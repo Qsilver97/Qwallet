@@ -47,10 +47,15 @@ Of course, if invalid inputs are sent, error will be returned. Now we are able t
 
 # Actions
 Given that there are funded address(es) in the user account, various actions are possible:
+
 Send QU with destination and amount
+
 Sendmany (up to 15625 destinations) with csv file
+
 Send Asset (Ownership and Possession) with asset name, destination and amount
+
 RANDOM entropy submission (amount to stake)
+
 QTRY and QX TBD
 
 Some intuitive way to determine the source of funds (checkboxes for addresses?) and specifying the required inputs to these actions are needed.
