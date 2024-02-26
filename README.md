@@ -71,7 +71,7 @@ args would be the command line and result will be the completion result or error
 In general qwallet will return integer status as follows:
 negative number would indicate error.N occured, N being -result
 0 means operation completed
->0 means operation was queued and the result is the queued task number.
+positive number means operation was queued and the result is the queued task number.
 
 for a queued task number the status command can be used to obtain status, which will be the same status number unless the command completed, in which case the result will be set
 
