@@ -63,6 +63,20 @@ Send Asset will work much like sending QU.
 
 RANDOM entropy submission just requires and amount and number of times (defaults to 1) to be specified.
 
+# Interface
+The UI interface to the wasm code will be via int qwallet(char *args,char *result)
 
+args would be the command line and result will be the completion result or error result.
+
+In general qwallet will return integer status as follows:
+negative number would indicate error.N occured, N being -result
+0 means operation completed
+>0 means operation was queued and the result is the queued task number.
+
+for a queued task number the status command can be used to obtain status, which will be the same status number unless the command completed, in which case the result will be set
+
+For now we can serialize the UI, so if a task number is returned, just poll the qwallet with status <tasknum> until it returns 0 or negative.
+
+On any negative number display the error value and the results which will have some details about the error
 
 
