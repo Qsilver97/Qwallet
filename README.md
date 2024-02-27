@@ -84,4 +84,24 @@ For now we can serialize the UI, so if a task number is returned, just poll the 
 
 On any negative number display the error value and the results which will have some details about the error
 
+# Feedback
+Kavatak:
+
+1. One notable feature is the process of the initial login with the repeated input of the seed bip39 (without the ability to copy). This is a valuable feature that emphasizes the importance of saving the seed. Some users might overlook this, leading to potential coin loss.
+
+2. The console is a handy feature (though perhaps it should be toggleable in the settings to avoid clutter for regular users).
+
+3. To become a top-1 wallet, you need to find a way to make a wallet for a mobile device.
+
+4. Adding a convenient copy address option (with a single click) and a QR code for the address could enhance the user experience.
+
+5. Implementing support channels (Discord/Telegram/email/FAQ) for feedback and issue resolution is essential.
+
+6. Storing the complete transaction history, including previous epochs, is a great idea. It allows users to easily track their financial operations, a feature currently lacking in wallet.qubic.li.
+
+7. Adding the ability to bookmark addresses for quick access and management could be beneficial.
+
+8. Consideration should be given to transaction confirmation methods, such as two-factor authentication or password usage.
+
+
 
