@@ -23,9 +23,9 @@ After a seed is created, you can specify it simply with the password.
 
 Once an account is created with a password, you can create derived privatekeys that combine the original seed for the password with the hash of the derivation string. This is automatically done on the first usage of the derivation index assuming a derivation string is provided.
 
-login <password>,1,derived
+login password,1,derived
 
-Once you do that you can specify it with <password>,1
+Once you do that you can specify it with password,1
 
 The user will only need to know the password and derivations they supplied and the UI will be able to display. Each different user supplied password will create (or log into) a different user account.
 
