@@ -7,28 +7,24 @@ The goal of Qwallet is to be an easy to use wallet for Qubic that enables the us
 The main target OS for the UI is windows and osx, to achieve this a wasm based solution is used. Combined with webpages (and localhost webserver) all the major OS will be able to be supported. If we can also get mobile (android and iOS) support using this method, then it would be worth making some additional customizations to support mobile.
 
 
-# Basic architecture
-Due to the usage of tcp/ip connections of the Qubic nodes and the difficulty of wasm using tcp/ip, a bridge to websockets is needed. This allows wasm to directly do networking and something like websockify can interface to the Qubic nodes. websockify also has a web server functionality so it could remove the need to use nginx.
-
-A simple to use installer will install files for the user so the Qwallet can easily be invoked and the main webpage opened in a browser. Would need to launch the web server and open browser to localhost page.
-
-Qwallet functionality will be mostly implemented inside the C code that will generate the wasm using emcripten. There will be UI webpages that invoke the wasm code interface functions. Advanced mode pages will exist for expert users to see the console output and perform low level functions or simply to invoke new functionality that does not have a UI webpage yet. The console would simply allow to issue command line commands with arguments that will be passed to the main(argv,argc) of the wasm. The user experience for this would be similar to using the unix command line.
-
-For functionality that has a UI webpage, the usage should be intuitive and be easy to understand, with utmost importance on the security of user funds.
-
-
 # User accounts
-All of the functionality associated with monetary value will be linked to a private key. There are several ways to get a private key and each method will be described below. Qubic uses SHA-3 K12 hash as its fundamental hashing and a field multiplication to get a public key from a private key. Addresses have checksums and error detection and single char error correction must be implemented so that simple user errors of trying to send to an address with one character wrong is corrected and two or more errors are at least detected. This allows the user to correct the destination address.
+Qwallet manages user funds based on accounts. An account is simple a seed associated with a password. The seed is encrypted with the password and saved to a filename based on the hash of the password.
 
-A seed is a string that generates one or more private keys, the first one directly generated and subsequent private keys are derived. This allows using a single seed to recover an arbitrary number of addresses. Each seed in a user account will have N sets of address data, each set of address data having the information to sign a transaction, the public key and associated address.
+The user can have a seed generated for them automatically simply by trying to login with a password for the first time. If the password starts with a 'Q' the qubic 55 lowercase alphabetic seed is generated, if the password does not start with 'Q' then a 24 word bip39 seed is created. The actual seed is not saved on disk and all instances of seeds, subseeds, privatekeys are immediately scrubbed from memory after their use. The addseed command can be used to create a pre-existing seed and link it to a password, the Qpassword convention is not used for external seeds added.
 
-A user account will have a collection of seeds and their address data. The user account will have a user generated password that is specified when the user account is created. This password is used to encrypt the sensitive seed and private key info for all the seeds in the user account. It needs to be strong enough to prevent people with access to the local computer from cracking it, but does not need to be cryptographic strength. User specified seeds needs to be cryptographically strong, preferably 256 bits like 24 word bip 39, BTC wif format, Qubic 55 chars, etc. Qwallet can generate 55 char seeds or bip39 seeds.
+login <password> to generate bip39 24 words
+login Q<password> to generate qubic 55 chars seed
+addseed <password> seed
 
-Seeds are one of two types, either 55 lowercase alphabetic characters native to Qubic or an arbitrary string. Qubic seeds are converted to 55 chars of 0 to 25 and K12 hashed, all the other types of seeds are K12 hashed. Both of these K12 hashes are the subseed, which is used to sign transactions. The subseed is K12 hashed to make the private key and that is ecc_mult to make a public key. The public key is displayed as an upper case alphabetic 60 character string, with the last 4 being a checksum based on K12 hash of the public key.
+After a seed is created, you can specify it simply with the password.
 
-Based on this the user account needs a set of seedinfo, each of which includes the original seed and each of the subseed, public key and address. The privatekey is only rare directly needed and can be calculated from the subseed. Both the original seed and the subseed must be encrypted before being stored and for this a pseudo-OTP is used based on the user supplied password. It really is not a OTP (one time pad) at all as it is reused many times, but the concept of how it is used is relevant. The user password is K12 hashed, multiple times if needed to generate the required number of bits. The seed and subseed are then XOR'ed with the pseudo-OTP bits and saved on disk. When retrieving from disk the XOR operation is done again to restore the seeds. The assumption is that the user files will not be accessible unless there is local access and without the user supplied password the K12 hash of the user supplied password will not be able to be determined to extract the seeds.
+Once an account is created with a password, you can create derived privatekeys that combine the original seed for the password with the hash of the derivation string. This is automatically done on the first usage of the derivation index assuming a derivation string is provided.
 
-The user will only need to know the password they supplied and the UI will be able to display all information about all addresses for all seeds in the user account. Each different user supplied password will create (or log into) a different user account.
+login <password>,1,derived
+
+Once you do that you can specify it with <password>,1
+
+The user will only need to know the password and derivations they supplied and the UI will be able to display. Each different user supplied password will create (or log into) a different user account.
 
 
 # Initial UI page
@@ -38,11 +34,7 @@ Before displaying to the user the corresponding address to this bip39 seed, the 
 
 If it is not the first time, after user supplies password, it can directly go to the after login page. This page will show all the addresses for every seed in the user account. Since each seed can have an arbitrary number of derived addresses, each seed should be able to be collapsed down to the initial address or expanded to see all the derived addresses for that seed. For each address, it would show the QU balance along with the last updated tick (and any assets that it has by expand/collapse that appears)
 
-The user will need to be able to add derived addresses and new seeds with appropriate functions. int32_t AddNewQseed(char seed55[55]) and int32_t AddNewBip39Seed(char *bip39seed). Each of these will create a new seed structure for the user account and return the 0 based index to be used for add derived addresses. 
-
-char *AddDerivedAddress(int32_t seedindex,char *reference) where seedindex is the index retured from the Addseed function and the reference can be any string, eg. address of customer, name, or "" if just deriving based on the next derived index. The resulting derived address is returned. If the reference is a valid qubic address, the pubkey for that adddress will be used for derivation, otherwise it will be treated as a string.
-
-Of course, if invalid inputs are sent, error will be returned. Now we are able to create an arbitrary number of seeds of both types and an arbitrary number of derived addresses of three types for each seed. All of these addresses combine to be the user account, each address being able to have QU and assets.
+The user will need to be able to add derived addresses and new seeds with appropriate functions.
 
 
 # Actions
