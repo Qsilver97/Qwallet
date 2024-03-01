@@ -40,7 +40,13 @@ The user will need to be able to add derived addresses and new seeds with approp
 # Actions
 Given that there are funded address(es) in the user account, various actions are possible:
 
-Send QU with destination and amount
+The address where funds are to come from is specified by login,index. Currently a simple send creates the rawhex for the tx, it needs to be manually broadcast to the network.
+
+send <password>,index,dest,amount[,extradata]
+
+Use index of 0 unless you want to use a derived address. extradata is an optional hexstring for data to be added to the transaction
+
+Future commands:
 
 Sendmany (up to 15625 destinations) with csv file
 
@@ -49,8 +55,6 @@ Send Asset (Ownership and Possession) with asset name, destination and amount
 RANDOM entropy submission (amount to stake)
 
 QTRY and QX TBD
-
-Some intuitive way to determine the source of funds (checkboxes for addresses?) and specifying the required inputs to these actions are needed.
 
 During and after the action, an appropriate page should be displayed with the current status. For example, when sending QU, it will create a txid, send it, verify if it worked, if not it creates another txid, repeats. Status information about the pending Send QU will be in the console while it is progressing. Upon completion, updated balance of sender and receiver, completion tick and time, txid details should be displayed and the txid will be stored permanently for future retrieval.
 
