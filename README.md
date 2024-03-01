@@ -13,8 +13,11 @@ Qwallet manages user funds based on accounts. An account is simple a seed associ
 The user can have a seed generated for them automatically simply by trying to login with a password for the first time. If the password starts with a 'Q' the qubic 55 lowercase alphabetic seed is generated, if the password does not start with 'Q' then a 24 word bip39 seed is created. The actual seed is not saved on disk and all instances of seeds, subseeds, privatekeys are immediately scrubbed from memory after their use. The addseed command can be used to create a pre-existing seed and link it to a password, the Qpassword convention is not used for external seeds added.
 
 login <password> to generate bip39 24 words
+
 login Q<password> to generate qubic 55 chars seed
+
 addseed <password> seed
+
 
 After a seed is created, you can specify it simply with the password.
 
