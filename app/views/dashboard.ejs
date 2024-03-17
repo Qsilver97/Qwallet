@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Dashboard</title>
+    <%- include('layout/header') %>
+        <script>
+            const socket = io();
+            let password = "<%=password %>";
+            let accounts = eval(`<%- JSON.stringify(result.display) %>`);
+            let confirmTickNumber = 5;
+            let currentTick = null;
+            let currentAccountIdx = 0;
+            let deleteIdx = null;
+            let success = false;
+            let destAddress = null;
+            let sent = null;
+            let tickNum = null;
+            let amounts = [];
+
+            socket.emit('broadcast', { command: 'liveSocketRequest', message: { data: accounts[0], flag: "address" } })
+            function delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            function logout() {
+                socket.emit('run', { command: "logout", flag: "logout" })
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'logout';
+                document.body.appendChild(form);
+                form.submit();
+            }
+
+            // Send command to QWallet
+            function callLoginQwallet(command, flag) {
+                socket.emit('run', { command, flag });
+            }
+
+            function selectAddress(address) {
+                const idx = accounts.findIndex((item) => item == address);
+                currentAccountIdx = idx;
+                $("#current-account").text(accounts[idx])
+                //socket.emit('broadcast', { command: 'liveSocketRequest', message: {data: accounts[idx], flag: "address"} })
+                $('#accountModal').modal('hide');
+            }
+
+            function getTransactionHistory() {
+                $.ajax({
+                    type: 'POST',
+                    url: '/gettransactionhistory',
+                    data: { address: accounts[currentAccountIdx] },
+                })
+                    .done((response) => {
+                        console.log(response)
+                    })
+            }
+
+            //getTransactionHistory()
+
+            // Function to handle result of Qwallet call
+            function handleResult(msg) {
+                const result = JSON.parse(msg.value);
+                const flag = msg.flag;
+
+                if (result.result == 0) {
+                    if (flag == 'addaccount' && password) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/addaccount',
+                            data: result,
+                        })
+                            .done((data) => {
+                                let count = 0;
+                                for (let i = accounts.length - 1; i >= 0; i--) {
+                                    if (accounts[i] === '') {
+                                        count++;
+                                    } else {
+                                        break; // Break the loop if the current element is not an empty string
+                                    }
+                                }
+                                const index = accounts.length - count;
+                                accounts[index] = result.display
+                                socket.emit('broadcast', { command: 'liveSocketRequest', message: { data: result.display, flag: "address" } })
+                                $("#accounts").append(
+                                    `
+                                    <div class="account" id="account${index}">
+                                        <span onclick="selectAddress('${result.display}')">${result.display}</span>
+                                        <div class="account-setting">
+                                            <i class="fa fa-copy" onclick="copyText('${result.display}')"></i>
+                                            <i class="fa fa-trash" onclick="showDeleteAccountModal('${index}')"></i>
+                                        </div>
+                                    </div>
+                                    `
+                                )
+                            })
+                            .fail((error) => {
+                                console.log(error)
+                            })
+                    }
+
+                    else if (flag == 'transfer' && password) {
+                        console.log(result, 'transfer');
+                        if (result.display.rawhex) {
+                            console.log(result.display.rawhex, "asdfasdfasdfasdf");
+                            socket.emit("broadcast", { command: "liveSocketRequest", message: { data: result.display.rawhex, flag: "transfer" } });
+                        }
+                    }
+
+                    else if (flag == 'deleteaccount' && password) {
+                        $(`#account${deleteIdx}`).remove()
+                        $.ajax({
+                            type: 'POST',
+                            url: 'postDeleteAccount',
+                            data: { address: accounts[deleteIdx] },
+                        })
+                            .done((data) => {
+                                accounts[deleteIdx] = '';
+                            })
+                            .fail((error) => {
+                                console.log(error)
+                            })
+                    }
+
+                    else if (flag == 'checkAllAccount' && password) {
+                        if (result.seedpage == 0) {
+                            accounts = result.display;
+                            $.ajax({
+                                type: 'POST',
+                                url: 'postCheckAccount',
+                                data: { accounts }
+                            })
+                                .done(async (data) => {
+                                    accounts.map((account, idx) => {
+                                        if (account != "") {
+                                            $("#accounts").append(
+                                                `
+                                                <div class="account" id="account${idx}">
+                                                    <div class="account-setting">
+                                                        <i class="fa fa-copy" onclick="copyText('${account}')"></i>
+                                                    </div>
+                                                    <div class='address-content'>
+                                                        <span onclick="selectAddress('${account}')">${account}</span>
+                                                    </div>
+                                                    <div class="account-setting">
+                                                        <i class="fa fa-trash" onclick="showDeleteAccountModal('${idx}')"></i>
+                                                    </div>
+                                                </div>
+                                                `
+                                            )
+                                        }
+                                    })
+
+                                    for (let idx = 0; idx < accounts.length; idx++) {
+                                        await delay(100)
+                                        if (accounts[idx] != '') {
+                                            socket.emit('broadcast', { command: 'liveSocketRequest', message: { data: accounts[idx], flag: "address" } })
+                                        }
+                                    }
+                                })
+                                .fail((error) => {
+                                    console.log(error)
+                                })
+                        }
+                    }
+
+                    else if (flag == "wss") {
+                        console.log(result, flag)
+                    }
+                }
+            }
+
+            function deleteAccount(idx) {
+                // delete password,index
+                deleteIdx = idx
+                if (idx == 0) {
+                    callLoginQwallet(`delete ${password},${idx}`, 'deleteaccount');
+                    logout()
+                }
+                callLoginQwallet(`delete ${password},${idx}`, 'deleteaccount');
+                $("#deleteModal").modal('hide')
+                $("#deleteModal").remove()
+            }
+
+            function showDeleteAccountModal(idx) {
+                let modalBody = ""
+                if (idx == 0) {
+                    modalBody = "<span>This is a primary account. If you delete this account, all accounts will be deleted.</span> </br>"
+                }
+                $('body').append(
+                    `
+                    <div class="modal delete-account-modal" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true" style="display: block">
+                        <div class="modal-dialog modal-dialog-centered" role="document" >
+                            <div class="modal-content" >
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalTitle">Delete Accout?</h5>
+                                    <div class="config">
+                                        <svg data-dismiss="modal" aria-label="Close" onclick="$('#deleteModal').modal('hide'); $('#deleteModal').remove();"
+                                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false"
+                                            aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon">
+                                            <path fill="#fff"
+                                                d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="modal-body">
+                                    ${modalBody}
+                                    ${accounts[idx]}
+                                </div>
+                                <div class="modal-footer">
+                                    <button onclick="deleteAccount(${idx})">Yes</button>
+                                    <button onclick="$('#deleteModal').modal('hide'); $('#deleteModal').remove();">No</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+                )
+            }
+
+            function handleLiveSocket(msg) {
+                console.log(msg, typeof msg);
+                try {
+                    let _msg = JSON.parse(msg);
+                    if (_msg.address && _msg.balance) {
+                        const addre = _msg.address
+                        const bal = _msg.balance
+
+                        const addressExists = (array, address) => {
+                            return array.some(item => item.address === address);
+                        };
+
+                        const updateAddressBalance = (array, address, balance) => {
+                            array.forEach(item => {
+                                if (item.address === address) {
+                                    item.balance = balance;
+                                }
+                            });
+                        };
+
+                        if (addressExists(amounts, addre)) {
+                            updateAddressBalance(amounts, addre, bal);
+                        } else {
+                            amounts.push({ address: addre, balance: bal });
+                        }
+
+                        //const addressContents = document.querySelectorAll('.address-content');
+                        //addressContents.forEach((item)=>{
+                        //    const amountObj = amounts.find(item => item.address === item.textContent.trim());
+                        //    const amountItem = amountObj ? amountObj.balance : 'undefined';
+                        //    item.append(
+                        //        `
+                        //        <span>${amountItem}</span>
+                        //        `
+                        //    )
+                        //})
+                    }
+
+                    const currentAccount = document.getElementById('current-account').textContent;
+                    const cleanedString = currentAccount.replace(/\s+/g, '');
+                    let preBalance = _msg.balance;
+                    let balance = $('#balance').text();
+                    if (_msg.address && _msg.address == cleanedString) {
+                        if (preBalance != balance && _msg.sent != 0) {
+                            document.getElementById('transfer').disabled = false;
+                            document.getElementById('transfer').style.cursor = 'pointer'
+                            document.getElementById('transfer').textContent = "Send";
+                            console.log(_msg.spectrum);
+                            Toastify({
+                                text: "Success",
+                                className: "warning",
+                                style: {
+                                    background: "yellowGreen",
+                                    color: "white",
+                                }
+                            }).showToast();
+
+                        } else {
+                            if (_msg.tick > tickNum) {
+                                callLoginQwallet(`send ${password},${currentAccountIdx},${tickNum + confirmTickNumber},${destAddress},${sent}`, 'transfer');
+                            } else {
+                                socket.on('liveSocketResponse', handleLiveSocket)
+                            }
+                        }
+
+                    }
+                    if (_msg.address && _msg.address == cleanedString) {
+                        $("#balance").text(_msg.balance)
+                    }
+                    // else {
+                    //     $("#tick").text(_msg.tick)
+                    // }
+                    if (_msg.command == "CurrentTickInfo") {
+                        currentTick = _msg.tick;
+                        $("#tick").text(_msg.tick);
+                    }
+
+                    if (_msg.wasm == 1) {
+                        socket.emit('broadcast', { command: "wssRequest", message: _msg })
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+
+            socket.on('result', handleResult)
+            socket.on('transfer', handleResult)
+            socket.on('wssResponse', (msg) => handleResult)
+            //socket.on('testemit', (msg) => console.log(msg))
+            socket.on('liveSocketResponse', handleLiveSocket)
+
+            document.addEventListener('DOMContentLoaded', function () {
+                socket.emit('run', { command: `list ${password}`, flag: "checkAllAccount" })
+                // Setup button click handlers
+                $("#add-account").click(() => {
+                    let count = 0;
+                    for (let i = accounts.length - 1; i >= 0; i--) {
+                        if (accounts[i] === '') {
+                            count++;
+                        } else {
+                            break; // Break the loop if the current element is not an empty string
+                        }
+                    }
+                    const index = accounts.length - count;
+                    if (index < 100) {
+                        if (index > 20) {
+                            document.getElementById('accounts').style.height = '600px'
+                        }
+                        callLoginQwallet(`login ${password},${index},derivation${index}`, 'addaccount');
+                    } else {
+                        Toastify({
+                            text: "You can't create more than 100 addresses.",
+                            className: "warning",
+                            style: {
+                                background: "red",
+                                color: "white",
+                            }
+                        }).showToast();
+                    }
+                });
+
+                function convertToNumber(value) {
+                    return parseInt(value.replaceAll(',', ''));
+                }
+
+                $("#transfer").click(() => {
+                    document.getElementById('transfer').disabled = true;
+                    document.getElementById('transfer').style.cursor = 'no-drop';
+                    document.getElementById('transfer').textContent = "Sending";
+                    const amount = convertToNumber($("#amount").val());
+                    const address = $("#address").val();
+                    destAddress = address;
+                    sent = amount;
+                    tickNum = currentTick + confirmTickNumber;
+                    callLoginQwallet(`send ${password},${currentAccountIdx},${tickNum},${address},${amount}`, 'transfer');
+                })
+
+                $('.center').click(() => {
+                    if (document.querySelectorAll('.account').length > 20) {
+                        document.getElementById('accounts').style.height = '600px'
+                    }
+                })
+
+                const amountInput = document.getElementById('amount');
+
+                amountInput.addEventListener('input', function () {
+                    let value = this.value.replace(/\D/g, '');
+
+                    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+                    this.value = value;
+                });
+            });
+        </script>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <header>
+            <div class="left">
+                <img class="logo" src="./assets/images/logo.png" />
+                <!-- <h2>Dashboard</h2> -->
+            </div>
+            <div class="center" data-toggle="modal" data-target="#accountModal">
+                <span id="current-account">
+                    <%=result.display[0] %>
+                </span>
+                <i class="fa fa-caret-down"></i>
+            </div>
+            <div class="right">
+                <i class="fa fa-cog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <!-- <button class="dropdown-item" type="button">Setting</button> -->
+                    <button class="dropdown-item" type="button" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+        </header>
+        <div class="body">
+            <div class="summary">
+                <h3>
+                    Balance:
+                    <span id="balance">0</span>
+                </h3>
+
+                <h3>
+                    Tick:
+                    <span id="tick">0</span>
+                </h3>
+            </div>
+            <div class="more-info">
+                <div class="send">
+                    <input type="text" class="address" id="address" placeholder="Address" />
+                    <input type="text" class="amount" id="amount" placeholder="Amount" />
+                    <button id="transfer">Send</button>
+                </div>
+                <div class="activity">
+                    <h3>
+                        Activity
+                    </h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Date</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Detail</th>
+                                <th scope="col">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td scope="row" class="no-data" colspan="4">
+                                    <div>
+                                        <img src="./assets/images/no_data.png" alt="">
+                                    </div>
+                                    No activity
+                                </td>
+                                <!-- <td></td>
+                                <td></td>
+                                <td></td> -->
+                            </tr>
+                            <!-- <tr>
+                                <td scope="row">9 Mar</td>
+                                <td>Transfer</td>
+                                <td>LSAHJ -> ARDHX</td>
+                                <td>9999999</td>
+                            </tr>
+                            <tr>
+                                <td scope="row">9 Mar</td>
+                                <td>Transfer</td>
+                                <td>LSAHJ -> ARDHX</td>
+                                <td>9999999</td>
+                            </tr>
+                            <tr>
+                                <td scope="row">9 Mar</td>
+                                <td>Transfer</td>
+                                <td>LSAHJ -> ARDHX</td>
+                                <td>9999999</td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="accountModal" tabindex="-1" role="dialog" aria-labelledby="accountModalTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Addresses</h5>
+                    <div class="config">
+                        <svg id="add-account" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="plus"
+                            class="svg-inline--fa fa-plus  icon_iconRecipe_size_l__102a6quc icon_iconInButton__102a6qu0 actionableIcon_actionableIconRecipe__1q4hsc25 actionableIcon_actionableIconRecipe_variant_primary__1q4hsc26"
+                            role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
+                            color="var(--compIconColorDefault__1dinw7t17z)">
+                            <path fill="#fff"
+                                d="M240 64c0-8.8-7.2-16-16-16s-16 7.2-16 16V240H32c-8.8 0-16 7.2-16 16s7.2 16 16 16H208V448c0 8.8 7.2 16 16 16s16-7.2 16-16V272H416c8.8 0 16-7.2 16-16s-7.2-16-16-16H240V64z">
+                            </path>
+                        </svg>
+                        <svg data-dismiss="modal" aria-label="Close"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false"
+                            aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon">
+                            <path fill="#fff"
+                                d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="modal-body" id="accounts">
+                </div>
+                <!-- <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div> -->
+            </div>
+        </div>
+    </div>
+    <script src="./assets/javascript/script.js"></script>
+
+</body>
+
+</html>

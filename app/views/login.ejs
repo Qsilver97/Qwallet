@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Login</title>
+    <%- include('layout/header') %>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const socket = io();
+                let password = null;
+                let hasRun = false;
+                // Function to handle result of Qwallet call
+                socket.emit('start', { message: "Restart the server!" })
+                function handleResult(msg) {
+                    let result = JSON.parse(msg.value);
+                    let flag = msg.flag;
+                    if (flag == 'check') {
+                        let status = document.querySelector("#password");
+                        let sentence = document.querySelector(".check-available")
+                        let sentenceExist = document.querySelector(".check-exist")
+                        if (result.result == 0) {
+                            const modalStatus = document.getElementById('wordsModal').style.display;
+                            const qPassword = "Q" + password;
+                            status.style.borderBottomColor = 'red';
+                            sentenceExist.style.display = 'none';
+                            if (!hasRun) {
+                                walletCheckAnother(qPassword);
+                                hasRun = true;
+                            }
+                            if (modalStatus == '') {
+                                sentence.style.display = 'block'
+                                status.style.marginBottom = '10px'
+                                document.getElementById('login-btn').disabled = true;
+                                document.getElementById('login-btn').style.cursor = 'no-drop';
+                            } else {
+                                let statusOther = document.getElementById('wordsPassword');
+                                statusOther.style.borderBottomColor = 'green';
+                            }
+                        } else {
+                            status.style.borderBottomColor = 'green';
+                            sentence.style.display = 'none'
+                            status.style.marginBottom = '30px'
+                            document.getElementById('login-btn').disabled = false;
+                            document.getElementById('login-btn').style.cursor = 'pointer';
+                            let statusOther = document.getElementById('wordsPassword');
+                            statusOther.style.borderBottomColor = 'red';
+                            sentenceExist.style.display = 'block'
+                            document.getElementById('create').disabled = true;
+                            document.getElementById('create').style.cursor = 'no-drop';
+                        }
+                    }
+                    if (flag == 'login' && password) {
+                        if (result.result == 0) {
+                            let actionPath = '';
+                            if (result.seedpage == 0) {
+                                actionPath = '/dashboard';
+                            } else if (result.seedpage == 1) {
+                                actionPath = '/create';
+                            }
+                            // Create a form element
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = actionPath;
+
+                            // Add password input to form
+                            const passwordInput = document.createElement('input');
+                            passwordInput.type = 'hidden';
+                            passwordInput.name = 'password';
+                            passwordInput.value = password;
+                            form.appendChild(passwordInput);
+
+                            // Add result input to form
+                            const resultInput = document.createElement('input');
+                            resultInput.type = 'hidden';
+                            resultInput.name = 'result';
+                            resultInput.value = JSON.stringify(result);
+                            form.appendChild(resultInput);
+
+                            // Add the form to the body and submit it
+                            document.body.appendChild(form);
+                            form.submit();
+                        } else {
+                            Toastify({
+                                text: result.display,
+                                className: "warning",
+                                style: {
+                                    background: "red",
+                                    color: "white",
+                                }
+                            }).showToast();
+                        }
+                    }
+                }
+
+                // Send command to QWallet
+                function callLoginQwallet(_password) {
+                    password = _password;
+                    socket.emit('run', { command: `login ${_password}`, flag: 'login' });
+                }
+
+                function walletCheck(_password) {
+                    password = _password;
+                    socket.emit('run', { command: `checkavail ${_password}`, flag: 'check' })
+                }
+
+                function walletCheckAnother(_password) {
+                    password = _password;
+                    socket.emit('run', { command: `checkavail ${_password}`, flag: 'check' })
+                }
+
+                socket.on('result', handleResult)
+
+                function login() {
+                    document.getElementById('login-btn').disabled = true;
+                    const _password = $("#password").val();
+                    callLoginQwallet(password);
+                }
+
+                function handleChange(_password) {
+                    hasRun = false;
+
+                    walletCheck(_password);
+                }
+
+                function recover(event) {
+                    const form = document.createElement('form');
+                    form.method = 'GET';
+                    form.action = '/recover';
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+
+                // Setup button click handlers
+                $("#login-btn").click(() => {
+                    login();
+                });
+
+                $('#password').on('input', function (event) {
+                    let validate = $('#password').val();
+                    if (validate != '') {
+                        handleChange(validate);
+                    } else {
+                        let status = document.querySelector("#password");
+                        let sentence = document.querySelector(".check-available")
+                        let statusOther = document.getElementById('wordsPassword');
+                        statusOther.style.borderBottomColor = 'white';
+                        status.style.borderBottomColor = 'white';
+                        sentence.style.display = 'none'
+                    }
+                });
+
+                $('#wordsPassword').on('input', function (event) {
+                    let validate = $('#wordsPassword').val();
+                    if (validate != '') {
+                        handleChange(validate);
+                    } else {
+                        let statusOther = document.getElementById('wordsPassword');
+                        statusOther.style.borderBottomColor = 'white';
+                        let status = document.querySelector("#password");
+                        status.style.borderBottomColor = 'green';
+                        let sentenceExist = document.querySelector(".check-exist")
+                        sentenceExist.style.display = 'none'
+                    }
+                });
+
+                $('#confirmWordsPassword').on('input', function () {
+                    let CPstatusOther = document.getElementById('confirmWordsPassword');
+                    let statusOtherStyle = document.getElementById('wordsPassword').style.borderBottomColor;
+                    const wordsPassword = document.getElementById('wordsPassword').value;
+                    const confirmWordsPassword = document.getElementById('confirmWordsPassword').value;
+                    if (wordsPassword == confirmWordsPassword && wordsPassword != '' && confirmWordsPassword != '') {
+                        CPstatusOther.style.borderBottomColor = statusOtherStyle
+                    } else if (wordsPassword != confirmWordsPassword && confirmWordsPassword != '') {
+                        CPstatusOther.style.borderBottomColor = 'red'
+                    } else if (confirmWordsPassword == '') {
+                        CPstatusOther.style.borderBottomColor = 'white'
+                    }
+                })
+
+                $('#recover-link').click(() => {
+                    recover();
+                });
+
+                function toggleSelection(selectedId) {
+                    const options = document.querySelectorAll('.seed-words');
+                    options.forEach(option => {
+                        if (option.id === selectedId) {
+                            option.classList.add('option-selected');
+                        } else {
+                            option.classList.remove('option-selected');
+                        }
+                    });
+                }
+
+                $('#option-words').click(() => {
+                    toggleSelection('option-words');
+                })
+
+                $('#option-chars').click(() => {
+                    toggleSelection('option-chars');
+                })
+
+                $('#create').click(() => {
+                    const option = document.querySelector('.option-selected');
+                    if (option) {
+                        const check = option.textContent.includes(24);
+                        const wordsPassword = document.getElementById('wordsPassword').value;
+                        const confirmWordsPassword = document.getElementById('confirmWordsPassword').value;
+                        if (check) {
+                            if (wordsPassword == confirmWordsPassword && wordsPassword != '' && confirmWordsPassword != '') {
+                                document.getElementById('create').disabled = true;
+                                const _password = wordsPassword;
+                                callLoginQwallet(_password);
+                            } else {
+                                Toastify({
+                                    text: "Please check your password.",
+                                    className: "warning",
+                                    style: {
+                                        background: "red",
+                                        color: "white",
+                                    }
+                                }).showToast();
+                            }
+                        } else {
+                            if (wordsPassword == confirmWordsPassword && wordsPassword != '' && confirmWordsPassword != '') {
+                                document.getElementById('create').disabled = true;
+                                const _password = "Q" + wordsPassword;
+                                callLoginQwallet(_password);
+                            } else {
+                                Toastify({
+                                    text: "Please check your password.",
+                                    className: "warning",
+                                    style: {
+                                        background: "red",
+                                        color: "white",
+                                    }
+                                }).showToast();
+                            }
+                        }
+                    } else {
+                        Toastify({
+                            text: "Please select one of two options.",
+                            className: "warning",
+                            style: {
+                                background: "red",
+                                color: "white",
+                            }
+                        }).showToast();
+                    }
+                })
+            });
+        </script>
+</head>
+
+<body>
+
+    <div class="container">
+        <img class="logo" src="./assets/images/logo.png" width="100px" />
+        <h2>Login</h2>
+        <div class="description">
+            Enter your password to access your account.
+            <br />
+            Each password corresponds to a unique user account
+        </div>
+        <form id="login-form" action="javascript: void(0)">
+            <input type="password" id="password" placeholder="Password" required>
+            <span class="fa fa-eye"></span>
+            <p class="check-available">Password does not exist!</p>
+            <input type="button" value="Login" id="login-btn">
+            <input type="button" value="Create" id="create-btn" data-toggle="modal" data-target="#wordsModal">
+            <a href="#" class="recover-link" id="recover-link">Restore your wallet from your seed</a>
+        </form>
+    </div>
+
+    <!-- 24 words Modal -->
+    <div class="modal fade" id="wordsModal" tabindex="-1" role="dialog" aria-labelledby="wordsModalTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Input your 24 words</h5>
+                    <div class="config">
+                        <svg data-dismiss="modal" aria-label="Close"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false"
+                            aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon">
+                            <path fill="#fff"
+                                d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="modal-body" id="wordsModal">
+                    <div class="start-q-password">
+                        <p>Select one of them</p>
+                        <div class="seed-words" id="option-words">
+                            <div class="seed-words-img">
+                                <img src="./assets/images/seed.png" alt="">
+                            </div>
+                            <p>Create With 24 words</p>
+                            <!-- <span class="fa fa-angle-double-right"></span> -->
+                        </div>
+                        <div class="seed-words" id="option-chars">
+                            <div class="seed-words-img">
+                                <img src="./assets/images/chars.png" alt="">
+                            </div>
+                            <p>Create With 55 Chars</p>
+                            <!-- <span class="fa fa-angle-double-right"></span> -->
+                        </div>
+                    </div>
+                    <div class="start-q-password">
+                        <p>Enter the password for the wallet you want to create.</p>
+                        <div class="password-group">
+                            <input type="password" name="" id="wordsPassword" placeholder="Type your password">
+                            <input type="password" name="" id="confirmWordsPassword"
+                                placeholder="Re-type your password">
+                        </div>
+                        <p class="check-exist">Password already exitsts.</p>
+                    </div>
+                    <button type="button" class="wordsModal-button" id="create">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./assets/javascript/script.js"></script>
+</body>
+
+</html>

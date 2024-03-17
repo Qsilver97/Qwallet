@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Create Account</title>
+    <%- include('layout/header') %>
+</head>
+
+<body>
+
+    <div class="container">
+        <img class="logo" src="./assets/images/logo.png" width="100px" />
+        <h2>Create an account</h2>
+        <div class="description">
+            A new seed has been generated and needs to be securely backed up.
+            We highly recommend to write down on paper for safe keeping
+        </div>
+        <% let ulClass = ''; if (password.startsWith('Q')) { ulClass='start-q' } %>
+        <ul id="seeds" class="<%=ulClass %>">
+            <% for(let i=0; i < result.display.split(" ").length; i ++) { %>
+                <li>
+                    <% if(!password.startsWith('Q')) { %>
+                        <span><%= i + 1 %></span>
+                        <input type="password" value="password" disabled class="no55seed" />
+                    <% } else { %>
+                        <input type="text" value="<%=result.display %>" readonly onclick="copyTextContent(this)"/>
+                    <% } %>
+                </li>
+            <% } %>
+            <% if(password.startsWith('Q')) { %>
+            <% } else { %>
+                <div class="blur"></div>
+                <span class="fa fa-eye" id="show"></span>
+            <% } %>
+        </ul>
+        <div class="backup">
+            <input type="checkbox" name="" id="checkbox">
+            <label for="checkbox">I've Made a Backup</label>
+        </div>
+        <input type="button" value="Next" id="next-btn">
+    </div>
+    <script>
+        $(document).ready(() => {
+            
+            function init () {
+                    // Mouse out
+                    const $input = $('.no55seed');
+                    $input.val('password');
+                    $input.attr('type', 'password');
+            }
+            
+            init()
+
+            let seeds = "<%= result.display %>".split(" ");
+            $('.blur,#show').hover(
+                function () {
+                    // Mouse over
+                    $('ul li input').each(function (i) {
+                        $(this).attr('type', 'text');
+                        $(this).val(seeds[i]);
+                    });
+                },
+                function () {
+                    // Mouse out
+                    const $input = $('ul li input');
+                    $input.val('password');
+                    $input.attr('type', 'password');
+                }
+            );
+            $('#next-btn').click(() => {
+                const isChecked = $('#checkbox').is(':checked')
+                if(isChecked){
+                    const actionPath = 'check'
+                    // Create a form element
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = actionPath;
+
+                    // Add password input to form
+                    const passwordInput = document.createElement('input');
+                    passwordInput.type = 'hidden';
+                    passwordInput.name = 'password';
+                    passwordInput.value = "<%= password%>";
+                    form.appendChild(passwordInput);
+
+                    // Add result input to form
+                    const resultInput = document.createElement('input');
+                    resultInput.type = 'hidden';
+                    resultInput.name = 'result';
+                    resultInput.value = '<%- JSON.stringify(result) %>';
+                    form.appendChild(resultInput);
+
+                    // Add the form to the body and submit it
+                    document.body.appendChild(form);
+                    form.submit();
+                }else {
+                    Toastify({
+                        text: "Please backup the seeds.",
+                        className: "warning",
+                        style: {
+                            background: "red",
+                            color: "white",
+                        }
+                    }).showToast();
+                    // alert('Please backup the seeds.')
+                }
+            })
+        });
+    </script>
+    <script src="./assets/javascript/script.js"></script>
+</body>
+
+</html>
