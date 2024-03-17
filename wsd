@@ -1,0 +1,14 @@
+# self-signed
+#https://gist.github.com/taoyuan/39d9bc24bafc8cc45663683eae36eb1a
+
+#certbot
+#This certificate expires on 2024-06-13.
+#These files will be updated when the certificate renews.
+#Certbot has set up a scheduled task to automatically renew this certificate in the background.
+#
+#Deploying certificate
+#Successfully deployed certificate for qsilver.org to /etc/apache2/sites-available/000-default-le-ssl.conf
+#Congratulations! You have successfully enabled HTTPS on https://qsilver.org
+
+gcc qclient.c -o qclient
+websocketd --ssl --sslcert=/etc/letsencrypt/live/qsilver.org/fullchain.pem --sslkey=/etc/letsencrypt/live/qsilver.org/privkey.pem -devconsole -port=5555 ./qclient
