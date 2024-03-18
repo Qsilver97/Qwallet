@@ -1,6 +1,8 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
-const dbPath = path.resolve(__dirname, 'sqlite.db');
+const isPackaged = typeof process.pkg !== 'undefined';
+const basePath = isPackaged ? path.dirname(process.execPath) : __dirname;
+const dbPath = path.resolve(basePath, 'sqlite.db');
 
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {

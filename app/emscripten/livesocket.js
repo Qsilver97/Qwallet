@@ -8,7 +8,7 @@ let addressStartTime = {}
 
 // Connect to the socket server
 const baseURL = `http://localhost:${PORT}`;
-const liveSocketURL = 'ws://93.190.139.223:4444';
+const liveSocketURL = 'wss://qsilver.org:5555';
 
 const socket = io(baseURL);
 const liveSocket = new WebSocket(liveSocketURL);
