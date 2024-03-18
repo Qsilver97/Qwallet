@@ -3,3 +3,4 @@ app/keys/*
 !app/keys/.gitkeep
 app/public/a.out.js
 .env
+build
