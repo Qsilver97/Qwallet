@@ -1,4 +1,6 @@
 {
+  "name": "qwallet",
+  "main": "server.js",
   "scripts": {
     "start": "nodemon server.js --ignore script.js"
   },
@@ -17,5 +19,16 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
+  },
+  "bin": "server.js",
+  "pkg": {
+    "assets": [
+      "views/**",
+      "node_modules/**"
+    ],
+    "targets": [
+      "node18-win-x64"
+    ],
+    "outputPath": "build"
   }
 }
