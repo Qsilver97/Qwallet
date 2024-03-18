@@ -1,0 +1,5 @@
+node_modules
+app/keys/*
+!app/keys/.gitkeep
+app/public/a.out.js
+.env
