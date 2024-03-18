@@ -85,9 +85,13 @@
                                 $("#accounts").append(
                                     `
                                     <div class="account" id="account${index}">
-                                        <span onclick="selectAddress('${result.display}')">${result.display}</span>
                                         <div class="account-setting">
                                             <i class="fa fa-copy" onclick="copyText('${result.display}')"></i>
+                                        </div>
+                                        <div class='address-content'>
+                                            <span onclick="selectAddress('${result.display}')">${result.display}</span>
+                                        </div>
+                                        <div class="account-setting">
                                             <i class="fa fa-trash" onclick="showDeleteAccountModal('${index}')"></i>
                                         </div>
                                     </div>
@@ -124,7 +128,7 @@
 
                     else if (flag == 'checkAllAccount' && password) {
                         if (result.seedpage == 0) {
-                            accounts = result.display;
+                            accounts = result.display.addresses;
                             $.ajax({
                                 type: 'POST',
                                 url: 'postCheckAccount',
