@@ -1,4 +1,4 @@
-
+    
 
 
 //#define TESTNET
@@ -60,7 +60,7 @@ struct pendingtx
 char PENDINGRESULT[4096],PENDINGSTATUS[4096];
 char CURRENTRAWTX[MAX_INPUT_SIZE * 3];
 char ACTIVEADDRS[MAX_INDEX][64];
-int32_t DIDlist;
+//int32_t DIDlist;
 
 char *wasm_result(int32_t retval,char *displaystr,int32_t seedpage)
 {
@@ -468,13 +468,15 @@ char *listfunc(char **argv,int32_t argc)
 {
     FILE *fp;
     uint32_t subshash;
-    int32_t index,n;
+    int32_t index,n,noaddrs = 0;
     uint8_t salt[32],origsubseed[32],subseed[32],subseed2[32],privkey[32],pubkey[32],subpubs[MAX_INDEX][32];
     char *password,fname[512],*retstr;
     static char addrsarray[MAX_INDEX * 80];
-    if ( argc != 1 )
-        return(wasm_result(-20,"list needs password",0));
+    if ( argc != 1 && argc != 2 )
+        return(wasm_result(-20,"list needs password[,noaddrs]",0));
     password = argv[0];
+    if ( argc == 2 )
+        noaddrs = atoi(argv[1]);
     memset(ACTIVEADDRS,0,sizeof(ACTIVEADDRS));
     memset(Balances,0,sizeof(Balances));
     if ( accountcodec("rb",password,0,origsubseed) == 0 )
@@ -504,13 +506,15 @@ char *listfunc(char **argv,int32_t argc)
     memset(subseed2,0xff,sizeof(subseed2));
     n = subpubshash(&subshash,subpubs);
     sprintf(addrsarray,"{\"numaddrs\":%d,\"subshash\":\"%x\",\"addresses\":[",n,subshash);
-    for (index=0; index<MAX_INDEX; index++)
-        sprintf(addrsarray + strlen(addrsarray),"\"%s\",",ACTIVEADDRS[index]);
-    addrsarray[strlen(addrsarray)-1] = ']';
-    strcat(addrsarray,"}");
+    if ( noaddrs == 0 )
+    {
+        for (index=0; index<MAX_INDEX; index++)
+            sprintf(addrsarray + strlen(addrsarray),"\"%s\",",ACTIVEADDRS[index]);
+        addrsarray[strlen(addrsarray)-1] = ']';
+    } else strcat(addrsarray,"]");
     //printf("%s\n",addrsarray);
     retstr = wasm_result(0,addrsarray,0);
-    DIDlist = 1;
+    //DIDlist = 1;
     printf("%s\n",retstr);
     return(retstr);
 }
@@ -524,7 +528,7 @@ struct qcommands
 {
     { "addseed", addseedfunc, "addseed password,seed" },
     { "login", loginfunc, "login password,[index [,derivation]]" },
-    { "list", listfunc, "list password" },
+    { "list", listfunc, "list password[,noaddrs]" },
     { "delete", deletefunc, "delete password,index" },
     { "checkavail", checkavailfunc, "checkavail password" },
     { "send", sendfunc, "send password,index,txtick,dest,amount[,extrahex]" },
@@ -801,7 +805,7 @@ char *qwallet(char *_args)
             sprintf(PENDINGSTATUS,"checking for %s tick.%d",PENDINGTX.txid,PENDINGTX.pendingtick);
             return(wasm_result(0,PENDINGTX.txid,0));
         }
-        else if ( DIDlist != 0 )
+        /*else if ( DIDlist != 0 )
         {
             for (i=1; i<MAX_INDEX; i++)
             {
@@ -815,7 +819,7 @@ char *qwallet(char *_args)
             }
             if ( i == MAX_INDEX )
                 DIDlist = 0;
-        }
+        }*/
         return(wasm_result(-1,"no request",0));
     }
     return(_qwallet(_args));
@@ -837,10 +841,10 @@ int32_t MAIN_count;
 int main()
 {
     int32_t i;
-    printf("MAIN CALLED.%d\n",MAIN_count);
+    printf("main was CALLED.%d\n",MAIN_count);
     MAIN_count++;
     MAIN_THREAD_EM_ASM(
-           FS.mkdir('/qwallet');
+                       FS.mkdir('/qwallet');
            // FS.mount(IDBFS, {}, '/qwallet');
            FS.mount(NODEFS, { root: '.' }, '/qwallet');
            FS.syncfs(true, function (err) {
@@ -873,3 +877,5 @@ int main()
 #endif
 
 // finish sendmany extradata construction
+
+    
