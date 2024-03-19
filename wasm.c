@@ -511,7 +511,8 @@ char *listfunc(char **argv,int32_t argc)
         for (index=0; index<MAX_INDEX; index++)
             sprintf(addrsarray + strlen(addrsarray),"\"%s\",",ACTIVEADDRS[index]);
         addrsarray[strlen(addrsarray)-1] = ']';
-    } else strcat(addrsarray,"]");
+        strcat(addrsarray,"}");
+    } else strcat(addrsarray,"]}");
     //printf("%s\n",addrsarray);
     retstr = wasm_result(0,addrsarray,0);
     //DIDlist = 1;
