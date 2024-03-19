@@ -34,33 +34,16 @@
 #include "qshared/qtime.c"
 #include "qshared/qtx.c"
 
-struct minientity
-{
-    uint8_t spectrum[32];
-    int64_t totalin,totalout;
-    int32_t tick;
-};
-
-struct balanceinfo
-{
-    char address[64];
-    struct minientity fifo[BALANCE_DEPTH],valid;
-};
-
-struct balanceinfo Balances[MAX_INDEX];
-
 struct pendingtx
 {
     char address[64],dest[64],txid[64],password[512];
-    int64_t amount;
-    struct minientity before,after;
-    int32_t pendingtick,pendingid,txreq,gottx,pwindex;
+    int64_t amount,beforeinputs,beforeoutputs,afterinputs,afteroutputs;
+    int32_t pendingtick,pendingid,gottx,pwindex,beforetick,aftertick;
 } PENDINGTX;
 
 char PENDINGRESULT[4096],PENDINGSTATUS[4096];
 char CURRENTRAWTX[MAX_INPUT_SIZE * 3];
 char ACTIVEADDRS[MAX_INDEX][64];
-//int32_t DIDlist;
 
 char *wasm_result(int32_t retval,char *displaystr,int32_t seedpage)
 {
@@ -188,7 +171,7 @@ char *_sendfunc(char **argv,int32_t argc,int32_t txtype)
         strcpy(CURRENTRAWTX,rawhex);
         for (i=0; i<MAX_INDEX; i++)
         {
-            if ( strcmp(addr,Balances[i].address) == 0 )
+            if ( strcmp(addr,ACTIVEADDRS[i]) == 0 )
             {
                 PENDINGTX.pendingid = 1;
                 strcpy(PENDINGTX.txid,txid);
@@ -198,10 +181,8 @@ char *_sendfunc(char **argv,int32_t argc,int32_t txtype)
                 strcpy(PENDINGTX.dest,dest);
                 PENDINGTX.amount = amount;
                 PENDINGTX.pendingtick = txtick;
-                PENDINGTX.txreq = 0;
                 PENDINGTX.gottx = 0;
                 // check for valid balance and error if not enough funds
-                PENDINGTX.before = Balances[i].valid;
                 sprintf(PENDINGSTATUS,"transaction %s broadcast for tick %d",txid,txtick);
                 break;
             }
@@ -478,7 +459,6 @@ char *listfunc(char **argv,int32_t argc)
     if ( argc == 2 )
         noaddrs = atoi(argv[1]);
     memset(ACTIVEADDRS,0,sizeof(ACTIVEADDRS));
-    memset(Balances,0,sizeof(Balances));
     if ( accountcodec("rb",password,0,origsubseed) == 0 )
     {
         memset(subpubs,0,sizeof(subpubs));
@@ -495,7 +475,6 @@ char *listfunc(char **argv,int32_t argc)
             getPublicKeyFromPrivateKey(privkey,pubkey);
             memcpy(subpubs[index],pubkey,32);
             pubkey2addr(pubkey,ACTIVEADDRS[index]);
-            strcpy(Balances[index].address,ACTIVEADDRS[index]);
             //printf("index.%d %s\n",index,addrs[index]);
         }
     }
@@ -624,119 +603,76 @@ int32_t wssupdate(char *jsonstr)
     {
         addr = json_strval(element,(char *)"address");
         spectrum = json_strval(element,(char *)"spectrum");
-        tick = json_numval(element,(char *)"tick");
+        tick = json_numval(element,(char *)"stick");
+        if ( tick == 0 )
+            tick = json_numval(element,(char *)"tick");
         input = atoll(json_strval(element,(char *)"totalincoming"));
         output = atoll(json_strval(element,(char *)"totaloutgoing"));
+        txid = json_strval(element,(char *)"before");
         if ( tick != 0 )
         {
-            for (index=0; index<MAX_INDEX; index++)
+            if ( txid != 0 && strcmp(PENDINGTX.txid,txid) == 0 )
             {
-                if ( strcmp(addr,Balances[index].address) == 0 )
-                {
-                    for (f=0; f<BALANCE_DEPTH; f++)
-                    {
-                        if ( Balances[index].fifo[f].tick == 0 )
-                            break;
-                    }
-                    if ( f == BALANCE_DEPTH )
-                    {
-                        for (f=0; f<BALANCE_DEPTH-1; f++)
-                            Balances[index].fifo[f] = Balances[index].fifo[f+1];
-                    }
-                    hexToByte(spectrum,Balances[index].fifo[f].spectrum,32);
-                    Balances[index].fifo[f].tick = tick;
-                    Balances[index].fifo[f].totalin = input;
-                    Balances[index].fifo[f].totalout = output;
-                    break;
-                }
+                //printf("got (%s) ",txid);
+                PENDINGTX.beforetick = tick;
+                PENDINGTX.beforeinputs = input;
+                PENDINGTX.beforeoutputs = output;
             }
+            else if ( PENDINGTX.beforetick != 0 && PENDINGTX.aftertick == 0 && tick > PENDINGTX.pendingtick )
+            {
+                PENDINGTX.aftertick = tick;
+                PENDINGTX.afterinputs = input;
+                PENDINGTX.afteroutputs = output;
+                if ( PENDINGTX.beforeoutputs != PENDINGTX.afteroutputs )
+                {
+                    sent = (PENDINGTX.afteroutputs - PENDINGTX.beforeoutputs);
+                    if ( sent == PENDINGTX.amount )
+                    {
+                        strcpy(PENDINGSTATUS,"send completed");
+                        sprintf(PENDINGRESULT,"{\"txtick\":%d,\"txid\":\"%s\",\"addr\":\"%s\",\"amount\":%s,\"dest\":\"%s\"}",PENDINGTX.pendingtick,PENDINGTX.txid,PENDINGTX.address,amountstr(PENDINGTX.amount),PENDINGTX.dest);
+                        memset(&PENDINGTX,0,sizeof(PENDINGTX));
+                    }
+                    else
+                    {
+                        sprintf(PENDINGSTATUS,"send %s error",PENDINGTX.txid);
+                        sprintf(PENDINGRESULT,"{\"error\":\"unexpected balance change %s instead of %s\"}",amountstr(sent),amountstr(PENDINGTX.amount));
+                        memset(&PENDINGTX,0,sizeof(PENDINGTX));
+                    }
+                }
+                else
+                {
+                    strcpy(PENDINGSTATUS,"pending send failed, resending");
+                    printf("PENDINGTX failed, resend\n");
+                    memset(PENDINGTX.txid,0,sizeof(PENDINGTX.txid));
+                    char *argv[6],numstr[16],numstr2[16];
+                    sprintf(numstr,"%d",PENDINGTX.pwindex);
+                    sprintf(numstr2,"%d",LATEST_TICK+TICKOFFSET);
+                    argv[0] = PENDINGTX.password;
+                    argv[1] = numstr;
+                    argv[2] = numstr2;
+                    argv[3] = PENDINGTX.dest;
+                    argv[4] = amountstr(PENDINGTX.amount);
+                    PENDINGTX.gottx = PENDINGTX.pendingtick = PENDINGTX.pendingid = 0;
+                    PENDINGTX.beforetick = PENDINGTX.aftertick = 0;
+                    PENDINGTX.beforeinputs = PENDINGTX.beforeoutputs = PENDINGTX.afterinputs = PENDINGTX.afteroutputs = 0;
+                    printf("resend %s\n",sendfunc(argv,5));
+                }
+                printf("%s\n%s\n",PENDINGSTATUS,PENDINGRESULT);
+            }
+            //printf("balance.(%s) index.%d tick.%d %s %s %s %s\n",addr,index,tick,amountstr3(input-output),amountstr(input),amountstr2(output),spectrum);
         }
-        printf("balance.(%s) index.%d tick.%d %s %s %s %s\n",addr,index,tick,amountstr3(input-output),amountstr(input),amountstr2(output),spectrum);
     }
     else if ( strcmp(command,(char *)"txidrequest") == 0 )
     {
         txid = json_strval(element,(char *)"txid");
         tick = json_numval(element,(char *)"tick");
-        printf("JSON.(%s)\n",jsonstr);
+        //printf("JSON.(%s)\n",jsonstr);
         if ( PENDINGTX.pendingid != 0 && strcmp(PENDINGTX.txid,txid) == 0 && PENDINGTX.pendingtick == tick )
         {
             PENDINGTX.gottx = 1;
             sprintf(PENDINGSTATUS,"%s included in tick %d, waiting for balance change validation",PENDINGTX.txid,tick);
         }
-        printf("txidrequest tick.%d %s txreq.%d gottx.%d\n",tick,txid,PENDINGTX.txreq,PENDINGTX.gottx);
-    }
-    else if ( strcmp(command,(char *)"validated") == 0 )
-    {
-        spectrum = json_strval(element,(char *)"spectrum");
-        tick = json_numval(element,(char *)"tick");
-        HAVE_TXTICK = json_numval(element,(char *)"havetx");
-        hexToByte(spectrum,digest,32);
-        VALIDATED_TICK = tick;
-        //printf("validated tick.%d latest.%d %s\n",tick,LATEST_TICK,spectrum);
-        for (index=0; index<MAX_INDEX; index++)
-        {
-            for (f=0; f<BALANCE_DEPTH; f++)
-            {
-                if ( Balances[index].fifo[f].tick == tick && (Balances[index].fifo[f].totalin != 0 || Balances[index].fifo[f].totalout != 0) )
-                {
-                    char hexstr[65];
-                    byteToHex(Balances[index].fifo[f].spectrum,hexstr,32);
-                    //printf("%s Balanced[%d].fifo[%d].tick matches %d %s\n",Balances[index].address,index,f,Balances[index].fifo[f].tick,hexstr);
-                    if ( memcmp(digest,Balances[index].fifo[f].spectrum,32) == 0 )
-                    {
-                        Balances[index].valid = Balances[index].fifo[f];
-                        sent = 0;
-                        if ( strcmp(PENDINGTX.address,Balances[index].address) == 0 && PENDINGTX.pendingid != 0 )
-                        {
-                            if ( tick < PENDINGTX.pendingtick )
-                            {
-                                printf("set %s pending.before from %d to %d, pendingtick.%d\n",PENDINGTX.address,PENDINGTX.before.tick,tick,PENDINGTX.pendingtick);
-                                PENDINGTX.before = Balances[index].valid;
-                            }
-                            else if ( tick > PENDINGTX.pendingtick )
-                            {
-                                printf("tick %d > %d check for balance change sent %s vs %s\n",tick,PENDINGTX.pendingtick,amountstr(PENDINGTX.before.totalout),amountstr(Balances[index].valid.totalout));
-                                if ( PENDINGTX.before.totalout != Balances[index].valid.totalout )
-                                {
-                                    sent = (Balances[index].valid.totalout - PENDINGTX.before.totalout);
-                                    if ( sent == PENDINGTX.amount )
-                                    {
-                                        strcpy(PENDINGSTATUS,"send completed");
-                                        sprintf(PENDINGRESULT,"{\"txtick\":%d,\"txid\":\"%s\",\"addr\":\"%s\",\"amount\":%s,\"dest\":\"%s\"}",PENDINGTX.pendingtick,PENDINGTX.txid,PENDINGTX.address,amountstr(PENDINGTX.amount),PENDINGTX.dest);
-                                        memset(&PENDINGTX,0,sizeof(PENDINGTX));
-                                    }
-                                    else
-                                    {
-                                        sprintf(PENDINGSTATUS,"send %s error",PENDINGTX.txid);
-                                        sprintf(PENDINGRESULT,"{\"error\":\"unexpected balance change %s instead of %s\"}",amountstr(sent),amountstr(PENDINGTX.amount));
-                                        memset(&PENDINGTX,0,sizeof(PENDINGTX));
-                                    }
-                                }
-                                else
-                                {
-                                    strcpy(PENDINGSTATUS,"pending send failed, resending");
-                                    printf("PENDINGTX failed, resend\n");
-                                    memset(PENDINGTX.txid,0,sizeof(PENDINGTX.txid));
-                                    char *argv[6],numstr[16],numstr2[16];
-                                    sprintf(numstr,"%d",PENDINGTX.pwindex);
-                                    sprintf(numstr2,"%d",LATEST_TICK+TICKOFFSET);
-                                    argv[0] = PENDINGTX.password;
-                                    argv[1] = numstr;
-                                    argv[2] = numstr2;
-                                    argv[3] = PENDINGTX.dest;
-                                    argv[4] = amountstr(PENDINGTX.amount);
-                                    PENDINGTX.gottx = PENDINGTX.txreq = PENDINGTX.pendingtick = PENDINGTX.pendingid = 0;
-                                    printf("resend %s\n",sendfunc(argv,5));
-                                }
-                            }
-                        }
-                        printf("spectrum match for %s.%d\n",Balances[index].address,tick);
-                        break;
-                    }
-                    else printf("spectrum mismatch for %s.%d %s vs %s\n",Balances[index].address,tick,hexstr,spectrum);
-                }
-            }
-        }
+        printf("txidrequest tick.%d %s gottx.%d\n",tick,txid,PENDINGTX.gottx);
     }
     else if ( strcmp(command,(char *)"CurrentTickInfo") == 0 )
     {
@@ -800,13 +736,13 @@ char *qwallet(char *_args)
             memset(CURRENTRAWTX,0,sizeof(CURRENTRAWTX));
             return(retstr);
         }
-        else if ( PENDINGTX.pendingid != 0 && PENDINGTX.txreq == 0 && HAVE_TXTICK > PENDINGTX.pendingtick )
+        /*else if ( PENDINGTX.pendingid != 0 && PENDINGTX.txreq == 0 && HAVE_TXTICK > PENDINGTX.pendingtick )
         {
             PENDINGTX.txreq = 1;
             sprintf(PENDINGSTATUS,"checking for %s tick.%d",PENDINGTX.txid,PENDINGTX.pendingtick);
             return(wasm_result(0,PENDINGTX.txid,0));
         }
-        /*else if ( DIDlist != 0 )
+         else if ( DIDlist != 0 )
         {
             for (i=1; i<MAX_INDEX; i++)
             {
