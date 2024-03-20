@@ -5,6 +5,7 @@ import { SERVER_URL } from './utils/constants';
 import axios from 'axios';
 import AppRoutes from './routes/AppRoutes';
 import { ThemeProvider } from './context/ThemeContext';
+import ThemeToggle from './components/theme/ThemeToggle';
 
 function App() {
     const [socket, setSocket] = useState<any>(null);
@@ -25,6 +26,7 @@ function App() {
     return (
         <>
             <ThemeProvider>
+                <ThemeToggle />
                 <AppRoutes />
             </ThemeProvider>
         </>
