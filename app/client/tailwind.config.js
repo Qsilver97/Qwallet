@@ -11,12 +11,12 @@ export default {
                 dark: '#1A202C', // Dark mode background
             },
             backgroundColor: {
-                light: '#e0e0e0', // Light mode background
-                dark: '#1A202C', // Dark mode background
+                light: 'rgba(230,230,230,0.8)', // Light mode background
+                dark: 'rgba(3,35,61,0.8)', // Dark mode background
             },
             textColor: {
-                light: '#1A202C', // Light mode text
-                dark: '#eee', // Dark mode text
+                light: 'rgba(3,35,61)', // Light mode text
+                dark: '#FFFFFF', // Dark mode text
             },
         },
     },

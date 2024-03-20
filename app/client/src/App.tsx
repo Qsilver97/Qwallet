@@ -19,6 +19,7 @@ function App() {
     }
 
     useEffect(() => {
+        testSocket()
         const newSocket = io(SERVER_URL);
         setSocket(newSocket)
     }, []);

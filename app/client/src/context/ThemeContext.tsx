@@ -1,12 +1,12 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 
 // Create a context for the theme
-const ThemeContext = createContext<[string, (theme: string) => void]>(['light', () => { }]);
+const ThemeContext = createContext<[string, (theme: string) => void]>(['dark', () => { }]);
 
 export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-    const [theme, setTheme] = useState('light');
+    const [theme, setTheme] = useState('dark');
     const bodyClass = 'bg-[url("/images/landing.png")]  bg-no-repeat bg-center bg-fixed bg-cover h-screen flex justify-center items-center m-0 relative';
     useEffect(() => {
         const styleEl = document.createElement('style');
@@ -14,6 +14,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
             body::after {
                 content: 'Qwallet';
                 position: absolute;
+                font-family: Arial, sans-serif;
                 top: 0;
                 bottom: 0;
                 color: white;
