@@ -3,12 +3,13 @@ import { io } from 'socket.io-client'
 
 import { SERVER_URL } from './utils/constants';
 import axios from 'axios';
+import AppRoutes from './routes/AppRoutes';
 
 function App() {
     const [socket, setSocket] = useState<any>(null);
 
     const testSocket = () => {
-        axios.post(`${SERVER_URL}/api/ccall`, {command: 'login aa', flag: 'login'})
+        axios.post(`${SERVER_URL}/api/ccall`, { command: 'login aa', flag: 'login' })
         if (socket) {
             socket.emit('test', 'hello')
             console.log('sent socket')
@@ -22,8 +23,7 @@ function App() {
 
     return (
         <>
-        <a onClick={testSocket}>testsocket</a>
-            hello
+            <AppRoutes />
         </>
     )
 }
