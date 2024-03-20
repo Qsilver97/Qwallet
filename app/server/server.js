@@ -1,35 +1,41 @@
-const express = require('express');
 const path = require('path');
+const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
-const { PORT } = require('./utils/constants');
-const createModule = require('./utils/a.out.js');
-const bodyParser = require('body-parser');
+const cors = require('cors');
 
-const Module = createModule();
+// Import custom modules and configurations
+const router = require('./routes.js');
+const socketManager = require('./managers/socketManager')
+const wasmManager = require('./managers/wasmManager')
+const { PORT, FRONTEND_URL } = require('./utils/constants');
 
-const callQwallet = async (req) => {
-    const result = await Module.ccall('qwallet', 'string', ['string'], [req.command]);
-    return { value: JSON.parse(result), flag: req.flag };
-};
+// Initialize WebSocket communication and WASM manager
+const io = socketManager.init(http);
+wasmManager.init();
 
+// Import and use socket controller with initialized WebSocket (io)
+const socketController = require('./controllers/socketController')
+socketController(io)
+
+
+// Middleware to enable CORS with dynamic origin support
+app.use(cors({ origin: FRONTEND_URL }))
+
+// Serve static files from the 'dist' directory
 app.use(express.static(path.join(__dirname, '/dist')));
 
-// Use body-parser to parse form data
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// Use built-in middleware for parsing JSON and URL-encoded bodies
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.post('/ccall', async (req, res) => {
-    console.log(req.body)
-    const result = await callQwallet(req.body);
-    res.send(result)
-})
-
-// Serve the React app
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname+'/dist/index.html'));
+// Define routes
+app.use('/api', router)
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname + '/dist/index.html'));
 });
 
-app.listen(PORT, () => {
+// Start the HTTP server listening on the specified port
+http.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
