@@ -1,14 +1,14 @@
 import React from "react";
+import ThemeToggle from "../components/theme/ThemeToggle";
 
 const Dashboard: React.FC = () => {
     return (
-        <div>
-            <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-                <h1 className="text-3xl font-bold underline">
-                    Hello world with TailwindCSS!
-                </h1>
+        <>
+            <ThemeToggle />
+            <div className="bg-light dark:bg-dark text-light dark:text-dark">
+                This text and background color will change based on the theme.
             </div>
-        </div>
+        </>
     )
 }
 

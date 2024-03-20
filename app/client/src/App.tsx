@@ -4,6 +4,7 @@ import { io } from 'socket.io-client'
 import { SERVER_URL } from './utils/constants';
 import axios from 'axios';
 import AppRoutes from './routes/AppRoutes';
+import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
     const [socket, setSocket] = useState<any>(null);
@@ -23,7 +24,9 @@ function App() {
 
     return (
         <>
-            <AppRoutes />
+            <ThemeProvider>
+                <AppRoutes />
+            </ThemeProvider>
         </>
     )
 }
