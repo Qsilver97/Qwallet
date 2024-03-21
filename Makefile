@@ -5,7 +5,7 @@ ccall:
 	/root/.nvm/versions/node/v18.19.1/bin/node commander.js
 
 deletekeys:
-	find app/keys -type f ! -name '.gitkeep' -exec rm {} +
+	find app/server/keys -type f ! -name '.gitkeep' -exec rm {} +
 
 start:
 	make build && cd app/client && npm run build && cd ../server && npm start

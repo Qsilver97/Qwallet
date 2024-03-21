@@ -41,17 +41,11 @@ const Create: React.FC = () => {
     }
 
     const handlePassword = (value: string) => {
-        axios.post(
-            `${SERVER_URL}/api/checkavail`,
-            {
-                command: `checkavail ${password}`,
-                flag: 'checkAvail'
-            }
-        ).then((resp) => {
-            console.log(resp)
-        }).catch((error) => {
-            console.log(error)
-        })
+        if (value != "") {
+            socket?.emit('passwordAvail', { command: `checkavail ${value}`, flag: 'passwordAvail' })
+        } else {
+            setPasswordStatus(true)
+        }
         dispatch(setPassword(value));
     }
 
@@ -75,9 +69,23 @@ const Create: React.FC = () => {
     }
 
     useEffect(() => {
+        axios.post(
+            `${SERVER_URL}/api/ccall`,
+            {
+                command: `login a`,
+                flag: `create`
+            }
+        ).then((resp) => {
+            console.log(resp)
+        }).catch((error) => {
+            console.log(error)
+        })
         if (socket) {
-            socket?.on('test', (msg) => {
+            socket.on('test', (msg) => {
                 console.log(msg)
+            })
+            socket.on('passwordAvail', (msg: boolean) => {
+                setPasswordStatus(msg)
             })
         }
     }, [socket])
@@ -110,6 +118,10 @@ const Create: React.FC = () => {
                     {/* <p className="check-available">Password does not exist!</p> */}
                     <div className="relative">
                         <Input inputType={passwordInputType} onChange={handlePassword} placeHolder="Password" />
+                        {
+                            !passwordStatus &&
+                            <p className="w-full text-left text-red-600">Password already exist.</p>
+                        }
                         <FontAwesomeIcon onClick={handleEye} icon={(passwordInputType == 'password' ? faEye : faEyeSlash)} className="absolute top-[15px] right-3 text-gray-500 cursor-pointer" />
                         <Input inputType={passwordInputType} onChange={handleConfirmPassword} placeHolder="Confirm password" />
                     </div>
