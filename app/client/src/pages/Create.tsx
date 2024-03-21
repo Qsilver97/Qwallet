@@ -12,7 +12,8 @@ const Create: React.FC = () => {
     const [passwordInputType, setPasswordInputType] = useState<string>('password');
 
     const handleCreate = () => {
-
+        console.log('///')
+        navigate('/backup')
     }
 
     const handlePassword = () => {
