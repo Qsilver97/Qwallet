@@ -1,20 +1,34 @@
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../components/common/Button";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Input from "../components/common/Input";
+import { useAuth } from "../context/AuthContext";
+import { useSocket } from "../context/SocketContext";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { setPassword } from "../redux/appSlice";
 
 const Login: React.FC = () => {
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const dispatch = useDispatch();
 
-    const [password, setPassword] = useState<string>();
+    const socket = useSocket();
+    const auth = useAuth();
+
+    const { password } = useSelector((state: RootState) => state.app)
+    const [passwordStatus, setPasswordStatus] = useState<boolean>();
 
     const [passwordInputType, setPasswordInputType] = useState<string>('password');
 
+    const from = location.state?.from?.pathname || "/";
+
     const handleLogin = () => {
-        console.log(password)
+        auth.login('');
+        navigate(from, { replace: true });
     }
 
     const handleCreate = () => {
@@ -22,11 +36,11 @@ const Login: React.FC = () => {
     }
 
     const handleRestore = () => {
-        navigate('/restore')
+        // navigate('/restore')
     }
 
     const handlePasswordChange = (value: string) => {
-        setPassword(value);
+        dispatch(setPassword(value));
     }
 
     const handleEye = () => {
@@ -35,6 +49,23 @@ const Login: React.FC = () => {
             else return 'text'
         })
     }
+
+    useEffect(() => {
+        if (password != "")
+            socket?.emit('passwordAvail', { command: `checkavail ${password}`, flag: 'passwordAvail' })
+    }, [password])
+
+    useEffect(() => {
+        dispatch(setPassword(""))
+    }, [])
+
+    useEffect(() => {
+        if (socket) {
+            socket.on('passwordAvail', (msg: boolean) => {
+                setPasswordStatus(msg)
+            })
+        }
+    }, [socket])
 
     return (
         <>
@@ -49,10 +80,12 @@ const Login: React.FC = () => {
                 <div className="relative">
                     <Input inputType={passwordInputType} onChange={handlePasswordChange} placeHolder="Password" />
                     <FontAwesomeIcon onClick={handleEye} icon={(passwordInputType == 'password' ? faEye : faEyeSlash)} className="absolute top-[15px] right-3 text-gray-500 cursor-pointer" />
-                    {/* <p className="check-available">Password does not exist!</p> */}
-                    <Button buttonValue="Login" onClick={handleLogin} />
+                    {passwordStatus &&
+                        <p className="w-full text-left text-red-600">Password does not exist.</p>
+                    }
+                    <Button buttonValue="Login" onClick={handleLogin} disabled={passwordStatus} />
                     <Button buttonValue="Create" onClick={handleCreate} />
-                    <a className="text-[#007bff]" onClick={handleRestore}>Restore your wallet from your seed</a>
+                    <a className="text-[#007bff] cursor-pointer" onClick={handleRestore}>Restore your wallet from your seed</a>
                 </div>
             </div>
         </>

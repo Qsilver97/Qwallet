@@ -34,12 +34,12 @@ const Confirm: React.FC = () => {
     const handleNext = () => {
         if(typeof seeds == 'object' && typeof confirmSeeds == 'object'){
             if(seeds.length === confirmSeeds.length && seeds.every((value, index) => value === confirmSeeds[index])){
-                navigate('/dashboard')
+                navigate('/login')
             } else {
                 console.error("Seeds don't match")
             }
         } else if (seeds == confirmSeeds) {
-            navigate('/dashboard')
+            navigate('/login')
         } else {
             console.error("Seeds don't match")
         }
