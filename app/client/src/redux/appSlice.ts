@@ -36,7 +36,7 @@ export const appSlice = createSlice({
 });
 
 // Export actions
-export const { setSeedType, setPassword, toggleTheme } = appSlice.actions;
+export const { setSeedType, setPassword, setSeeds, toggleTheme } = appSlice.actions;
 
 // Export reducer
 export default appSlice.reducer;

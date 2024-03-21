@@ -6,7 +6,7 @@ import Input from "../components/common/Input";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
-import { setPassword, setSeedType } from "../redux/appSlice";
+import { setPassword, setSeedType, setSeeds } from "../redux/appSlice";
 import { RootState } from "../redux/store";
 import axios from "axios";
 import { SERVER_URL } from "../utils/constants";
@@ -27,25 +27,28 @@ const Create: React.FC = () => {
         let passwordPrefix = ''
         if (seedType == '55chars') passwordPrefix = 'Q'
         axios.post(
-            `${SERVER_URL}/ccall`,
+            `${SERVER_URL}/api/ccall`,
             {
                 command: `login ${passwordPrefix}${password}`,
                 flag: `create`
             }
-        ).then((resp) => {
+        ).then((resp: any) => {
             console.log(resp)
+            if(resp.data.value.result == 0 && resp.data.value.seedpage == 1) {
+                const seeds = resp.data.value.display.split(' ')
+                if(seeds.length == 1){
+                    dispatch(setSeeds(seeds[0]))
+                }else {
+                    dispatch(setSeeds(seeds));
+                }
+                navigate(`/backup`)
+            }
         }).catch((error) => {
-            console.log(error)
+            console.error(error)
         })
-        navigate(`/backup`)
     }
 
     const handlePassword = (value: string) => {
-        if (value != "") {
-            socket?.emit('passwordAvail', { command: `checkavail ${value}`, flag: 'passwordAvail' })
-        } else {
-            setPasswordStatus(true)
-        }
         dispatch(setPassword(value));
     }
 
@@ -69,17 +72,19 @@ const Create: React.FC = () => {
     }
 
     useEffect(() => {
-        axios.post(
-            `${SERVER_URL}/api/ccall`,
-            {
-                command: `login a`,
-                flag: `create`
-            }
-        ).then((resp) => {
-            console.log(resp)
-        }).catch((error) => {
-            console.log(error)
-        })
+        if (password != "") {
+            socket?.emit('passwordAvail', { command: `checkavail ${password}`, flag: 'passwordAvail' })
+        } else {
+            setPasswordStatus(true)
+        }
+    }, [password, confirmPassword])
+
+    useEffect(() => {
+        dispatch(setPassword(""))
+        setConfirmPassword("")
+    }, [])
+
+    useEffect(() => {
         if (socket) {
             socket.on('test', (msg) => {
                 console.log(msg)
@@ -124,10 +129,14 @@ const Create: React.FC = () => {
                         }
                         <FontAwesomeIcon onClick={handleEye} icon={(passwordInputType == 'password' ? faEye : faEyeSlash)} className="absolute top-[15px] right-3 text-gray-500 cursor-pointer" />
                         <Input inputType={passwordInputType} onChange={handleConfirmPassword} placeHolder="Confirm password" />
+                        {
+                            password != confirmPassword &&
+                            <p className="w-full text-left text-red-600">Password does not match.</p>
+                        }
                     </div>
                     <div className="flex gap-2">
                         <Button buttonValue="Back" onClick={handleBack} />
-                        <Button buttonValue="Create" onClick={handleCreate} />
+                        <Button buttonValue="Create" onClick={handleCreate} disabled={!passwordStatus || (password != confirmPassword) || (password == "")} />
                     </div>
                 </div>
             </div>

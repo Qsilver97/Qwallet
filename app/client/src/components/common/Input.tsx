@@ -15,11 +15,11 @@ const Input: React.FC<InputProps> = ({ inputType, disabled, value, placeHolder, 
         <input
             type={inputType || 'text'}
             value={value}
-            className="w-full p-[10px] border-b border-white bg-transparent outline-none text-white text-[16px] mb-[15px]"
+            className="w-full p-[10px] border-b border-white bg-transparent outline-none text-white text-[16px]"
             placeholder={placeHolder}
             required
-            onChange={(e) => {onChange(e.target.value)}}
-            disabled={(disabled ? true: false)}
+            onChange={(e) => { onChange(e.target.value) }}
+            disabled={(disabled ? true : false)}
         />
     )
 }
