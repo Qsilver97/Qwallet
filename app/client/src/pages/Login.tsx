@@ -11,7 +11,7 @@ const Login: React.FC = () => {
 
     const [password, setPassword] = useState<string>();
 
-    const [passwordInputType, setPasswordInputType] = useState<'text' | 'password'>('password');
+    const [passwordInputType, setPasswordInputType] = useState<string>('password');
 
     const handleLogin = () => {
         console.log(password)
@@ -40,7 +40,7 @@ const Login: React.FC = () => {
         <>
             <div className="bg-light dark:bg-dark text-light dark:text-dark max-w-[500px] mx-auto p-[40px] rounded-[10px] shadow-[0_15px_25px_rgba(0,0,0,0.5)] text-center z-0">
                 <img className="mx-auto" src="images/logo.png" width="100px" />
-                <h2 className="my-[15px] mx-auto text-light dark:text-dark pb-[10px] text-[2rem]">Login</h2>
+                <h2 className="my-[15px] mx-auto text-light dark:text-dark text-[2rem]">Login</h2>
                 <div className="mb-[20px] leading-[25px] text-[1rem] font-normal">
                     Enter your password to access your account.
                     <br />

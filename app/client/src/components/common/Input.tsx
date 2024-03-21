@@ -12,7 +12,7 @@ const Input: React.FC<InputProps> = ({ inputType, placeHolder, onChange }) => {
     return (
         <input
             type={inputType || 'text'}
-            className="w-full p-[10px] mb-[30px] border-b border-white bg-transparent outline-none text-white text-[16px]"
+            className="w-full p-[10px] border-b border-white bg-transparent outline-none text-white text-[16px] mb-[15px]"
             placeholder={placeHolder}
             required
             onChange={(e) => {onChange(e.target.value)}}

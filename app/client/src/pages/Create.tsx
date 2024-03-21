@@ -1,14 +1,37 @@
-import { faEye } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
+import React, { useState } from "react";
 import Button from "../components/common/Button";
 import { useNavigate } from "react-router-dom";
+import Radio from "../components/common/Radio";
+import Input from "../components/common/Input";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const Create: React.FC = () => {
     const navigate = useNavigate();
+    const [selectedValue, setSelectedValue] = useState<string>('22words');
+    const [passwordInputType, setPasswordInputType] = useState<string>('password');
 
     const handleCreate = () => {
 
+    }
+
+    const handlePassword = () => {
+
+    }
+
+    const handleConfirmPassword = () => {
+
+    }
+
+    const handleChange = (value: string) => {
+        setSelectedValue(value);
+    }
+
+    const handleEye = () => {
+        setPasswordInputType((prev) => {
+            if (prev == 'text') return 'password'
+            else return 'text'
+        })
     }
 
     const handleBack = () => {
@@ -19,23 +42,37 @@ const Create: React.FC = () => {
         <>
             <div className="bg-light w-full dark:bg-dark text-light dark:text-dark max-w-[500px] mx-auto p-[40px] rounded-[10px] shadow-[0_15px_25px_rgba(0,0,0,0.5)] text-center z-0">
                 <img className="mx-auto" src="images/logo.png" width="100px" />
-                <h2 className="my-[15px] mx-auto text-light dark:text-dark pb-[10px] text-[2rem]">Create</h2>
+                <h2 className="my-[15px] mx-auto text-light dark:text-dark text-[2rem]">Create</h2>
                 <div className="mb-[20px] leading-[25px] text-[1rem] font-normal">
                     There are two ways to create your account.
                 </div>
                 <div className="relative">
-                    <div className="text-[20px] border border-[rgba(65,88,104,0.8)] rounded-[10px] flex gap-[20px] items-center pl-[20px] bg-[#00243f] cursor-pointer">
-                        <img src="images/seed.png" className="w-[80px]" alt="" />
-                        <p>Create with 24 words</p>
-                        {/* <span className="fa fa-angle-double-right"></span> */}
-                    </div>
-                    <div className="text-[20px] border border-[rgba(65,88,104,0.8)] rounded-[10px] flex gap-[20px] items-center pl-[20px] bg-[#00243f] cursor-pointer my-[15px]">
-                        <img src="images/chars.png" className="w-[80px]" alt="" />
-                        <p>Create with 55 chars</p>
-                        {/* <span className="fa fa-angle-double-right"></span> */}
+                    <div className="flex justify-evenly mb-3">
+                        <Radio
+                            label="22 Words"
+                            name="options"
+                            value="22words"
+                            checked={selectedValue === '22words'}
+                            onChange={handleChange}
+                        />
+                        <Radio
+                            label="55 Chars"
+                            name="options"
+                            value="55chars"
+                            checked={selectedValue === '55chars'}
+                            onChange={handleChange}
+                        />
                     </div>
                     {/* <p className="check-available">Password does not exist!</p> */}
-                    <Button buttonValue="Back" onClick={handleBack} />
+                    <div className="relative">
+                        <Input inputType={passwordInputType} onChange={handlePassword} placeHolder="Password" />
+                        <FontAwesomeIcon onClick={handleEye} icon={(passwordInputType == 'password' ? faEye : faEyeSlash)} className="absolute top-[15px] right-3 text-gray-500 cursor-pointer" />
+                        <Input inputType={passwordInputType} onChange={handleConfirmPassword} placeHolder="Confirm password" />
+                    </div>
+                    <div className="flex gap-2">
+                        <Button buttonValue="Back" onClick={handleBack} />
+                        <Button buttonValue="Create" onClick={handleCreate} />
+                    </div>
                 </div>
             </div>
         </>
