@@ -1,16 +1,17 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from '../pages/Dashboard';
 import Login from '../pages/Login';
 import Create from '../pages/Create';
 import Backup from '../pages/Backup';
 import Confirm from '../pages/Confirm';
+import ProtectedRoute from './ProtectedRoute';
 
 const AppRoutes: React.FC = () => (
     <Router>
         <Routes>
-            <Route path='/' element={<Dashboard />} />
-            <Route path='/dashboard' element={<Dashboard />} />
+            <Route path='/' element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path='/dashboard' element={<Navigate to={'/'} />} />
             <Route path='/login' element={<Login />} />
             <Route path='/create' element={<Create />} />
             <Route path='/backup' element={<Backup />} />

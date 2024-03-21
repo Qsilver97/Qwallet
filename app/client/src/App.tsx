@@ -9,6 +9,7 @@ import ThemeToggle from './components/theme/ThemeToggle';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import { SocketProvider } from './context/SocketContext';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
     // const [socket, setSocket] = useState<any>(null);
@@ -29,14 +30,16 @@ function App() {
 
     return (
         <>
-            <Provider store={store}>
-                <SocketProvider wsUrl={SERVER_URL}>
-                    <ThemeProvider>
-                        <ThemeToggle />
-                        <AppRoutes />
-                    </ThemeProvider>
-                </SocketProvider>
-            </Provider>
+            <AuthProvider>
+                <Provider store={store}>
+                    <SocketProvider wsUrl={SERVER_URL}>
+                        <ThemeProvider>
+                            <ThemeToggle />
+                            <AppRoutes />
+                        </ThemeProvider>
+                    </SocketProvider>
+                </Provider>
+            </AuthProvider>
         </>
     )
 }
