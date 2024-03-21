@@ -4,6 +4,7 @@ module.exports = function (io) {
 
         socket.on('test', (msg) => {
             console.log(msg)
+            socket.emit('test', msg)
         });
 
         socket.on('disconnect', () => {

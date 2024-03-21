@@ -1,30 +1,66 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../components/common/Button";
 import { useNavigate } from "react-router-dom";
 import Radio from "../components/common/Radio";
 import Input from "../components/common/Input";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { useSelector, useDispatch } from "react-redux";
+import { setPassword, setSeedType } from "../redux/appSlice";
+import { RootState } from "../redux/store";
+import axios from "axios";
+import { SERVER_URL } from "../utils/constants";
+import { useSocket } from "../context/SocketContext";
 
 const Create: React.FC = () => {
+    const socket = useSocket()
+    const dispatch = useDispatch()
     const navigate = useNavigate();
-    const [seedType, setSeedType] = useState<string>('22words');
+
+    const { seedType, password } = useSelector((state: RootState) => state.app)
+
     const [passwordInputType, setPasswordInputType] = useState<string>('password');
+    const [confirmPassword, setConfirmPassword] = useState<string>();
+    const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
 
     const handleCreate = () => {
-        navigate(`/backup?seedType=${seedType}`)
+        let passwordPrefix = ''
+        if (seedType == '55chars') passwordPrefix = 'Q'
+        axios.post(
+            `${SERVER_URL}/ccall`,
+            {
+                command: `login ${passwordPrefix}${password}`,
+                flag: `create`
+            }
+        ).then((resp) => {
+            console.log(resp)
+        }).catch((error) => {
+            console.log(error)
+        })
+        navigate(`/backup`)
     }
 
-    const handlePassword = () => {
-
+    const handlePassword = (value: string) => {
+        axios.post(
+            `${SERVER_URL}/api/checkavail`,
+            {
+                command: `checkavail ${password}`,
+                flag: 'checkAvail'
+            }
+        ).then((resp) => {
+            console.log(resp)
+        }).catch((error) => {
+            console.log(error)
+        })
+        dispatch(setPassword(value));
     }
 
-    const handleConfirmPassword = () => {
-
+    const handleConfirmPassword = (value: string) => {
+        setConfirmPassword(value);
     }
 
     const handleSeedType = (value: string) => {
-        setSeedType(value);
+        dispatch(setSeedType(value));
     }
 
     const handleEye = () => {
@@ -37,6 +73,14 @@ const Create: React.FC = () => {
     const handleBack = () => {
         navigate('/login')
     }
+
+    useEffect(() => {
+        if (socket) {
+            socket?.on('test', (msg) => {
+                console.log(msg)
+            })
+        }
+    }, [socket])
 
     return (
         <>

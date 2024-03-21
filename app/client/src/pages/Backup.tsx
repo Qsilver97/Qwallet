@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import Button from "../components/common/Button";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Input from "../components/common/Input";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../redux/store";
+import { setSeedType } from "../redux/appSlice";
 
 const Backup: React.FC = () => {
+    const { seedType } = useSelector((state: RootState) => state.app)
+    const dispatch = useDispatch()
 
-    const query = new URLSearchParams(useLocation().search);
     const [backuped, setBackuped] = useState<boolean>(false);
-    const [seedType, setSeedType] = useState<string>();
     const [backdrop, setBackdrop] = useState<string>('opacity-100');
     const [seeds, setSeeds] = useState<string[]>(['a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a']);
 
@@ -36,9 +39,6 @@ const Backup: React.FC = () => {
     }
 
     useEffect(() => {
-        const seedType = query.get('seedType')
-        if (seedType)
-            setSeedType(seedType)
     }, [])
 
     return (
@@ -50,8 +50,10 @@ const Backup: React.FC = () => {
                     A new seed has been generated and needs to be securely backed up. We highly recommend to write down on paper for safe keeping
                 </div>
                 <div className="relative">
-                    {seedType == '55chars' ?
-                        <Input inputType={'text'} onChange={() => { }} placeHolder="" value={"asdf"} disabled={true} />:
+                    {seedType == '55chars' &&
+                        <Input inputType={'text'} onChange={() => { }} placeHolder="" value={"asdf"} disabled={true} />
+                    }
+                    {seedType == '22words' &&
                         <ul className="grid gap-[20px] p-[10px_0] grid-cols-4 select-none relative">
                             {
                                 seeds.map((seed, idx) => {
