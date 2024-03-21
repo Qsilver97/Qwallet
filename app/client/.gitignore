@@ -1,11 +1,3 @@
-node_modules
-app/server/keys/*
-!app/server/keys/.gitkeep
-app/server/utils/a.out.js
-app/server/utils/a.out.worker.js
-.env
-build
-
 # Logs
 logs
 *.log
