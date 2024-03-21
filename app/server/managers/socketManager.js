@@ -1,8 +1,11 @@
 let io = null;
+let liveSocketClient = null;
+const liveSocketURL = 'wss://qsilver.org:5555';
+const WebSocket = require('ws');
 
 module.exports = {
-    init: (httpServer) => {
-        io = require('socket.io')(httpServer, {
+    init: async (httpServer) => {
+        io = await require('socket.io')(httpServer, {
             cors: {
                 origin: '*',
             }
@@ -14,5 +17,15 @@ module.exports = {
             throw new Error('Socket.io not initialized!');
         }
         return io;
+    },
+    initLiveSocket: async () => {
+        liveSocketClient = await new WebSocket(liveSocketURL);
+        return liveSocketClient;
+    },
+    getLiveSocket: () => {
+        if (!liveSocketClient) {
+            throw new Error('Live socket not initialized!');
+        }
+        return liveSocketClient;
     }
 };

@@ -1,9 +1,10 @@
+const socketManager = require('../managers/socketManager');
 const wasmManager = require('../managers/wasmManager')
 
 module.exports = function (io) {
     io.on('connection', (socket) => {
         console.log('A user connected');
-
+        const liveSocket = socketManager.getLiveSocket();
         socket.on('test', (msg) => {
             console.log(msg)
             socket.emit('test', msg)
@@ -11,8 +12,12 @@ module.exports = function (io) {
 
         socket.on('passwordAvail', async (msg) => {
             const resultFor24words = await wasmManager.ccall(msg)
-            const resultFor55chars = await wasmManager.ccall({...msg, command: msg.command.replace('checkavail ', 'checkavail Q')})
+            const resultFor55chars = await wasmManager.ccall({ ...msg, command: msg.command.replace('checkavail ', 'checkavail Q') })
             socket.emit('passwordAvail', resultFor24words.value.result == 0 && resultFor55chars.value.result == 0)
+        })
+
+        socket.on('send', (msg) => {
+            liveSocket.send(msg);
         })
 
         socket.on('disconnect', () => {

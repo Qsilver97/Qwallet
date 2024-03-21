@@ -22,11 +22,9 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps): JSX.Element => {
         const fetchUser = async () => {
             try {
                 const response = await axios.post(`${SERVER_URL}/api/fetch-user`);
-                console.log(response.data)
                 login(response.data);
                 dispatch(setIsAuthenticated(response.data.isAuthenticated));
             } catch (error) {
-                console.error(error);
                 dispatch(setIsAuthenticated(false));
             }
         };
