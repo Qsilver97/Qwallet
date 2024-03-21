@@ -4,6 +4,7 @@ import Dashboard from '../pages/Dashboard';
 import Login from '../pages/Login';
 import Create from '../pages/Create';
 import Backup from '../pages/Backup';
+import Confirm from '../pages/Confirm';
 
 const AppRoutes: React.FC = () => (
     <Router>
@@ -13,6 +14,7 @@ const AppRoutes: React.FC = () => (
             <Route path='/login' element={<Login />} />
             <Route path='/create' element={<Create />} />
             <Route path='/backup' element={<Backup />} />
+            <Route path='/confirm' element={<Confirm />} />
             {/* Add more routes as needed */}
         </Routes>
     </Router>
