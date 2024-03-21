@@ -60,7 +60,7 @@ const Confirm: React.FC = () => {
     }, [confirmSeeds])
 
     useEffect(() => {
-        if(seedType == '22words') {
+        if(seedType == '24words') {
             setConfirmSeeds([])
         } else if(seedType == '55chars') {
             setConfirmSeeds("")
