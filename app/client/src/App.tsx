@@ -10,6 +10,8 @@ import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import { SocketProvider } from './context/SocketContext';
 import { AuthProvider } from './context/AuthContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
     // const [socket, setSocket] = useState<any>(null);
@@ -35,6 +37,7 @@ function App() {
                     <SocketProvider wsUrl={SERVER_URL}>
                         <ThemeProvider>
                             <ThemeToggle />
+                            <ToastContainer />
                             <AppRoutes />
                         </ThemeProvider>
                     </SocketProvider>

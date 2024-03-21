@@ -83,7 +83,7 @@ const Login: React.FC = () => {
                     {passwordStatus &&
                         <p className="w-full text-left text-red-600">Password does not exist.</p>
                     }
-                    <Button buttonValue="Login" onClick={handleLogin} disabled={passwordStatus} />
+                    <Button buttonValue="Login" onClick={handleLogin} disabled={passwordStatus || password == ""} />
                     <Button buttonValue="Create" onClick={handleCreate} />
                     <a className="text-[#007bff] cursor-pointer" onClick={handleRestore}>Restore your wallet from your seed</a>
                 </div>
