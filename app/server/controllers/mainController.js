@@ -1,5 +1,7 @@
 const wasmManager = require('../managers/wasmManager');
 const stateManager = require('../managers/stateManager');
+const socketManager = require('../managers/socketManager');
+const { delay } = require('../utils/helpers');
 
 exports.ccall = async (req, res) => {
     const result = await wasmManager.ccall(req.body);
@@ -26,8 +28,27 @@ exports.login = async (req, res) => {
         password = `Q${req.body.password}`;
     }
     const result = await wasmManager.ccall({ command: `list ${password}`, flag: 'login' });
-    const userState = stateManager.setUserState({ password, accountInfo: result.value.display, isAuthenticated: true });
-    res.send(userState);
+    const socket = socketManager.getIO();
+    const liveSocket = socketManager.getLiveSocket();
+    console.log(result.value.display)
+    const localSubshash = result.value.display.subshash;
+    stateManager.setLocalSubshash(localSubshash);
+
+    liveSocket.send(result.value.display.addresses[0]);
+    const hexResult = await wasmManager.ccall({ command: `logintx ${password}`, flag: 'logintx' });
+    liveSocket.send(hexResult.value.display);
+
+    await delay(500);
+    const remoteSubshas = stateManager.getRemoteSubshash();
+    console.log('1', remoteSubshas, '2', localSubshash)
+    if ((localSubshash != "") && (remoteSubshas == localSubshash)) {
+        stateManager.setRemoteSubshash("");
+        stateManager.setLocalSubshash("");
+        const userState = stateManager.setUserState({ password, accountInfo: result.value.display, isAuthenticated: true });
+        res.send(userState);
+    } else {
+        res.status(401).send('not synced');
+    }
 }
 
 exports.logout = async (req, res) => {

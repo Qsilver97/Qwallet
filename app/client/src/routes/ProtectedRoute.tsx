@@ -40,7 +40,8 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps): JSX.Element => {
                 height="80"
                 width="100"
                 color="rgb(0 14 31)"
-                ariaLabel="loading" />
+                ariaLabel="loading"
+            />
         </div>;
     }
 
