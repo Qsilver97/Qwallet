@@ -8,12 +8,11 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const Create: React.FC = () => {
     const navigate = useNavigate();
-    const [selectedValue, setSelectedValue] = useState<string>('22words');
+    const [seedType, setSeedType] = useState<string>('22words');
     const [passwordInputType, setPasswordInputType] = useState<string>('password');
 
     const handleCreate = () => {
-        console.log('///')
-        navigate('/backup')
+        navigate(`/backup?seedType=${seedType}`)
     }
 
     const handlePassword = () => {
@@ -24,8 +23,8 @@ const Create: React.FC = () => {
 
     }
 
-    const handleChange = (value: string) => {
-        setSelectedValue(value);
+    const handleSeedType = (value: string) => {
+        setSeedType(value);
     }
 
     const handleEye = () => {
@@ -53,15 +52,15 @@ const Create: React.FC = () => {
                             label="22 Words"
                             name="options"
                             value="22words"
-                            checked={selectedValue === '22words'}
-                            onChange={handleChange}
+                            checked={seedType === '22words'}
+                            onChange={handleSeedType}
                         />
                         <Radio
                             label="55 Chars"
                             name="options"
                             value="55chars"
-                            checked={selectedValue === '55chars'}
-                            onChange={handleChange}
+                            checked={seedType === '55chars'}
+                            onChange={handleSeedType}
                         />
                     </div>
                     {/* <p className="check-available">Password does not exist!</p> */}

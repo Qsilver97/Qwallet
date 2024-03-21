@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../components/common/Button";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Input from "../components/common/Input";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
 
 const Backup: React.FC = () => {
 
+    const query = new URLSearchParams(useLocation().search);
     const [backuped, setBackuped] = useState<boolean>(false);
+    const [seedType, setSeedType] = useState<string>();
+    const [backdrop, setBackdrop] = useState<string>('opacity-100');
+    const [seeds, setSeeds] = useState<string[]>(['a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a']);
 
     const navigate = useNavigate();
 
@@ -16,10 +22,24 @@ const Backup: React.FC = () => {
     const handleBack = () => {
         navigate('/create')
     }
-    
+
     const handleNext = () => {
         navigate('/confirm')
     }
+
+    const handleMouseEnter = () => {
+        setBackdrop('opacity-0')
+    }
+
+    const handleMouseLeave = () => {
+        setBackdrop('opacity-100')
+    }
+
+    useEffect(() => {
+        const seedType = query.get('seedType')
+        if (seedType)
+            setSeedType(seedType)
+    }, [])
 
     return (
         <>
@@ -30,7 +50,25 @@ const Backup: React.FC = () => {
                     A new seed has been generated and needs to be securely backed up. We highly recommend to write down on paper for safe keeping
                 </div>
                 <div className="relative">
-                    <Input inputType={'text'} onChange={() => { }} placeHolder="" value={"asdf"} disabled={true} />
+                    {seedType == '55chars' ?
+                        <Input inputType={'text'} onChange={() => { }} placeHolder="" value={"asdf"} disabled={true} />:
+                        <ul className="grid gap-[20px] p-[10px_0] grid-cols-4 select-none relative">
+                            {
+                                seeds.map((seed, idx) => {
+                                    return <li className="flex gap-[5px] list-none border-b border-white" key={`seed${idx}`}>
+                                        <span className="w-[30px]">1</span>
+                                        <input className="border-none select-none text-center text-white m-0 p-0 bg-transparent w-full" type="password" value={seed} disabled />
+                                    </li>
+                                })
+                            }
+                            <div
+                                className={`absolute w-full h-full transition-all duration-300 backdrop-blur-[6px] ${backdrop}`}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                            ></div>
+                            <FontAwesomeIcon icon={faEye} className="absolute text-[40px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                        </ul>
+                    }
                     <div className="w-full flex gap-1">
                         <input type="checkbox" id="backup" onChange={handleBackup} checked={backuped} />
                         <label htmlFor="backup">I've Made a Backup</label>
