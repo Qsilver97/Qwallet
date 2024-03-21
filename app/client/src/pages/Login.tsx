@@ -2,18 +2,20 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import Button from "../components/common/Button";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Input from "../components/common/Input";
-import { useAuth } from "../context/AuthContext";
+import { UserDetailType, useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { setPassword } from "../redux/appSlice";
+import { setIsAuthenticated, setPassword } from "../redux/appSlice";
+import axios from "axios";
+import { SERVER_URL } from "../utils/constants";
+import { toast } from "react-toastify";
 
 const Login: React.FC = () => {
 
     const navigate = useNavigate();
-    const location = useLocation();
     const dispatch = useDispatch();
 
     const socket = useSocket();
@@ -24,11 +26,27 @@ const Login: React.FC = () => {
 
     const [passwordInputType, setPasswordInputType] = useState<string>('password');
 
-    const from = location.state?.from?.pathname || "/";
-
     const handleLogin = () => {
-        auth.login('');
-        navigate(from, { replace: true });
+        if (password != "") {
+            dispatch(setIsAuthenticated(null))
+            axios.post(
+                `${SERVER_URL}/api/login`,
+                {
+                    password
+                }
+            ).then((resp) => {
+                console.log(resp.data)
+                const userInfo: UserDetailType = resp.data;
+                dispatch(setIsAuthenticated(true))
+                auth.login(userInfo);
+                navigate('/dashboard')
+            }).catch((error) => {
+                console.error(error)
+                dispatch(setIsAuthenticated(false))
+            })
+        } else {
+            toast.error('Incorrect password.')
+        }
     }
 
     const handleCreate = () => {

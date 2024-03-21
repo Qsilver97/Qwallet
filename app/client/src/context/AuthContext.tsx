@@ -1,26 +1,52 @@
+import axios from 'axios';
 import { createContext, useContext, ReactNode, useState } from 'react';
+import { SERVER_URL } from '../utils/constants';
+import { useDispatch } from 'react-redux';
+import { setIsAuthenticated } from '../redux/appSlice';
+
+export interface AccountDetailType {
+    addresses: string[],
+    numaddrs: number,
+    subshash: string,
+}
+
+export interface UserDetailType {
+    isAuthenticated: boolean;
+    password: string,
+    accountInfo: AccountDetailType,
+}
 
 interface AuthContextType {
-    isAuthenticated: boolean;
-    user: any;
-    login: (userDetails: any) => void;
+    user: UserDetailType | null;
+    login: (userDetails: UserDetailType) => void;
     logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<UserDetailType | null>(null);
+    const dispatch = useDispatch()
 
-    const login = (userDetails: any) => {
+    const login = (userDetails: UserDetailType | null) => {
         setUser(userDetails)
-        setIsAuthenticated(true)
     };
-    const logout = () => setIsAuthenticated(false);
+    const logout = () => {
+        console.log('aaa')
+        axios.post(
+            `${SERVER_URL}/api/logout`
+        ).then((resp) => {
+            console.log(resp.data)
+            dispatch(setIsAuthenticated(true))
+            login(null);
+        }).catch((error) => {
+            console.error(error)
+        }).finally(() => {
+        })
+    };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

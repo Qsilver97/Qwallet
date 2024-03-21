@@ -2,13 +2,22 @@ import { faCopy, faGear, faPlus, faTimes, faTrash } from "@fortawesome/free-soli
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import Modal from "../components/common/Modal";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
+    const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const { logout } = useAuth();
 
     const toggleModal = () => setIsModalOpen(!isModalOpen);
 
     const handleAddAccount = () => {
+    }
+
+    const handleLogout = () => {
+        logout()
+        navigate('/login')
     }
 
     return (
@@ -25,7 +34,7 @@ const Dashboard: React.FC = () => {
                         </span>
                     </div>
                     <div className="flex items-center gap-[10px] cursor-pointer">
-                        <FontAwesomeIcon className="text-[32px]" icon={faGear} />
+                        <FontAwesomeIcon className="text-[32px]" icon={faGear} onClick={handleLogout} />
                     </div>
                 </header>
                 <div className="p-[20px_60px] ">

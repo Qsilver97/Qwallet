@@ -14,26 +14,10 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-    // const [socket, setSocket] = useState<any>(null);
-
-    // const testSocket = () => {
-    //     axios.post(`${SERVER_URL}/api/ccall`, { command: 'login aa', flag: 'login' })
-    //     if (socket) {
-    //         socket.emit('test', 'hello')
-    //         console.log('sent socket')
-    //     }
-    // }
-
-    // useEffect(() => {
-    //     testSocket()
-    //     const newSocket = io(SERVER_URL);
-    //     setSocket(newSocket)
-    // }, []);
-
     return (
         <>
-            <AuthProvider>
-                <Provider store={store}>
+            <Provider store={store}>
+                <AuthProvider>
                     <SocketProvider wsUrl={SERVER_URL}>
                         <ThemeProvider>
                             <ThemeToggle />
@@ -41,8 +25,8 @@ function App() {
                             <AppRoutes />
                         </ThemeProvider>
                     </SocketProvider>
-                </Provider>
-            </AuthProvider>
+                </AuthProvider>
+            </Provider>
         </>
     )
 }

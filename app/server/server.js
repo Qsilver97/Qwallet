@@ -8,11 +8,13 @@ const cors = require('cors');
 const router = require('./routes.js');
 const socketManager = require('./managers/socketManager')
 const wasmManager = require('./managers/wasmManager')
+const stateManager = require('./managers/stateManager')
 const { PORT, FRONTEND_URL } = require('./utils/constants');
 
-// Initialize WebSocket communication and WASM manager
+// Initialize WebSocket communication, WASM manager and UserState manager
 const io = socketManager.init(http);
 wasmManager.init();
+stateManager.init();
 
 // Import and use socket controller with initialized WebSocket (io)
 const socketController = require('./controllers/socketController')

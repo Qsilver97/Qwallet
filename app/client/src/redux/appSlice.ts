@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // Define the initial state type
 interface AppState {
+    isAuthenticated: boolean | null;
     seedType: string;
     password: string;
     seeds: string | string[];
@@ -10,6 +11,7 @@ interface AppState {
 
 // Initial state
 const initialState: | AppState = {
+    isAuthenticated: null,
     seedType: "22words",
     seeds: "",
     password: "",
@@ -26,8 +28,11 @@ export const appSlice = createSlice({
         setPassword: (state, action: PayloadAction<string>) => {
             state.password = action.payload;
         },
-        setSeeds: (state, action: PayloadAction<string | string []>) => {
-            state.seeds = action.payload
+        setSeeds: (state, action: PayloadAction<string | string[]>) => {
+            state.seeds = action.payload;
+        },
+        setIsAuthenticated: (state, action: PayloadAction<boolean | null>) => {
+            state.isAuthenticated = action.payload;
         },
         toggleTheme: (state) => {
             state.theme = state.theme === 'light' ? 'dark' : 'light';
@@ -36,7 +41,7 @@ export const appSlice = createSlice({
 });
 
 // Export actions
-export const { setSeedType, setPassword, setSeeds, toggleTheme } = appSlice.actions;
+export const { setSeedType, setPassword, setSeeds, setIsAuthenticated, toggleTheme } = appSlice.actions;
 
 // Export reducer
 export default appSlice.reducer;
