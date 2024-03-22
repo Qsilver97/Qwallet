@@ -30,15 +30,30 @@ exports.login = async (req, res) => {
     const result = await wasmManager.ccall({ command: `list ${password}`, flag: 'login' });
     const socket = socketManager.getIO();
     const liveSocket = socketManager.getLiveSocket();
-    console.log(result.value.display)
     const localSubshash = result.value.display.subshash;
     stateManager.setLocalSubshash(localSubshash);
+    await delay(500)
+    liveSocket.send('clearderived');
 
-    liveSocket.send(result.value.display.addresses[0]);
+    const addresses = result.value.display.addresses;
+    await delay(50);
+    liveSocket.send(addresses[0]);
+
+    await delay(50)
     const hexResult = await wasmManager.ccall({ command: `logintx ${password}`, flag: 'logintx' });
+    console.log(hexResult.value.display, 'qqqqq')
     liveSocket.send(hexResult.value.display);
+    await delay(50)
 
-    await delay(500);
+    for(let idx = 1; idx < addresses.length; idx ++) {
+        if(addresses[idx] != ""){
+            console.log(`+${idx} ${addresses[idx]}`)
+            await delay(5)
+            liveSocket.send(`+${idx} ${addresses[idx]}`)
+        }
+    }
+
+    await delay(50);
     const remoteSubshas = stateManager.getRemoteSubshash();
     console.log('1', remoteSubshas, '2', localSubshash)
     if ((localSubshash != "") && (remoteSubshas == localSubshash)) {
@@ -58,5 +73,29 @@ exports.logout = async (req, res) => {
 
 exports.fetchUser = async (req, res) => {
     const userState = stateManager.getUserState();
+    res.send(userState);
+}
+
+exports.deleteAccount = async (req, res) => {
+    const password = req.password;
+    const index = req.index;
+    const result = await wasmManager.ccall({ command: `delete ${password}`, flag: 'delete' });
+}
+
+exports.addAccount = async (req, res) => {
+    const password = req.body.password;
+    const index = req.body.index;
+
+    const addResult = await wasmManager.ccall({command: `login ${password},${index},derivation${index}`, flag: 'addaccount'});
+    if(addResult.value.result != 0) {
+        res.send(addResult.value.display);
+        return
+    }
+    const socket = socketManager.getIO();
+    const liveSocket = socketManager.getLiveSocket();
+    liveSocket.send(`+1 ${addResult.value.display}`)
+
+    const result = await wasmManager.ccall({ command: `list ${password}`, flag: 'login' });
+    const userState = stateManager.setUserState({ password, accountInfo: result.value.display, isAuthenticated: true });
     res.send(userState);
 }
