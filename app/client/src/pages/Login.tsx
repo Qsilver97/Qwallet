@@ -21,14 +21,16 @@ const Login: React.FC = () => {
     const socket = useSocket();
     const auth = useAuth();
 
-    const { password } = useSelector((state: RootState) => state.app)
+    const { password } = useSelector((state: RootState) => state.app);
     const [passwordStatus, setPasswordStatus] = useState<boolean>();
 
     const [passwordInputType, setPasswordInputType] = useState<string>('password');
+    const [loginWaiting, setLoginWaiting] = useState<boolean>(false);
 
     const handleLogin = () => {
+        setLoginWaiting(true);
         if (password != "") {
-            dispatch(setIsAuthenticated(null))
+            dispatch(setIsAuthenticated(null));
             axios.post(
                 `${SERVER_URL}/api/login`,
                 {
@@ -37,24 +39,26 @@ const Login: React.FC = () => {
             ).then((resp) => {
                 console.log(resp.data)
                 const userInfo: UserDetailType = resp.data;
-                dispatch(setIsAuthenticated(true))
+                dispatch(setIsAuthenticated(true));
                 auth.login(userInfo);
-                navigate('/dashboard')
+                navigate('/dashboard');
             }).catch((error) => {
-                console.error(error)
-                dispatch(setIsAuthenticated(false))
+                toast.error(error.response.data);
+                dispatch(setIsAuthenticated(false));
+            }).finally(() => {
+                setLoginWaiting(false);
             })
         } else {
-            toast.error('Incorrect password.')
+            toast.error('Incorrect password.');
         }
     }
 
     const handleCreate = () => {
-        navigate('/create')
+        navigate('/create');
     }
 
     const handleRestore = () => {
-        // navigate('/restore')
+        // navigate('/restore');
     }
 
     const handlePasswordChange = (value: string) => {
@@ -70,24 +74,24 @@ const Login: React.FC = () => {
 
     useEffect(() => {
         if (password != "")
-            socket?.emit('passwordAvail', { command: `checkavail ${password}`, flag: 'passwordAvail' })
+            socket?.emit('passwordAvail', { command: `checkavail ${password}`, flag: 'passwordAvail' });
     }, [password])
 
     useEffect(() => {
-        dispatch(setPassword(""))
+        dispatch(setPassword(""));
     }, [])
 
     useEffect(() => {
         if (socket) {
             socket.on('passwordAvail', (msg: boolean) => {
-                setPasswordStatus(msg)
+                setPasswordStatus(msg);
             })
         }
     }, [socket])
 
     return (
         <>
-            <div className="bg-light dark:bg-dark text-light dark:text-dark max-w-[500px] mx-auto p-[40px] rounded-[10px] shadow-[0_15px_25px_rgba(0,0,0,0.5)] text-center z-0">
+            <div className={`bg-light dark:bg-dark text-light dark:text-dark max-w-[500px] mx-auto p-[40px] rounded-[10px] shadow-[0_15px_25px_rgba(0,0,0,0.5)] text-center z-0`}>
                 <img className="mx-auto" src="images/logo.png" width="100px" />
                 <h2 className="my-[15px] mx-auto text-light dark:text-dark text-[2rem]">Login</h2>
                 <div className="mb-[20px] leading-[25px] text-[1rem] font-normal">
@@ -101,7 +105,7 @@ const Login: React.FC = () => {
                     {passwordStatus &&
                         <p className="w-full text-left text-red-600">Password does not exist.</p>
                     }
-                    <Button buttonValue="Login" onClick={handleLogin} disabled={passwordStatus || password == ""} />
+                    <Button buttonValue="Login" onClick={handleLogin} disabled={passwordStatus || password == "" || loginWaiting} />
                     <Button buttonValue="Create" onClick={handleCreate} />
                     <a className="text-[#007bff] cursor-pointer" onClick={handleRestore}>Restore your wallet from your seed</a>
                 </div>

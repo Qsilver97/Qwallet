@@ -14,13 +14,13 @@ const { PORT, FRONTEND_URL } = require('./utils/constants');
 async function init() {
     // Initialize WebSocket communication, WASM manager and UserState manager
     const io = await socketManager.init(http);
-    const liveSocket = await socketManager.initLiveSocket();
+    // const liveSocket = await socketManager.initLiveSocket();
     wasmManager.init();
     stateManager.init();
 
     // Import and use socket controller with initialized WebSocket (io)
     require('./controllers/socketController')(io)
-    require('./controllers/liveSocketController')(liveSocket)
+    // require('./controllers/liveSocketController')(liveSocket)
 }
 
 init()

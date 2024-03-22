@@ -4,7 +4,6 @@ const wasmManager = require('../managers/wasmManager')
 module.exports = function (io) {
     io.on('connection', (socket) => {
         console.log('A user connected');
-        const liveSocket = socketManager.getLiveSocket();
         socket.on('test', (msg) => {
             console.log(msg)
             socket.emit('test', msg)
@@ -17,6 +16,7 @@ module.exports = function (io) {
         })
 
         socket.on('send', (msg) => {
+            const liveSocket = socketManager.getLiveSocket();
             liveSocket.send(msg);
         })
 
