@@ -123,7 +123,8 @@ const Dashboard: React.FC = () => {
                         </span>
                     </div>
                     <div className="flex items-center gap-[10px] cursor-pointer">
-                        <FontAwesomeIcon className="text-[32px]" icon={faGear} onClick={handleLogout} />
+                        <a className="text-[18px] bg-[#1e2975] px-2 rounded-[5px]" onClick={handleLogout} >Logout</a>
+                        {/* <FontAwesomeIcon className="text-[32px]" icon={faGear} onClick={handleLogout} /> */}
                     </div>
                 </header>
                 <div className="p-[20px_60px] ">
