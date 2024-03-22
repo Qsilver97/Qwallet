@@ -22,7 +22,7 @@ exports.createAccount = async (req, res) => {
 exports.login = async (req, res) => {
     let password;
     stateManager.init();
-    await socketManager.initLiveSocket();
+    const liveSocket = await socketManager.initLiveSocket();
     const resultFor24words = await wasmManager.ccall({ command: `checkavail ${req.body.password}`, flag: 'login' });
     const resultFor55chars = await wasmManager.ccall({ command: `checkavail Q${req.body.password}`, flag: 'login' });
     console.log(req.body.password, resultFor24words, resultFor55chars);
@@ -39,30 +39,29 @@ exports.login = async (req, res) => {
     const localSubshash = result.value.display.subshash;
     stateManager.setLocalSubshash(localSubshash);
 
-    const liveSocket = socketManager.getLiveSocket()
     liveSocketController(liveSocket);
-    await delay(100);
+    await delay(1000);
     liveSocket.send('clearderived');
 
     const addresses = result.value.display.addresses;
-    await delay(50);
+    await delay(200);
     liveSocket.send(addresses[0]);
 
-    await delay(50)
+    await delay(200)
     const hexResult = await wasmManager.ccall({ command: `logintx ${password}`, flag: 'logintx' });
     console.log(hexResult.value.display, 'qqqqq')
     liveSocket.send(hexResult.value.display);
-    await delay(50)
+    await delay(200)
 
     for (let idx = 1; idx < addresses.length; idx++) {
         if (addresses[idx] != "") {
             console.log(`+${idx} ${addresses[idx]}`)
-            await delay(5)
+            await delay(50)
             liveSocket.send(`+${idx} ${addresses[idx]}`)
         }
     }
 
-    await delay(50);
+    await delay(200);
     const remoteSubshas = stateManager.getRemoteSubshash();
     console.log('1', remoteSubshas, '2', localSubshash)
     if ((localSubshash != "") && (remoteSubshas == localSubshash)) {
@@ -109,10 +108,10 @@ exports.deleteAccount = async (req, res) => {
     const hexResult = await wasmManager.ccall({ command: `logintx ${password}`, flag: 'logintx' });
     liveSocket.send(hexResult.value.display);
 
-    await delay(50);
+    await delay(1000);
     liveSocket.send(`-${index} ${address}`);
 
-    await delay(50);
+    await delay(1000);
     const remoteSubshas = stateManager.getRemoteSubshash();
 
     if ((localSubshash != "") && (remoteSubshas == localSubshash)) {
@@ -144,11 +143,11 @@ exports.addAccount = async (req, res) => {
     liveSocket.send(hexResult.value.display);
 
 
-    await delay(50);
+    await delay(1000);
     console.log(`+${index} ${addResult.value.display}`)
     liveSocket.send(`+${index} ${addResult.value.display}`)
 
-    await delay(50)
+    await delay(1000)
     const remoteSubshas = stateManager.getRemoteSubshash()
 
     if ((localSubshash != "") && (remoteSubshas == localSubshash)) {

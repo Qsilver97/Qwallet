@@ -20,17 +20,21 @@
     "socket.io": "^4.7.5"
   },
   "pkg": {
-    "target": [
-      "node18-win-64"
+    "targets": [
+      "node18-win-x64",
+      "node18-mac-x64"
     ],
-    "output": "build/qwallet.exe",
+    "output": "build/qwallet",
     "assets": [
-      "dist/**"
+      "dist/**/*"
     ],
     "scripts": [
-      "controllers/**",
-      "managers/**",
-      "utils/**"
+      "controllers/**/*.js",
+      "managers/**/*.js",
+      "utils/**/*.js"
     ]
+  },  
+  "devDependencies": {
+    "pkg": "^5.8.1"
   }
 }
