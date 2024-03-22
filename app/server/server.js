@@ -42,6 +42,6 @@ app.get('*', (req, res) => {
 });
 
 // Start the HTTP server listening on the specified port
-http.listen(PORT, () => {
+http.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
 });
