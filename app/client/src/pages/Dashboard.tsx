@@ -5,16 +5,62 @@ import Modal from "../components/common/Modal";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../context/SocketContext";
+import { handleCopy } from "../utils/helper";
+import axios from "axios";
+import { SERVER_URL } from "../utils/constants";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 const Dashboard: React.FC = () => {
+    const { login, logout, user } = useAuth();
     const socket = useSocket();
     const navigate = useNavigate();
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const { logout } = useAuth();
 
-    const toggleModal = () => setIsModalOpen(!isModalOpen);
+    const [isAccountModalOpen, setIsAccountModalOpen] = useState<boolean>(false);
+    const toggleAccountModal = () => setIsAccountModalOpen(!isAccountModalOpen);
+    const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState<boolean>(false);
+    const toggleDeleteAccountModal = () => setIsDeleteAccountModalOpen(!isDeleteAccountModalOpen);
+
+
+    const { tick, balances } = useSelector((state: RootState) => state.app);
+    
+    const [deleteAccount, setDeleteAccount] = useState<string>("");
+    const [currentAddress, setCurrentAddress] = useState<string>("");
+    const [allAddresses, setAllAddresses] = useState<string[]>([]);
 
     const handleAddAccount = () => {
+        console.log(user?.password, user?.accountInfo.addresses.findIndex((item) => item == ""))
+        axios.post(
+            `${SERVER_URL}/api/add-account`,
+            {
+                password: user?.password,
+                index: user?.accountInfo.addresses.findIndex((item) => item == "")
+            }
+        ).then((resp) => {
+            console.log(resp.data);
+            // login(resp.data)
+        }).catch((error) => {
+            console.error(error);
+        })
+    }
+
+    const handleDeleteAccount = () => {
+        if (deleteAccount != "")
+            axios.post(
+                `${SERVER_URL}/api/delete-account`,
+                {
+                    password: user?.password,
+                    index: user?.accountInfo.addresses.indexOf(deleteAccount)
+                }
+            ).then((resp) => {
+                if(user?.accountInfo.addresses.indexOf(deleteAccount) == 0) {
+                    logout();
+                }
+                delete balances[deleteAccount];
+                login(resp.data);
+            }).catch(() => {
+
+            })
     }
 
     const handleTransfer = () => {
@@ -22,17 +68,35 @@ const Dashboard: React.FC = () => {
     }
 
     const handleLogout = () => {
-        logout()
-        navigate('/login')
+        logout();
+        navigate('/login');
+    }
+
+    const handleClickAccount = (address: string) => {
+        setCurrentAddress(address);
+        toggleAccountModal();
     }
 
     useEffect(() => {
-        if (socket) {
-            socket.on('live', (msg) => {
-                console.log(msg);
-            })
-        }
+        // if (socket) {
+        //     socket.on('live', (data) => {
+        //         console.log(data);
+        //         if (data.command == 'CurrentTickInfo') {
+        //             setTick(data.tick);
+        //         } else if (data.command == 'EntityInfo') {
+        //             setBalances((prev) => ({ ...prev, [data.address]: data.balance }));
+        //         }
+        //     })
+        // }
     }, [socket])
+
+    useEffect(() => {
+        if(user?.accountInfo){
+            setCurrentAddress(user?.accountInfo.addresses[0])
+            setAllAddresses(user?.accountInfo.addresses)
+        }
+
+    }, [login, user])
 
     return (
         <>
@@ -41,9 +105,9 @@ const Dashboard: React.FC = () => {
                     <div className="cursor-pointer">
                         <img src="images/logo.png" className="w-[50px]" />
                     </div>
-                    <div className="cursor-pointer" onClick={toggleModal}>
+                    <div className="cursor-pointer" onClick={toggleAccountModal}>
                         <span className="p-[5px] shadow-[0_2px_3px_rgba(0,0,0,0.5)] rounded-[5px]">
-                            MVPYRACGNJBMJGDLLAXUDXHXFOXBOBWCBZQBAXSUTGJXOBRLZVCTBDPCXPMK
+                            {currentAddress}
                             {/* <FontAwesomeIcon icon={faArrowDown} /> */}
                         </span>
                     </div>
@@ -53,8 +117,8 @@ const Dashboard: React.FC = () => {
                 </header>
                 <div className="p-[20px_60px] ">
                     <div>
-                        <h3 className="text-[1.75rem]">Balance: 0</h3>
-                        <h3 className="text-[1.75rem]">Tick: 130928</h3>
+                        <h3 className="text-[1.75rem]">Balance: {Object.values(balances).reduce((sum, balance) => sum + balance, 0)}</h3>
+                        <h3 className="text-[1.75rem]">Tick: {tick}</h3>
                     </div>
                     <div className="mt-[20px]">
                         <div className="">
@@ -79,19 +143,39 @@ const Dashboard: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <Modal isOpen={isModalOpen}>
+            <Modal isOpen={isAccountModalOpen}>
                 <div className='flex justify-between p-[10px_16px] items-center border-b border-white text-[1.25rem]'>
                     <div>Addresses</div>
                     <div className="flex gap-[10px]">
                         <FontAwesomeIcon icon={faPlus} className='cursor-pointer' onClick={handleAddAccount} />
-                        <FontAwesomeIcon icon={faTimes} onClick={toggleModal} className='cursor-pointer' />
+                        <FontAwesomeIcon icon={faTimes} onClick={toggleAccountModal} className='cursor-pointer' />
                     </div>
                 </div>
-                <div className="p-[10px_16px]">
-                    <div className="flex justify-between items-center gap-[20px]">
-                        <FontAwesomeIcon className="cursor-pointer" icon={faCopy} />
-                        <span className="cursor-pointer">MVPYRACGNJBMJGDLLAXUDXHXFOXBOBWCBZQBAXSUTGJXOBRLZVCTBDPCXPMK</span>
-                        <FontAwesomeIcon className="cursor-pointer" icon={faTrash} />
+                <div className="p-[10px_16px] max-h-[500px] overflow-y-auto mb-[10px]">
+                    {
+                        allAddresses.map((item, idx) => {
+                            if (item != "")
+                                return <div className="flex justify-between items-center gap-[20px]" key={`address-${idx}`}>
+                                    <FontAwesomeIcon className="cursor-pointer" icon={faCopy} onClick={() => handleCopy(item)} />
+                                    <span className="cursor-pointer" onClick={() => {handleClickAccount(item)}}>{item}</span>
+                                    <FontAwesomeIcon className="cursor-pointer" icon={faTrash} onClick={() => { setDeleteAccount(item); toggleDeleteAccountModal(); }} />
+                                </div>
+                        })
+                    }
+                </div>
+            </Modal>
+            <Modal isOpen={isDeleteAccountModalOpen}>
+                <div className='flex justify-between p-[10px_16px] items-center border-b border-white text-[1.25rem]'>
+                    <div>Delete this account?</div>
+                    <div className="flex gap-[10px]">
+                        <FontAwesomeIcon icon={faTimes} onClick={toggleDeleteAccountModal} className='cursor-pointer' />
+                    </div>
+                </div>
+                <div className="p-[10px_16px] max-h-[500px] overflow-y-auto mb-[10px]">
+                    {deleteAccount}
+                    <div className="flex justify-end gap-5 mt-[10px]">
+                        <a className="cursor-pointer bg-red-500 px-4 hover:bg-red-600" onClick={handleDeleteAccount}>Yes</a>
+                        <a className="cursor-pointer bg-[#5468ff] px-4 hover:bg-[#3f4cb1]" onClick={toggleDeleteAccountModal}>No</a>
                     </div>
                 </div>
             </Modal>

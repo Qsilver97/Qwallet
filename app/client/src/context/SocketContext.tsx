@@ -1,6 +1,8 @@
 // context/SocketContext.tsx
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { useDispatch } from 'react-redux';
 import { io, Socket } from 'socket.io-client';
+import { setBalances, setTick } from '../redux/appSlice';
 
 interface SocketContextType {
     socket: Socket | undefined;
@@ -22,11 +24,23 @@ interface SocketProviderProps {
 }
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children, wsUrl }) => {
+
+    const dispatch = useDispatch();
+
     const [socket, setSocket] = useState<Socket>();
 
     useEffect(() => {
         const newSocket = io(wsUrl);
         setSocket(newSocket);
+        
+        newSocket.on('live', (data) => {
+            console.log(data);
+            if (data.command == 'CurrentTickInfo') {
+                dispatch(setTick(data.tick));
+            } else if (data.command == 'EntityInfo') {
+                dispatch(setBalances({[data.address]: parseFloat(data.balance)}));
+            }
+        })
 
         return () => {
             newSocket.close();

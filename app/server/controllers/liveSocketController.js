@@ -18,7 +18,7 @@ module.exports = function (liveSocket) {
             if (data.subshash) {
                 setRemoteSubshash(data.subshash);
             }
-            socket.emit('live', event.data);
+            socket.emit('live', data);
         } catch (error) {
 
         }

@@ -7,6 +7,8 @@ interface AppState {
     password: string;
     seeds: string | string[];
     theme: 'light' | 'dark';
+    tick: string;
+    balances: {[key: string]: number};
 }
 
 // Initial state
@@ -16,6 +18,8 @@ const initialState: | AppState = {
     seeds: "",
     password: "",
     theme: 'light',
+    tick: "",
+    balances: {},
 };
 
 export const appSlice = createSlice({
@@ -34,6 +38,12 @@ export const appSlice = createSlice({
         setIsAuthenticated: (state, action: PayloadAction<boolean | null>) => {
             state.isAuthenticated = action.payload;
         },
+        setTick: (state, action: PayloadAction<string>) => {
+            state.tick = action.payload;
+        },
+        setBalances: (state, action: PayloadAction<{[key: string]: number}>) => {
+            state.balances = {...state.balances, ...action.payload};
+        },
         toggleTheme: (state) => {
             state.theme = state.theme === 'light' ? 'dark' : 'light';
         },
@@ -41,7 +51,7 @@ export const appSlice = createSlice({
 });
 
 // Export actions
-export const { setSeedType, setPassword, setSeeds, setIsAuthenticated, toggleTheme } = appSlice.actions;
+export const { setSeedType, setPassword, setSeeds, setIsAuthenticated, toggleTheme, setTick, setBalances } = appSlice.actions;
 
 // Export reducer
 export default appSlice.reducer;
