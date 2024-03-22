@@ -1,11 +1,13 @@
 import { faCopy, faGear, faPlus, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "../components/common/Modal";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useSocket } from "../context/SocketContext";
 
 const Dashboard: React.FC = () => {
+    const socket = useSocket();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const { logout } = useAuth();
@@ -15,10 +17,22 @@ const Dashboard: React.FC = () => {
     const handleAddAccount = () => {
     }
 
+    const handleTransfer = () => {
+        socket?.emit('send', 'MVPYRACGNJBMJGDLLAXUDXHXFOXBOBWCBZQBAXSUTGJXOBRLZVCTBDPCXPMK')
+    }
+
     const handleLogout = () => {
         logout()
         navigate('/login')
     }
+
+    useEffect(() => {
+        if (socket) {
+            socket.on('live', (msg) => {
+                console.log(msg);
+            })
+        }
+    }, [socket])
 
     return (
         <>
@@ -46,7 +60,7 @@ const Dashboard: React.FC = () => {
                         <div className="">
                             <input className="text-white p-[10px] mr-[5px] border-[1.5px] border-[#17517a] rounded-[5px] w-[720px] outline-none bg-transparent" />
                             <input className="text-white p-[10px] mr-[5px] border-[1.5px] border-[#17517a] rounded-[5px] w-[120px] outline-none bg-transparent " />
-                            <button className="outline-none p-[10px_20px] bg-[#17517a] border-none rounded-[5px] text-white text-[16px] cursor-pointer transition-bg duration-300 ease">Send</button>
+                            <button className="outline-none p-[10px_20px] bg-[#17517a] border-none rounded-[5px] text-white text-[16px] cursor-pointer transition-bg duration-300 ease" onClick={handleTransfer}>Send</button>
                         </div>
                         <div className="mt-[40px] max-h-[1000px] overflow-auto">
                             <h3 className="text-[1.75rem]">Activity</h3>

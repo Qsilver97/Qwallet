@@ -1,4 +1,6 @@
 let userState = {};
+let remoteSubshas = "";
+let localSubshash = "";
 
 // export interface AccountDetailType {
 //     addresses: string[],
@@ -33,5 +35,16 @@ module.exports = {
     setUserState: (userDetail) => {
         userState = { ...userDetail };
         return userState;
+    },
+    setRemoteSubshash: (subshash) => {
+        remoteSubshas = subshash;
+        return remoteSubshas;
+    },
+    getRemoteSubshash: () => {
+        return remoteSubshas;
+    },
+    setLocalSubshash: (subshash) => {
+        localSubshash = subshash;
+        return subshash;
     }
 };

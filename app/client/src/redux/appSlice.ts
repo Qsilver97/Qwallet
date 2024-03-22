@@ -12,7 +12,7 @@ interface AppState {
 // Initial state
 const initialState: | AppState = {
     isAuthenticated: null,
-    seedType: "22words",
+    seedType: "24words",
     seeds: "",
     password: "",
     theme: 'light',

@@ -11,15 +11,19 @@ const wasmManager = require('./managers/wasmManager')
 const stateManager = require('./managers/stateManager')
 const { PORT, FRONTEND_URL } = require('./utils/constants');
 
-// Initialize WebSocket communication, WASM manager and UserState manager
-const io = socketManager.init(http);
-wasmManager.init();
-stateManager.init();
+async function init() {
+    // Initialize WebSocket communication, WASM manager and UserState manager
+    const io = await socketManager.init(http);
+    const liveSocket = await socketManager.initLiveSocket();
+    wasmManager.init();
+    stateManager.init();
 
-// Import and use socket controller with initialized WebSocket (io)
-const socketController = require('./controllers/socketController')
-socketController(io)
+    // Import and use socket controller with initialized WebSocket (io)
+    require('./controllers/socketController')(io)
+    require('./controllers/liveSocketController')(liveSocket)
+}
 
+init()
 
 // Middleware to enable CORS with dynamic origin support
 app.use(cors({ origin: FRONTEND_URL }))

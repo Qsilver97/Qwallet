@@ -106,10 +106,10 @@ const Create: React.FC = () => {
                 <div className="relative">
                     <div className="flex justify-evenly mb-3">
                         <Radio
-                            label="22 Words"
+                            label="24 Words"
                             name="options"
-                            value="22words"
-                            checked={seedType === '22words'}
+                            value="24words"
+                            checked={seedType === '24words'}
                             onChange={handleSeedType}
                         />
                         <Radio
