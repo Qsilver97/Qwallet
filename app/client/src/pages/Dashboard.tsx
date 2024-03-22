@@ -1,4 +1,4 @@
-import { faCopy, faGear, faPlus, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCopy, faPlus, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import Modal from "../components/common/Modal";
