@@ -112,6 +112,10 @@ const Dashboard: React.FC = () => {
         toggleAccountModal();
     }
 
+    const handleSelectAccount = (address: string) => {
+        setCurrentAddress(address);
+    }
+
     useEffect(() => {
         // if (socket) {
         //     socket.on('live', (data) => {
@@ -144,7 +148,7 @@ const Dashboard: React.FC = () => {
                     <div className="cursor-pointer">
                         <img src="images/logo.png" className="w-[50px]" />
                     </div>
-                    <div className="cursor-pointer" onClick={toggleAccountModal}>
+                    <div className="cursor-pointer" onClick={() => handleCopy(currentAddress)}>
                         <span className="p-[5px] shadow-[0_2px_3px_rgba(0,0,0,0.5)] rounded-[5px]">
                             {currentAddress}
                             {/* <FontAwesomeIcon icon={faArrowDown} /> */}
@@ -156,9 +160,24 @@ const Dashboard: React.FC = () => {
                     </div>
                 </header>
                 <div className="p-[20px_60px] ">
-                    <div>
+                    <div className="flex gap-5">
                         <h3 className="text-[1.75rem]">Balance: {Object.values(balances).reduce((sum, balance) => sum + balance, 0)}</h3>
                         <h3 className="text-[1.75rem]">Tick: {tick}</h3>
+                    </div>
+                    <div className="flex gap-5 w-full h-full overflow-auto overflow-y-hidden p-5 border-[1.5px] border-[#17517a] rounded-[5px] mt-2">
+                        <div className={`p-2 cursor-pointer flex items-center align-middle shadow-[2px_2px_2px_2px_rgba(0,0,0,0.3)] ${addingStatus ? "cursor-wait" : "cursor-pointer"}`} onClick={handleAddAccount}>
+                            <FontAwesomeIcon icon={faPlus} className="p-3 text-[24px]" />
+                        </div>
+                        {
+                            allAddresses.map((item, idx) => {
+                                console.log(balances[item])
+                                if (item != "")
+                                    return <div className={`p-2 cursor-pointer flex items-center flex-col ${currentAddress == item ? " shadow-[2px_2px_2px_2px_rgba(0,0,0,0.6)] bg-[#17517a] " : " shadow-[2px_2px_2px_2px_rgba(0,0,0,0.3)] "}`} key={`item${idx}`} onClick={() => handleSelectAccount(item)} onContextMenu={(e) => { e.preventDefault(); setDeleteAccount(item); toggleDeleteAccountModal() }}>
+                                        <div>{`${item.slice(0, 5)}...${item.slice(-5)}`}</div>
+                                        <span>{balances[item] | 0}</span>
+                                    </div>
+                            })
+                        }
                     </div>
                     <div className="mt-[20px]">
                         <div className="">
