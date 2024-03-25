@@ -9,33 +9,23 @@ import ThemeToggle from './components/theme/ThemeToggle';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import { SocketProvider } from './context/SocketContext';
+import { AuthProvider } from './context/AuthContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-    // const [socket, setSocket] = useState<any>(null);
-
-    // const testSocket = () => {
-    //     axios.post(`${SERVER_URL}/api/ccall`, { command: 'login aa', flag: 'login' })
-    //     if (socket) {
-    //         socket.emit('test', 'hello')
-    //         console.log('sent socket')
-    //     }
-    // }
-
-    // useEffect(() => {
-    //     testSocket()
-    //     const newSocket = io(SERVER_URL);
-    //     setSocket(newSocket)
-    // }, []);
-
     return (
         <>
             <Provider store={store}>
-                <SocketProvider wsUrl={SERVER_URL}>
-                    <ThemeProvider>
-                        <ThemeToggle />
-                        <AppRoutes />
-                    </ThemeProvider>
-                </SocketProvider>
+                <AuthProvider>
+                    <SocketProvider wsUrl={SERVER_URL}>
+                        <ThemeProvider>
+                            <ThemeToggle />
+                            <ToastContainer />
+                            <AppRoutes />
+                        </ThemeProvider>
+                    </SocketProvider>
+                </AuthProvider>
             </Provider>
         </>
     )

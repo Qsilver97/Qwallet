@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { handleCopy } from "../utils/helper";
 
 const Backup: React.FC = () => {
     const { seeds } = useSelector((state: RootState) => state.app)
@@ -33,10 +34,6 @@ const Backup: React.FC = () => {
 
     const handleMouseLeave = () => {
         setSeedsShowStatus(false)
-    }
-
-    const handleCopy = async (value: string) => {
-        await navigator.clipboard.writeText(value);
     }
 
     useEffect(() => {

@@ -8,16 +8,22 @@ const cors = require('cors');
 const router = require('./routes.js');
 const socketManager = require('./managers/socketManager')
 const wasmManager = require('./managers/wasmManager')
+const stateManager = require('./managers/stateManager')
 const { PORT, FRONTEND_URL } = require('./utils/constants');
 
-// Initialize WebSocket communication and WASM manager
-const io = socketManager.init(http);
-wasmManager.init();
+async function init() {
+    // Initialize WebSocket communication, WASM manager and UserState manager
+    const io = await socketManager.init(http);
+    // const liveSocket = await socketManager.initLiveSocket();
+    wasmManager.init();
+    stateManager.init();
 
-// Import and use socket controller with initialized WebSocket (io)
-const socketController = require('./controllers/socketController')
-socketController(io)
+    // Import and use socket controller with initialized WebSocket (io)
+    require('./controllers/socketController')(io)
+    // require('./controllers/liveSocketController')(liveSocket)
+}
 
+init()
 
 // Middleware to enable CORS with dynamic origin support
 app.use(cors({ origin: FRONTEND_URL }))
@@ -36,6 +42,6 @@ app.get('*', (req, res) => {
 });
 
 // Start the HTTP server listening on the specified port
-http.listen(PORT, () => {
+http.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
 });
