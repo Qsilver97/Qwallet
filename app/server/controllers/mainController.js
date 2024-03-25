@@ -86,9 +86,7 @@ exports.fetchUser = async (req, res) => {
 }
 
 exports.deleteAccount = async (req, res) => {
-    const password = req.body.password;
-    const index = req.body.index;
-    const address = req.body.address;
+    const { password, index, address } = req.body;
     const socket = socketManager.getIO();
     const liveSocket = socketManager.getLiveSocket();
     if (index == 0) {
@@ -126,8 +124,7 @@ exports.deleteAccount = async (req, res) => {
 }
 
 exports.addAccount = async (req, res) => {
-    const password = req.body.password;
-    const index = req.body.index;
+    const { password, index } = req.body;
     const socket = socketManager.getIO();
     const liveSocket = socketManager.getLiveSocket();
 
@@ -162,9 +159,7 @@ exports.addAccount = async (req, res) => {
 }
 
 exports.restoreAccount = async (req, res) => {
-    const password = req.body.password;
-    const seeds = req.body.seeds;
-    const seedType = req.body.seedType;
+    const { password, seeds, seedType } = req.body.password;
     let command = null;
     if (seedType == '24words') {
         command = `addseed ${password},${seeds.join(' ')}`;
@@ -178,4 +173,10 @@ exports.restoreAccount = async (req, res) => {
     const recoverResult = await wasmManager.ccall({ command, flag: 'recover' });
     console.log(recoverResult)
     res.send(recoverResult)
+}
+
+exports.transfer = async (req, res) => {
+    const { toAddress, fromIdx, amount } = req.body;
+    console.log(toAddress, fromIdx, amount);
+    res.send('success');
 }

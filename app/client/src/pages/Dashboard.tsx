@@ -10,6 +10,7 @@ import axios from "axios";
 import { SERVER_URL } from "../utils/constants";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { toast } from "react-toastify";
 
 const Dashboard: React.FC = () => {
     const { login, logout, user } = useAuth();
@@ -28,6 +29,9 @@ const Dashboard: React.FC = () => {
     const [allAddresses, setAllAddresses] = useState<string[]>([]);
     const [addingStatus, setAddingStatus] = useState<boolean>(false);
     const [deletingStatus, setDeletingStatus] = useState<boolean>(false);
+    const [toAddress, setToAddress] = useState<string>("");
+    const [amount, setAmount] = useState<string>("");
+    const [sendingStatus, setSendingStatus] = useState<boolean>(false);
 
     const handleAddAccount = () => {
         if (addingStatus) return;
@@ -80,7 +84,27 @@ const Dashboard: React.FC = () => {
     }
 
     const handleTransfer = () => {
-        socket?.emit('send', 'MVPYRACGNJBMJGDLLAXUDXHXFOXBOBWCBZQBAXSUTGJXOBRLZVCTBDPCXPMK')
+        if (toAddress == "" || amount == "" || amount == "0") {
+            toast.error(
+                `Invalid address or amount!`
+            );
+            return;
+        }
+        setSendingStatus(true);
+        axios.post(
+            `${SERVER_URL}/api/transfer`,
+            {
+                toAddress,
+                fromIdx: allAddresses.indexOf(currentAddress),
+                amount
+            }
+        ).then((resp) => {
+            console.log(resp.data);
+        }).catch((error) => {
+            console.log(error.response);
+        }).finally(() => {
+
+        });
     }
 
     const handleClickAccount = (address: string) => {
@@ -100,6 +124,10 @@ const Dashboard: React.FC = () => {
         //     })
         // }
     }, [socket])
+
+    useEffect(() => {
+
+    }, [sendingStatus])
 
     useEffect(() => {
         if (user?.accountInfo) {
@@ -134,8 +162,8 @@ const Dashboard: React.FC = () => {
                     </div>
                     <div className="mt-[20px]">
                         <div className="">
-                            <input className="text-white p-[10px] mr-[5px] border-[1.5px] border-[#17517a] rounded-[5px] w-[720px] outline-none bg-transparent" />
-                            <input className="text-white p-[10px] mr-[5px] border-[1.5px] border-[#17517a] rounded-[5px] w-[120px] outline-none bg-transparent " />
+                            <input className="text-white p-[10px] mr-[5px] border-[1.5px] border-[#17517a] rounded-[5px] w-[720px] outline-none bg-transparent" placeholder="Address" onChange={(e) => setToAddress(e.target.value)} />
+                            <input className="text-white p-[10px] mr-[5px] border-[1.5px] border-[#17517a] rounded-[5px] w-[120px] outline-none bg-transparent" placeholder="Amount" onChange={(e) => setAmount(e.target.value)} type="number" />
                             <button className="outline-none p-[10px_20px] bg-[#17517a] border-none rounded-[5px] text-white text-[16px] cursor-pointer transition-bg duration-300 ease" onClick={handleTransfer}>Send</button>
                         </div>
                         <div className="mt-[40px] max-h-[1000px] overflow-auto">
