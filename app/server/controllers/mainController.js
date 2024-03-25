@@ -6,6 +6,7 @@ const liveSocketController = require('./liveSocketController');
 
 exports.ccall = async (req, res) => {
     const result = await wasmManager.ccall(req.body);
+    console.log(result);
     res.send(result);
 }
 
@@ -158,4 +159,23 @@ exports.addAccount = async (req, res) => {
     } else {
         res.status(401).send('not synced');
     }
+}
+
+exports.restoreAccount = async (req, res) => {
+    const password = req.body.password;
+    const seeds = req.body.seeds;
+    const seedType = req.body.seedType;
+    let command = null;
+    if (seedType == '24words') {
+        command = `addseed ${password},${seeds.join(' ')}`;
+    } else if (seedType == '55chars') {
+        command = `addseed ${password},${seeds}`;
+    }
+    if (command == null) {
+        res.status(401).send('error');
+        return;
+    }
+    const recoverResult = await wasmManager.ccall({ command, flag: 'recover' });
+    console.log(recoverResult)
+    res.send(recoverResult)
 }

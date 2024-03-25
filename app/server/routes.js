@@ -11,5 +11,6 @@ router.post('/logout', mainController.logout);
 router.post('/fetch-user', mainController.fetchUser);
 router.post('/delete-account', mainController.deleteAccount);
 router.post('/add-account', mainController.addAccount);
+router.post('/restore', mainController.restoreAccount);
 
 module.exports = router;
