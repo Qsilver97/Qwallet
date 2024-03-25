@@ -197,7 +197,7 @@ const Dashboard: React.FC = () => {
                             if (item != "")
                                 return <div className="flex justify-between items-center gap-[20px]" key={`address-${idx}`}>
                                     <FontAwesomeIcon className="cursor-pointer" icon={faCopy} onClick={() => handleCopy(item)} />
-                                    <span className="cursor-pointer" onClick={() => { handleClickAccount(item) }}>{item}</span>
+                                    <span className="font-mono cursor-pointer" onClick={() => { handleClickAccount(item) }}>{item}</span>
                                     <FontAwesomeIcon className="cursor-pointer" icon={faTrash} onClick={() => { setDeleteAccount(item); toggleDeleteAccountModal(); }} />
                                 </div>
                         })

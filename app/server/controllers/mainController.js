@@ -159,8 +159,9 @@ exports.addAccount = async (req, res) => {
 }
 
 exports.restoreAccount = async (req, res) => {
-    const { password, seeds, seedType } = req.body.password;
+    const { password, seeds, seedType } = req.body;
     let command = null;
+    console.log(password, seeds, seedType);
     if (seedType == '24words') {
         command = `addseed ${password},${seeds.join(' ')}`;
     } else if (seedType == '55chars') {
