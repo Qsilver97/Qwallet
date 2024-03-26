@@ -6,7 +6,6 @@ const liveSocketController = require('./liveSocketController');
 
 exports.ccall = async (req, res) => {
     const result = await wasmManager.ccall(req.body);
-    console.log(result);
     res.send(result);
 }
 
@@ -177,7 +176,18 @@ exports.restoreAccount = async (req, res) => {
 }
 
 exports.transfer = async (req, res) => {
-    const { toAddress, fromIdx, amount } = req.body;
-    console.log(toAddress, fromIdx, amount);
-    res.send('success');
+    const { toAddress, fromIdx, amount, tick } = req.body;
+    const command = `send ${stateManager.getUserState().password},${fromIdx},${tick},${toAddress},${amount}`;
+    const sendResult = await wasmManager.ccall({ command, flag: 'transfer' });
+    const v1requestResult = await wasmManager.ccall({ command: 'v1request', flag: 'v1request' });
+    if (v1requestResult.value.result == 0 && v1requestResult.value.display) {
+        const livesocket = socketManager.getLiveSocket();
+        console.log(v1requestResult.value.display, 'bbbbbbbbb');
+        livesocket.send(v1requestResult.value.display);
+        res.send('pending')
+        return;
+    } else {
+        res.status(401).send('failed');
+        return;
+    }
 }
