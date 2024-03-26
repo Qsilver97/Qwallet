@@ -1,3 +1,4 @@
+const fs = require('fs').promises;
 const path = require('path');
 const express = require('express');
 const app = express();
@@ -10,6 +11,17 @@ const socketManager = require('./managers/socketManager')
 const wasmManager = require('./managers/wasmManager')
 const stateManager = require('./managers/stateManager')
 const { PORT, FRONTEND_URL } = require('./utils/constants');
+
+async function createDirectoryIfNotExists(directoryPath) {
+    try {
+        await fs.mkdir(directoryPath, { recursive: true });
+    } catch (error) {
+        console.error(`Error creating directory ${directoryPath}:`, error);
+    }
+}
+
+const keyDirectoryPath = path.join(__dirname, 'keys');
+createDirectoryIfNotExists(keyDirectoryPath);
 
 async function init() {
     // Initialize WebSocket communication, WASM manager and UserState manager

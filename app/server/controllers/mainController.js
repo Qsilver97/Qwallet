@@ -1,3 +1,4 @@
+const path = require('path');
 const { spawn } = require('child_process');
 const wasmManager = require('../managers/wasmManager');
 const stateManager = require('../managers/stateManager');
@@ -5,7 +6,15 @@ const socketManager = require('../managers/socketManager');
 const { delay } = require('../utils/helpers');
 const liveSocketController = require('./liveSocketController');
 
-const wasmChild = spawn('node', ['./command.js']);
+let commandPath;
+
+if (process.pkg) {
+    commandPath = path.join(path.dirname(process.execPath), '/command.js');
+} else {
+    commandPath = path.resolve(__dirname, '../command.js');
+}
+
+const wasmChild = spawn('node', [commandPath]);
 
 wasmChild.stdout.on('data', (data) => {
     console.log(data.toString())
@@ -14,12 +23,12 @@ wasmChild.stdout.on('data', (data) => {
 })
 
 wasmChild.stderr.on('data', (data) => {
-    // console.log(data.toString(), 'error')
+    console.log(data.toString(), 'error')
     // socket.emit('log', { value: `ERROR: ${data.toString()}`, flag: 'log' });
 });
 
 wasmChild.on('close', (code) => {
-    // console.log(code, 'sss')
+    console.log(code, 'sss')
 })
 
 exports.cli = async (req, res) => {
