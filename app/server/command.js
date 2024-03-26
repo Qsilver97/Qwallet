@@ -1,7 +1,7 @@
 const createModule = require('./utils/a.out.js');
 const io = require('socket.io-client');
 
-const baseURL = `http://localhost:3000`;
+const baseURL = `http://127.0.0.1:3000`;
 
 const socket = io(baseURL);
 
