@@ -15,8 +15,10 @@ const Cli: React.FC = () => {
     const [children, setChildren] = useState<Array<JSX.Element>>([]);
 
     const addChild = (value: string) => {
-        const newChild = <ChildComponent value={value} key={children.length} />;
-        setChildren([newChild, ...children]);
+        setChildren(currentChildren => {
+            const newChild = <ChildComponent value={value} key={currentChildren.length} />;
+            return [newChild, ...currentChildren];
+        });
     };
 
     const handleCommand = (e: any) => {
@@ -38,6 +40,10 @@ const Cli: React.FC = () => {
 
         })
     }
+
+    useEffect(() => {
+        console.log(children);
+    }, [children])
 
     useEffect(() => {
         if (socket) {
