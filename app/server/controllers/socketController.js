@@ -20,6 +20,10 @@ module.exports = function (io) {
             liveSocket.send(msg);
         })
 
+        socket.on('broadcast', (msg) => {
+            socket.broadcast.emit(msg.command, msg.value);
+        })
+
         socket.on('disconnect', () => {
 
         });
