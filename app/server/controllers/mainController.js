@@ -1,8 +1,33 @@
+const { spawn } = require('child_process');
 const wasmManager = require('../managers/wasmManager');
 const stateManager = require('../managers/stateManager');
 const socketManager = require('../managers/socketManager');
 const { delay } = require('../utils/helpers');
 const liveSocketController = require('./liveSocketController');
+
+const wasmChild = spawn('node', ['./command.js']);
+
+wasmChild.stdout.on('data', (data) => {
+    console.log(data.toString())
+    const io = socketManager.getIO();
+    io.emit('log', { value: data.toString(), flag: 'log' });
+})
+
+wasmChild.stderr.on('data', (data) => {
+    // console.log(data.toString(), 'error')
+    // socket.emit('log', { value: `ERROR: ${data.toString()}`, flag: 'log' });
+});
+
+wasmChild.on('close', (code) => {
+    // console.log(code, 'sss')
+})
+
+exports.cli = async (req, res) => {
+    console.log(req.body)
+    const io = socketManager.getIO();
+    io.emit('qwallet', req.body);
+    res.send('success');
+}
 
 exports.ccall = async (req, res) => {
     const result = await wasmManager.ccall(req.body);
@@ -22,7 +47,7 @@ exports.createAccount = async (req, res) => {
 exports.login = async (req, res) => {
     let password;
     stateManager.init();
-    await socketManager.initLiveSocket();
+    const liveSocket = await socketManager.initLiveSocket();
     const resultFor24words = await wasmManager.ccall({ command: `checkavail ${req.body.password}`, flag: 'login' });
     const resultFor55chars = await wasmManager.ccall({ command: `checkavail Q${req.body.password}`, flag: 'login' });
     console.log(req.body.password, resultFor24words, resultFor55chars);
@@ -39,30 +64,29 @@ exports.login = async (req, res) => {
     const localSubshash = result.value.display.subshash;
     stateManager.setLocalSubshash(localSubshash);
 
-    const liveSocket = socketManager.getLiveSocket()
     liveSocketController(liveSocket);
-    await delay(100);
+    await delay(1000);
     liveSocket.send('clearderived');
 
     const addresses = result.value.display.addresses;
-    await delay(50);
+    await delay(200);
     liveSocket.send(addresses[0]);
 
-    await delay(50)
+    await delay(200)
     const hexResult = await wasmManager.ccall({ command: `logintx ${password}`, flag: 'logintx' });
     console.log(hexResult.value.display, 'qqqqq')
     liveSocket.send(hexResult.value.display);
-    await delay(50)
+    await delay(200)
 
     for (let idx = 1; idx < addresses.length; idx++) {
         if (addresses[idx] != "") {
             console.log(`+${idx} ${addresses[idx]}`)
-            await delay(5)
+            await delay(50)
             liveSocket.send(`+${idx} ${addresses[idx]}`)
         }
     }
 
-    await delay(50);
+    await delay(200);
     const remoteSubshas = stateManager.getRemoteSubshash();
     console.log('1', remoteSubshas, '2', localSubshash)
     if ((localSubshash != "") && (remoteSubshas == localSubshash)) {
@@ -86,9 +110,7 @@ exports.fetchUser = async (req, res) => {
 }
 
 exports.deleteAccount = async (req, res) => {
-    const password = req.body.password;
-    const index = req.body.index;
-    const address = req.body.address;
+    const { password, index, address } = req.body;
     const socket = socketManager.getIO();
     const liveSocket = socketManager.getLiveSocket();
     if (index == 0) {
@@ -109,10 +131,10 @@ exports.deleteAccount = async (req, res) => {
     const hexResult = await wasmManager.ccall({ command: `logintx ${password}`, flag: 'logintx' });
     liveSocket.send(hexResult.value.display);
 
-    await delay(50);
+    await delay(1000);
     liveSocket.send(`-${index} ${address}`);
 
-    await delay(50);
+    await delay(1000);
     const remoteSubshas = stateManager.getRemoteSubshash();
 
     if ((localSubshash != "") && (remoteSubshas == localSubshash)) {
@@ -126,8 +148,7 @@ exports.deleteAccount = async (req, res) => {
 }
 
 exports.addAccount = async (req, res) => {
-    const password = req.body.password;
-    const index = req.body.index;
+    const { password, index } = req.body;
     const socket = socketManager.getIO();
     const liveSocket = socketManager.getLiveSocket();
 
@@ -144,11 +165,11 @@ exports.addAccount = async (req, res) => {
     liveSocket.send(hexResult.value.display);
 
 
-    await delay(50);
+    await delay(1000);
     console.log(`+${index} ${addResult.value.display}`)
     liveSocket.send(`+${index} ${addResult.value.display}`)
 
-    await delay(50)
+    await delay(1000)
     const remoteSubshas = stateManager.getRemoteSubshash()
 
     if ((localSubshash != "") && (remoteSubshas == localSubshash)) {
@@ -158,5 +179,40 @@ exports.addAccount = async (req, res) => {
         res.send(userState);
     } else {
         res.status(401).send('not synced');
+    }
+}
+
+exports.restoreAccount = async (req, res) => {
+    const { password, seeds, seedType } = req.body;
+    let command = null;
+    console.log(password, seeds, seedType);
+    if (seedType == '24words') {
+        command = `addseed ${password},${seeds.join(' ')}`;
+    } else if (seedType == '55chars') {
+        command = `addseed ${password},${seeds}`;
+    }
+    if (command == null) {
+        res.status(401).send('error');
+        return;
+    }
+    const recoverResult = await wasmManager.ccall({ command, flag: 'recover' });
+    console.log(recoverResult)
+    res.send(recoverResult)
+}
+
+exports.transfer = async (req, res) => {
+    const { toAddress, fromIdx, amount, tick } = req.body;
+    const command = `send ${stateManager.getUserState().password},${fromIdx},${tick},${toAddress},${amount}`;
+    const sendResult = await wasmManager.ccall({ command, flag: 'transfer' });
+    const v1requestResult = await wasmManager.ccall({ command: 'v1request', flag: 'v1request' });
+    if (v1requestResult.value.result == 0 && v1requestResult.value.display) {
+        const livesocket = socketManager.getLiveSocket();
+        console.log(v1requestResult.value.display, 'bbbbbbbbb');
+        livesocket.send(v1requestResult.value.display);
+        res.send('pending')
+        return;
+    } else {
+        res.status(401).send('failed');
+        return;
     }
 }

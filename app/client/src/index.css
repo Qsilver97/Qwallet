@@ -1,3 +1,46 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* For webkit browsers like Chrome and Safari */
+::-webkit-scrollbar {
+    width: 12px;
+    /* Width of the entire scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: #1e1e24;
+    /* Color of the tracking area */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #5c5c6d;
+    /* Color of the scroll thumb */
+    border-radius: 10px;
+    border: 3px solid #1e1e24;
+    /* Creates padding around the scroll thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #787880;
+    /* Color of the scroll thumb on hover */
+}
+
+/* For Firefox */
+* {
+    scrollbar-width: thin;
+    /* "auto" or "thin" */
+    scrollbar-color: #5c5c6d #1e1e24;
+    /* thumb and track color */
+}

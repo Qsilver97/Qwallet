@@ -1,4 +1,4 @@
-import { faCopy, faGear, faPlus, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCopy, faPlus, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import Modal from "../components/common/Modal";
@@ -10,6 +10,8 @@ import axios from "axios";
 import { SERVER_URL } from "../utils/constants";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { toast } from "react-toastify";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const Dashboard: React.FC = () => {
     const { login, logout, user } = useAuth();
@@ -20,6 +22,8 @@ const Dashboard: React.FC = () => {
     const toggleAccountModal = () => setIsAccountModalOpen(!isAccountModalOpen);
     const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState<boolean>(false);
     const toggleDeleteAccountModal = () => setIsDeleteAccountModalOpen(!isDeleteAccountModalOpen);
+    const [isTransferModalOpen, setIsTransferModalOpen] = useState<boolean>(false);
+    const toggleTransferModal = () => setIsTransferModalOpen(!isTransferModalOpen);
 
     const { tick, balances } = useSelector((state: RootState) => state.app);
 
@@ -28,6 +32,10 @@ const Dashboard: React.FC = () => {
     const [allAddresses, setAllAddresses] = useState<string[]>([]);
     const [addingStatus, setAddingStatus] = useState<boolean>(false);
     const [deletingStatus, setDeletingStatus] = useState<boolean>(false);
+    const [toAddress, setToAddress] = useState<string>("");
+    const [amount, setAmount] = useState<string>("");
+    const [sendingStatus, setSendingStatus] = useState<'open' | 'pending' | 'closed' | 'rejected'>('closed');
+    const [statusInterval, _] = useState<any>();
 
     const handleAddAccount = () => {
         if (addingStatus) return;
@@ -80,13 +88,58 @@ const Dashboard: React.FC = () => {
     }
 
     const handleTransfer = () => {
-        socket?.emit('send', 'MVPYRACGNJBMJGDLLAXUDXHXFOXBOBWCBZQBAXSUTGJXOBRLZVCTBDPCXPMK')
+        if (toAddress == "" || amount == "" || amount == "0") {
+            toast.error(
+                `Invalid address or amount!`
+            );
+            return;
+        }
+        setSendingStatus('open');
+        axios.post(
+            `${SERVER_URL}/api/transfer`,
+            {
+                toAddress,
+                fromIdx: allAddresses.indexOf(currentAddress),
+                amount,
+                tick: parseInt(tick) + 3,
+            }
+        ).then((_) => {
+            // const _statusInterval = setInterval(() => {
+            //     axios.post(
+            //         `${SERVER_URL}/api/ccall`,
+            //         {
+            //             command: 'status 1',
+            //             flag: 'status'
+            //         }
+            //     ).then((resp) => {
+            //         console.log(resp.data);
+            //         if(resp.data.value.result == '0') {
+            //             setSendingStatus('closed');
+            //         }else if(resp.data.value.result == '1'){
+            //             setSendingStatus('pending');
+            //         }
+            //     }).catch((error) => {
+            //         console.log(error.response);
+            //     })
+            // }, 1000)
+            // setStatusInterval(_statusInterval);
+            // console.log(resp.data);
+            setSendingStatus('closed');
+        }).catch((_) => {
+            setSendingStatus('rejected');
+        }).finally(() => {
+        });
     }
 
     const handleClickAccount = (address: string) => {
         setCurrentAddress(address);
         toggleAccountModal();
     }
+
+    const handleSelectAccount = (address: string) => {
+        setCurrentAddress(address);
+    }
+
 
     useEffect(() => {
         // if (socket) {
@@ -102,12 +155,35 @@ const Dashboard: React.FC = () => {
     }, [socket])
 
     useEffect(() => {
+        if (sendingStatus == 'open' || sendingStatus == 'pending') {
+            setIsTransferModalOpen(true);
+        } else {
+            setIsTransferModalOpen(false);
+            clearInterval(statusInterval);
+        }
+    }, [sendingStatus])
+
+    useEffect(() => {
         if (user?.accountInfo) {
             setCurrentAddress(user?.accountInfo.addresses[0])
             setAllAddresses(user?.accountInfo.addresses)
         }
 
     }, [login, user])
+
+    useEffect(() => {
+        axios.post(
+            `${SERVER_URL}/api/ccall`,
+            {
+                command: 'status 1',
+                flag: 'status'
+            }
+        ).then((resp) => {
+            console.log(resp.data);
+        }).catch((error) => {
+            console.log(error.response);
+        })
+    }, [])
 
     return (
         <>
@@ -116,25 +192,40 @@ const Dashboard: React.FC = () => {
                     <div className="cursor-pointer">
                         <img src="images/logo.png" className="w-[50px]" />
                     </div>
-                    <div className="cursor-pointer" onClick={toggleAccountModal}>
+                    <div className="cursor-pointer" onClick={() => handleCopy(currentAddress)}>
                         <span className="p-[5px] shadow-[0_2px_3px_rgba(0,0,0,0.5)] rounded-[5px]">
                             {currentAddress}
                             {/* <FontAwesomeIcon icon={faArrowDown} /> */}
                         </span>
                     </div>
                     <div className="flex items-center gap-[10px] cursor-pointer">
-                        <FontAwesomeIcon className="text-[32px]" icon={faGear} onClick={handleLogout} />
+                        <a className="text-[18px] bg-[#1e2975] px-2 rounded-[5px]" onClick={handleLogout} >Logout</a>
+                        {/* <FontAwesomeIcon className="text-[32px]" icon={faGear} onClick={handleLogout} /> */}
                     </div>
                 </header>
                 <div className="p-[20px_60px] ">
-                    <div>
+                    <div className="flex gap-5">
                         <h3 className="text-[1.75rem]">Balance: {Object.values(balances).reduce((sum, balance) => sum + balance, 0)}</h3>
                         <h3 className="text-[1.75rem]">Tick: {tick}</h3>
                     </div>
+                    <div className="flex gap-5 w-full h-full overflow-auto overflow-y-hidden p-5 border-[1.5px] border-[#17517a] rounded-[5px] mt-2">
+                        <div className={`p-2 cursor-pointer flex items-center align-middle shadow-[2px_2px_2px_2px_rgba(0,0,0,0.3)] ${addingStatus ? "cursor-wait" : "cursor-pointer"}`} onClick={handleAddAccount}>
+                            <FontAwesomeIcon icon={faPlus} className="p-3 text-[24px]" />
+                        </div>
+                        {
+                            allAddresses.map((item, idx) => {
+                                if (item != "")
+                                    return <div className={`p-2 cursor-pointer flex items-center flex-col ${currentAddress == item ? " shadow-[2px_2px_2px_2px_rgba(0,0,0,0.6)] bg-[#17517a] " : " shadow-[2px_2px_2px_2px_rgba(0,0,0,0.3)] "}`} key={`item${idx}`} onClick={() => handleSelectAccount(item)} onContextMenu={(e) => { e.preventDefault(); setDeleteAccount(item); toggleDeleteAccountModal() }}>
+                                        <div>{`${item.slice(0, 5)}...${item.slice(-5)}`}</div>
+                                        <span>{balances[item] | 0}</span>
+                                    </div>
+                            })
+                        }
+                    </div>
                     <div className="mt-[20px]">
                         <div className="">
-                            <input className="text-white p-[10px] mr-[5px] border-[1.5px] border-[#17517a] rounded-[5px] w-[720px] outline-none bg-transparent" />
-                            <input className="text-white p-[10px] mr-[5px] border-[1.5px] border-[#17517a] rounded-[5px] w-[120px] outline-none bg-transparent " />
+                            <input className="text-white p-[10px] mr-[5px] border-[1.5px] border-[#17517a] rounded-[5px] w-[720px] outline-none bg-transparent" placeholder="Address" onChange={(e) => setToAddress(e.target.value)} />
+                            <input className="text-white p-[10px] mr-[5px] border-[1.5px] border-[#17517a] rounded-[5px] w-[120px] outline-none bg-transparent" placeholder="Amount" onChange={(e) => setAmount(e.target.value)} type="number" />
                             <button className="outline-none p-[10px_20px] bg-[#17517a] border-none rounded-[5px] text-white text-[16px] cursor-pointer transition-bg duration-300 ease" onClick={handleTransfer}>Send</button>
                         </div>
                         <div className="mt-[40px] max-h-[1000px] overflow-auto">
@@ -168,7 +259,7 @@ const Dashboard: React.FC = () => {
                             if (item != "")
                                 return <div className="flex justify-between items-center gap-[20px]" key={`address-${idx}`}>
                                     <FontAwesomeIcon className="cursor-pointer" icon={faCopy} onClick={() => handleCopy(item)} />
-                                    <span className="cursor-pointer" onClick={() => { handleClickAccount(item) }}>{item}</span>
+                                    <span className="font-mono cursor-pointer" onClick={() => { handleClickAccount(item) }}>{item}</span>
                                     <FontAwesomeIcon className="cursor-pointer" icon={faTrash} onClick={() => { setDeleteAccount(item); toggleDeleteAccountModal(); }} />
                                 </div>
                         })
@@ -189,6 +280,30 @@ const Dashboard: React.FC = () => {
                         <a className="cursor-pointer bg-[#5468ff] px-4 hover:bg-[#3f4cb1]" onClick={toggleDeleteAccountModal}>No</a>
                     </div>
                 </div>
+            </Modal>
+            <Modal isOpen={isTransferModalOpen}>
+                {/* <div className='flex justify-between p-[10px_16px] items-center border-b border-white text-[1.25rem]'>
+                    <div>Sending</div>
+                    <div className="flex gap-[10px]">
+                        <FontAwesomeIcon icon={faTimes} onClick={toggleTransferModal} className='cursor-pointer' />
+                    </div>
+                </div> */}
+                {
+                    (sendingStatus == 'closed' || sendingStatus == 'rejected') &&
+                    <div className='flex justify-between p-[10px_16px] items-center text-[1.25rem] gap-5'>
+                        <div>{sendingStatus == 'closed' ? "Success" : "Failed"}</div>
+                        <div className="flex gap-[10px]">
+                            <FontAwesomeIcon icon={faTimes} onClick={toggleTransferModal} className='cursor-pointer' />
+                        </div>
+                    </div>
+                }
+                {
+                    (sendingStatus == 'open' || sendingStatus == 'pending') &&
+                    <div className="p-[10px_16px] max-h-[500px] overflow-y-auto mb-[10px] flex flex-col gap-5 items-center">
+                        <div className="text-[24px]">Sending</div>
+                        <ClipLoader />
+                    </div>
+                }
             </Modal>
         </>
     )

@@ -58,7 +58,7 @@ const Login: React.FC = () => {
     }
 
     const handleRestore = () => {
-        // navigate('/restore');
+        navigate('/restore');
     }
 
     const handlePasswordChange = (value: string) => {
