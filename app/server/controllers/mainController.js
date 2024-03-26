@@ -1,40 +1,40 @@
 const path = require('path');
-const { spawn } = require('child_process');
+// const { spawn } = require('child_process');
 const wasmManager = require('../managers/wasmManager');
 const stateManager = require('../managers/stateManager');
 const socketManager = require('../managers/socketManager');
 const { delay } = require('../utils/helpers');
 const liveSocketController = require('./liveSocketController');
 
-let commandPath;
+// let commandPath;
 
-if (process.pkg) {
-    commandPath = path.join(path.dirname(process.execPath), '/command.js');
-} else {
-    commandPath = path.resolve(__dirname, '../command.js');
-}
+// if (process.pkg) {
+//     commandPath = path.join(path.dirname(process.execPath), '/command.js');
+// } else {
+//     commandPath = path.resolve(__dirname, '../command.js');
+// }
 
-const wasmChild = spawn('node', [commandPath]);
+// const wasmChild = spawn('node', [commandPath]);
 
-wasmChild.stdout.on('data', (data) => {
-    console.log(data.toString())
-    const io = socketManager.getIO();
-    io.emit('log', { value: data.toString(), flag: 'log' });
-})
+// wasmChild.stdout.on('data', (data) => {
+//     console.log(data.toString())
+//     const io = socketManager.getIO();
+//     io.emit('log', { value: data.toString(), flag: 'log' });
+// })
 
-wasmChild.stderr.on('data', (data) => {
-    console.log(data.toString(), 'error')
-    // socket.emit('log', { value: `ERROR: ${data.toString()}`, flag: 'log' });
-});
+// wasmChild.stderr.on('data', (data) => {
+//     console.log(data.toString(), 'error')
+//     // socket.emit('log', { value: `ERROR: ${data.toString()}`, flag: 'log' });
+// });
 
-wasmChild.on('close', (code) => {
-    console.log(code, 'sss')
-})
+// wasmChild.on('close', (code) => {
+//     console.log(code, 'sss')
+// })
 
 exports.cli = async (req, res) => {
-    console.log(req.body)
-    const io = socketManager.getIO();
-    io.emit('qwallet', req.body);
+//     console.log(req.body)
+//     const io = socketManager.getIO();
+//     io.emit('qwallet', req.body);
     res.send('success');
 }
 
