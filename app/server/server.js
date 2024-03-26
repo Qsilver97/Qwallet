@@ -62,8 +62,8 @@ http.listen(PORT, '0.0.0.0', () => {
 function createWindow() {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1024,
+        height: 768,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
@@ -71,7 +71,7 @@ function createWindow() {
 
     // Load your Express app
     mainWindow.loadURL('http://localhost:3000');
-
+    mainWindow.maximize();
     // Open the DevTools.
     // mainWindow.webContents.openDevTools();
 }
