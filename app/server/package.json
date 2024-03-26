@@ -37,6 +37,7 @@
     ]
   },
   "devDependencies": {
+    "electron": "^29.1.5",
     "pkg": "^5.8.1"
   }
 }

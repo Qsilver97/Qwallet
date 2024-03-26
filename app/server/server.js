@@ -1,3 +1,4 @@
+const { app: electronApp, BrowserWindow } = require('electron');
 const fs = require('fs').promises;
 const path = require('path');
 const express = require('express');
@@ -56,4 +57,41 @@ app.get('*', (req, res) => {
 // Start the HTTP server listening on the specified port
 http.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
+});
+
+function createWindow() {
+    // Create the browser window.
+    const mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js')
+        }
+    });
+
+    // Load your Express app
+    mainWindow.loadURL('http://localhost:3000');
+
+    // Open the DevTools.
+    // mainWindow.webContents.openDevTools();
+}
+
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+electronApp.whenReady().then(() => {
+    createWindow();
+
+    electronApp.on('activate', function () {
+        // On macOS it's common to re-create a window in the app when the
+        // dock icon is clicked and there are no other windows open.
+        if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    });
+});
+
+// Quit when all windows are closed, except on macOS. There, it's common
+// for applications and their menu bar to stay active until the user quits
+// explicitly with Cmd + Q.
+electronApp.on('window-all-closed', function () {
+    if (process.platform !== 'darwin') electronApp.quit();
 });
