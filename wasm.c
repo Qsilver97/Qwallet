@@ -790,7 +790,8 @@ int main()
     MAIN_count++;
     MAIN_THREAD_EM_ASM(
                        FS.mkdir('/qwallet');
-           // FS.mount(IDBFS, {}, '/qwallet');
+                        FS.mkdir('/qwallet/keys');
+          // FS.mount(IDBFS, {}, '/qwallet');
            FS.mount(NODEFS, { root: '.' }, '/qwallet');
            FS.syncfs(true, function (err) {
              assert(!err); });
