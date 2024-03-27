@@ -15,3 +15,6 @@ start:
 
 dev:
 	cd app/server && npm run dev
+
+release:
+	cd app/server && npx electron-packager . --overwrite --platform=darwin --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f
