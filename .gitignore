@@ -31,5 +31,4 @@ dist-ssr
 *.sln
 *.sw?
 
-!app/server/dist
 app/server/release-builds

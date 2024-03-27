@@ -8,7 +8,10 @@ deletekeys:
 	find app/server/keys -type f ! -name '.gitkeep' -exec rm {} +
 
 prepare:
-	make build && cd app/client && npm install && npm run build && cd ../server && npm install
+	cd app/server && npm install && rm -rf dist && mkdir dist && cd ../client && npm install && npm run build
 
 start:
 	cd app/server && npm start
+
+dev:
+	cd app/server && npm run dev
