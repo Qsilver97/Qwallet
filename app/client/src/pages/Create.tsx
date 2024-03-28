@@ -19,13 +19,16 @@ const Create: React.FC = () => {
 
     const { seedType, password } = useSelector((state: RootState) => state.app)
 
+    const [step, setStep] = useState<'password' | 'seedType'>('password');
     const [passwordInputType, setPasswordInputType] = useState<string>('password');
     const [confirmPassword, setConfirmPassword] = useState<string>();
     const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
+    const [creatingStatus, setCreatingStatus] = useState<boolean>(false);
 
     const handleCreate = () => {
-        let passwordPrefix = ''
-        if (seedType == '55chars') passwordPrefix = 'Q'
+        setCreatingStatus(true);
+        let passwordPrefix = '';
+        if (seedType == '55chars') passwordPrefix = 'Q';
         axios.post(
             `${SERVER_URL}/api/ccall`,
             {
@@ -34,17 +37,19 @@ const Create: React.FC = () => {
             }
         ).then((resp: any) => {
             console.log(resp)
-            if(resp.data.value.result == 0 && resp.data.value.seedpage == 1) {
+            if (resp.data.value.result == 0 && resp.data.value.seedpage == 1) {
                 const seeds = resp.data.value.display.split(' ')
-                if(seeds.length == 1){
+                if (seeds.length == 1) {
                     dispatch(setSeeds(seeds[0]))
-                }else {
+                } else {
                     dispatch(setSeeds(seeds));
                 }
                 navigate(`/backup`)
             }
         }).catch((error) => {
             console.error(error)
+        }).finally(() => {
+            setCreatingStatus(false);
         })
     }
 
@@ -101,43 +106,61 @@ const Create: React.FC = () => {
                 <img className="mx-auto" src="images/logo.png" width="100px" />
                 <h2 className="my-[15px] mx-auto text-light dark:text-dark text-[2rem]">Create</h2>
                 <div className="mb-[20px] leading-[25px] text-[1rem] font-normal">
-                    There are two ways to create your account.
+                    {step == 'password' &&
+                        "Secure your account with a new password."
+                    }
+                    {step == 'seedType' &&
+                        "There are two ways to create your account."
+                    }
                 </div>
                 <div className="relative">
-                    <div className="flex justify-evenly mb-3">
-                        <Radio
-                            label="24 Words"
-                            name="options"
-                            value="24words"
-                            checked={seedType === '24words'}
-                            onChange={handleSeedType}
-                        />
-                        <Radio
-                            label="55 Chars"
-                            name="options"
-                            value="55chars"
-                            checked={seedType === '55chars'}
-                            onChange={handleSeedType}
-                        />
-                    </div>
-                    {/* <p className="check-available">Password does not exist!</p> */}
-                    <div className="relative">
-                        <Input inputType={passwordInputType} onChange={handlePassword} placeHolder="Password" />
-                        {
-                            !passwordStatus &&
-                            <p className="w-full text-left text-red-600">Password already exist.</p>
-                        }
-                        <FontAwesomeIcon onClick={handleEye} icon={(passwordInputType == 'password' ? faEye : faEyeSlash)} className="absolute top-[15px] right-3 text-gray-500 cursor-pointer" />
-                        <Input inputType={passwordInputType} onChange={handleConfirmPassword} placeHolder="Confirm password" />
-                        {
-                            password != confirmPassword &&
-                            <p className="w-full text-left text-red-600">Password does not match.</p>
-                        }
-                    </div>
-                    <div className="flex gap-2">
-                        <Button buttonValue="Back" onClick={handleBack} />
-                        <Button buttonValue="Create" onClick={handleCreate} disabled={!passwordStatus || (password != confirmPassword) || (password == "")} />
-                    </div>
+                    {
+                        step == 'password' &&
+                        <>
+                            <div className="relative">
+                                <Input inputType={passwordInputType} onChange={handlePassword} placeHolder="Password" />
+                                {
+                                    !passwordStatus &&
+                                    <p className="w-full text-left text-red-600">Password already exist.</p>
+                                }
+                                <FontAwesomeIcon onClick={handleEye} icon={(passwordInputType == 'password' ? faEye : faEyeSlash)} className="absolute top-[15px] right-3 text-gray-500 cursor-pointer" />
+                                <Input inputType={passwordInputType} onChange={handleConfirmPassword} placeHolder="Confirm password" />
+                                {
+                                    password != confirmPassword &&
+                                    <p className="w-full text-left text-red-600">Password does not match.</p>
+                                }
+                            </div>
+                            <div className="flex gap-2">
+                                <Button buttonValue="Back" onClick={handleBack} />
+                                <Button buttonValue="Next" onClick={() => { setStep('seedType') }} disabled={!passwordStatus || (password != confirmPassword) || (password == "")} />
+                            </div>
+                        </>
+                    }
+                    {
+                        step == 'seedType' &&
+                        <>
+                            <div className="flex justify-evenly mb-3">
+                                <Radio
+                                    label="24 Words"
+                                    name="options"
+                                    value="24words"
+                                    checked={seedType === '24words'}
+                                    onChange={handleSeedType}
+                                />
+                                <Radio
+                                    label="55 Chars"
+                                    name="options"
+                                    value="55chars"
+                                    checked={seedType === '55chars'}
+                                    onChange={handleSeedType}
+                                />
+                            </div>
+                            <div className="flex gap-2">
+                                <Button buttonValue="Back" onClick={() => { setStep('password') }} />
+                                <Button buttonValue="Create" onClick={handleCreate} disabled={creatingStatus} />
+                            </div>
+                        </>
+                    }
                 </div>
             </div>
         </>
