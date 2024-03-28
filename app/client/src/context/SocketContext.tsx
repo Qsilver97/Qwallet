@@ -32,13 +32,17 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, wsUrl 
     useEffect(() => {
         const newSocket = io(wsUrl);
         setSocket(newSocket);
-        
+
         newSocket.on('live', (data) => {
             console.log(data);
             if (data.command == 'CurrentTickInfo') {
                 dispatch(setTick(data.tick));
             } else if (data.command == 'EntityInfo') {
-                dispatch(setBalances({[data.address]: parseFloat(data.balance)}));
+                // dispatch(setBalances({ [data.address]: parseFloat(data.balance) }));
+            } else if (data.balances) {
+                data.balances.map((item: [number, string]) => {
+                    dispatch(setBalances({ index: item[0], balance: item[1] }));
+                })
             }
         })
 
