@@ -23,6 +23,7 @@ const Restore: React.FC = () => {
     const [confirmPassword, setConfirmPassword] = useState<string>();
     const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
     const [step, setStep] = useState<'1' | '2'>('1');
+    const [passwordStep, setPasswordStep] = useState<boolean>(true);
     const [restoreSeeds, setRestoreSeeds] = useState<string | string[]>([]);
     const [recovering, setRecovering] = useState<boolean>(false);
 
@@ -122,43 +123,57 @@ const Restore: React.FC = () => {
                         <img className="mx-auto" src="images/logo.png" width="100px" />
                         <h2 className="my-[15px] mx-auto text-light dark:text-dark text-[2rem]">Restore</h2>
                         <div className="mb-[20px] leading-[25px] text-[1rem] font-normal">
-                            There are two ways to restore your account.
+                            {
+                                passwordStep ?
+                                    "Secure your account with a new password." :
+                                    "There are two ways to restore your account."
+                            }
                         </div>
                         <div className="relative">
-                            <div className="flex justify-evenly mb-3">
-                                <Radio
-                                    label="24 Words"
-                                    name="options"
-                                    value="24words"
-                                    checked={seedType === '24words'}
-                                    onChange={handleSeedType}
-                                />
-                                <Radio
-                                    label="55 Chars"
-                                    name="options"
-                                    value="55chars"
-                                    checked={seedType === '55chars'}
-                                    onChange={handleSeedType}
-                                />
-                            </div>
-                            {/* <p className="check-available">Password does not exist!</p> */}
-                            <div className="relative">
-                                <Input inputType={passwordInputType} onChange={handlePassword} placeHolder="Password" />
-                                {
-                                    !passwordStatus &&
-                                    <p className="w-full text-left text-red-600">Password already exist.</p>
-                                }
-                                <FontAwesomeIcon onClick={handleEye} icon={(passwordInputType == 'password' ? faEye : faEyeSlash)} className="absolute top-[15px] right-3 text-gray-500 cursor-pointer" />
-                                <Input inputType={passwordInputType} onChange={handleConfirmPassword} placeHolder="Confirm password" />
-                                {
-                                    password != confirmPassword &&
-                                    <p className="w-full text-left text-red-600">Password does not match.</p>
-                                }
-                            </div>
-                            <div className="flex gap-2">
-                                <Button buttonValue="Back" onClick={handleBack} />
-                                <Button buttonValue="Next" onClick={() => setStep('2')} disabled={!passwordStatus || (password != confirmPassword) || (password == "")} />
-                            </div>
+                            {
+                                passwordStep ?
+                                    <>
+                                        <div className="relative">
+                                            <Input inputType={passwordInputType} onChange={handlePassword} placeHolder="Password" />
+                                            {
+                                                !passwordStatus &&
+                                                <p className="w-full text-left text-red-600">Password already exist.</p>
+                                            }
+                                            <FontAwesomeIcon onClick={handleEye} icon={(passwordInputType == 'password' ? faEye : faEyeSlash)} className="absolute top-[15px] right-3 text-gray-500 cursor-pointer" />
+                                            <Input inputType={passwordInputType} onChange={handleConfirmPassword} placeHolder="Confirm password" />
+                                            {
+                                                password != confirmPassword &&
+                                                <p className="w-full text-left text-red-600">Password does not match.</p>
+                                            }
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <Button buttonValue="Back" onClick={handleBack} />
+                                            <Button buttonValue="Next" onClick={() => setPasswordStep(!passwordStep)} disabled={!passwordStatus || (password != confirmPassword) || (password == "")} />
+                                        </div>
+                                    </> :
+                                    <>
+                                        <div className="flex justify-evenly mb-3">
+                                            <Radio
+                                                label="24 Words"
+                                                name="options"
+                                                value="24words"
+                                                checked={seedType === '24words'}
+                                                onChange={handleSeedType}
+                                            />
+                                            <Radio
+                                                label="55 Chars"
+                                                name="options"
+                                                value="55chars"
+                                                checked={seedType === '55chars'}
+                                                onChange={handleSeedType}
+                                            />
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <Button buttonValue="Back" onClick={() => setPasswordStep(!passwordStep)} />
+                                            <Button buttonValue="Next" onClick={() => setStep('2')} />
+                                        </div>
+                                    </>
+                            }
                         </div>
                     </div> :
                     <div className="bg-light dark:bg-dark text-light dark:text-dark max-w-[500px] mx-auto p-[40px] rounded-[10px] shadow-[0_15px_25px_rgba(0,0,0,0.5)] text-center z-0">
