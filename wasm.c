@@ -744,27 +744,8 @@ char *qwallet(char *_args)
             memset(CURRENTRAWTX,0,sizeof(CURRENTRAWTX));
             return(retstr);
         }
-        /*else if ( PENDINGTX.pendingid != 0 && PENDINGTX.txreq == 0 && HAVE_TXTICK > PENDINGTX.pendingtick )
-        {
-            PENDINGTX.txreq = 1;
-            sprintf(PENDINGSTATUS,"checking for %s tick.%d",PENDINGTX.txid,PENDINGTX.pendingtick);
-            return(wasm_result(0,PENDINGTX.txid,0));
-        }
-         else if ( DIDlist != 0 )
-        {
-            for (i=1; i<MAX_INDEX; i++)
-            {
-                if ( ACTIVEADDRS[i][0] != 0 )
-                {
-                    sprintf(buf,"+%d %s",i,ACTIVEADDRS[i]);
-                    memset(ACTIVEADDRS[i],0,sizeof(ACTIVEADDRS[i]));
-                    printf("%s\n",buf);
-                    return(wasm_result(0,buf,0));
-                }
-            }
-            if ( i == MAX_INDEX )
-                DIDlist = 0;
-        }*/
+        else if ( PENDINGTX.beforetick != 0 && PENDINGTX.aftertick == 0 )
+            return(wasm_result(0,PENDINGTX.address,0));
         return(wasm_result(-1,"no request",0));
     }
     return(_qwallet(_args));
