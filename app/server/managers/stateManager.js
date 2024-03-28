@@ -23,7 +23,9 @@ module.exports = {
                 numaddrs: 0,
                 subshash: ""
             }
-        }
+        },
+            remoteSubshas = "";
+        localSubshash = "";
         return userState;
     },
     getUserState: () => {
@@ -46,5 +48,8 @@ module.exports = {
     setLocalSubshash: (subshash) => {
         localSubshash = subshash;
         return subshash;
+    },
+    getLocalSubshash: () => {
+        return localSubshash;
     }
 };
