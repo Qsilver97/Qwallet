@@ -12,6 +12,26 @@ const socketManager = require('./managers/socketManager')
 const wasmManager = require('./managers/wasmManager')
 const stateManager = require('./managers/stateManager')
 const { PORT, FRONTEND_URL } = require('./utils/constants');
+
+const originalConsoleLog = console.log;
+const originalConsoleError = console.error;
+
+console.log = (...args) => {
+    const timestamp = new Date().toISOString();
+    const message = args.map(arg =>
+        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg
+    ).join(" ");
+    originalConsoleLog(`[${timestamp}] ${message}`);
+};
+
+console.error = (...args) => {
+    const timestamp = new Date().toISOString();
+    const message = args.map(arg =>
+        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg
+    ).join(" ");
+    originalConsoleError(message);
+};
+
 exports.startServer = async () => {
 
     async function createDirectoryIfNotExists(directoryPath) {
