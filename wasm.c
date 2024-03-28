@@ -618,7 +618,7 @@ int32_t wssupdate(char *jsonstr)
                 PENDINGTX.beforeinputs = input;
                 PENDINGTX.beforeoutputs = output;
             }
-            else if ( PENDINGTX.beforetick != 0 && PENDINGTX.aftertick == 0 && tick > PENDINGTX.pendingtick )
+            else if ( PENDINGTX.beforetick != 0 && PENDINGTX.aftertick == 0 && tick >= PENDINGTX.pendingtick )
             {
                 PENDINGTX.aftertick = tick;
                 PENDINGTX.afterinputs = input;
