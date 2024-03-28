@@ -8,7 +8,12 @@ interface AppState {
     seeds: string | string[];
     theme: 'light' | 'dark';
     tick: string;
-    balances: {[key: string]: number};
+    balances: string[];
+}
+
+interface UpdateBalancePayload {
+    index: number;
+    balance: string;
 }
 
 // Initial state
@@ -19,7 +24,7 @@ const initialState: | AppState = {
     password: "",
     theme: 'light',
     tick: "",
-    balances: {},
+    balances: Array(100).fill(""),
 };
 
 export const appSlice = createSlice({
@@ -41,8 +46,11 @@ export const appSlice = createSlice({
         setTick: (state, action: PayloadAction<string>) => {
             state.tick = action.payload;
         },
-        setBalances: (state, action: PayloadAction<{[key: string]: number}>) => {
-            state.balances = {...state.balances, ...action.payload};
+        setBalances: (state, action: PayloadAction<UpdateBalancePayload>) => {
+            const { index, balance } = action.payload;
+            if (index >= 0 && index < state.balances.length) {
+                state.balances[index] = balance;
+            }
         },
         toggleTheme: (state) => {
             state.theme = state.theme === 'light' ? 'dark' : 'light';

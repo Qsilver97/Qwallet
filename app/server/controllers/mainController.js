@@ -21,57 +21,67 @@ exports.createAccount = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
-    let password;
-    stateManager.init();
     const liveSocket = await socketManager.initLiveSocket();
-    const resultFor24words = await wasmManager.ccall({ command: `checkavail ${req.body.password}`, flag: 'login' });
-    const resultFor55chars = await wasmManager.ccall({ command: `checkavail Q${req.body.password}`, flag: 'login' });
+    liveSocketController(liveSocket);
+    await delay(1000);
+    const { password } = req.body;
+    let realPassword;
+    stateManager.init();
+    const resultFor24words = await wasmManager.ccall({ command: `checkavail ${password}`, flag: 'login' });
+    const resultFor55chars = await wasmManager.ccall({ command: `checkavail Q${password}`, flag: 'login' });
     if (resultFor24words.value.result != -33 && resultFor55chars.value.result != -33) {
         res.status(401).send('Password does not exist.');
         return
     } else if (resultFor24words.value.result == -33) {
-        password = req.body.password;
+        realPassword = password;
     } else if (resultFor55chars.value.result == -33) {
-        password = `Q${req.body.password}`;
-    }
-    const result = await wasmManager.ccall({ command: `list ${password}`, flag: 'login' });
-    const socket = socketManager.getIO();
-    const localSubshash = result.value.display.subshash;
-    stateManager.setLocalSubshash(localSubshash);
-
-    liveSocketController(liveSocket);
-    await delay(1000);
-    console.log(`Socket sent: clearderived`)
-    liveSocket.send('clearderived');
-
-    const addresses = result.value.display.addresses;
-    await delay(200);
-    console.log(`Socket sent: ${addresses[0]}`)
-    liveSocket.send(addresses[0]);
-
-    await delay(200)
-    const hexResult = await wasmManager.ccall({ command: `logintx ${password}`, flag: 'logintx' });
-    console.log(`Socket sent: ${hexResult.value.display}`)
-    liveSocket.send(hexResult.value.display);
-    await delay(200)
-
-    for (let idx = 1; idx < addresses.length; idx++) {
-        if (addresses[idx] != "") {
-            await delay(50)
-            console.log(`Socket sent: +${idx} ${addresses[idx]}`)
-            liveSocket.send(`+${idx} ${addresses[idx]}`)
-        }
+        realPassword = `Q${password}`;
     }
 
-    await delay(200);
-    const remoteSubshas = stateManager.getRemoteSubshash();
-    if ((localSubshash != "") && (remoteSubshas == localSubshash)) {
+    let listResult;
+
+    async function checkSubshash() {
+        listResult = await wasmManager.ccall({ command: `list ${realPassword}`, flag: 'login' });
+        const socket = socketManager.getIO();
+        const localSubshash = listResult.value.display.subshash;
+        stateManager.setLocalSubshash(localSubshash);
+
+        const addresses = listResult.value.display.addresses;
+        await delay(200);
+        console.log(`Socket sent: ${addresses[0]}`)
+        liveSocket.send(addresses[0]);
+
+        await delay(200)
+        const hexResult = await wasmManager.ccall({ command: `logintx ${realPassword}`, flag: 'logintx' });
+        console.log(`Socket sent: ${hexResult.value.display}`)
+        liveSocket.send(hexResult.value.display);
+        await delay(200)
+
+        const remoteSubshas = stateManager.getRemoteSubshash();
+        console.log(addresses, 2222222);
+        console.log(localSubshash, remoteSubshas, 111111);
+        return (localSubshash != "") && (remoteSubshas == localSubshash);
+    }
+
+    const matchStatus = await checkSubshash();
+
+    if (matchStatus) {
         stateManager.setRemoteSubshash("");
         stateManager.setLocalSubshash("");
-        const userState = stateManager.setUserState({ password, accountInfo: result.value.display, isAuthenticated: true });
+        const userState = stateManager.setUserState({ password: realPassword, accountInfo: listResult.value.display, isAuthenticated: true });
         res.send(userState);
     } else {
-        res.status(401).send('not synced');
+        liveSocket.send('clearderived');
+        await delay(500);
+        const matchStatus = await checkSubshash()
+        if (matchStatus) {
+            stateManager.setRemoteSubshash("");
+            stateManager.setLocalSubshash("");
+            const userState = stateManager.setUserState({ password: realPassword, accountInfo: listResult.value.display, isAuthenticated: true });
+            res.send(userState);
+        } else {
+            res.status(401).send('not synced');
+        }
     }
 }
 
