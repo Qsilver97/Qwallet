@@ -47,11 +47,14 @@ export const appSlice = createSlice({
         toggleTheme: (state) => {
             state.theme = state.theme === 'light' ? 'dark' : 'light';
         },
+        resetState: () => {
+            return initialState;
+        },
     },
 });
 
 // Export actions
-export const { setSeedType, setPassword, setSeeds, setIsAuthenticated, toggleTheme, setTick, setBalances } = appSlice.actions;
+export const { setSeedType, setPassword, setSeeds, setIsAuthenticated, toggleTheme, setTick, setBalances, resetState } = appSlice.actions;
 
 // Export reducer
 export default appSlice.reducer;
