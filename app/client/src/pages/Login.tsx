@@ -8,7 +8,7 @@ import { UserDetailType, useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { setIsAuthenticated, setPassword } from "../redux/appSlice";
+import { resetState, setIsAuthenticated, setPassword } from "../redux/appSlice";
 import axios from "axios";
 import { SERVER_URL } from "../utils/constants";
 import { toast } from "react-toastify";
@@ -38,6 +38,7 @@ const Login: React.FC = () => {
                 }
             ).then((resp) => {
                 console.log(resp.data)
+                dispatch(resetState())
                 const userInfo: UserDetailType = resp.data;
                 dispatch(setIsAuthenticated(true));
                 auth.login(userInfo);

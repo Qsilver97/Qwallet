@@ -13,6 +13,5 @@ router.post('/delete-account', mainController.deleteAccount);
 router.post('/add-account', mainController.addAccount);
 router.post('/restore', mainController.restoreAccount);
 router.post('/transfer', mainController.transfer);
-router.post('/cli', mainController.cli);
 
 module.exports = router;

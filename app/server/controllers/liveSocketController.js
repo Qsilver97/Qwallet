@@ -12,7 +12,7 @@ module.exports = function (liveSocket) {
     });
 
     liveSocket.onmessage = (event) => {
-        console.log(event.data, 'livesocket');
+        console.log(`Socket recieved: ${event.data}`);
         try {
             const data = JSON.parse(event.data)
             if (data.subshash) {

@@ -17,6 +17,7 @@ module.exports = function (io) {
 
         socket.on('send', (msg) => {
             const liveSocket = socketManager.getLiveSocket();
+            console.log(`Socket sent: ${msg}`)
             liveSocket.send(msg);
         })
 
