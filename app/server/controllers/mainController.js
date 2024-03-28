@@ -41,9 +41,7 @@ exports.login = async (req, res) => {
 
     liveSocketController(liveSocket);
     await delay(1000);
-    console.log(`Socket sent: clearderived`)
-    liveSocket.send('clearderived');
-
+    
     const addresses = result.value.display.addresses;
     await delay(200);
     console.log(`Socket sent: ${addresses[0]}`)
@@ -55,15 +53,6 @@ exports.login = async (req, res) => {
     liveSocket.send(hexResult.value.display);
     await delay(200)
 
-    for (let idx = 1; idx < addresses.length; idx++) {
-        if (addresses[idx] != "") {
-            await delay(50)
-            console.log(`Socket sent: +${idx} ${addresses[idx]}`)
-            liveSocket.send(`+${idx} ${addresses[idx]}`)
-        }
-    }
-
-    await delay(200);
     const remoteSubshas = stateManager.getRemoteSubshash();
     if ((localSubshash != "") && (remoteSubshas == localSubshash)) {
         stateManager.setRemoteSubshash("");
