@@ -47,19 +47,17 @@ exports.login = async (req, res) => {
         stateManager.setLocalSubshash(localSubshash);
 
         const addresses = listResult.value.display.addresses;
-        await delay(200);
+        await delay(20);
         console.log(`Socket sent: ${addresses[0]}`)
         liveSocket.send(addresses[0]);
 
-        await delay(200)
+        await delay(20)
         const hexResult = await wasmManager.ccall({ command: `logintx ${realPassword}`, flag: 'logintx' });
         console.log(`Socket sent: ${hexResult.value.display}`)
         liveSocket.send(hexResult.value.display);
-        await delay(200)
+        await delay(20)
 
         const remoteSubshas = stateManager.getRemoteSubshash();
-        console.log(addresses, 2222222);
-        console.log(localSubshash, remoteSubshas, 111111);
         return (localSubshash != "") && (remoteSubshas == localSubshash);
     }
 
@@ -72,9 +70,18 @@ exports.login = async (req, res) => {
         res.send(userState);
     } else {
         liveSocket.send('clearderived');
-        await delay(500);
-        const matchStatus = await checkSubshash()
-        if (matchStatus) {
+        await delay(200);
+        listResult = await wasmManager.ccall({ command: `list ${realPassword}`, flag: 'login' });
+        const addresses = listResult.value.display.addresses;
+        for (let idx = 1; idx < addresses.length; idx++) {
+            if (addresses[idx] && addresses[idx] != "") {
+                await delay(11);
+                liveSocket.send(`+${idx} ${addresses[idx]}`)
+            }
+        }
+        // const matchStatus = await checkSubshash()
+        await delay(1000)
+        if ((stateManager.getLocalSubshash() != "") && (stateManager.getRemoteSubshash() == stateManager.getLocalSubshash())) {
             stateManager.setRemoteSubshash("");
             stateManager.setLocalSubshash("");
             const userState = stateManager.setUserState({ password: realPassword, accountInfo: listResult.value.display, isAuthenticated: true });
