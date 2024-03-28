@@ -16,22 +16,6 @@ const { PORT, FRONTEND_URL } = require('./utils/constants');
 const originalConsoleLog = console.log;
 const originalConsoleError = console.error;
 
-console.log = (...args) => {
-    const timestamp = new Date().toISOString();
-    const message = args.map(arg =>
-        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg
-    ).join(" ");
-    originalConsoleLog(`[${timestamp}] ${message}`);
-};
-
-console.error = (...args) => {
-    const timestamp = new Date().toISOString();
-    const message = args.map(arg =>
-        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg
-    ).join(" ");
-    originalConsoleError(message);
-};
-
 exports.startServer = async () => {
 
     async function createDirectoryIfNotExists(directoryPath) {
@@ -56,6 +40,26 @@ exports.startServer = async () => {
         // Import and use socket controller with initialized WebSocket (io)
         require('./controllers/socketController')(io)
         // require('./controllers/liveSocketController')(liveSocket)
+
+        console.log = (...args) => {
+            const timestamp = new Date().toISOString();
+            const message = args.map(arg =>
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg
+            ).join(" ");
+            const logMessage = `[${timestamp}] ${message}`;
+            io.emit('log', logMessage)
+            originalConsoleLog(logMessage);
+        };
+
+        console.error = (...args) => {
+            const timestamp = new Date().toISOString();
+            const message = args.map(arg =>
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg
+            ).join(" ");
+            const errorMessage = `[${timestamp}] ${message}`;
+            io.emit('log', errorMessage);
+            originalConsoleError(errorMessage);
+        };
     }
 
     init()
