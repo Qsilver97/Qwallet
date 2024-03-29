@@ -13,5 +13,6 @@ router.post('/delete-account', mainController.deleteAccount);
 router.post('/add-account', mainController.addAccount);
 router.post('/restore', mainController.restoreAccount);
 router.post('/transfer', mainController.transfer);
+router.post('/socket', mainController.socket);
 
 module.exports = router;

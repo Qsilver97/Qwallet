@@ -14,17 +14,17 @@ module.exports = {
     },
     getIO: () => {
         if (!io) {
-            throw new Error('Socket.io not initialized!');
+            return false;
         }
         return io;
     },
-    initLiveSocket: async () => {
-        liveSocketClient = await new WebSocket(liveSocketURL);
+    initLiveSocket: () => {
+        liveSocketClient = new WebSocket(liveSocketURL);
         return liveSocketClient;
     },
     getLiveSocket: () => {
         if (!liveSocketClient) {
-            throw new Error('Live socket not initialized!');
+            return false;
         }
         return liveSocketClient;
     }
