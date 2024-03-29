@@ -425,6 +425,15 @@ char *logintxfunc(char **argv,int32_t argc)
     else return(wasm_result(-21,"password has no seed",0));
 }
 
+char *logoutfunc(char **argv,int32_t argc)
+{
+    memset(&PENDINGTX,0,sizeof(PENDINGTX));
+    memset(ACTIVEADDRS,0,sizeof(ACTIVEADDRS));
+    memset(PENDINGRESULT,0,sizeof(PENDINGRESULT));
+    memset(PENDINGSTATUS,0,sizeof(PENDINGSTATUS));
+    return(wasm_result(0,"logged out, any pending tx cleared",0));
+}
+
 int32_t subpubshash(uint32_t *subshashp,uint8_t subpubs[MAX_INDEX][32])
 {
     int32_t i,j,n = 0;
@@ -513,6 +522,7 @@ struct qcommands
     { "checkavail", checkavailfunc, "checkavail password" },
     { "send", sendfunc, "send password,index,txtick,dest,amount[,extrahex]" },
     { "logintx", logintxfunc, "logintx password" },
+    { "logout", logoutfunc, "logout" },
     { "sendmany", sendmanyfunc, "send password,index,txtick,dest,amount[,dest2,amount2,...]" },
 };
 
@@ -698,8 +708,8 @@ char *qwallet(char *_args)
     int32_t i,pendingid;
     char *retstr,buf[512];
     static char retbuf[JSON_BUFSIZE],toggle;
-    //if ( strcmp(_args,"v1request") != 0 )
-    //    printf("qwallet(%s)\n",_args);
+    if ( strcmp(_args,"v1request") != 0 )
+        printf("qwallet(%s)\n",_args);
     if ( strcmp(_args,(char *)"help") == 0 )
     {
         retbuf[0] = 0;
@@ -744,8 +754,10 @@ char *qwallet(char *_args)
             memset(CURRENTRAWTX,0,sizeof(CURRENTRAWTX));
             return(retstr);
         }
-        else if ( PENDINGTX.beforetick != 0 && PENDINGTX.aftertick == 0 )
+        /*else if ( PENDINGTX.beforetick != 0 && PENDINGTX.aftertick == 0 )
+        {
             return(wasm_result(0,PENDINGTX.address,0));
+        }*/
         return(wasm_result(-1,"no request",0));
     }
     return(_qwallet(_args));
@@ -771,8 +783,8 @@ int main()
     MAIN_count++;
     MAIN_THREAD_EM_ASM(
                        FS.mkdir('/qwallet');
-                        FS.mkdir('/qwallet/keys');
-          // FS.mount(IDBFS, {}, '/qwallet');
+                       FS.mkdir('/qwallet/keys');
+           // FS.mount(IDBFS, {}, '/qwallet');
            FS.mount(NODEFS, { root: '.' }, '/qwallet');
            FS.syncfs(true, function (err) {
              assert(!err); });
