@@ -4,6 +4,7 @@ const stateManager = require('../managers/stateManager');
 const socketManager = require('../managers/socketManager');
 const { delay } = require('../utils/helpers');
 const liveSocketController = require('./liveSocketController');
+const socketController = require('./socketController');
 
 exports.ccall = async (req, res) => {
     const result = await wasmManager.ccall(req.body);
@@ -21,7 +22,7 @@ exports.createAccount = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
-    const liveSocket = await socketManager.initLiveSocket();
+    const liveSocket = socketManager.initLiveSocket();
     liveSocketController(liveSocket);
     await delay(1000);
     const { password } = req.body;
@@ -69,6 +70,7 @@ exports.login = async (req, res) => {
         const userState = stateManager.setUserState({ password: realPassword, accountInfo: listResult.value.display, isAuthenticated: true });
         res.send(userState);
     } else {
+        console.log(`Socket sent: clearderived`)
         liveSocket.send('clearderived');
         await delay(200);
         listResult = await wasmManager.ccall({ command: `list ${realPassword}`, flag: 'login' });
@@ -201,13 +203,26 @@ exports.transfer = async (req, res) => {
     const sendResult = await wasmManager.ccall({ command, flag: 'transfer' });
     const v1requestResult = await wasmManager.ccall({ command: 'v1request', flag: 'v1request' });
     if (v1requestResult.value.result == 0 && v1requestResult.value.display) {
-        const livesocket = socketManager.getLiveSocket();
+        const liveSocket = socketManager.getLiveSocket();
         console.log(`Socket sent: ${v1requestResult.value.display}`)
-        livesocket.send(v1requestResult.value.display);
+        liveSocket.send(v1requestResult.value.display);
         res.send('pending')
         return;
     } else {
         res.status(401).send('failed');
         return;
     }
+}
+
+exports.socket = async (req, res) => {
+    const { command } = req.body;
+    let liveSocket = socketManager.getLiveSocket();
+    if (!liveSocket) {
+        liveSocket = socketManager.initLiveSocket();
+        liveSocketController(liveSocket)
+        await delay(500);
+    }
+    console.log(`Socket sent: ${command}`);
+    liveSocket.send(command);
+    res.send('success');
 }

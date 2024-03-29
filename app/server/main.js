@@ -47,7 +47,11 @@ exports.startServer = async () => {
                 typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg
             ).join(" ");
             const logMessage = `[${timestamp}] ${message}`;
-            io.emit('log', logMessage)
+            if (message.startsWith('Socket sent') || message.startsWith('Socket recieved')) {
+                io.emit('socketLog', logMessage);
+            } else {
+                io.emit('log', logMessage)
+            }
             originalConsoleLog(logMessage);
         };
 
