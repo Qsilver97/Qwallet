@@ -754,10 +754,10 @@ char *qwallet(char *_args)
             memset(CURRENTRAWTX,0,sizeof(CURRENTRAWTX));
             return(retstr);
         }
-        else if ( PENDINGTX.beforetick != 0 && PENDINGTX.aftertick == 0 )
+        /*else if ( PENDINGTX.beforetick != 0 && PENDINGTX.aftertick == 0 )
         {
             return(wasm_result(0,PENDINGTX.address,0));
-        }
+        }*/
         return(wasm_result(-1,"no request",0));
     }
     return(_qwallet(_args));
