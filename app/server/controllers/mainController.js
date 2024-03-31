@@ -22,8 +22,12 @@ exports.createAccount = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
-    const liveSocket = socketManager.initLiveSocket();
-    liveSocketController(liveSocket);
+    let liveSocket = socketManager.getLiveSocket();
+    if (!liveSocket) {
+        liveSocket = socketManager.initLiveSocket();
+        liveSocketController(liveSocket)
+        await delay(500);
+    }
     await delay(1000);
     const { password } = req.body;
     let realPassword;
@@ -52,11 +56,11 @@ exports.login = async (req, res) => {
         console.log(`Socket sent: ${addresses[0]}`)
         liveSocket.send(addresses[0]);
 
-        await delay(20)
+        await delay(1500)
         const hexResult = await wasmManager.ccall({ command: `logintx ${realPassword}`, flag: 'logintx' });
         console.log(`Socket sent: ${hexResult.value.display}`)
         liveSocket.send(hexResult.value.display);
-        await delay(20)
+        await delay(200)
 
         const remoteSubshas = stateManager.getRemoteSubshash();
         return (localSubshash != "") && (remoteSubshas == localSubshash);
