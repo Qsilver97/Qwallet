@@ -3,9 +3,10 @@ const path = require('path');
 const { startServer } = require('./main');
 function createWindow() {
     // Create the browser window.
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
     const mainWindow = new BrowserWindow({
-        width: 1024,
-        height: 768,
+        width,
+        height: Math.round(height * 0.8),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
