@@ -1,6 +1,7 @@
 let userState = {};
 let remoteSubshas = "";
 let localSubshash = "";
+let socketState = {};
 
 // export interface AccountDetailType {
 //     addresses: string[],
@@ -51,5 +52,12 @@ module.exports = {
     },
     getLocalSubshash: () => {
         return localSubshash;
+    },
+    updateSocketState: (flag, value) => {
+        socketState[flag] = value;
+        return value;
+    },
+    getSocketState: (flag) => {
+        return socketState[flag];
     }
 };

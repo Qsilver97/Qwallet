@@ -72,7 +72,8 @@ const CliSocket: React.FC = () => {
         if (socket) {
             socket.on('result', (msg) => {
                 setResult(msg);
-                addWasmChild(msg);
+                const timestamp = new Date().toISOString();
+                addWasmChild(`[${timestamp}] result: ${msg}`);
             })
             socket.on('log', (msg) => {
                 addWasmChild(msg);
