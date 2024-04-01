@@ -14,7 +14,7 @@ function createWindow() {
 
     // Load your Express app
     mainWindow.loadURL('http://localhost:3000');
-    mainWindow.maximize();
+    // mainWindow.maximize();
     // Open the DevTools.
     // mainWindow.webContents.openDevTools();
 }
