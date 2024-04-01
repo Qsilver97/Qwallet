@@ -2,7 +2,7 @@ const path = require('path');
 const wasmManager = require('../managers/wasmManager');
 const stateManager = require('../managers/stateManager');
 const socketManager = require('../managers/socketManager');
-const { delay } = require('../utils/helpers');
+const { delay, socketSync } = require('../utils/helpers');
 const liveSocketController = require('./liveSocketController');
 const socketController = require('./socketController');
 
@@ -52,16 +52,16 @@ exports.login = async (req, res) => {
         stateManager.setLocalSubshash(localSubshash);
 
         const addresses = listResult.value.display.addresses;
-        await delay(20);
-        console.log(`Socket sent: ${addresses[0]}`)
-        liveSocket.send(addresses[0]);
-
-        await delay(1500)
+        const addressesResp = await socketSync(addresses[0]);
+        if (!addressesResp) {
+            return 'Socket server error';
+        };
         const hexResult = await wasmManager.ccall({ command: `logintx ${realPassword}`, flag: 'logintx' });
         console.log(`Socket sent: ${hexResult.value.display}`)
-        liveSocket.send(hexResult.value.display);
-        await delay(200)
-
+        const hexLive = await socketSync(hexResult.value.display);
+        if (!hexLive) {
+            return 'Socket server error';
+        };
         const remoteSubshas = stateManager.getRemoteSubshash();
         return (localSubshash != "") && (remoteSubshas == localSubshash);
     }
@@ -73,6 +73,10 @@ exports.login = async (req, res) => {
         stateManager.setLocalSubshash("");
         const userState = stateManager.setUserState({ password: realPassword, accountInfo: listResult.value.display, isAuthenticated: true });
         res.send(userState);
+        return;
+    } else if (matchStatus == 'Socket server error') {
+        res.status(401).send('Socket server error');
+        return;
     } else {
         console.log(`Socket sent: clearderived`)
         liveSocket.send('clearderived');

@@ -1,4 +1,6 @@
-const axios = require('axios')
+const axios = require('axios');
+const socketManager = require('../managers/socketManager');
+const stateManager = require('../managers/stateManager');
 
 exports.delay = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -11,6 +13,29 @@ exports.log = (msg) => {
             msg,
             timestamp: (new Date).toTimeString()
         }
-    ).then((resp) => {console.log(resp.data)})
-    .catch((error) => {console.log(error.response)})
+    ).then((resp) => { })
+        .catch((error) => { })
+}
+
+exports.socketSync = async (value) => {
+    const socket = socketManager.getLiveSocket();
+    const flag = `${Date.now()}`;
+    console.log(`Socket sent new: #${flag} ${value}`)
+    socket.send(`#${flag} ${value}`);
+    for (let i = 1; i < 100; i++) {
+        await this.delay(20);
+        const socketState = stateManager.getSocketState(flag);
+        if (socketState) {
+            return socketState;
+        }
+    }
+    return false
+}
+
+exports.splitAtFirstSpace = (str) => {
+    const index = str.indexOf(' ');
+    if (index === -1) {
+        return [str];
+    }
+    return [str.slice(0, index), JSON.parse(str.slice(index + 1))];
 }
