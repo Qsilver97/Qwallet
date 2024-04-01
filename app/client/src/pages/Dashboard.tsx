@@ -8,13 +8,15 @@ import { useSocket } from "../context/SocketContext";
 import { handleCopy } from "../utils/helper";
 import axios from "axios";
 import { SERVER_URL } from "../utils/constants";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { toast } from "react-toastify";
 import ClipLoader from "react-spinners/ClipLoader";
+import { setBalances } from "../redux/appSlice";
 
 const Dashboard: React.FC = () => {
     const { login, logout, user } = useAuth();
+    const dispatch = useDispatch();
     const socket = useSocket();
     const navigate = useNavigate();
 
@@ -35,7 +37,8 @@ const Dashboard: React.FC = () => {
     const [toAddress, setToAddress] = useState<string>("");
     const [amount, setAmount] = useState<string>("");
     const [sendingStatus, setSendingStatus] = useState<'open' | 'pending' | 'closed' | 'rejected'>('closed');
-    const [statusInterval, _] = useState<any>();
+    const [_, setStatusInterval] = useState<any>();
+    const [sendingResult, setSendingResult] = useState<string>('');
 
     const handleAddAccount = () => {
         if (addingStatus) return;
@@ -101,30 +104,34 @@ const Dashboard: React.FC = () => {
                 toAddress,
                 fromIdx: allAddresses.indexOf(currentAddress),
                 amount,
-                tick: parseInt(tick) + 3,
+                tick: parseInt(tick) + 10,
             }
-        ).then((_) => {
-            // const _statusInterval = setInterval(() => {
-            //     axios.post(
-            //         `${SERVER_URL}/api/ccall`,
-            //         {
-            //             command: 'status 1',
-            //             flag: 'status'
-            //         }
-            //     ).then((resp) => {
-            //         console.log(resp.data);
-            //         if(resp.data.value.result == '0') {
-            //             setSendingStatus('closed');
-            //         }else if(resp.data.value.result == '1'){
-            //             setSendingStatus('pending');
-            //         }
-            //     }).catch((error) => {
-            //         console.log(error.response);
-            //     })
-            // }, 1000)
-            // setStatusInterval(_statusInterval);
-            // console.log(resp.data);
-            setSendingStatus('closed');
+        ).then((resp) => {
+            const _statusInterval = setInterval(() => {
+                axios.post(
+                    `${SERVER_URL}/api/ccall`,
+                    {
+                        command: 'status 1',
+                        flag: 'status'
+                    }
+                ).then((resp) => {
+                    console.log(resp.data);
+                    if (resp.data.value.result == '0') {
+                        setSendingStatus('pending');
+                    } else if (resp.data.value.result == '1') {
+                        setSendingResult(resp.data.value.display);
+                        setSendingStatus('closed');
+                    } else {
+                        setSendingStatus('rejected');
+                    }
+                }).catch((error) => {
+                    console.log(error.response);
+                    setSendingStatus('rejected');
+                })
+            }, 1000)
+            setStatusInterval(_statusInterval);
+            console.log(resp.data);
+            // setSendingStatus('closed');
         }).catch((_) => {
             setSendingStatus('rejected');
         }).finally(() => {
@@ -158,8 +165,7 @@ const Dashboard: React.FC = () => {
         if (sendingStatus == 'open' || sendingStatus == 'pending') {
             setIsTransferModalOpen(true);
         } else {
-            setIsTransferModalOpen(false);
-            clearInterval(statusInterval);
+            // clearInterval(statusInterval);
         }
     }, [sendingStatus])
 
@@ -172,17 +178,17 @@ const Dashboard: React.FC = () => {
     }, [login, user])
 
     useEffect(() => {
-        axios.post(
-            `${SERVER_URL}/api/ccall`,
-            {
-                command: 'status 1',
-                flag: 'status'
-            }
-        ).then((resp) => {
-            console.log(resp.data);
-        }).catch((error) => {
-            console.log(error.response);
-        })
+        if (balances[0] == "") {
+            axios.post(
+                `${SERVER_URL}/api/balances`
+            ).then((resp) => {
+                resp.data.balances.map((item: [number, string]) => {
+                    dispatch(setBalances({ index: item[0], balance: item[1] }));
+                })
+            }).catch((error) => {
+                console.log(error.response);
+            })
+        }
     }, [])
 
     return (
@@ -282,12 +288,6 @@ const Dashboard: React.FC = () => {
                 </div>
             </Modal>
             <Modal isOpen={isTransferModalOpen}>
-                {/* <div className='flex justify-between p-[10px_16px] items-center border-b border-white text-[1.25rem]'>
-                    <div>Sending</div>
-                    <div className="flex gap-[10px]">
-                        <FontAwesomeIcon icon={faTimes} onClick={toggleTransferModal} className='cursor-pointer' />
-                    </div>
-                </div> */}
                 {
                     (sendingStatus == 'closed' || sendingStatus == 'rejected') &&
                     <div className='flex justify-between p-[10px_16px] items-center text-[1.25rem] gap-5'>
@@ -298,11 +298,21 @@ const Dashboard: React.FC = () => {
                     </div>
                 }
                 {
-                    (sendingStatus == 'open' || sendingStatus == 'pending') &&
-                    <div className="p-[10px_16px] max-h-[500px] overflow-y-auto mb-[10px] flex flex-col gap-5 items-center">
-                        <div className="text-[24px]">Sending</div>
-                        <ClipLoader />
-                    </div>
+                    (sendingStatus == 'open' || sendingStatus == 'pending') ?
+                        <div className="p-[10px_16px] max-h-[500px] overflow-y-auto mb-[10px] flex flex-col gap-5 items-center">
+                            <div className="text-[24px]">Sending</div>
+                            <ClipLoader />
+                        </div> :
+                        <>
+                            {sendingStatus == 'closed' ?
+                                <div className="p-[10px_16px] max-h-[500px] overflow-y-auto mb-[10px] flex flex-col gap-5 items-center">
+                                    <div className="text-[24px]">{sendingResult}</div>
+                                </div> :
+                                <div className="p-[10px_16px] max-h-[500px] overflow-y-auto mb-[10px] flex flex-col gap-5 items-center">
+                                    <div className="text-[24px]">Failed</div>
+                                </div>
+                            }
+                        </>
                 }
             </Modal>
         </>

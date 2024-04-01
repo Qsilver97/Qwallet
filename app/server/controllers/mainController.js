@@ -241,3 +241,17 @@ exports.socket = async (req, res) => {
     liveSocket.send(command);
     res.send('success');
 }
+
+exports.balances = async (req, res) => {
+    let liveSocket = socketManager.getLiveSocket();
+    if (!liveSocket) {
+        res.status(401).send('Socket server error.');
+        return
+    }
+    const balanceResult = await socketSync('balances');
+    if (!balanceResult) {
+        res.status(401).send('failed');
+        return;
+    }
+    res.send(balanceResult);
+}
