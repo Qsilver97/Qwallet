@@ -14,5 +14,6 @@ router.post('/add-account', mainController.addAccount);
 router.post('/restore', mainController.restoreAccount);
 router.post('/transfer', mainController.transfer);
 router.post('/socket', mainController.socket);
+router.post('/balances', mainController.balances);
 
 module.exports = router;
