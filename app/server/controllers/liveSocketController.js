@@ -15,7 +15,7 @@ module.exports = function (liveSocket) {
     });
 
     liveSocket.onmessage = (event) => {
-        console.log(`Socket recieved: ${event.data}`);
+        console.log(`Socket recieved1: ${event.data}`);
         try {
             let flag, data;
             if (event.data.startsWith('#')) {
@@ -27,7 +27,8 @@ module.exports = function (liveSocket) {
                 setRemoteSubshash(data.subshash);
             }
             if (data.wasm == 1) {
-                wasmManager.ccall({ command: `wss ${event.data}`, flag: 'wss' });
+                console.log(`Socket recieved: Wasm call - wss ${JSON.stringify(data)}`);
+                wasmManager.ccall({ command: `wss ${JSON.stringify(data)}`, flag: 'wss' });
             }
             if (flag) {
                 stateManager.updateSocketState(flag.slice(1), data);

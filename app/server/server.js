@@ -1,11 +1,12 @@
-const { app: electronApp, BrowserWindow } = require('electron');
+const { app: electronApp, BrowserWindow, screen } = require('electron');
 const path = require('path');
 const { startServer } = require('./main');
 function createWindow() {
     // Create the browser window.
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
     const mainWindow = new BrowserWindow({
-        width: 1024,
-        height: 768,
+        width,
+        height: Math.round(height * 0.8),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
@@ -13,7 +14,7 @@ function createWindow() {
 
     // Load your Express app
     mainWindow.loadURL('http://localhost:3000');
-    mainWindow.maximize();
+    // mainWindow.maximize();
     // Open the DevTools.
     // mainWindow.webContents.openDevTools();
 }
