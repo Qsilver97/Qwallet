@@ -17,14 +17,21 @@ module.exports = function (liveSocket) {
     liveSocket.onmessage = (event) => {
         console.log(`Socket recieved: ${event.data}`);
         try {
-            const [flag, data] = splitAtFirstSpace(event.data);
+            let flag, data;
+            if (event.data.startsWith('#')) {
+                [flag, data] = splitAtFirstSpace(event.data);
+            } else {
+                data = JSON.parse(event.data);
+            }
             if (data.subshash) {
                 setRemoteSubshash(data.subshash);
             }
             if (data.wasm == 1) {
                 wasmManager.ccall({ command: `wss ${event.data}`, flag: 'wss' });
             }
-            stateManager.updateSocketState(flag.slice(1), data);
+            if (flag) {
+                stateManager.updateSocketState(flag.slice(1), data);
+            }
             socket.emit('live', data);
         } catch (error) {
 
