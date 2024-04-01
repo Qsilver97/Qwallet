@@ -1,4 +1,4 @@
-const { app: electronApp, BrowserWindow } = require('electron');
+const { app: electronApp, BrowserWindow, screen } = require('electron');
 const path = require('path');
 const { startServer } = require('./main');
 function createWindow() {
