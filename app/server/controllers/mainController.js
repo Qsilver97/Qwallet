@@ -263,3 +263,9 @@ exports.transferStatus = async (req, res) => {
     }, 1000)
     res.send(result);
 }
+
+exports.history = async (req, res) => {
+    const { address } = req.body;
+    const result = await socketSync(`history ${address}`);
+    res.send(result);
+}
