@@ -221,17 +221,15 @@ const Dashboard: React.FC = () => {
     }, [currentAddress])
 
     useEffect(() => {
-        if (balances[0] == "") {
-            axios.post(
-                `${SERVER_URL}/api/balances`
-            ).then((resp) => {
-                resp.data.balances.map((item: [number, string]) => {
-                    dispatch(setBalances({ index: item[0], balance: item[1] }));
-                })
-            }).catch((error) => {
-                console.log(error.response);
+        axios.post(
+            `${SERVER_URL}/api/balances`
+        ).then((resp) => {
+            resp.data.balances.map((item: [number, string]) => {
+                dispatch(setBalances({ index: item[0], balance: item[1] }));
             })
-        }
+        }).catch((error) => {
+            console.log(error.response);
+        })
 
         const handleResize = () => {
             setScreenWidth(window.innerWidth);
@@ -284,23 +282,20 @@ const Dashboard: React.FC = () => {
                         </div>
                         <div className="mt-[40px] max-h-[500px]">
                             <h3 className="text-[1.75rem] mb-5">Activity</h3>
-                            <div className="relative overflow-x-auto shadow-[1px_2px_5px_5px_rgba(0.3,0.3,0.3,0.3)] sm:rounded-lg">
-                                <table className="w-full text-sm text-left rtl:text-right h-full">
+                            <div className="relative overflow-x-auto shadow-[1px_2px_5px_5px_rgba(0.3,0.3,0.3,0.3)] sm:rounded-lg p-5">
+                                <table className="w-full text-sm text-left rtl:text-right h-full p-5">
                                     <thead className="text-xs uppercase ">
                                         <tr>
-                                            <th scope="col" className="px-6 py-3">
+                                            <th scope="col" className="px-1 py-1 pb-3">
                                                 Txid
                                             </th>
-                                            <th scope="col" className="px-6 py-3">
+                                            <th scope="col" className="px-1 py-1 pb-3">
                                                 Tick
                                             </th>
-                                            <th scope="col" className="px-6 py-3">
-                                                From
+                                            <th scope="col" className="px-1 py-1 pb-3">
+                                                Address
                                             </th>
-                                            <th scope="col" className="px-6 py-3">
-                                                To
-                                            </th>
-                                            <th scope="col" className="px-6 py-3">
+                                            <th scope="col" className="px-1 py-1 pb-3">
                                                 Amount
                                             </th>
                                         </tr>
@@ -308,20 +303,11 @@ const Dashboard: React.FC = () => {
                                     <tbody className="">
                                         {
                                             histories.map((item, idx) => {
-                                                return <tr className="" key={idx}>
-                                                    <td className="px-6 py-4 font-mono">{item[1]}</td>
-                                                    <td className="px-6 py-4 font-mono">{item[0]}</td>
-                                                    {parseInt(item[3]) > 0 ?
-                                                        <>
-                                                            <td className="px-6 py-4 font-mono">{currentAddress}</td>
-                                                            <td className="px-6 py-4 font-mono">{item[2]}</td>
-                                                        </> :
-                                                        <>
-                                                            <td className="px-6 py-4 font-mono">{item[2]}</td>
-                                                            <td className="px-6 py-4 font-mono">{currentAddress}</td>
-                                                        </>
-                                                    }
-                                                    <td className="px-6 py-4 font-mono">{item[3]}</td>
+                                                return <tr className={`${item[3].startsWith('-') ? 'text-red-400' : 'text-green-400'} odd:bg-[#022139] even:bg-[#0a304a]`} key={idx}>
+                                                    <td className="px-1 py-2 font-mono cursor-pointer hover:bg-slate-400 hover:text-black" onClick={() => handleCopy(item[1])}>{screenWidth > 1250 ? item[1] : item[1].slice(0, Math.ceil(screenWidth ** 2.1) / 59000)}{item[1].slice(0, Math.ceil(screenWidth) * 67 / 1920).length < 60 && screenWidth < 1250 && '...'}</td>
+                                                    <td className="px-1 py-2 font-mono cursor-pointer hover:bg-slate-400 hover:text-black" onClick={() => handleCopy(item[0])}>{item[0]}</td>
+                                                    <td className="px-1 py-2 font-mono cursor-pointer hover:bg-slate-400 hover:text-black" onClick={() => handleCopy(item[2])}>{screenWidth > 1250 ? item[2] : item[2].slice(0, Math.ceil(screenWidth ** 2.1) / 59000)}{item[2].slice(0, Math.ceil(screenWidth) * 67 / 1920).length < 60 && screenWidth < 1250 && '...'}</td>
+                                                    <td className="px-1 py-2 font-mono cursor-pointer hover:bg-slate-400 hover:text-black" onClick={() => handleCopy(item[3])}>{item[3]}</td>
                                                 </tr>
                                             }
                                             )
