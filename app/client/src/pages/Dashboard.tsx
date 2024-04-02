@@ -1,4 +1,4 @@
-import { faCopy, faPlus, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faCopy, faPlus, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import Modal from "../components/common/Modal";
@@ -37,8 +37,10 @@ const Dashboard: React.FC = () => {
     const [toAddress, setToAddress] = useState<string>("");
     const [amount, setAmount] = useState<string>("");
     const [sendingStatus, setSendingStatus] = useState<'open' | 'pending' | 'closed' | 'rejected'>('closed');
-    const [_, setStatusInterval] = useState<any>();
+    const [statusInterval, setStatusInterval] = useState<any>();
     const [sendingResult, setSendingResult] = useState<string>('');
+    const [transactionId, setTrasactionId] = useState<string>('');
+    const [expectedTick, setExpectedTick] = useState<number>();
 
     const handleAddAccount = () => {
         if (addingStatus) return;
@@ -98,22 +100,20 @@ const Dashboard: React.FC = () => {
             return;
         }
         setSendingStatus('open');
+        const expectedTick = parseInt(tick) + 5;
+        setExpectedTick(expectedTick);
         axios.post(
             `${SERVER_URL}/api/transfer`,
             {
                 toAddress,
                 fromIdx: allAddresses.indexOf(currentAddress),
                 amount,
-                tick: parseInt(tick) + 10,
+                tick: expectedTick,
             }
         ).then((resp) => {
             const _statusInterval = setInterval(() => {
                 axios.post(
-                    `${SERVER_URL}/api/ccall`,
-                    {
-                        command: 'status 1',
-                        flag: 'status'
-                    }
+                    `${SERVER_URL}/api/transfer-status`
                 ).then((resp) => {
                     console.log(resp.data);
                     if (resp.data.value.result == '0') {
@@ -128,7 +128,7 @@ const Dashboard: React.FC = () => {
                     console.log(error.response);
                     setSendingStatus('rejected');
                 })
-            }, 1000)
+            }, 2000)
             setStatusInterval(_statusInterval);
             console.log(resp.data);
             // setSendingStatus('closed');
@@ -176,6 +176,16 @@ const Dashboard: React.FC = () => {
         }
 
     }, [login, user])
+
+    useEffect(() => {
+        if (sendingResult.includes('broadcast for tick')) {
+            const sendingResultSplit = sendingResult.split(' ');
+            setTrasactionId(sendingResultSplit[1]);
+            setExpectedTick(parseInt(sendingResultSplit[sendingResultSplit.length - 1]));
+        } else if (sendingResult.includes('no command pending')) {
+            clearInterval(statusInterval);
+        }
+    }, [sendingResult])
 
     useEffect(() => {
         if (balances[0] == "") {
@@ -291,22 +301,45 @@ const Dashboard: React.FC = () => {
                 {
                     (sendingStatus == 'closed' || sendingStatus == 'rejected') &&
                     <div className='flex justify-between p-[10px_16px] items-center text-[1.25rem] gap-5'>
-                        <div>{sendingStatus == 'closed' ? "Success" : "Failed"}</div>
-                        <div className="flex gap-[10px]">
+                        {sendingResult == 'no command pending' ?
+                            <div>Success</div> :
+                            <div>{sendingStatus == 'closed' ? "Sending..." : "Failed"}</div>
+                        }
+                        <div className="gap-[10px]">
                             <FontAwesomeIcon icon={faTimes} onClick={toggleTransferModal} className='cursor-pointer' />
                         </div>
                     </div>
                 }
                 {
                     (sendingStatus == 'open' || sendingStatus == 'pending') ?
-                        <div className="p-[10px_16px] max-h-[500px] overflow-y-auto mb-[10px] flex flex-col gap-5 items-center">
-                            <div className="text-[24px]">Sending</div>
+                        <div className="p-[10px_16px] max-h-[500px] overflow-y-auto my-[10px] flex flex-col gap-5 items-center">
+                            {/* <div className="text-[24px]">Sending</div> */}
                             <ClipLoader />
                         </div> :
                         <>
                             {sendingStatus == 'closed' ?
-                                <div className="p-[10px_16px] max-h-[500px] overflow-y-auto mb-[10px] flex flex-col gap-5 items-center">
-                                    <div className="text-[24px]">{sendingResult}</div>
+                                <div className="max-w-md mx-auto bg-transparent overflow-hidden md:max-w-2xl my-4 px-8">
+                                    <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Transaction ID</div>
+                                    <p className="mt-1 text-lg font-mediu">{transactionId}</p>
+                                    {
+                                        sendingResult == 'no command pending' ?
+                                            <>
+                                                <div className="mt-4 font-[24px]">
+                                                    <FontAwesomeIcon icon={faCheck} />
+                                                </div>
+                                            </> :
+                                            <>
+                                                {/* <div className="mt-4">
+                                                    <span className="text-indigo-500 font-semibold">Tick:</span> {tick}
+                                                </div> */}
+                                                <div className="mt-2">
+                                                    <span className="text-indigo-500 font-semibold">Expected Tick:</span> {expectedTick}
+                                                </div>
+                                                <div className="mt-2">
+                                                    <span className="text-indigo-500 font-semibold">Status:</span> {sendingResult}
+                                                </div>
+                                            </>
+                                    }
                                 </div> :
                                 <div className="p-[10px_16px] max-h-[500px] overflow-y-auto mb-[10px] flex flex-col gap-5 items-center">
                                     <div className="text-[24px]">Failed</div>
