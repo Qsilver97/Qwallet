@@ -1,4 +1,4 @@
-import { faCopy, faPlus, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faCopy, faPlus, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import Modal from "../components/common/Modal";
@@ -13,6 +13,8 @@ import { RootState } from "../redux/store";
 import { toast } from "react-toastify";
 import ClipLoader from "react-spinners/ClipLoader";
 import { setBalances } from "../redux/appSlice";
+
+type TransactionItem = [number, string, string, string];
 
 const Dashboard: React.FC = () => {
     const { login, logout, user } = useAuth();
@@ -29,16 +31,21 @@ const Dashboard: React.FC = () => {
 
     const { tick, balances } = useSelector((state: RootState) => state.app);
 
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
     const [deleteAccount, setDeleteAccount] = useState<string>("");
     const [currentAddress, setCurrentAddress] = useState<string>("");
+    const [displayAddress, setDisplayAddress] = useState(currentAddress);
     const [allAddresses, setAllAddresses] = useState<string[]>([]);
     const [addingStatus, setAddingStatus] = useState<boolean>(false);
     const [deletingStatus, setDeletingStatus] = useState<boolean>(false);
     const [toAddress, setToAddress] = useState<string>("");
     const [amount, setAmount] = useState<string>("");
     const [sendingStatus, setSendingStatus] = useState<'open' | 'pending' | 'closed' | 'rejected'>('closed');
-    const [_, setStatusInterval] = useState<any>();
+    const [statusInterval, setStatusInterval] = useState<any>();
     const [sendingResult, setSendingResult] = useState<string>('');
+    const [transactionId, setTrasactionId] = useState<string>('');
+    const [expectedTick, setExpectedTick] = useState<number>();
+    const [histories, setHistories] = useState<TransactionItem[]>([]);
 
     const handleAddAccount = () => {
         if (addingStatus) return;
@@ -98,22 +105,20 @@ const Dashboard: React.FC = () => {
             return;
         }
         setSendingStatus('open');
+        const expectedTick = parseInt(tick) + 5;
+        setExpectedTick(expectedTick);
         axios.post(
             `${SERVER_URL}/api/transfer`,
             {
                 toAddress,
                 fromIdx: allAddresses.indexOf(currentAddress),
                 amount,
-                tick: parseInt(tick) + 10,
+                tick: expectedTick,
             }
         ).then((resp) => {
             const _statusInterval = setInterval(() => {
                 axios.post(
-                    `${SERVER_URL}/api/ccall`,
-                    {
-                        command: 'status 1',
-                        flag: 'status'
-                    }
+                    `${SERVER_URL}/api/transfer-status`
                 ).then((resp) => {
                     console.log(resp.data);
                     if (resp.data.value.result == '0') {
@@ -128,7 +133,7 @@ const Dashboard: React.FC = () => {
                     console.log(error.response);
                     setSendingStatus('rejected');
                 })
-            }, 1000)
+            }, 2000)
             setStatusInterval(_statusInterval);
             console.log(resp.data);
             // setSendingStatus('closed');
@@ -178,6 +183,44 @@ const Dashboard: React.FC = () => {
     }, [login, user])
 
     useEffect(() => {
+        if (sendingResult.includes('broadcast for tick')) {
+            const sendingResultSplit = sendingResult.split(' ');
+            setTrasactionId(sendingResultSplit[1]);
+            setExpectedTick(parseInt(sendingResultSplit[sendingResultSplit.length - 1]));
+        } else if (sendingResult.includes('no command pending')) {
+            clearInterval(statusInterval);
+        }
+    }, [sendingResult])
+
+    useEffect(() => {
+        // Assuming Tailwind's 'md' breakpoint is 768px
+        if (screenWidth < 1024 && currentAddress.length > 6) {
+            const sliceLength = Math.ceil(screenWidth * 20 / 1024);
+            const modifiedAddress = `${currentAddress.slice(0, sliceLength)}...${currentAddress.slice(-sliceLength)}`;
+            setDisplayAddress(modifiedAddress);
+        } else {
+            setDisplayAddress(currentAddress);
+        }
+    }, [screenWidth, currentAddress]);
+
+    useEffect(() => {
+        axios.post(
+            `${SERVER_URL}/api/history`,
+            {
+                address: currentAddress
+            }
+        ).then((resp) => {
+            if (resp.data.changes) {
+                setHistories(resp.data.changes[1].txids)
+            } else {
+                setHistories([]);
+            }
+        }).catch((_) => {
+            setHistories([]);
+        })
+    }, [currentAddress])
+
+    useEffect(() => {
         if (balances[0] == "") {
             axios.post(
                 `${SERVER_URL}/api/balances`
@@ -189,19 +232,24 @@ const Dashboard: React.FC = () => {
                 console.log(error.response);
             })
         }
+
+        const handleResize = () => {
+            setScreenWidth(window.innerWidth);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, [])
 
     return (
         <>
             <div className="w-[calc(100%-20px)] max-w-[1368px] bg-[rgba(3,35,61,0.8)] h-[calc(100vh-100px)] m-[0_10px] overflow-y-auto z-0 rounded-[10px] shadow-[0_15px_25px_rgba(0,0,0,0.5)] text-white mx-auto">
-                <header className="p-[20px_60px] flex justify-between items-center border-b border-white text-[16px]">
+                <header className="p-[20px_20px] md:p-[20px_60px] flex justify-between items-center border-b border-white text-[16px]">
                     <div className="cursor-pointer">
                         <img src="images/logo.png" className="w-[50px]" />
                     </div>
                     <div className="cursor-pointer" onClick={() => handleCopy(currentAddress)}>
-                        <span className="p-[5px] shadow-[0_2px_3px_rgba(0,0,0,0.5)] rounded-[5px]">
-                            {currentAddress}
-                            {/* <FontAwesomeIcon icon={faArrowDown} /> */}
+                        <span className="text-[16px] sm:text-[18px] p-[5px] shadow-[0_2px_3px_rgba(0,0,0,0.5)] rounded-[5px]">
+                            {displayAddress}
                         </span>
                     </div>
                     <div className="flex items-center gap-[10px] cursor-pointer">
@@ -209,10 +257,10 @@ const Dashboard: React.FC = () => {
                         {/* <FontAwesomeIcon className="text-[32px]" icon={faGear} onClick={handleLogout} /> */}
                     </div>
                 </header>
-                <div className="p-[20px_60px] ">
-                    <div className="flex gap-5">
-                        <h3 className="text-[1.75rem]">Balance: {balances.reduce((acc, currentValue) => acc + Number(currentValue), 0)}</h3>
-                        <h3 className="text-[1.75rem]">Tick: {tick}</h3>
+                <div className="p-[10px_20px] md:p-[20px_60px]">
+                    <div className="flex gap-2 sm:gap-5 text-[1.5rem] sm:text-[1.75rem]">
+                        <h3>Balance: {balances.reduce((acc, currentValue) => acc + Number(currentValue), 0)}</h3>
+                        <h3>Tick: {tick}</h3>
                     </div>
                     <div className="flex gap-5 w-full h-full overflow-auto overflow-y-hidden p-5 border-[1.5px] border-[#17517a] rounded-[5px] mt-2">
                         <div className={`p-2 cursor-pointer flex items-center align-middle shadow-[2px_2px_2px_2px_rgba(0,0,0,0.3)] ${addingStatus ? "cursor-wait" : "cursor-pointer"}`} onClick={handleAddAccount}>
@@ -229,24 +277,58 @@ const Dashboard: React.FC = () => {
                         }
                     </div>
                     <div className="mt-[20px]">
-                        <div className="">
-                            <input className="text-white p-[10px] mr-[5px] border-[1.5px] border-[#17517a] rounded-[5px] w-[720px] outline-none bg-transparent" placeholder="Address" onChange={(e) => setToAddress(e.target.value)} />
-                            <input className="text-white p-[10px] mr-[5px] border-[1.5px] border-[#17517a] rounded-[5px] w-[120px] outline-none bg-transparent" placeholder="Amount" onChange={(e) => setAmount(e.target.value)} type="number" />
-                            <button className="outline-none p-[10px_20px] bg-[#17517a] border-none rounded-[5px] text-white text-[16px] cursor-pointer transition-bg duration-300 ease" onClick={handleTransfer}>Send</button>
+                        <div className="flex flex-wrap">
+                            <input className="text-white p-[10px] my-2 mr-[5px] border-[1.5px] border-[#17517a] rounded-[5px] max-w-[720px] w-full outline-none bg-transparent" placeholder="Address" onChange={(e) => setToAddress(e.target.value)} />
+                            <input className="text-white p-[10px] my-2 mr-[5px] border-[1.5px] border-[#17517a] rounded-[5px] w-[120px] outline-none bg-transparent" placeholder="Amount" onChange={(e) => setAmount(e.target.value)} type="number" />
+                            <button className="outline-none my-2 p-[10px_20px] bg-[#17517a] border-none rounded-[5px] text-white text-[16px] cursor-pointer transition-bg duration-300 ease" onClick={handleTransfer}>Send</button>
                         </div>
-                        <div className="mt-[40px] max-h-[1000px] overflow-auto">
-                            <h3 className="text-[1.75rem]">Activity</h3>
-                            <table className="text-[#bbb] w-full max-w-[100%] mb-[1rem] bg-transparent text-left">
-                                <thead>
-                                    <tr>
-                                        <th className="border-b border-[#dee2e6] border-t-0 p-[0.75rem]">Date</th>
-                                        <th className="border-b border-[#dee2e6] border-t-0 p-[0.75rem]">Type</th>
-                                        <th className="border-b border-[#dee2e6] border-t-0 p-[0.75rem]">Detail</th>
-                                        <th className="border-b border-[#dee2e6] border-t-0 p-[0.75rem]">Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                        <div className="mt-[40px] max-h-[500px]">
+                            <h3 className="text-[1.75rem] mb-5">Activity</h3>
+                            <div className="relative overflow-x-auto shadow-[1px_2px_5px_5px_rgba(0.3,0.3,0.3,0.3)] sm:rounded-lg">
+                                <table className="w-full text-sm text-left rtl:text-right h-full">
+                                    <thead className="text-xs uppercase ">
+                                        <tr>
+                                            <th scope="col" className="px-6 py-3">
+                                                Txid
+                                            </th>
+                                            <th scope="col" className="px-6 py-3">
+                                                Tick
+                                            </th>
+                                            <th scope="col" className="px-6 py-3">
+                                                From
+                                            </th>
+                                            <th scope="col" className="px-6 py-3">
+                                                To
+                                            </th>
+                                            <th scope="col" className="px-6 py-3">
+                                                Amount
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="">
+                                        {
+                                            histories.map((item, idx) => {
+                                                return <tr className="" key={idx}>
+                                                    <td className="px-6 py-4 font-mono">{item[1]}</td>
+                                                    <td className="px-6 py-4 font-mono">{item[0]}</td>
+                                                    {parseInt(item[3]) > 0 ?
+                                                        <>
+                                                            <td className="px-6 py-4 font-mono">{currentAddress}</td>
+                                                            <td className="px-6 py-4 font-mono">{item[2]}</td>
+                                                        </> :
+                                                        <>
+                                                            <td className="px-6 py-4 font-mono">{item[2]}</td>
+                                                            <td className="px-6 py-4 font-mono">{currentAddress}</td>
+                                                        </>
+                                                    }
+                                                    <td className="px-6 py-4 font-mono">{item[3]}</td>
+                                                </tr>
+                                            }
+                                            )
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -291,22 +373,42 @@ const Dashboard: React.FC = () => {
                 {
                     (sendingStatus == 'closed' || sendingStatus == 'rejected') &&
                     <div className='flex justify-between p-[10px_16px] items-center text-[1.25rem] gap-5'>
-                        <div>{sendingStatus == 'closed' ? "Success" : "Failed"}</div>
-                        <div className="flex gap-[10px]">
+                        {sendingResult == 'no command pending' ?
+                            <div>Success</div> :
+                            <div>{sendingStatus == 'closed' ? "Sending..." : "Failed"}</div>
+                        }
+                        <div className="gap-[10px]">
                             <FontAwesomeIcon icon={faTimes} onClick={toggleTransferModal} className='cursor-pointer' />
                         </div>
                     </div>
                 }
                 {
                     (sendingStatus == 'open' || sendingStatus == 'pending') ?
-                        <div className="p-[10px_16px] max-h-[500px] overflow-y-auto mb-[10px] flex flex-col gap-5 items-center">
-                            <div className="text-[24px]">Sending</div>
+                        <div className="p-[10px_16px] max-h-[500px] overflow-y-auto my-[10px] flex flex-col gap-5 items-center">
+                            {/* <div className="text-[24px]">Sending</div> */}
                             <ClipLoader />
                         </div> :
                         <>
                             {sendingStatus == 'closed' ?
-                                <div className="p-[10px_16px] max-h-[500px] overflow-y-auto mb-[10px] flex flex-col gap-5 items-center">
-                                    <div className="text-[24px]">{sendingResult}</div>
+                                <div className="max-w-md mx-auto bg-transparent overflow-hidden md:max-w-2xl my-4 px-8">
+                                    <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Transaction ID</div>
+                                    <p className="mt-1 text-lg font-mediu">{transactionId}</p>
+                                    {
+                                        sendingResult == 'no command pending' ?
+                                            <>
+                                                <div className="mt-4 font-[24px]">
+                                                    <FontAwesomeIcon icon={faCheck} />
+                                                </div>
+                                            </> :
+                                            <>
+                                                <div className="mt-2">
+                                                    <span className="text-indigo-500 font-semibold">Expected Tick:</span> {expectedTick}
+                                                </div>
+                                                <div className="mt-2">
+                                                    <span className="text-indigo-500 font-semibold">Status:</span> {sendingResult}
+                                                </div>
+                                            </>
+                                    }
                                 </div> :
                                 <div className="p-[10px_16px] max-h-[500px] overflow-y-auto mb-[10px] flex flex-col gap-5 items-center">
                                     <div className="text-[24px]">Failed</div>

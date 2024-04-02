@@ -255,3 +255,17 @@ exports.balances = async (req, res) => {
     }
     res.send(balanceResult);
 }
+
+exports.transferStatus = async (req, res) => {
+    const result = await wasmManager.ccall({ command: 'status 1', flag: 'transferStatus' })
+    setTimeout(() => {
+        wasmManager.ccall({ command: 'v1request', flag: 'transferStatus' });
+    }, 1000)
+    res.send(result);
+}
+
+exports.history = async (req, res) => {
+    const { address } = req.body;
+    const result = await socketSync(`history ${address}`);
+    res.send(result);
+}

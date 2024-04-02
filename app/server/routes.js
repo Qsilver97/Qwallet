@@ -15,5 +15,7 @@ router.post('/restore', mainController.restoreAccount);
 router.post('/transfer', mainController.transfer);
 router.post('/socket', mainController.socket);
 router.post('/balances', mainController.balances);
+router.post('/transfer-status', mainController.transferStatus);
+router.post('/history', mainController.history);
 
 module.exports = router;

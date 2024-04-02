@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import Button from "../components/common/Button";
 import { useNavigate } from "react-router-dom";
-import Input from "../components/common/Input";
 import { UserDetailType, useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,30 +27,30 @@ const Login: React.FC = () => {
     const [loginWaiting, setLoginWaiting] = useState<boolean>(false);
 
     const handleLogin = () => {
-        setLoginWaiting(true);
-        if (password != "") {
-            dispatch(setIsAuthenticated(null));
-            axios.post(
-                `${SERVER_URL}/api/login`,
-                {
-                    password
-                }
-            ).then((resp) => {
-                console.log(resp.data)
-                dispatch(resetState())
-                const userInfo: UserDetailType = resp.data;
-                dispatch(setIsAuthenticated(true));
-                auth.login(userInfo);
-                navigate('/dashboard');
-            }).catch((error) => {
-                toast.error(error.response.data);
-                dispatch(setIsAuthenticated(false));
-            }).finally(() => {
-                setLoginWaiting(false);
-            })
-        } else {
-            toast.error('Incorrect password.');
+        if (password == "") {
+            toast.error('Input password')
+            return
         }
+        setLoginWaiting(true);
+        dispatch(setIsAuthenticated(null));
+        axios.post(
+            `${SERVER_URL}/api/login`,
+            {
+                password
+            }
+        ).then((resp) => {
+            console.log(resp.data)
+            dispatch(resetState())
+            const userInfo: UserDetailType = resp.data;
+            dispatch(setIsAuthenticated(true));
+            auth.login(userInfo);
+            navigate('/dashboard');
+        }).catch((error) => {
+            toast.error(error.response.data);
+            dispatch(setIsAuthenticated(false));
+        }).finally(() => {
+            setLoginWaiting(false);
+        })
     }
 
     const handleCreate = () => {
@@ -71,6 +70,12 @@ const Login: React.FC = () => {
             if (prev == 'text') return 'password'
             else return 'text'
         })
+    }
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key == 'Enter') {
+            handleLogin();
+        }
     }
 
     useEffect(() => {
@@ -101,7 +106,15 @@ const Login: React.FC = () => {
                     Each password corresponds to a unique user account
                 </div>
                 <div className="relative">
-                    <Input inputType={passwordInputType} onChange={handlePasswordChange} placeHolder="Password" />
+
+                    <input
+                        type={passwordInputType || 'text'}
+                        className="w-full p-[10px] border-b border-white bg-transparent outline-none text-white text-[16px]"
+                        placeholder={"Password"}
+                        required
+                        onChange={(e) => { handlePasswordChange(e.target.value) }}
+                        onKeyDown={handleKeyDown}
+                    />
                     <FontAwesomeIcon onClick={handleEye} icon={(passwordInputType == 'password' ? faEye : faEyeSlash)} className="absolute top-[15px] right-3 text-gray-500 cursor-pointer" />
                     {passwordStatus &&
                         <p className="w-full text-left text-red-600">Password does not exist.</p>
