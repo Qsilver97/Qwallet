@@ -1,8 +1,8 @@
 import { toast } from "react-toastify";
 
-const handleCopy = async (value: string) => {
+const handleCopy = async (value: any) => {
     toast(`Copied`)
-    await navigator.clipboard.writeText(value);
+    await navigator.clipboard.writeText(`${value}`);
 }
 
 const delay = (ms: number) => {
