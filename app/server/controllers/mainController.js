@@ -23,7 +23,7 @@ exports.createAccount = async (req, res) => {
 exports.login = async (req, res) => {
     let liveSocket = socketManager.initLiveSocket();
     liveSocketController(liveSocket)
-    await delay(500);
+    await delay(1000);
     const { password } = req.body;
     let realPassword;
     stateManager.init();
