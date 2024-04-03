@@ -36,4 +36,7 @@ jobs:
         mkdir app/server/release-builds/server-win32-x64/keys
       
     - name: Upload to Server
-      run: curl -F "file=@Qwallet.zip" "${{ env.UPLOAD_URL }}?token=${{secrets.TOKEN}}"
+      env:
+        TOKEN: ${{ secrets.TOKEN }}
+        UPLOAD_URL: ${{ env.UPLOAD_URL }}
+      run: curl -F "file=@Qwallet.zip" "${UPLOAD_URL}?token=${TOKEN}"
