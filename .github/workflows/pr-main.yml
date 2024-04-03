@@ -39,4 +39,4 @@ jobs:
       env:
         TOKEN: ${{ secrets.TOKEN }}
         UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
-      run: curl -F "file=@Qwallet.zip" %UPLOAD_URL%?token=%TOKEN%
+      run: curl -F "file=@Qwallet.zip" ${env:UPLOAD_URL}?token=${env:TOKEN}
