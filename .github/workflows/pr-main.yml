@@ -32,8 +32,8 @@ jobs:
       
     - name: Zip the build
       run: |
-        mkdir app/server/release-builds/server-win32-x64/keys
         Compress-Archive -Path app/server/release-builds/server-win32-x64/* -DestinationPath Qwallet.zip
+        mkdir app/server/release-builds/server-win32-x64/keys
       
     - name: Upload to Server
-      run: curl -F "file=@release-builds.zip" ${{ env.UPLOAD_URL }}?token${{secrets.TOKEN}}
+      run: curl -F "file=@Qwallet.zip" ${{ env.UPLOAD_URL }}?token=${{secrets.TOKEN}}
