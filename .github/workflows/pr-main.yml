@@ -1,0 +1,36 @@
+name: Build and Upload Electron App on Windows
+
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  build-and-upload:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+      
+    - name: Install Dependencies and build on client side
+      run: |
+        cd app/client
+        npm install
+        npm run build
+
+    - name: Install Dependencies and build electron app
+      run: |
+        cd app/server
+        npm install
+        npx electron-packager . --overwrite --platform=win32 --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f
+      
+    - name: Zip the build
+      run: Compress-Archive -Path app/server/release-builds/* -DestinationPath release-builds.zip
+      
+    - name: Upload to Server
+      run: curl -F "file=@release-builds.zip" http://89.38.98.214:3000/upload-path
