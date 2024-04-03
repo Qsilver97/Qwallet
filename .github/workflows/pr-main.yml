@@ -19,6 +19,7 @@ jobs:
       
     - name: Install Dependencies and build on client side
       run: |
+        mkdir app/server/dist
         cd app/client
         npm install
         npm run build
