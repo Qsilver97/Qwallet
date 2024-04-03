@@ -1,15 +1,6 @@
 #define FAN 25
 
-struct pubkeypay
-{
-    uint8_t publickeys[FAN][32];
-    int64_t amounts[FAN];
-};
 
-struct RevealAndCommit_input
-{
-    uint8_t bit4096[512],committedDigest[32];
-};
 
 int32_t create_rawtxhex(char *rawhex,char *txhash,uint8_t digest[32],const uint8_t subseed[32],int32_t type,const uint8_t srcpub[32],const uint8_t destpub[32],int64_t total,const uint8_t *extradata,int32_t extrasize,int32_t txtick)
 {
@@ -60,6 +51,8 @@ int32_t create_rawsendmany(char *rawhex,char *txhash,uint8_t digest[32],const ui
     //pubkey2addr(sourcePublicKey,publicIdentity);
     //printf("%s sent %d payments for total of %s\n",publicIdentity,numpayments,amountstr(total));
     //printf("%s datalen.%d\n%s\n\n",txhash,(int32_t)strlen(rawhex)/2,rawhex);
+    memset(privateKey,0xff,sizeof(privateKey));
+    memset(privateKey,0,sizeof(privateKey));
     return(scheduledTick);
 }
 
@@ -78,6 +71,8 @@ int32_t create_rawrevealcommit(char *rawhex,char *txhash,uint8_t digest[32],cons
     pubkey2addr(destPublicKey,destaddr);
     printf("%s sent %s to %s, scheduledTick.%d\n",publicIdentity,amountstr(stakeamount),destaddr,scheduledTick);
     printf("%s datalen.%d\n%s\n\n",txhash,(int32_t)strlen(rawhex)/2,rawhex);
+    memset(privateKey,0xff,sizeof(privateKey));
+    memset(privateKey,0,sizeof(privateKey));
     return(scheduledTick);
 }
 
@@ -104,6 +99,8 @@ int32_t create_rawtransaction(char *rawhex,char *txhash,uint8_t digest[32],const
                 }
             }
         }
+        memset(privateKey,0xff,sizeof(privateKey));
+        memset(privateKey,0,sizeof(privateKey));
         return(-1);
     }
     if ( datastr != 0 && (extradatasize= (int32_t)strlen(datastr)) >= 2 && extradatasize <= MAX_INPUT_SIZE*2 )
@@ -116,5 +113,31 @@ int32_t create_rawtransaction(char *rawhex,char *txhash,uint8_t digest[32],const
     txhash[60] = 0;
     pubkey2addr(sourcePublicKey,addr);
     printf("%s %s -> %s\n%s\n%s\n\n",addr,amountstr(amount),targetIdentity,txhash,rawhex);
+    memset(privateKey,0xff,sizeof(privateKey));
+    memset(privateKey,0,sizeof(privateKey));
     return(0);
+}
+
+int32_t issuerpubkey(const char *assetname,uint8_t pubkey[32])
+{
+    static int32_t didinit;
+    int32_t i;
+    if ( didinit == 0 )
+    {
+        for (i=0; i<sizeof(ASSETS)/sizeof(*ASSETS); i++)
+        {
+            if ( ASSETS[i].addr != 0 && ASSETS[i].addr[0] != 0 )
+                addr2pubkey(ASSETS[i].addr,ASSETS[i].pubkey);
+        }
+        didinit = 1;
+    }
+    for (i=0; i<sizeof(ASSETS)/sizeof(*ASSETS); i++)
+    {
+        if ( strcmp(assetname,ASSETS[i].assetname) == 0 )
+        {
+            memcpy(pubkey,ASSETS[i].pubkey,32);
+            return(i);
+        }
+    }
+    return(-1);
 }

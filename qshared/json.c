@@ -650,7 +650,7 @@ result(json_element_value) json_parse_array(typed(json_string) * str_ptr) {
 }
 
 result(json_element_value) json_parse_boolean(typed(json_string) * str_ptr) {
-  typed(json_boolean) output;
+  typed(json_boolean) output = 0;
 
   switch (**str_ptr) {
   case 't':
