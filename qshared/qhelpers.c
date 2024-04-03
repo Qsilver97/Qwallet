@@ -3,6 +3,79 @@
 int32_t EPOCH,LATEST_TICK,INITIAL_TICK,VALIDATED_TICK,HAVE_TXTICK;
 uint32_t EXITFLAG,PROGRESSTIME,LATEST_UTIME;
 
+int EPOCHS[][2] =
+{
+    { 83, 10800000 },
+    { 84, 10950000 },
+    { 85, 11100000 },
+    { 86, 11250000 },
+    { 87, 11400000 },
+    { 88, 11550000 },
+    { 89, 11700000 },
+    { 90, 11850000 },
+    { 91, 11950000 },
+    { 92, 12050000 },
+    { 93, 12160000 },
+    { 94, 12270000 },
+    { 95, 12380000 },
+    { 96, 12500000 },
+    { 97, 12600000 },
+    { 98, 12710000 },
+    { 99, 12820000 },
+    { 100, 12950000 },
+    { 101, 13060000 },
+    { 102, 13110000 },
+};
+
+struct issuerpub ASSETS[] =
+{
+    { "QX" },
+    { "QTRY" },
+    { "RANDOM" },
+    { "QUTIL" },
+    { "QFT", "TFUYVBXYIYBVTEMJHAJGEJOOZHJBQFVQLTBBKMEHPEVIZFXZRPEYFUWGTIWG" },
+    { "QWALLET", "QWALLETSGQVAGBHUCVVXWZXMBKQBPQQSHRYKZGEJWFVNUFCEDDPRMKTAUVHA" },
+    { "TEST", "LIYVCGRCGBDMKCPOBSXRJLKFPTABHMQSVWOATAMVGFCTSXXJZZTMLOGCSEKB" },
+};
+
+uint64_t assetint(char *assetname)
+{
+    char str[8];
+    uint64_t asseti = 0;
+    memset(str,0,sizeof(str));
+    strncpy(str,assetname,8);
+    memcpy(&asseti,str,8);
+    return(asseti);
+}
+
+int32_t tick2epoch(int32_t tick)
+{
+    int32_t i;
+    for (i=0; i<(sizeof(EPOCHS)/sizeof(*EPOCHS))-1; i++)
+        if ( tick >= EPOCHS[i][1] && tick < EPOCHS[i+1][0] )
+            return(EPOCHS[i][0]);
+    return(EPOCH);
+}
+
+int32_t epochstart(int32_t epoch)
+{
+    int32_t i;
+    for (i=0; i<(sizeof(EPOCHS)/sizeof(*EPOCHS)); i++)
+        if ( epoch == EPOCHS[i][0] )
+            return(EPOCHS[i][1]);
+    return(0);
+}
+
+int64_t addrhashi(uint8_t pubkey[32])
+{
+    return((*(uint64_t *)&pubkey[8]) % MAXADDRESSES);
+}
+
+int64_t ebalance(struct Entity *E)
+{
+    return(E->incomingAmount - E->outgoingAmount);
+}
+
 void devurandom(uint8_t *buf,long len)
 {
     static int32_t fd = -1;
@@ -160,14 +233,46 @@ void makedir(const char *dirname)
     } else fclose(fp);
 }
 
+char *epochdirname(int32_t epoch)
+{
+    static char dirname[128];
+    sprintf(dirname,"%s%cepochs%c%d%c",EPOCHSROOT,dir_delim(),dir_delim(),epoch,dir_delim());
+    return(dirname);
+}
+
+void epochfname(char *fname,int32_t epoch,int32_t tick,char *suffix)
+{
+    sprintf(fname,"%s%d%s",epochdirname(epoch),tick,suffix);
+}
+
+void peertxfname(char *fname,char *ipaddr)
+{
+    sprintf(fname,"%stx%c%s",epochdirname(EPOCH),dir_delim(),ipaddr);
+}
+
+void init_dirs(void)
+{
+    char dirname[512];
+    sprintf(dirname,"%s%cepochs",EPOCHSROOT,dir_delim());
+    makedir(dirname);
+    makedir(DATADIR);
+    sprintf(dirname,"%s%csubs",DATADIR,dir_delim());
+    makedir(dirname);
+    sprintf(dirname,"%s%cuniv",DATADIR,dir_delim());
+    makedir(dirname);
+    sprintf(dirname,"%s%caddrs",DATADIR,dir_delim());
+    makedir(dirname);
+    sprintf(dirname,"%s%corders",DATADIR,dir_delim());
+    makedir(dirname);
+}
+
 void newepoch(void)
 {
     char dirname[512];
-    sprintf(dirname,"epochs%c%d",dir_delim(),EPOCH);
+    makedir(epochdirname(EPOCH));
+    sprintf(dirname,"%scomputors",epochdirname(EPOCH));
     makedir(dirname);
-    sprintf(dirname,"epochs%c%d%ccomputors",dir_delim(),EPOCH,dir_delim());
-    makedir(dirname);
-    sprintf(dirname,"epochs%c%d%ctx",dir_delim(),EPOCH,dir_delim());
+    sprintf(dirname,"%stx",epochdirname(EPOCH));
     makedir(dirname);
 }
 
@@ -288,7 +393,7 @@ int32_t checktxsig(char *addr,char *rawhex)
     else return(0);
 }
 
-int32_t validaterawhex(char *rawhex,uint8_t txdata[MAX_INPUT_SIZE*2],char *txidstr)
+int32_t validaterawhex(char *rawhex,uint8_t txdata[MAX_TX_SIZE - sizeof(struct quheader)],char *txidstr)
 {
     uint8_t digest[32];
     char src[64],dest[64];
@@ -296,7 +401,7 @@ int32_t validaterawhex(char *rawhex,uint8_t txdata[MAX_INPUT_SIZE*2],char *txids
     Transaction tx;
     int32_t datalen = (int32_t)strlen(rawhex)/2;
     txidstr[0] = 0;
-    if ( datalen < sizeof(Transaction) || datalen > MAX_INPUT_SIZE * 2 )
+    if ( datalen < sizeof(Transaction) || datalen > (MAX_TX_SIZE-sizeof(struct quheader)) )
         return(0);
     hexToByte(rawhex,txdata,datalen);
     memcpy(&tx,txdata,sizeof(tx));
@@ -315,7 +420,9 @@ int32_t update_latest(void)
     FILE *fp;
     int32_t flag = 0;
     int32_t vals[5];
-    if ( (fp= fopen("latest","rb")) != 0 )
+    char fname[512];
+    sprintf(fname,"%s%clatest",DATADIR,dir_delim());
+    if ( (fp= fopen(fname,"rb")) != 0 )
     {
         if ( fread(vals,1,sizeof(vals),fp) == sizeof(vals) )
         {
@@ -332,6 +439,127 @@ int32_t update_latest(void)
         fclose(fp);
     }
     return(flag);
+}
+
+int32_t Qserver_msg(const char *msg)
+{
+    int fd,len;
+    char buf[8192];
+    len = (int32_t)strlen(msg);
+    strncpy(buf,msg,sizeof(buf)-1);
+    if ( buf[len - 1] != '\n' )
+        buf[len++] = '\n';
+    buf[len] = 0;
+    fd = open("Qserver", O_WRONLY);
+    if ( fd > 0 )
+    {
+        write(fd,buf,len);
+        close(fd);
+        return(0);
+    } else return(-1);
+}
+
+void mutualexclusion(char *name,int32_t open_close)
+{
+    FILE *fp;
+    char fname[512];
+    sprintf(fname,"me%c%s",dir_delim(),name);
+    if ( open_close > 0 )
+    {
+        if ( (fp= fopen(fname,"rb")) != 0 )
+        {
+            printf("%s exists, exit\n",fname);
+            fclose(fp);
+            exit(-1);
+        }
+        fp = fopen(fname,"wb");
+        fclose(fp);
+    }
+    else
+    {
+        deletefile(fname);
+    }
+}
+
+int32_t tickfindsender(int32_t tick,uint8_t sender[32],char *txidstr)
+{
+    FILE *fp;
+    Transaction tx;
+    uint8_t txid[32],txdata[MAX_TX_SIZE];
+    char fname[512];
+    int32_t i,txlen,epoch;
+    epoch = tick2epoch(tick);
+    epochfname(fname,epoch,tick,".T");
+    if ( (fp= fopen(fname,"rb")) != 0 )
+    {
+        for (i=0; i<NUMBER_OF_TRANSACTIONS_PER_TICK; i++)
+        {
+            if ( fread(&txlen,1,sizeof(txlen),fp) != sizeof(txlen) || txlen < sizeof(tx) || txlen > sizeof(tx)+MAX_INPUT_SIZE+SIGNATURE_SIZE )
+                break;
+            if ( fread(txid,1,sizeof(txid),fp) != sizeof(txid) )
+                break;
+            if ( fread(txdata,1,txlen,fp) != txlen )
+                break;
+            memcpy(&tx,txdata,sizeof(tx));
+            if ( memcmp(tx.sourcePublicKey,sender,32) == 0 )
+            {
+                digest2txid(txid,txidstr);
+                fclose(fp);
+                return(i);
+            }
+        }
+        fclose(fp);
+    }
+    return(-1);
+}
+
+int32_t tickfindtxid(int32_t tick,char txidstr[32],uint8_t txdata[MAX_TX_SIZE])
+{
+    FILE *fp;
+    char fname[512];
+    TickData TD;
+    Transaction T;
+    int32_t i,j,epoch,txlen=0,n=0;
+    uint8_t zero[32],txid[32],tmptxid[32];
+    txid2digest(txidstr,txid);
+    epoch = tick2epoch(tick);
+    epochfname(fname,epoch,tick,"");
+    if ( (fp= fopen(fname,"rb")) != 0 )
+    {
+        fread(&TD,1,sizeof(TD),fp);
+        fclose(fp);
+        memset(zero,0,sizeof(zero));
+        for (i=0; i<NUMBER_OF_TRANSACTIONS_PER_TICK; i++)
+        {
+            if ( memcmp(TD.transactionDigests[i],zero,sizeof(zero)) == 0 )
+                break;
+            n++;
+            if ( memcmp(TD.transactionDigests[i],txid,sizeof(txid)) == 0 )
+            {
+                epochfname(fname,epoch,tick,".T");
+                if ( (fp= fopen(fname,"rb")) != 0 )
+                {
+                    for (j=0; j<n; j++)
+                    {
+                        if ( fread(&txlen,1,sizeof(txlen),fp) != sizeof(txlen) || txlen < sizeof(T) || txlen > sizeof(T)+MAX_INPUT_SIZE+SIGNATURE_SIZE )
+                            break;
+                        if ( fread(tmptxid,1,sizeof(tmptxid),fp) != sizeof(tmptxid) )
+                            break;
+                        if ( fread(txdata,1,txlen,fp) != txlen )
+                            break;
+                    }
+                    fclose(fp);
+                    if ( j != n || memcmp(tmptxid,txid,32) != 0 )
+                    {
+                        printf("j.%d != n.%d\n",j,n);
+                        txlen = 1;
+                    }
+                } else txlen = 1;
+                return(txlen);
+            }
+        }
+    }
+    return(0);
 }
 
 char *BIP39[] =

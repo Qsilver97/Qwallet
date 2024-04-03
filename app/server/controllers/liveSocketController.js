@@ -1,5 +1,8 @@
 const socketManager = require('../managers/socketManager');
+const stateManager = require('../managers/stateManager');
 const { setRemoteSubshash } = require('../managers/stateManager');
+const wasmManager = require('../managers/wasmManager');
+const { splitAtFirstSpace } = require('../utils/helpers');
 
 module.exports = function (liveSocket) {
     let socket = socketManager.getIO();
@@ -12,11 +15,23 @@ module.exports = function (liveSocket) {
     });
 
     liveSocket.onmessage = (event) => {
-        console.log(event.data, 'livesocket');
+        console.log(`Socket recieved1: ${event.data}`);
         try {
-            const data = JSON.parse(event.data)
+            let flag, data;
+            if (event.data.startsWith('#')) {
+                [flag, data] = splitAtFirstSpace(event.data);
+            } else {
+                data = JSON.parse(event.data);
+            }
             if (data.subshash) {
                 setRemoteSubshash(data.subshash);
+            }
+            if (data.wasm == 1) {
+                console.log(`Socket recieved: Wasm call - wss ${JSON.stringify(data)}`);
+                wasmManager.ccall({ command: `wss ${JSON.stringify(data)}`, flag: 'wss' });
+            }
+            if (flag) {
+                stateManager.updateSocketState(flag.slice(1), data);
             }
             socket.emit('live', data);
         } catch (error) {

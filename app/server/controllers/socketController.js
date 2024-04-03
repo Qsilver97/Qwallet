@@ -5,7 +5,6 @@ module.exports = function (io) {
     io.on('connection', (socket) => {
         console.log('A user connected');
         socket.on('test', (msg) => {
-            console.log(msg)
             socket.emit('test', msg)
         });
 
@@ -17,7 +16,12 @@ module.exports = function (io) {
 
         socket.on('send', (msg) => {
             const liveSocket = socketManager.getLiveSocket();
+            console.log(`Socket sent: ${msg}`)
             liveSocket.send(msg);
+        })
+
+        socket.on('broadcast', (msg) => {
+            socket.broadcast.emit(msg.command, msg.value);
         })
 
         socket.on('disconnect', () => {

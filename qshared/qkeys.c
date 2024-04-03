@@ -152,6 +152,12 @@ bool addr2pubkey(const char *identity,uint8_t pubkey[32])
     return(true);
 }
 
+void digest2txid(uint8_t digest[32],char txid[61])
+{
+    getTxHashFromDigest(digest,txid);
+    txid[60] = 0;
+}
+
 bool txid2digest(const char *txid,uint8_t digest[32])
 {
     int64_t partial;

@@ -1,6 +1,8 @@
 node_modules
 app/server/keys/*
 !app/server/keys/.gitkeep
+keys/*
+!keys/.gitkeep
 # app/server/utils/a.out.js
 # app/server/utils/a.out.worker.js
 .env
@@ -30,3 +32,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+app/server/release-builds
