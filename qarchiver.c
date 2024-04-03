@@ -15,11 +15,13 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include "uthash.h"
+#include "utlist.h"
 
 
 #include "qshared/K12AndKeyUtil.h"
 #include "qshared/qdefines.h"
 #include "qshared/qstructs.h"
+#include "qshared/qexterns.h"
 
 struct qubictx
 {
@@ -29,257 +31,83 @@ struct qubictx
     uint8_t txdata[];
 } *TXIDS;
 
+pthread_mutex_t txid_mutex;
+struct voteq_entry *VOTEQ[MAXTICKS];
+int32_t Voteallocs,Votedup,Totalsandwiches;
+
+struct election
+{
+    Tick ref;
+    struct voteq_entry *voters[NUMBER_OF_COMPUTORS];
+    int32_t numvotes;
+} Candidates[6];
+
 struct RAM_Quorum
 {
-    Tick Quorum[NUMBER_OF_COMPUTORS];
     uint8_t qchain[32],spectrum[32];
     int32_t validated,count,pending,needtx;
-} *RAMQ;
+} RAMQ[MAXTICKS];
 
 #include "qshared/qkeys.c"
 #include "qshared/qhelpers.c"
 #include "qshared/qtime.c"
-
 #include "qconn.c"
-#include "qpeers.c"
 
 #define QUORUM_FETCHWT 100
 #define TX_FETCHWT 300
 
-pthread_mutex_t txid_mutex;
 
-
-void _qubictxadd(uint8_t txid[32],uint8_t *txdata,int32_t txlen)
+void queue_vote(int32_t peerid,int32_t offset,Tick *qdata)
 {
-    struct qubictx *qtx;
-    qtx = (struct qubictx *)calloc(1,sizeof(*qtx) + txlen);
-    memcpy(qtx->txid,txid,sizeof(qtx->txid));
-    qtx->txlen = txlen;
-    memcpy(qtx->txdata,txdata,txlen);
-    HASH_ADD_KEYPTR(hh,TXIDS,qtx->txid,sizeof(qtx->txid),qtx);
-}
-
-struct qubictx *qubictxhash(uint8_t txid[32],uint8_t *txdata,int32_t txlen)
-{
-    struct qubictx *qtx;
-    pthread_mutex_lock(&txid_mutex);
-    HASH_FIND(hh,TXIDS,txid,sizeof(qtx->txid),qtx);
-    if ( qtx == 0 && txdata != 0 && txlen >= sizeof(Transaction) )
+    struct voteq_entry *vp;
+    if ( qdata->tick >= VALIDATED_TICK )
     {
-        _qubictxadd(txid,txdata,txlen);
-        HASH_FIND(hh,TXIDS,txid,sizeof(qtx->txid),qtx);
-        if ( qtx == 0 )
-            printf("FATAL HASH TABLE ERROR\n");
+        vp = (struct voteq_entry *)calloc(1,sizeof(*vp));
+        vp->vote = *qdata;
+        pthread_mutex_lock(&Peertickinfo[peerid].peermutex);
+        Voteallocs++;
+        DL_APPEND(Peertickinfo[peerid].voteQ,vp);
+        pthread_mutex_unlock(&Peertickinfo[peerid].peermutex);
     }
-    pthread_mutex_unlock(&txid_mutex);
-    return(qtx);
 }
 
-void qpurge(int32_t tick)
+void dequeue_votes()
 {
-    char fname[512];
-    sprintf(fname,"epochs%c%d%c%d.T",dir_delim(),EPOCH,dir_delim(),tick);
-    deletefile(fname);
-    sprintf(fname,"epochs%c%d%c%d.Q",dir_delim(),EPOCH,dir_delim(),tick);
-    deletefile(fname);
-    sprintf(fname,"epochs%c%d%c%d",dir_delim(),EPOCH,dir_delim(),tick);
-    deletefile(fname);
-    if ( VALIDATED_TICK >= tick )
-        VALIDATED_TICK = tick - 1;
-    if ( HAVE_TXTICK >= tick )
-        HAVE_TXTICK = tick - 1;
-}
-
-void qchaincalc(uint8_t prevhash[32],uint8_t qchain[32],Tick T)
-{
-    uint8_t digest[32];
-    char hexstr[65];
-    Qchain Q;
-    memset(&Q,0,sizeof(Q));
-    Q.epoch = T.epoch;
-    Q.tick = T.tick;
-    Q.millisecond = T.millisecond;
-    Q.second = T.second;
-    Q.minute = T.minute;
-    Q.hour = T.hour;
-    Q.day = T.day;
-    Q.month = T.month;
-    Q.year = T.year;
-    Q.prevResourceTestingDigest = T.prevResourceTestingDigest;
-    memcpy(Q.prevSpectrumDigest,T.prevSpectrumDigest,sizeof(Q.prevSpectrumDigest));
-    memcpy(Q.prevUniverseDigest,T.prevUniverseDigest,sizeof(Q.prevUniverseDigest));
-    memcpy(Q.prevComputerDigest,T.prevComputerDigest,sizeof(Q.prevComputerDigest));
-    memcpy(Q.transactionDigest,T.transactionDigest,sizeof(Q.transactionDigest));
-    memcpy(Q.prevqchain,prevhash,sizeof(Q.prevqchain));
-    KangarooTwelve((uint8_t *)&Q,sizeof(Q),digest,32);
-    byteToHex(digest,hexstr,sizeof(digest));
-    if ( (T.tick % 1000) == 0 )
-        printf("qchain.%-6d %s\n",T.tick,hexstr);
-    memcpy(qchain,digest,sizeof(digest));
-}
-
-void incr_VALIDATE_TICK(int32_t tick,Tick T)
-{
-    FILE *fp;
-    char fname[512];
-    int32_t i;
-    long offset;
-    uint8_t prevhash[32],buf[64];
-    offset = (tick - INITIAL_TICK);
-    if ( offset >= 0 && offset < MAXTICKS )
+    int32_t peerid,offset,numdel = 0;
+    struct voteq_entry *vp;
+    for (offset=0; offset<VALIDATED_TICK-INITIAL_TICK-10; offset++)
     {
-        if ( offset == 0 )
-            memset(prevhash,0,sizeof(prevhash));
-        else
+        while ( (vp= VOTEQ[offset]) != 0 )
         {
-            memcpy(RAMQ[offset].spectrum,T.prevSpectrumDigest,sizeof(prevhash));
-            memcpy(prevhash,RAMQ[offset-1].qchain,sizeof(prevhash));
-        }
-        qchaincalc(prevhash,RAMQ[offset].qchain,T);
-        sprintf(fname,"epochs%c%d%cqchain",dir_delim(),EPOCH,dir_delim());
-        if ( (fp= fopen(fname,"rb+")) == 0 )
-        {
-            if ( (fp= fopen(fname,"wb")) != 0 )
-            {
-                memset(buf,0,sizeof(buf));
-                for (i=0; i<MAXTICKS; i++)
-                    fwrite(buf,1,sizeof(buf),fp);
-                fclose(fp);
-            }
-            fp = fopen(fname,"rb+");
-        }
-        if ( fp != 0 )
-        {
-            fseek(fp,offset * 64,SEEK_SET);
-            memcpy(buf,RAMQ[offset].spectrum,32);
-            memcpy(&buf[32],RAMQ[offset].qchain,32);
-            fwrite(buf,1,sizeof(buf),fp);
-            fclose(fp);
+            DL_DELETE(VOTEQ[offset],vp);
+            free(vp);
+            Voteallocs--;
+            numdel++;
         }
     }
-    VALIDATED_TICK = tick;
-    PROGRESSTIME = LATEST_UTIME;
-    EXITFLAG = 0;
-}
-
-int32_t update_validated(void)
-{
-    Tick T;
-    TickData TD;
-    uint8_t zeros[32],digest[32];
-    FILE *fp;
-    int32_t tick,n,haveQ=0,deleteflag,missed = 0;
-    char fname[512];
-    n = 0;
-    
-    for (tick=VALIDATED_TICK!=0?VALIDATED_TICK:INITIAL_TICK; tick<LATEST_TICK && missed<1000; tick++)
+    //printf("dequeue_votes num deleted %d\n",numdel);
+    for (peerid=0; peerid<MAXPEERS; peerid++)
     {
-        n++;
-        haveQ = 0;
-        //printf("validate %d missed.%d\n",tick,missed);
-        sprintf(fname,"epochs%c%d%c%d.T",dir_delim(),EPOCH,dir_delim(),tick);
-        if ( (fp= fopen(fname,"rb")) != 0 )
+        pthread_mutex_lock(&Peertickinfo[peerid].peermutex);
+        while ( (vp= Peertickinfo[peerid].voteQ) != 0 )
         {
-            fclose(fp);
-            sprintf(fname,"epochs%c%d%c%d.Q",dir_delim(),EPOCH,dir_delim(),tick);
-            if ( (fp= fopen(fname,"rb")) != 0 )
+            DL_DELETE(Peertickinfo[peerid].voteQ,vp);
+            if ( vp != 0 )
             {
-                while ( fread(&T,1,sizeof(T),fp) == sizeof(T) )
+                offset = (vp->vote.tick - INITIAL_TICK);
+                if ( offset >= 0 && offset < MAXTICKS )
                 {
-                    if ( T.tick == tick )
-                    {
-                        haveQ = 1;
-                        break;
-                    }
+                    DL_APPEND(VOTEQ[offset],vp);
                 }
-                fclose(fp);
-                if ( haveQ != 0 )
-                {
-                    //printf("skip VALIDATED_TICK.%d\n",tick);
-                    incr_VALIDATE_TICK(tick,T);
-                    continue;
-                }
-            }
-            //printf("haveT.%d tick.%d even with Qfile\n",haveT,tick);
-        }
-        sprintf(fname,"epochs%c%d%c%d.Q",dir_delim(),EPOCH,dir_delim(),tick);
-        if ( (fp= fopen(fname,"rb")) != 0 )
-        {
-            while ( fread(&T,1,sizeof(T),fp) == sizeof(T) )
-            {
-                if ( T.tick == tick )
-                {
-                    haveQ = 1;
-                    break;
-                }
-            }
-            fclose(fp);
-            deleteflag = 0;
-            sprintf(fname,"epochs%c%d%c%d",dir_delim(),EPOCH,dir_delim(),tick);
-            if ( (fp= fopen(fname,"rb")) != 0 )
-            {
-                fseek(fp,0,SEEK_END);
-                if ( ftell(fp) == 32 )
-                    memset(digest,0,sizeof(digest));
                 else
                 {
-                    rewind(fp);
-                    if ( fread(&TD,1,sizeof(TD),fp) == sizeof(TD) )
-                        KangarooTwelve((uint8_t *)&TD,sizeof(TD),digest,32);
-                    else deleteflag = 1;
-                }
-                fclose(fp);
-                if ( deleteflag == 0 )
-                {
-                    if ( memcmp(digest,T.transactionDigest,sizeof(digest)) == 0 )
-                    {
-                        if ( missed == 0 && tick > VALIDATED_TICK )
-                        {
-                            //printf("VALIDATED_TICK.%d\n",tick);
-                            incr_VALIDATE_TICK(tick,T);
-                        }
-                    }
-                    else
-                    {
-                        deleteflag = 1;
-                        char hex1[65],hex2[65];
-                        byteToHex(digest,hex1,32);
-                        byteToHex(T.transactionDigest,hex2,32);
-                        printf("transactiondigest mismatch tick.%d %s vs %s\n",T.tick,hex1,hex2);
-                    }
-                }
-                if ( deleteflag != 0 )
-                {
-                    printf("validate deletes %s\n",fname);
-                    deletefile(fname);
+                    free(vp);
+                    Voteallocs--;
                 }
             }
-            else
-            {
-                if ( haveQ != 0 )
-                {
-                    memset(zeros,0,sizeof(zeros));
-                    if ( memcmp(zeros,T.transactionDigest,sizeof(zeros)) == 0 )
-                    {
-                        if ( (fp= fopen(fname,"wb")) != 0 )
-                        {
-                            fwrite(zeros,1,sizeof(zeros),fp);
-                            fclose(fp);
-                        }
-                    }
-                }
-                missed++;
-            }
         }
-        else
-        {
-            missed++;
-            //printf("%d missing\n",tick);
-        }
+        pthread_mutex_unlock(&Peertickinfo[peerid].peermutex);
     }
-    if ( (rand() % 100) == 0 )
-        printf("VALIDATED_TICK.%d missed.%d of %d\n",VALIDATED_TICK,missed,n);
-    return(VALIDATED_TICK);
 }
 
 int32_t cmptick(Tick *a,Tick *b)
@@ -325,6 +153,359 @@ int32_t cmptick(Tick *a,Tick *b)
     return(0);
 }
 
+int32_t have_quorum(int32_t tick)
+{
+    struct voteq_entry *vp,*tmp;
+    struct election *votes[NUMBER_OF_COMPUTORS];
+    char fname[512];
+    FILE *fp;
+    int32_t err,offset,i,numcand,numvoters,winner,audit;
+    offset = (tick - INITIAL_TICK);
+    if ( offset >= 0 && offset < MAXTICKS )
+    {
+        numcand = 0;
+        numvoters = 0;
+        winner = -1;
+        memset(votes,0,sizeof(votes));
+        memset(Candidates,0,sizeof(Candidates));
+        //printf("check quorum %d offset.%d\n",tick,offset);
+        DL_FOREACH_SAFE(VOTEQ[offset],vp,tmp)
+        {
+            if ( vp->vote.tick != tick || votes[vp->vote.computorIndex] != 0 )
+            {
+                DL_DELETE(VOTEQ[offset],vp);
+                free(vp);
+                Votedup++;
+                Voteallocs--;
+                continue;
+            }
+            for (i=0; i<numcand; i++)
+            {
+                if ( (err= cmptick(&vp->vote,&Candidates[i].ref)) == 0 )
+                {
+                    votes[vp->vote.computorIndex] = &Candidates[i];
+                    Candidates[i].voters[Candidates[i].numvotes++] = vp;
+                    numvoters++;
+                    //printf("computor.%d matches candidate.%d votes.%d\n",vp->vote.computorIndex,i,Candidates[i].numvotes);
+                    if ( Candidates[i].numvotes >= TWOTHIRDS )
+                        winner = i;
+                    break;
+                }
+            }
+            if ( i == numcand )
+            {
+                if ( i+1 < sizeof(Candidates)/sizeof(*Candidates) )
+                {
+                    Candidates[i].ref = vp->vote;
+                    //printf("tick.%d create new candidate.%d n.%d from computor.%d\n",tick,i,n,vp->vote.computorIndex);
+                    votes[vp->vote.computorIndex] = &Candidates[i];
+                    Candidates[i].voters[Candidates[i].numvotes++] = vp;
+                    numvoters++;
+                    numcand++;
+                } else printf("out of candidate slots.%d\n",i);
+            }
+        }
+        if ( winner >= 0 && Candidates[winner].numvotes >= TWOTHIRDS )
+        {
+            audit = 0;
+            for (i=0; i<NUMBER_OF_COMPUTORS; i++)
+                if ( votes[i] == &Candidates[winner] )
+                    audit++;
+            printf("tick.%d candidate.%d wins with %d votes out of %d. audit.%d Voteallocs.%d dups.%d\n",tick,winner,Candidates[winner].numvotes,numvoters,audit,Voteallocs,Votedup);
+            if ( audit == Candidates[winner].numvotes )
+            {
+                RAMQ[offset].validated = Candidates[winner].numvotes;
+                epochfname(fname,EPOCH,tick,".Q");
+                if ( (fp= fopen(fname,"wb")) != 0 )
+                {
+                    for (i=0; i<Candidates[winner].numvotes; i++)
+                    {
+                        if ( cmptick(&Candidates[winner].voters[i]->vote,&Candidates[winner].ref) == 0 )
+                            fwrite(&Candidates[winner].voters[i]->vote,1,sizeof(Candidates[winner].voters[i]->vote),fp);
+                        else printf("err.%d voter.%d for winner.%d with numvotes.%d\n",err,i,winner,Candidates[winner].numvotes);
+                    }
+                    fclose(fp);
+                }
+                DL_FOREACH_SAFE(VOTEQ[offset],vp,tmp)
+                {
+                    DL_DELETE(VOTEQ[offset],vp);
+                    free(vp);
+                    Voteallocs--;
+                }
+                return(Candidates[winner].numvotes);
+            }
+        }
+    }
+    return(-1);
+}
+
+void _qubictxadd(uint8_t txid[32],uint8_t *txdata,int32_t txlen)
+{
+    struct qubictx *qtx;
+    qtx = (struct qubictx *)calloc(1,sizeof(*qtx) + txlen);
+    memcpy(qtx->txid,txid,sizeof(qtx->txid));
+    qtx->txlen = txlen;
+    memcpy(qtx->txdata,txdata,txlen);
+    HASH_ADD_KEYPTR(hh,TXIDS,qtx->txid,sizeof(qtx->txid),qtx);
+}
+
+struct qubictx *qubictxhash(int32_t *addedflagp,uint8_t txid[32],uint8_t *txdata,int32_t txlen)
+{
+    int32_t flag = 0;
+    struct qubictx *qtx;
+    pthread_mutex_lock(&txid_mutex);
+    HASH_FIND(hh,TXIDS,txid,sizeof(qtx->txid),qtx);
+    if ( qtx == 0 && txdata != 0 && txlen >= sizeof(Transaction) )
+    {
+        flag = 1;
+        _qubictxadd(txid,txdata,txlen);
+        HASH_FIND(hh,TXIDS,txid,sizeof(qtx->txid),qtx);
+        if ( qtx == 0 )
+            printf("FATAL HASH TABLE ERROR\n");
+    }
+    pthread_mutex_unlock(&txid_mutex);
+    if ( addedflagp != 0 )
+        *addedflagp = flag;
+    return(qtx);
+}
+
+void qpurge(int32_t tick)
+{
+    char fname[512];
+    epochfname(fname,EPOCH,tick,".T");
+    deletefile(fname);
+    epochfname(fname,EPOCH,tick,".Q");
+    deletefile(fname);
+    epochfname(fname,EPOCH,tick,"");
+    deletefile(fname);
+    if ( VALIDATED_TICK >= tick )
+        VALIDATED_TICK = tick - 1;
+    if ( HAVE_TXTICK >= tick )
+        HAVE_TXTICK = tick - 1;
+}
+
+void qchaincalc(uint8_t prevhash[32],uint8_t qchain[32],Tick T)
+{
+    uint8_t digest[32];
+    char hexstr[65];
+    Qchain Q;
+    memset(&Q,0,sizeof(Q));
+    Q.epoch = T.epoch;
+    Q.tick = T.tick;
+    Q.millisecond = T.millisecond;
+    Q.second = T.second;
+    Q.minute = T.minute;
+    Q.hour = T.hour;
+    Q.day = T.day;
+    Q.month = T.month;
+    Q.year = T.year;
+    Q.prevResourceTestingDigest = T.prevResourceTestingDigest;
+    memcpy(Q.prevSpectrumDigest,T.prevSpectrumDigest,sizeof(Q.prevSpectrumDigest));
+    memcpy(Q.prevUniverseDigest,T.prevUniverseDigest,sizeof(Q.prevUniverseDigest));
+    memcpy(Q.prevComputerDigest,T.prevComputerDigest,sizeof(Q.prevComputerDigest));
+    memcpy(Q.transactionDigest,T.transactionDigest,sizeof(Q.transactionDigest));
+    memcpy(Q.prevqchain,prevhash,sizeof(Q.prevqchain));
+    KangarooTwelve((uint8_t *)&Q,sizeof(Q),digest,32);
+    byteToHex(digest,hexstr,sizeof(digest));
+    if ( (T.tick % 1000) == 0 )
+        printf("qchain.%-6d %s\n",T.tick,hexstr);
+    memcpy(qchain,digest,sizeof(digest));
+}
+
+void incr_VALIDATE_TICK(int32_t tick,Tick T)
+{
+    FILE *fp;
+    char fname[512],spectrumstr[65],msg[512];
+    int32_t i;
+    long offset;
+    uint8_t prevhash[32],buf[64];
+    offset = (tick - INITIAL_TICK);
+    if ( offset >= 0 && offset < MAXTICKS )
+    {
+        if ( offset == 0 )
+            memset(prevhash,0,sizeof(prevhash));
+        else
+        {
+            memcpy(RAMQ[offset].spectrum,T.prevSpectrumDigest,sizeof(prevhash));
+            memcpy(prevhash,RAMQ[offset-1].qchain,sizeof(prevhash));
+        }
+        RAMQ[offset].validated = NUMBER_OF_COMPUTORS;
+        qchaincalc(prevhash,RAMQ[offset].qchain,T);
+        sprintf(fname,"%s%cqchain.%d",DATADIR,dir_delim(),EPOCH);
+        if ( (fp= fopen(fname,"rb+")) == 0 )
+        {
+            if ( (fp= fopen(fname,"wb")) != 0 )
+            {
+                memset(buf,0,sizeof(buf));
+                for (i=0; i<MAXTICKS; i++)
+                    fwrite(buf,1,sizeof(buf),fp);
+                fclose(fp);
+            }
+            fp = fopen(fname,"rb+");
+        }
+        if ( fp != 0 )
+        {
+            byteToHex(RAMQ[offset].spectrum,spectrumstr,32);
+            sprintf(msg,"merkle %d %s",tick,spectrumstr);
+            Qserver_msg(msg);
+            fseek(fp,offset * 64,SEEK_SET);
+            memcpy(buf,RAMQ[offset].spectrum,32);
+            memcpy(&buf[32],RAMQ[offset].qchain,32);
+            fwrite(buf,1,sizeof(buf),fp);
+            fclose(fp);
+        }
+    }
+    VALIDATED_TICK = tick;
+    PROGRESSTIME = LATEST_UTIME;
+    EXITFLAG = 0;
+}
+
+int32_t update_validated(void)
+{
+    Tick T;
+    TickData TD;
+    uint8_t zeros[32],digest[32];
+    FILE *fp;
+    int32_t tick,n,haveQ=0,deleteflag,missed = 0;
+    char fname[512];
+    n = 0;
+    memset(zeros,0,sizeof(zeros));
+    if ( INITIAL_TICK != 0 )
+    {
+        for (tick=VALIDATED_TICK!=0?VALIDATED_TICK:INITIAL_TICK; tick<LATEST_TICK && missed<100; tick++)
+        {
+            epochfname(fname,EPOCH,tick,".Q");
+            if ( (fp= fopen(fname,"rb")) != 0 )
+            {
+                fclose(fp);
+                //printf("skip tick.%d as Q file already there\n",tick);
+                continue;
+            }
+            if ( have_quorum(tick) < TWOTHIRDS )
+                missed++;
+        }
+    }
+    missed = 0;
+    for (tick=VALIDATED_TICK!=0?VALIDATED_TICK:INITIAL_TICK; tick<LATEST_TICK && missed<100; tick++)
+    {
+        n++;
+        haveQ = 0;
+        //printf("validate %d missed.%d\n",tick,missed);
+        /*
+         epochfname(fname,EPOCH,tick,".T");
+
+        if ( (fp= fopen(fname,"rb")) != 0 )
+        {
+            fclose(fp);
+            epochfname(fname,EPOCH,tick,".Q");
+            if ( (fp= fopen(fname,"rb")) != 0 )
+            {
+                while ( fread(&T,1,sizeof(T),fp) == sizeof(T) )
+                {
+                    if ( T.tick == tick )
+                    {
+                        haveQ = 1;
+                        break;
+                    }
+                }
+                fclose(fp);
+                if ( haveQ != 0 && missed == 0 && tick > VALIDATED_TICK )
+                {
+                    //printf("skip VALIDATED_TICK.%d\n",tick);
+                    incr_VALIDATE_TICK(tick,T);
+                    continue;
+                }
+            }
+            //printf("haveQ.%d tick.%d even with Qfile\n",haveQ,tick);
+        }*/
+        epochfname(fname,EPOCH,tick,".Q");
+        if ( (fp= fopen(fname,"rb")) != 0 )
+        {
+            if ( fread(&T,1,sizeof(T),fp) == sizeof(T) && T.tick == tick )
+                haveQ = 1;
+            fclose(fp);
+            if ( haveQ == 0 )
+            {
+                deletefile(fname);
+                missed++;
+                printf("delete strange Q file %s\n",fname);
+                continue;
+            }
+            deleteflag = 0;
+            epochfname(fname,EPOCH,tick,"");
+            if ( (fp= fopen(fname,"rb")) != 0 )
+            {
+                fseek(fp,0,SEEK_END);
+                if ( ftell(fp) == 32 )
+                {
+                    memset(digest,0,sizeof(digest));
+                    //printf("empty tick.%d\n",tick);
+                }
+                else
+                {
+                    rewind(fp);
+                    if ( fread(&TD,1,sizeof(TD),fp) == sizeof(TD) )
+                        KangarooTwelve((uint8_t *)&TD,sizeof(TD),digest,32);
+                    else
+                    {
+                        deleteflag = 1;
+                        printf("TD read error %s\n",fname);
+                    }
+                }
+                fclose(fp);
+                //printf("tick.%d haveQ.%d deleteflag.%d missed.%d %s\n",tick,haveQ,deleteflag,missed,fname);
+                if ( deleteflag == 0 )
+                {
+                    if ( memcmp(digest,T.transactionDigest,sizeof(digest)) == 0 )
+                    {
+                        if ( missed == 0 && tick > VALIDATED_TICK )
+                        {
+                            //printf("VALIDATED_TICK.%d T.tick %d latest.%d\n",tick,T.tick,LATEST_TICK);
+                            incr_VALIDATE_TICK(tick,T);
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        deleteflag = 1;
+                        char hex1[65],hex2[65];
+                        byteToHex(digest,hex1,32);
+                        byteToHex(T.transactionDigest,hex2,32);
+                        if ( memcmp(T.transactionDigest,zeros,32) != 0 )
+                            printf("transactiondigest mismatch tick.%d %s vs %s\n",T.tick,hex1,hex2);
+                    }
+                }
+                else
+                {
+                    //printf("validate deletes %s\n",fname);
+                    deletefile(fname);
+                }
+            }
+            else
+            {
+                //printf("%s missing haveQ.%d iszero.%d\n",fname,haveQ,memcmp(zeros,T.transactionDigest,sizeof(zeros)));
+                if ( memcmp(zeros,T.transactionDigest,sizeof(zeros)) == 0 )
+                {
+                    if ( (fp= fopen(fname,"wb")) != 0 )
+                    {
+                        fwrite(zeros,1,sizeof(zeros),fp);
+                        fclose(fp);
+                    }
+                }
+                missed++;
+            }
+        }
+        else
+        {
+            missed++;
+            //printf("%d missing\n",tick);
+        }
+    }
+    if ( (rand() % 100) == 0 )
+        printf("end VALIDATED_TICK.%d missed.%d of %d\n",VALIDATED_TICK,missed,n);
+    return(VALIDATED_TICK);
+}
+
 int32_t quorumsigverify(Computors *computors,Tick *T)
 {
     int computorIndex = T->computorIndex;
@@ -343,61 +524,13 @@ int32_t quorumsigverify(Computors *computors,Tick *T)
 
 void process_quorumdata(int32_t peerid,char *ipaddr,Tick *qdata,Computors *computors)
 {
-    FILE *fp;
-    char fname[512];
-    int32_t i,offset,firsti,matches,count,errors,err;
-    offset = (qdata->tick - INITIAL_TICK);
-    if ( qdata->epoch == EPOCH && qdata->tick != 0 && offset >= 0 && offset < MAXTICKS && RAMQ[offset].validated == 0 )
+    int32_t offset;
+    if ( INITIAL_TICK == 0 || qdata->tick < INITIAL_TICK || qdata->tick >= INITIAL_TICK+MAXTICKS )
+        return;
+    if ( qdata->epoch == EPOCH && qdata->tick != 0 && qdata->computorIndex >= 0 && qdata->computorIndex < 676 && quorumsigverify(computors,qdata) == 1 )
     {
-        if ( qdata->computorIndex >= 0 && qdata->computorIndex < 676 && RAMQ[offset].Quorum[qdata->computorIndex].tick != qdata->tick && quorumsigverify(computors,qdata) == 1 )
-        {
-            RAMQ[offset].Quorum[qdata->computorIndex] = *qdata;
-            RAMQ[offset].count++;
-            if ( RAMQ[offset].count >= 451 )
-            {
-                for (count=i=0; i<676; i++)
-                {
-                    //printf("%d ",RAMQ[offset].Quorum[i].tick);
-                    if ( RAMQ[offset].Quorum[i].tick != 0 )
-                        count++;
-                }
-                if ( count != RAMQ[offset].count )
-                {
-                    if ( (rand() % 100) == 0 )
-                        printf("set count %d -> %d\n",RAMQ[offset].count,count);
-                    RAMQ[offset].count = count;
-                }
-                for (firsti=0; firsti<676; firsti++)
-                    if ( RAMQ[offset].Quorum[firsti].epoch == EPOCH && RAMQ[offset].Quorum[firsti].tick == qdata->tick )
-                        break;
-                matches = 1;
-                errors = 0;
-                for (i=firsti+1; i<676; i++)
-                {
-                    if ( RAMQ[offset].Quorum[i].tick == 0 )
-                       continue;
-                    if ( (err= cmptick(&RAMQ[offset].Quorum[firsti],&RAMQ[offset].Quorum[i])) == 0 )
-                        matches++;
-                    else
-                    {
-                        errors++;
-                        if ( err != -2 )
-                            printf("E%d ",err);
-                    }
-                }
-                if ( matches >= 451 )
-                {
-                    RAMQ[offset].validated = matches;
-                    sprintf(fname,"epochs%c%d%c%d.Q",dir_delim(),EPOCH,dir_delim(),qdata->tick);
-                    if ( (fp= fopen(fname,"wb")) != 0 )
-                    {
-                        fwrite(RAMQ[offset].Quorum,1,sizeof(RAMQ[offset].Quorum),fp);
-                        fclose(fp);
-                    }
-                }
-                //printf("tick.%d peerid.%d matches %d, firsti.%d errors.%d count.%d\n",qdata->tick,peerid,matches,firsti,errors,count);
-            }
-        }
+        offset = qdata->tick - INITIAL_TICK;
+        queue_vote(peerid,offset,qdata);
     }
 }
 
@@ -424,7 +557,7 @@ int32_t updatetick(int32_t *nump,int32_t tick,char *ipaddr,int32_t sock)
     RequestedQuorumTick R;
     int32_t offset;
     uint8_t reqbuf[sizeof(H) + sizeof(R) ];
-    sprintf(fname,"epochs%c%d%c%d",dir_delim(),EPOCH,dir_delim(),tick);
+    epochfname(fname,EPOCH,tick,"");
     if ( (fp= fopen(fname,"rb")) == 0 )
     {
         sock = updateticktx(tick,ipaddr,sock);
@@ -432,14 +565,16 @@ int32_t updatetick(int32_t *nump,int32_t tick,char *ipaddr,int32_t sock)
         memcpy(reqbuf,&H,sizeof(H));
         memcpy(&reqbuf[sizeof(H)],&tick,sizeof(tick));
         sock = socksend(ipaddr,sock,reqbuf,sizeof(H) + sizeof(tick));
+        //printf("request %d\n",tick);
         (*nump)++;
     } else fclose(fp);
-    sprintf(fname,"epochs%c%d%c%d.Q",dir_delim(),EPOCH,dir_delim(),tick);
+    epochfname(fname,EPOCH,tick,".Q");
     offset = (tick - INITIAL_TICK);
     if ( offset >= 0 && offset < MAXTICKS )//&& RAMQ[offset].pending < LATEST_TICK-1 )
     {
         if ( (fp= fopen(fname,"rb")) == 0 )
         {
+            //printf("request %d.Q\n",tick);
             memset(&R,0,sizeof(R));
             memset(reqbuf,0,sizeof(reqbuf));
             H = quheaderset(REQUEST_QUORUMTICK,sizeof(H) + sizeof(R));
@@ -462,9 +597,9 @@ void process_entity(int32_t peerid,char *ipaddr,RespondedEntity *E)
 int32_t process_transaction(int32_t *savedtxp,FILE *fp,int32_t peerid,char *ipaddr,Transaction *tx,int32_t txlen)
 {
     static uint8_t txdata[MAXPEERS+1][4096],sigs[MAXPEERS+1][64]; // needs to be aligned or crashes in verify
-    uint8_t digest[32],txid[32];
-    char addr[64],txidstr[64];
-    int32_t v = -1;
+    uint8_t digest[32],txid[32],zero[32],pubkey[32];
+    char addr[64],dest[64],txidstr[64],qmsg[512],smany[2][64];
+    int32_t i,addedflag,v = -1;
     if ( txlen < sizeof(txdata[peerid]) )
     {
         memcpy(txdata[peerid],tx,txlen);
@@ -480,8 +615,41 @@ int32_t process_transaction(int32_t *savedtxp,FILE *fp,int32_t peerid,char *ipad
             fwrite(&txlen,1,sizeof(txlen),fp);
             fwrite(txid,1,sizeof(txid),fp);
             fwrite(tx,1,txlen,fp);
-            qubictxhash(txid,(uint8_t *)tx,txlen);
+            qubictxhash(&addedflag,txid,(uint8_t *)tx,txlen);
             (*savedtxp)++;
+            if ( addedflag != 0 && tx->amount != 0 && tx->tick > LATEST_TICK )
+            {
+                if ( tx->inputType == SENDTOMANYV1 )
+                {
+                    if ( ((uint64_t *)tx->destinationPublicKey)[0] == QUTIL_CONTRACT_ID )
+                    {
+                        memset(zero,0,sizeof(zero));
+                        for (i=0; i<25; i++)
+                        {
+                            memcpy(pubkey,&txdata[peerid][sizeof(*tx) + i*32],32);
+                            if ( memcmp(pubkey,zero,32) != 0 )
+                            {
+                                pubkey2addr(pubkey,dest);
+                                strcpy(smany[i%2],dest);
+                                if ( (i&1) != 0 )
+                                {
+                                    sprintf(qmsg,"future %d %s %s",tx->tick,smany[0],smany[1]);
+                                    Qserver_msg(qmsg);
+                                    Totalsandwiches++;
+                                }
+                                //printf("%s %s, ",dest,amountstr(*(uint64_t *)&txdata[peerid][sizeof(*tx) + 25*32 + i*8]));
+                            }
+                        }
+                        printf("detected sendmany from %s extrasize.%d, might do redundant Qmsg for last dest\n",addr,tx->inputSize);
+                    }
+                }
+                else pubkey2addr(tx->destinationPublicKey,dest);
+                sprintf(qmsg,"future %d %s %s",tx->tick,addr,dest);
+                //printf("QMSG.(%s)\n",qmsg);
+                Totalsandwiches++;
+                Qserver_msg(qmsg);
+                printf("Total.%d lag.%d %s %s amount %s -> %s\n",Totalsandwiches,tx->tick - LATEST_TICK,ipaddr,addr,amountstr(tx->amount),dest);
+            }
         }
         //printf("process tx from tick.%d %s %s v.%d txlen.%d %p\n",tx->tick,txidstr,addr,v,txlen,qubictxhash(txid,(uint8_t *)tx,txlen));
     }
@@ -500,7 +668,7 @@ int32_t has_computors(Computors *computors,char *ipaddr)
 {
     FILE *fp;
     char fname[512];
-    sprintf(fname,"epochs%c%d%ccomputors%c%s",dir_delim(),EPOCH,dir_delim(),dir_delim(),ipaddr);
+    sprintf(fname,"%scomputors%c%s",epochdirname(EPOCH),dir_delim(),ipaddr);
     if ( (fp= fopen(fname,"rb")) != 0 )
     {
         fread(computors,1,sizeof(*computors),fp);
@@ -518,7 +686,7 @@ void process_computors(int32_t peerid,char *ipaddr,Computors *computors)
     v = validate_computors(computors);
     if ( v != 0 )
     {
-        sprintf(fname,"epochs%c%d%ccomputors%c%s",dir_delim(),EPOCH,dir_delim(),dir_delim(),ipaddr);
+        sprintf(fname,"%scomputors%c%s",epochdirname(EPOCH),dir_delim(),ipaddr);
         if ( (fp= fopen(fname,"rb")) == 0 )
         {
             if ( (fp= fopen(fname,"wb")) != 0 )
@@ -545,7 +713,7 @@ void process_tickdata(int32_t peerid,char *ipaddr,TickData *tickdata,Computors *
     if ( verify(pubkey,sigcheck,sig) != 0 )
     {
         //printf("process tickdata %d GOOD SIG! computor.%d\n",tickdata->tick,computorIndex);
-        sprintf(fname,"epochs%c%d%c%d",dir_delim(),EPOCH,dir_delim(),tickdata->tick);
+        epochfname(fname,EPOCH,tickdata->tick,"");
         if ( (fp= fopen(fname,"wb")) != 0 )
         {
             fwrite(tickdata,1,sizeof(*tickdata),fp);
@@ -606,7 +774,17 @@ int32_t process_response(int32_t *savedtxp,FILE *fp,Computors *computors,int32_t
             break;
         case REQUEST_SYSTEM_INFO: // we are not server
             break;
-        //case PROCESS_SPECIAL_COMMAND:       if ( datasize != sizeof() ) return(-1);
+        case REQUEST_TICK_DATA:
+            break;
+        case REQUEST_COMPUTORS:
+            break;
+        case REQUEST_QUORUMTICK:
+            break;
+        case REQUEST_TICK_TRANSACTIONS:
+            break;
+        case BROADCAST_MESSAGE:
+            break;
+       //case PROCESS_SPECIAL_COMMAND:       if ( datasize != sizeof() ) return(-1);
         default: printf("%s unknown type.%d sz.%d\n",ipaddr,H->_type,datasize);
             break;
     }
@@ -633,12 +811,12 @@ int32_t updateticks(char *ipaddr,int32_t sock)
         sock = updateticktx(INITIAL_TICK,ipaddr,sock);
     else
         sock = updateticktx(HAVE_TXTICK+1,ipaddr,sock);
-    if ( LATEST_TICK - VALIDATED_TICK < 30 )
+    /*if ( LATEST_TICK - VALIDATED_TICK < 5 )
     {
-        for (tick=VALIDATED_TICK+2; tick<=LATEST_TICK; tick++)
+        for (tick=VALIDATED_TICK+2; tick<=LATEST_TICK+2; tick++)
             sock = updatetick(&numsent,tick,ipaddr,sock);
     }
-    else
+    else*/
     {
         for (i=0; i<n; i++)
         {
@@ -669,11 +847,6 @@ int32_t updateticks(char *ipaddr,int32_t sock)
     return(sock);
 }
 
-void peertxfname(char *fname,char *ipaddr)
-{
-    sprintf(fname,"epochs%c%d%ctx%c%s",dir_delim(),EPOCH,dir_delim(),dir_delim(),ipaddr);
-}
-
 void *peerthread(void *_ipaddr)
 {
     char *ipaddr = _ipaddr;
@@ -683,10 +856,9 @@ void *peerthread(void *_ipaddr)
     char fname[512],addr[64];
     int32_t peerid,sock=-1,i,savedtx,ptr,sz,recvbyte,prevutime,prevtick,iter,bufsize,hascomputors;
     struct quheader H;
-    struct addrhash *ap;
     uint8_t *buf;
     signal(SIGPIPE, SIG_IGN);
-    bufsize = 4096 * 1024;
+    bufsize = 1024 * 1024 * 64;
     buf = calloc(1,bufsize);
     peerid = prevutime = prevtick = iter = hascomputors = 0;
     while ( iter++ < 10 )
@@ -755,6 +927,8 @@ void *peerthread(void *_ipaddr)
                     {
                         //printf("peerid.%d Error processing H.type %d size.%ld\n",peerid,H._type,sz - sizeof(H));
                     }
+                    else if ( H._type == EXCHANGE_PUBLIC_PEERS )
+                        sock = socksend(ipaddr,sock,(uint8_t *)&H,sz);
                 }
                 ptr += sz;
             }
@@ -774,12 +948,13 @@ void *peerthread(void *_ipaddr)
             prevutime = LATEST_UTIME;
             H = quheaderset(REQUEST_CURRENT_TICK_INFO,sizeof(H));
             sock = socksend(ipaddr,sock,(uint8_t *)&H,sizeof(H));
-            sock = updateticks(ipaddr,sock);
+            if ( hascomputors != 0 && (LATEST_UTIME % 7) == (peerid % 7) )
+                sock = updateticks(ipaddr,sock);
         }
         if ( LATEST_TICK > prevtick )
         {
             prevtick = LATEST_TICK;
-        } else usleep(5000);
+        } else usleep(100000);
     }
     if ( sock >= 0 )
         close(sock);
@@ -789,12 +964,12 @@ void *peerthread(void *_ipaddr)
     return(0);
 }
 
-int32_t loadqtx(long *fposp,FILE *fp)
+int32_t loadqtx(FILE *fp)
 {
     int32_t txlen,retval = -1;
     char txidstr[64];
     struct qubictx *qtx;
-    uint8_t txid[32],cmptxid[32],txdata[MAX_INPUT_SIZE*2];
+    uint8_t txid[32],cmptxid[32],txdata[MAX_TX_SIZE];
     if ( fread(&txlen,1,sizeof(txlen),fp) != sizeof(txlen) )
     {
         //printf("error reading txlen at pos %ld\n",*fposp);
@@ -816,7 +991,6 @@ int32_t loadqtx(long *fposp,FILE *fp)
             txidstr[60] = 0;
             if ( memcmp(txid,cmptxid,sizeof(txid)) == 0 )
             {
-                *fposp = ftell(fp);
                 HASH_FIND(hh,TXIDS,txid,sizeof(qtx->txid),qtx);
                 if ( qtx == 0 )
                 {
@@ -841,13 +1015,13 @@ int32_t havealltx(int32_t tick) // negative means error, 0 means file exists, 1 
     struct qubictx *qtx,*ptrs[NUMBER_OF_TRANSACTIONS_PER_TICK];
     int32_t i,sz,numtx,haveQ;
     Tick T;
-    sprintf(fname,"epochs%c%d%c%d.T",dir_delim(),EPOCH,dir_delim(),tick);
+    epochfname(fname,EPOCH,tick,".T");
     if ( (fp= fopen(fname,"rb")) != 0 )
     {
         fclose(fp);
         return(0);
     }
-    sprintf(fname,"epochs%c%d%c%d.Q",dir_delim(),EPOCH,dir_delim(),tick);
+    epochfname(fname,EPOCH,tick,".Q");
     haveQ = 0;
     if ( (fp= fopen(fname,"rb")) != 0 )
     {
@@ -866,7 +1040,7 @@ int32_t havealltx(int32_t tick) // negative means error, 0 means file exists, 1 
             if ( memcmp(T.transactionDigest,zero,32) == 0 )
             {
                 //printf("empty tick.%d\n",tick);
-                sprintf(fname,"epochs%c%d%c%d",dir_delim(),EPOCH,dir_delim(),tick);
+                epochfname(fname,EPOCH,tick,"");
                 if ( (fp= fopen(fname,"wb")) != 0 )
                 {
                     fwrite(zero,1,sizeof(zero),fp);
@@ -876,7 +1050,7 @@ int32_t havealltx(int32_t tick) // negative means error, 0 means file exists, 1 
             }
         }
     }
-    sprintf(fname,"epochs%c%d%c%d",dir_delim(),EPOCH,dir_delim(),tick);
+    epochfname(fname,EPOCH,tick,"");
     if ( (fp= fopen(fname,"rb")) != 0 )
     {
         if ( (sz= (int32_t)fread(&TD,1,sizeof(TD),fp)) == 32 ) // empty tick
@@ -893,7 +1067,7 @@ int32_t havealltx(int32_t tick) // negative means error, 0 means file exists, 1 
             {
                 if ( memcmp(zero,TD.transactionDigests[i],sizeof(zero)) != 0 )
                 {
-                    qtx = qubictxhash(TD.transactionDigests[i],0,0);
+                    qtx = qubictxhash(0,TD.transactionDigests[i],0,0);
                     if ( qtx != 0 )
                         ptrs[numtx++] = qtx;
                     else
@@ -907,7 +1081,7 @@ int32_t havealltx(int32_t tick) // negative means error, 0 means file exists, 1 
             }
             if ( numtx == 0 )
                 return(0);
-            sprintf(fname,"epochs%c%d%c%d.T",dir_delim(),EPOCH,dir_delim(),tick);
+            epochfname(fname,EPOCH,tick,".T");
             if ( (fp= fopen(fname,"wb")) == 0 )
                 return(-3);
             for (i=0; i<numtx; i++)
@@ -938,13 +1112,12 @@ int32_t init_txids(void)
 {
     char fname[512],line[512],cmd[1024],*ptr;
     FILE *fp,*fp2;
-    long fpos;
     int32_t retval,numfiles = 0,numadded = 0;
-    sprintf(cmd,"ls -l epochs%c%d%ctx > txfiles",dir_delim(),EPOCH,dir_delim());
+    sprintf(cmd,"ls -l %stx > /tmp/txfiles",epochdirname(EPOCH));
     //sprintf(cmd,"ls -w 16 epochs%c%d%ctx > txfiles",dir_delim(),EPOCH,dir_delim());
     system(cmd);
     printf("%s\n",cmd);
-    if ( (fp= fopen("txfiles","r")) != 0 )
+    if ( (fp= fopen("/tmp/txfiles","r")) != 0 )
     {
         while ( fgets(line,sizeof(line),fp) != 0 )
         {
@@ -953,14 +1126,13 @@ int32_t init_txids(void)
             while ( ptr > line && ptr[-1] != ' ' )
                 ptr--;
             printf("(%s) [%s]\n",line,ptr);
-            sprintf(fname,"epochs%c%d%ctx%c%s",dir_delim(),EPOCH,dir_delim(),dir_delim(),ptr);
+            sprintf(fname,"%stx%c%s",epochdirname(EPOCH),dir_delim(),ptr);
             if ( (fp2= fopen(fname,"rb")) != 0 )
             {
                 numfiles++;
-                fpos = 0;
                 while ( 1 )
                 {
-                    if ( (retval= loadqtx(&fpos,fp2)) < 0 )
+                    if ( (retval= loadqtx(fp2)) < 0 )
                         break;
                     else numadded += (retval != 0);
                 }
@@ -1016,7 +1188,7 @@ void *dataloop(void *_ignore)
             prevutime = LATEST_UTIME;
             update_txids();
         }
-        usleep(10000);
+        usleep(100000);
         if ( EXITFLAG != 0 && LATEST_UTIME > EXITFLAG )
             break;
     }
@@ -1030,12 +1202,13 @@ void *validateloop(void *_ignore)
     printf("validateloop STARTED\n");
     while ( 1 )
     {
-        if ( LATEST_TICK > latest )
+        if ( LATEST_UTIME > latest )
         {
-            latest = LATEST_TICK;
+            latest = LATEST_UTIME;
+            dequeue_votes();
             update_validated();
         }
-        sleep(1);
+        usleep(500000);
         if ( EXITFLAG != 0 && LATEST_UTIME > EXITFLAG )
             break;
     }
@@ -1047,22 +1220,21 @@ int main(int argc, const char * argv[])
 {
     pthread_t findpeers_thread,dataloop_thread,validate_thread;
     uint32_t utime,newepochflag = 0;
-    int32_t year,month,day,seconds,latest = 0;
+    int32_t i,peerid,offset,prevoffset,year,month,day,seconds,latest = 0;
+    //mutualexclusion("qarchiver",1);
     signal(SIGPIPE, SIG_IGN);
     devurandom((uint8_t *)&utime,sizeof(utime));
     srand(utime);
     utime = set_current_ymd(&year,&month,&day,&seconds);
     EPOCH = utime_to_epoch(utime,&seconds);
-    if ( argc == 2 )
-        makevanity((char *)argv[1]);
-    init_txids();
-    makedir((char *)"epochs");
-    makedir((char *)"subs");
-    makedir((char *)"addrs");
+    //init_txids();
+    init_dirs();
     newepoch();
-    RAMQ = (void *)calloc(MAXTICKS,sizeof(*RAMQ));
+    prevoffset = 0;
     //pthread_mutex_init(&conn_mutex,NULL);
     pthread_mutex_init(&txid_mutex,NULL);
+    for (peerid=0; peerid<MAXPEERS; peerid++)
+        pthread_mutex_init(&Peertickinfo[peerid].peermutex,NULL);
     pthread_mutex_init(&addpeer_mutex,NULL);
     pthread_create(&findpeers_thread,NULL,&findpeers,0);
     pthread_create(&dataloop_thread,NULL,&dataloop,0);
@@ -1097,9 +1269,12 @@ int main(int argc, const char * argv[])
                 if ( HAVE_TXTICK != 0 )
                     qpurge(HAVE_TXTICK+1);
             }
+            offset = VALIDATED_TICK - INITIAL_TICK;
+            fflush(stdout);
         }
     }
     sleep(15);
+    //mutualexclusion("qarchiver",-1);
     printf("qarchiver exiting\n");
 }
 

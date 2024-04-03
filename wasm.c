@@ -1,4 +1,4 @@
-    
+
 
 
 //#define TESTNET
@@ -44,6 +44,7 @@ struct pendingtx
 char PENDINGRESULT[4096],PENDINGSTATUS[4096];
 char CURRENTRAWTX[MAX_INPUT_SIZE * 3];
 char ACTIVEADDRS[MAX_INDEX][64];
+char KEYSDIR[512] = { "/qwallet/keys" };
 
 char *wasm_result(int32_t retval,char *displaystr,int32_t seedpage)
 {
@@ -60,7 +61,7 @@ void accountfname(char *password,int32_t index,char *fname,uint8_t salt[32])
     char saltstr[65];
     KangarooTwelve((uint8_t *)password,(int32_t)strlen(password),salt,32);
     byteToHex(salt,saltstr,32);
-    sprintf(fname,"%cqwallet%ckeys%c%s.%d",dir_delim(),dir_delim(),dir_delim(),saltstr+48,index);
+    sprintf(fname,"%s%c%s.%d",KEYSDIR,dir_delim(),saltstr+48,index);
 }
 
 int32_t accountcodec(char *rw,char *password,int32_t index,uint8_t subseed[32])
@@ -103,6 +104,7 @@ void subseedcombine(uint8_t subseed[32],uint8_t subseed2[32])
     memcpy(seedbuf+32,subseed2,32);
     KangarooTwelve(seedbuf,64,subseed,32);
     memset(seedbuf,0xff,sizeof(seedbuf));
+    memset(seedbuf,0,sizeof(seedbuf));
 }
 
 char *_sendfunc(char **argv,int32_t argc,int32_t txtype)
@@ -134,11 +136,11 @@ char *_sendfunc(char **argv,int32_t argc,int32_t txtype)
                 if ( checkSumIdentity(checkaddr) != 0 )
                 {
                     sprintf(str,"_send illegal dest: changing %dth to %c to %s passes checksum",i,j,checkaddr);
-                    return(wasm_result(-3,str,0));
+                    return(wasm_result(-4,str,0));
                 }
             }
         }
-        return(wasm_result(-4,"illegal destination address, bad checksum",0));
+        return(wasm_result(-5,"illegal destination address, bad checksum",0));
     }
     amount = atoll(argv[4]);
     txid[0] = 0;
@@ -147,15 +149,16 @@ char *_sendfunc(char **argv,int32_t argc,int32_t txtype)
         if ( pwindex > 0 )
         {
             if ( accountcodec("rb",password,pwindex,subseed2) != 0 )
-                return(wasm_result(-4,"cannot find derived key",0));
+                return(wasm_result(-6,"cannot find derived key",0));
             subseedcombine(subseed,subseed2);
             memset(subseed2,0xff,sizeof(subseed2));
+            memset(subseed2,0,sizeof(subseed2));
         }
         getPrivateKeyFromSubSeed(subseed,privatekey);
         getPublicKeyFromPrivateKey(privatekey,publickey);
         pubkey2addr(publickey,addr);
         if ( strcmp(addr,dest) == 0 )
-            return(wasm_result(-4,"sending to same address not supported",0));
+            return(wasm_result(-7,"sending to same address not supported",0));
         if ( argc == 6 )
         {
             datalen = strlen(argv[5]) / 2;
@@ -168,6 +171,8 @@ char *_sendfunc(char **argv,int32_t argc,int32_t txtype)
         printf("{\"txtick\":%d,\"txid\":\"%s\",\"rawhex\":\"%s\",\"addr\":\"%s\",\"amount\":%s,\"dest\":\"%s\"}",txtick,txid,rawhex,addr,amountstr(amount),dest);
         memset(subseed,0xff,sizeof(subseed));
         memset(privatekey,0xff,sizeof(privatekey));
+        memset(subseed,0,sizeof(subseed));
+        memset(privatekey,0,sizeof(privatekey));
         strcpy(CURRENTRAWTX,rawhex);
         for (i=0; i<MAX_INDEX; i++)
         {
@@ -192,7 +197,7 @@ char *_sendfunc(char **argv,int32_t argc,int32_t txtype)
             return(wasm_result(0,"send broadcast but not queued since address could not be found",0));
         return(wasm_result(PENDINGTX.pendingid,"send queued",0));
     }
-    return(wasm_result(-5,"unknown user account password file not found or invalid index",0));
+    return(wasm_result(-8,"unknown user account password file not found or invalid index",0));
 }
 
 char *sendfunc(char **argv,int32_t argc)
@@ -200,18 +205,73 @@ char *sendfunc(char **argv,int32_t argc)
     return(_sendfunc(argv,argc,0));
 }
 
+char *tokensendfunc(char **argv,int32_t argc)
+{
+    char numstr[16],extrastr[512],*assetname = argv[5];
+    struct TransferAssetOwnershipAndPossession_input TA;
+    memset(&TA,0,sizeof(TA));
+    if ( addr2pubkey(argv[3],TA.newOwnerAndPossessor) <= 0 )
+        return(wasm_result(-9,"illegal destination address",0));
+    if ( issuerpubkey(assetname,TA.issuer) < 0 )
+        return(wasm_result(-10,"unknown asset",0));
+    TA.assetName = assetint(assetname);
+    TA.numberOfUnits = atoll(argv[4]);
+    argv[3] = QX_ADDRESS;
+    sprintf(numstr,"%d",QXTRANSFERFEE);
+    argv[4] = numstr;
+    byteToHex((uint8_t *)&TA,extrastr,sizeof(TA));
+    argv[5] = extrastr;
+    argc = 6;
+    return(_sendfunc(argv,argc,QX_TRANSFER_SHARE_FN));
+}
+
+char *qxordertx(char **argv,int32_t argc,int32_t type)
+{
+    char numstr[32],extrastr[512],*assetname = argv[3];
+    struct qxOrderAction_input I;
+    memset(&I,0,sizeof(I));
+    if ( issuerpubkey(argv[3],I.issuer) < 0 )
+        return(wasm_result(-10,"unknown asset",0));
+    I.assetName = assetint(argv[3]);
+    I.price = atoll(argv[5]);
+    I.numberOfShares = atoll(argv[4]);
+    if ( type == QX_ADD_BID_ORDER_FN )
+        sprintf(numstr,"%s",amountstr(I.price * I.numberOfShares));
+    else sprintf(numstr,"%d",1);
+    byteToHex((uint8_t *)&I,extrastr,sizeof(I));
+    argv[3] = QX_ADDRESS;
+    argv[4] = numstr;
+    argv[5] = extrastr;
+    argc = 6;
+    return(_sendfunc(argv,argc,QX_ADD_BID_ORDER_FN));
+}
+
+char *buyfunc(char **argv,int32_t argc) { return(qxordertx(argv,argc,QX_ADD_BID_ORDER_FN)); }
+char *sellfunc(char **argv,int32_t argc) { return(qxordertx(argv,argc,QX_ADD_ASK_ORDER_FN)); }
+char *cancelbuyfunc(char **argv,int32_t argc) { return(qxordertx(argv,argc,QX_REMOVE_BID_ORDER_FN)); }
+char *cancelsellfunc(char **argv,int32_t argc) { return(qxordertx(argv,argc,QX_REMOVE_ASK_ORDER_FN)); }
+
 char *sendmanyfunc(char **argv,int32_t argc)
 {
     char hexstr[MAX_INPUT_SIZE*2+1],totalstr[16],destaddr[64];
     uint8_t destpub[32];
     int64_t total = 0;
-    /*pubkeypay payments;
+    int32_t i,n = 0;
+    struct pubkeypay payments;
     memset(&payments,0,sizeof(payments));
+    for (i=3; i<3+25*2; i+=2,n++)
     {
-        //argv[3 + i*2], argv[4 + i*2]
-        // put in pubkeys and amounts, += total;
+        if ( i+1 > argc )
+            break;
+        if ( addr2pubkey(argv[i],payments.pubkeys[n]) == 0 )
+        {
+            sprintf(hexstr,"invalid address position %d: (%s)",n,argv[i]);
+            return(wasm_result(-11,hexstr,0));
+        }
+        if ( (payments.amounts[n]= atoll(argv[i+1])) < 0 )
+            return(wasm_result(-12,"negative payment not allowed",0));
     }
-    byteToHex((uint8_t *)&payments,hexstr,sizeof(payments));*/
+    byteToHex((uint8_t *)&payments,hexstr,sizeof(payments));
     memset(destpub,0,sizeof(destpub));
     ((uint64_t *)destpub)[0] = QUTIL_CONTRACT_ID;
     pubkey2addr(destpub,destaddr);
@@ -232,14 +292,14 @@ char *loginfunc(char **argv,int32_t argc)
     uint8_t privatekey[32],publickey[32],subseed[32],subseed2[32];
     char addr[64],seed[512],*password,bipwords[24][16];
     if ( argc == 0 || argc > 3 )
-        return(wasm_result(-6,"login needs password",0));
+        return(wasm_result(-13,"login needs password",0));
     password = argv[0];
     devurandom(subseed,32);
     if ( argc >= 2 )
     {
         index = atoi(argv[1]);
         if ( index < 0 || index >= MAX_INDEX )
-            return(wasm_result(-7,"login needs non negative index less than 100",0));
+            return(wasm_result(-14,"login needs non negative index less than 100",0));
     }
     if ( accountcodec("rb",password,0,subseed) == 0 )
     {
@@ -251,16 +311,20 @@ char *loginfunc(char **argv,int32_t argc)
                 {
                     memset(subseed,0xff,sizeof(subseed));
                     memset(subseed2,0xff,sizeof(subseed2));
-                    return(wasm_result(-8,"password already has derived subseed at index",0));
+                    memset(subseed,0,sizeof(subseed));
+                    memset(subseed2,0,sizeof(subseed2));
+                   return(wasm_result(-15,"password already has derived subseed at index",0));
                 }
                 KangarooTwelve((uint8_t *)argv[2],strlen(argv[2]),subseed2,32);
                 subseedcombine(subseed,subseed2);
                 retval = accountcodec("wb",password,index,subseed2);
                 memset(subseed2,0xff,sizeof(subseed2));
+                memset(subseed2,0,sizeof(subseed2));
                 if ( retval < 0 )
                 {
                     memset(subseed,0xff,sizeof(subseed));
-                    return(wasm_result(-9,"error creating encrypted derived index account",0));
+                    memset(subseed,0,sizeof(subseed));
+                    return(wasm_result(-16,"error creating encrypted derived index account",0));
                 }
             }
             else
@@ -268,10 +332,12 @@ char *loginfunc(char **argv,int32_t argc)
                 if ( accountcodec("rb",password,index,subseed2) != 0 )
                 {
                     memset(subseed,0xff,sizeof(subseed));
-                    return(wasm_result(-10,"password does not have derived subseed at index",0));
+                    memset(subseed,0,sizeof(subseed));
+                    return(wasm_result(-17,"password does not have derived subseed at index",0));
                 }
                 subseedcombine(subseed,subseed2);
                 memset(subseed2,0xff,sizeof(subseed2));
+                memset(subseed2,0,sizeof(subseed2));
             }
         }
         getPrivateKeyFromSubSeed(subseed,privatekey);
@@ -280,10 +346,12 @@ char *loginfunc(char **argv,int32_t argc)
         //printf("found encrypted file for (%s) -> %s\n",password,addr);
         memset(subseed,0xff,sizeof(subseed));
         memset(privatekey,0xff,sizeof(privatekey));
-        return(wasm_result(0,addr,0));
+        memset(subseed,0,sizeof(subseed));
+        memset(privatekey,0,sizeof(privatekey));
+       return(wasm_result(0,addr,0));
     }
     if ( index != 0 || argc > 2 )
-        return(wasm_result(-11,"cannot create nonzero index or derivation without index.0",0));
+        return(wasm_result(-18,"cannot create nonzero index or derivation without index.0",0));
   //printf("create encrypted file for %s\n",password);
     if ( argv[0][0] == 'Q' )
     {
@@ -309,12 +377,15 @@ char *loginfunc(char **argv,int32_t argc)
     getPrivateKeyFromSubSeed(subseed,privatekey);
     getPublicKeyFromPrivateKey(privatekey,publickey);
     memset(privatekey,0xff,sizeof(privatekey));
+    memset(privatekey,0,sizeof(privatekey));
     retval = accountcodec("wb",password,index,subseed);
     memset(subseed,0xff,sizeof(subseed));
+    memset(subseed,0,sizeof(subseed));
     if ( retval < 0 )
     {
         memset(seed,0xff,sizeof(seed));
-        return(wasm_result(-12,"error creating encrypted account",0));
+        memset(seed,0,sizeof(seed));
+        return(wasm_result(-19,"error creating encrypted account",0));
     }
     getIdentityFromPublicKey(publickey,addr,false);
     addr[60] = 0;
@@ -329,11 +400,11 @@ char *addseedfunc(char **argv,int32_t argc)
     uint8_t privatekey[32],publickey[32],subseed[32];
     char addr[64],*origseed;
     if ( argc != 2 )
-        return(wasm_result(-13,"addseed needs password seed",0));
+        return(wasm_result(-20,"addseed needs password seed",0));
     password = argv[0];
     seed = argv[1];
     if ( accountcodec("rb",password,0,subseed) == 0 )
-        return(wasm_result(-14,"password already has seed",0));
+        return(wasm_result(-21,"password already has seed",0));
     for (i=0; i<55; i++)
     {
         if ( seed[i] < 'a' || seed[i] > 'z' )
@@ -345,17 +416,21 @@ char *addseedfunc(char **argv,int32_t argc)
     getPrivateKeyFromSubSeed(subseed,privatekey);
     getPublicKeyFromPrivateKey(privatekey,publickey);
     memset(privatekey,0xff,sizeof(privatekey));
+    memset(privatekey,0,sizeof(privatekey));
     retval = accountcodec("wb",password,0,subseed);
     memset(subseed,0xff,sizeof(subseed));
+    memset(subseed,0,sizeof(subseed));
     if ( retval < 0 )
     {
         memset(seed,0xff,strlen(seed));
-        return(wasm_result(-15,"error creating encrypted account",0));
+        memset(seed,0,strlen(seed));
+        return(wasm_result(-22,"error creating encrypted account",0));
     }
     getIdentityFromPublicKey(publickey,addr,false);
     addr[60] = 0;
     printf("addseed got (%s) -> seed {%s} %s\n",password,seed,addr);
-    memset(seed,0xff,strlen(seed));
+    //memset(seed,0xff,strlen(seed));
+    //memset(seed,0,strlen(seed));
     return(wasm_result(retval,addr,0));
 }
 
@@ -365,13 +440,13 @@ char *checkavailfunc(char **argv,int32_t argc)
     uint8_t salt[32];
     char *password,fname[512];
     if ( argc != 1 )
-        return(wasm_result(-20,"checkavail needs password",0));
+        return(wasm_result(-23,"checkavail needs password",0));
     password = argv[0];
     accountfname(password,0,fname,salt);
     if ( (fp= fopen(fname,"rb")) == 0 )
         return(wasm_result(0,"password is available",0));
     fclose(fp);
-    return(wasm_result(-33,"password already exists",0));
+    return(wasm_result(-24,"password already exists",0));
 }
 
 char *deletefunc(char **argv,int32_t argc)
@@ -381,12 +456,12 @@ char *deletefunc(char **argv,int32_t argc)
     int32_t index;
     char *password,fname[512],retstr[512];
     if ( argc != 2 )
-        return(wasm_result(-20,"delete needs password,index",0));
+        return(wasm_result(-25,"delete needs password,index",0));
     password = argv[0];
     index = atoi(argv[1]);
     accountfname(password,index,fname,salt);
     if ( (fp= fopen(fname,"rb")) == 0 )
-        return(wasm_result(-21,"password,index has no file",0));
+        return(wasm_result(-26,"password,index has no file",0));
     fclose(fp);
     deletefile(fname);
     if ( index > 0 )
@@ -411,7 +486,7 @@ char *logintxfunc(char **argv,int32_t argc)
     uint8_t subseed[32],privkey[32],pubkey[32],txdigest[32];
     printf("logintx\n");
     if ( argc != 1 )
-        return(wasm_result(-20,"logintx needs password",0));
+        return(wasm_result(-27,"logintx needs password",0));
     if ( accountcodec("rb",argv[0],0,subseed) == 0 )
     {
         getPrivateKeyFromSubSeed(subseed,privkey);
@@ -420,9 +495,26 @@ char *logintxfunc(char **argv,int32_t argc)
         create_rawtxhex(rawhex,txid,txdigest,subseed,0,pubkey,pubkey,0,0,0,txtick);
         memset(privkey,0xff,sizeof(privkey));
         memset(subseed,0xff,sizeof(subseed));
+        memset(privkey,0,sizeof(privkey));
+        memset(subseed,0,sizeof(subseed));
         return(wasm_result(0,rawhex,0));
     }
-    else return(wasm_result(-21,"password has no seed",0));
+    else return(wasm_result(-28,"password has no seed",0));
+}
+
+char *logoutfunc(char **argv,int32_t argc)
+{
+    memset(&PENDINGTX,0,sizeof(PENDINGTX));
+    memset(ACTIVEADDRS,0,sizeof(ACTIVEADDRS));
+    memset(PENDINGRESULT,0,sizeof(PENDINGRESULT));
+    memset(PENDINGSTATUS,0,sizeof(PENDINGSTATUS));
+    return(wasm_result(0,"logged out, any pending tx cleared",0));
+}
+
+char *keysdirfunc(char **argv,int32_t argc)
+{
+    strncpy(KEYSDIR,argv[0],sizeof(KEYSDIR)-1);
+    return(wasm_result(0,"set keys dir",0));
 }
 
 int32_t subpubshash(uint32_t *subshashp,uint8_t subpubs[MAX_INDEX][32])
@@ -454,7 +546,7 @@ char *listfunc(char **argv,int32_t argc)
     char *password,fname[512],*retstr;
     static char addrsarray[MAX_INDEX * 80];
     if ( argc != 1 && argc != 2 )
-        return(wasm_result(-20,"list needs password[,noaddrs]",0));
+        return(wasm_result(-29,"list needs password[,noaddrs]",0));
     password = argv[0];
     if ( argc == 2 )
         noaddrs = atoi(argv[1]);
@@ -478,11 +570,15 @@ char *listfunc(char **argv,int32_t argc)
             //printf("index.%d %s\n",index,addrs[index]);
         }
     }
-    else return(wasm_result(-21,"password has no seed",0));
+    else return(wasm_result(-30,"password has no seed",0));
     memset(privkey,0xff,sizeof(privkey));
     memset(origsubseed,0xff,sizeof(origsubseed));
     memset(subseed,0xff,sizeof(subseed));
     memset(subseed2,0xff,sizeof(subseed2));
+    memset(privkey,0,sizeof(privkey));
+    memset(origsubseed,0,sizeof(origsubseed));
+    memset(subseed,0,sizeof(subseed));
+    memset(subseed2,0,sizeof(subseed2));
     n = subpubshash(&subshash,subpubs);
     sprintf(addrsarray,"{\"numaddrs\":%d,\"subshash\":\"%x\",\"addresses\":[",n,subshash);
     if ( noaddrs == 0 )
@@ -508,12 +604,19 @@ struct qcommands
 {
     { "addseed", addseedfunc, "addseed password,seed" },
     { "login", loginfunc, "login password,[index [,derivation]]" },
+    { "keysdir", keysdirfunc, "keysdir dirname" },
     { "list", listfunc, "list password[,noaddrs]" },
     { "delete", deletefunc, "delete password,index" },
     { "checkavail", checkavailfunc, "checkavail password" },
     { "send", sendfunc, "send password,index,txtick,dest,amount[,extrahex]" },
+    { "tokensend", tokensendfunc, "tokensend password,index,txtick,dest,amount,assetname" },
+    { "buy", buyfunc, "buy password,index,txtick,assetname,amount,price" },
+    { "sell", sellfunc, "sell password,index,txtick,assetname,amount,price" },
+    { "cancelbuy", cancelbuyfunc, "cancelbuy password,index,txtick,assetname,amount,price" },
+    { "cancelsell", cancelsellfunc, "cancelsell password,index,txtick,assetname,amount,price" },
     { "logintx", logintxfunc, "logintx password" },
-    { "sendmany", sendmanyfunc, "send password,index,txtick,dest,amount[,dest2,amount2,...]" },
+    { "logout", logoutfunc, "logout" },
+    { "sendmany", sendmanyfunc, "sendmany password,index,txtick,dest,amount[,dest2,amount2,...]" },
 };
 
 char *_qwallet(char *_args)
@@ -545,7 +648,7 @@ char *_qwallet(char *_args)
                     args[len++] = 0;
                     argv[argc++] = &args[len];
                     if ( argc >= (sizeof(argv)/sizeof(*argv)) )
-                        return(wasm_result(-5,"too many arguments",0));
+                        return(wasm_result(-31,"too many arguments",0));
                 } else len++;
             }
             argv[argc] = (char *)"";
@@ -555,7 +658,7 @@ char *_qwallet(char *_args)
             return((*QCMDS[i].func)(argv,argc));
         }
     }
-    return(wasm_result(-1,"unknown command",0));
+    return(wasm_result(-32,"unknown command",0));
 }
 
 const char *json_strval(typed(json_element) element,char *field)
@@ -618,7 +721,7 @@ int32_t wssupdate(char *jsonstr)
                 PENDINGTX.beforeinputs = input;
                 PENDINGTX.beforeoutputs = output;
             }
-            else if ( PENDINGTX.beforetick != 0 && PENDINGTX.aftertick == 0 && tick > PENDINGTX.pendingtick )
+            else if ( PENDINGTX.beforetick != 0 && PENDINGTX.aftertick == 0 && tick >= PENDINGTX.pendingtick )
             {
                 PENDINGTX.aftertick = tick;
                 PENDINGTX.afterinputs = input;
@@ -698,8 +801,8 @@ char *qwallet(char *_args)
     int32_t i,pendingid;
     char *retstr,buf[512];
     static char retbuf[JSON_BUFSIZE],toggle;
-    //if ( strcmp(_args,"v1request") != 0 )
-    //    printf("qwallet(%s)\n",_args);
+    if ( strcmp(_args,"v1request") != 0 )
+        printf("qwallet(%s)\n",_args);
     if ( strcmp(_args,(char *)"help") == 0 )
     {
         retbuf[0] = 0;
@@ -744,28 +847,11 @@ char *qwallet(char *_args)
             memset(CURRENTRAWTX,0,sizeof(CURRENTRAWTX));
             return(retstr);
         }
-        /*else if ( PENDINGTX.pendingid != 0 && PENDINGTX.txreq == 0 && HAVE_TXTICK > PENDINGTX.pendingtick )
+        /*else if ( PENDINGTX.beforetick != 0 && PENDINGTX.aftertick == 0 )
         {
-            PENDINGTX.txreq = 1;
-            sprintf(PENDINGSTATUS,"checking for %s tick.%d",PENDINGTX.txid,PENDINGTX.pendingtick);
-            return(wasm_result(0,PENDINGTX.txid,0));
-        }
-         else if ( DIDlist != 0 )
-        {
-            for (i=1; i<MAX_INDEX; i++)
-            {
-                if ( ACTIVEADDRS[i][0] != 0 )
-                {
-                    sprintf(buf,"+%d %s",i,ACTIVEADDRS[i]);
-                    memset(ACTIVEADDRS[i],0,sizeof(ACTIVEADDRS[i]));
-                    printf("%s\n",buf);
-                    return(wasm_result(0,buf,0));
-                }
-            }
-            if ( i == MAX_INDEX )
-                DIDlist = 0;
+            return(wasm_result(0,PENDINGTX.address,0));
         }*/
-        return(wasm_result(-1,"no request",0));
+        return(wasm_result(-33,"no request",0));
     }
     return(_qwallet(_args));
 }
@@ -790,8 +876,8 @@ int main()
     MAIN_count++;
     MAIN_THREAD_EM_ASM(
                        FS.mkdir('/qwallet');
-                        FS.mkdir('/qwallet/keys');
-          // FS.mount(IDBFS, {}, '/qwallet');
+                       FS.mkdir('/qwallet/keys');
+           // FS.mount(IDBFS, {}, '/qwallet');
            FS.mount(NODEFS, { root: '.' }, '/qwallet');
            FS.syncfs(true, function (err) {
              assert(!err); });
@@ -822,6 +908,6 @@ int main()
 }
 #endif
 
-// finish sendmany extradata construction
-
-    
+// tokensend
+// buy + sell
+// cancel order

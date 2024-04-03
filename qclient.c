@@ -28,8 +28,8 @@
     -<index> <address>  -> removes address from index if it matches
     clearderived        -> clears all except the index 0 address
  
-    logintx hex         -> creates subscription from wasm logintx hex value, call after starting websockets with <address>
-    broadcasttx         -> broadcasts tx to network
+    <logintx hex>       -> creates subscription from wasm logintx hex value, call after starting websockets with <address>
+    <broadcasttx>       -> broadcasts tx to network
     <txid> [tick]       -> searches tick for txid, uses tick of broadcasttx if no tick specified
  
  Right after opening the websocket, send address of the seed (index 0)
@@ -47,90 +47,36 @@
  no need to wait 1 sec between. then after it is done updating the server, the subshash should match
  */
 
-int32_t Subscriber,Numaddrs,Broadcasttxtick,Histogram[4];
-char Firstaddr[64];
-uint8_t Subpubs[MAX_INDEX][32];
+void helplines()
+{
+    printf("Websockets server for Qwallet\n \
+           <address>                    -> must be first and use address from seed (index 0), will return entity data. after first time should have valid entity data\n \
+           <logintx hex>                -> creates subscription from wasm logintx hex value, call after starting websockets with  <address>\n \
+           list [noaddrs]               -> returns all the addresses in the subscription account\n \
+           +<index> <address>           -> adds address to index if index is empty\n \
+           -<index> <address>           -> removes address from index if it matches\n \
+           clearderived                 -> clears all except the index 0 address\n \
+           balances                     -> returns array of balances\n \
+           <broadcasttx>                -> broadcasts tx to network\n \
+           <txid> [tick]                -> searches tick for txid, uses tick of broadcasttx if no tick specified\n \
+           tokenlist                    -> returns list of tokens to trade in QX\n \
+           tokenissuer <name>           -> returns issuer of a specific token\n \
+           orders <name>                -> returns orders for a specific token\n \
+           myorders                     -> returns orders for account trading address\n \
+           richlist[.tok] [start [num]] -> richlist for token (defaults to QU), start rank, number (defaults to 100)\n \
+           history <address> [start]    -> returns all tx in archive for address [optional from start tick]\n \
+           ");
+}
+
+int32_t Subscriber,Numaddrs,Histogram[4],PENDINGTXTICK;
+char Firstaddr[64],PENDINGTXID[64],PENDINGTXADDR[64];
+uint8_t Subpubs[MAX_INDEX][32],Firstpub[32];
 uint32_t Subshash,Firstutime;
 int64_t Subsbalances[MAX_INDEX],Firstbalance;
 struct addrhash Subsdata[MAX_INDEX][2],Firstdata[2];
+pthread_mutex_t command_mutex;
 
 // wasm:1 json needs to also have command field
-
-int32_t Qserver_msg(char *msg)
-{
-    int fd,len;
-    char buf[8192];
-    len = strlen(msg);
-    strncpy(buf,msg,sizeof(buf)-1);
-    if ( buf[len - 1] != '\n' )
-        buf[len++] = '\n';
-    buf[len] = 0;
-    fd = open("Qserver", O_WRONLY);
-    if ( fd > 0 )
-    {
-        write(fd,buf,len);
-        close(fd);
-        return(0);
-    } else return(-1);
-}
-
-void loginjson(void)
-{
-    printf("{\"numaddrs\":%d,\"subshash\":\"%x\",\"subscriber\":\"%s\"}\n",Numaddrs,Subshash,Firstaddr);
-}
-
-void latestjson(int32_t subscriber)
-{
-    if ( subscriber == 0 )
-        printf("{\"tick\":%d,\"wasm\":1,\"command\":\"CurrentTickInfo\"}\n",LATEST_TICK);
-    else
-        printf("{\"tick\":%d,\"validated\":%d,\"havetx\":%d,\"numaddrs\":%d,\"subshash\":\"%x\",\"wasm\":1,\"command\":\"CurrentTickInfo\"}\n",LATEST_TICK,VALIDATED_TICK,HAVE_TXTICK,Numaddrs,Subshash);
-}
-
-void qchainjson(int32_t tick,uint8_t spectrum[32],uint8_t qchain[32])
-{
-    char spectrumstr[65],qchainstr[65];
-    byteToHex(spectrum,spectrumstr,32);
-    byteToHex(qchain,qchainstr,32);
-    printf("{\"tick\":%d,\"spectrum\":\"%s\",\"qchain\":\"%s\"}\n",tick,spectrumstr,qchainstr);
-}
-
-void txjson(char *txidstr,uint8_t txdata[MAX_INPUT_SIZE*2],int32_t txlen)
-{
-    Transaction tx;
-    char srcstr[64],deststr[64],extrastr[MAX_INPUT_SIZE*2+1];
-    extrastr[0] = 0;
-    if ( txlen >= sizeof(tx) )
-    {
-        memcpy(&tx,txdata,sizeof(tx));
-        pubkey2addr(tx.sourcePublicKey,srcstr);
-        pubkey2addr(tx.destinationPublicKey,deststr);
-        if ( tx.inputSize <= MAX_INPUT_SIZE )
-            byteToHex(&txdata[sizeof(tx)],extrastr,tx.inputSize);
-    }
-    else
-    {
-        memset(&tx,0,sizeof(tx));
-        srcstr[0] = deststr[0] = 0;
-    }
-    printf("{\"txid\":\"%s\",\"tick\":%d,\"included\":%d,\"src\":\"%s\",\"dest\":\"%s\",\"amount\":\"%s\",\"type\":%d,\"extralen\":%d,\"extra\":\"%s\",\"command\":\"txidrequest\",\"wasm\":1}\n",txidstr,tx.tick,txlen>0,srcstr,deststr,amountstr(tx.amount),tx.inputType,tx.inputSize,extrastr);
-}
-
-void entityjson(char *addr,struct Entity E,int32_t tick,int32_t stick,uint8_t merkle[32],int64_t sent,int64_t recv)
-{
-    char merklestr[65];
-    byteToHex(merkle,merklestr,32);
-    printf("{\"histo\":[%d,%d,%d,%d],\"address\":\"%s\",\"balance\":\"%s\",\"sent\":\"%s\",\"received\":\"%s\",\"tick\":%d,\"stick\":%d,\"spectrum\":\"%s\",\"numin\":%d,\"totalincoming\":\"%s\",\"latestin\":%d,\"numout\":%d,\"totaloutgoing\":\"%s\",\"latestout\":%d,\"command\":\"EntityInfo\",\"wasm\":1}\n",Histogram[0],Histogram[1],Histogram[2],Histogram[3],addr,amountstr(E.incomingAmount - E.outgoingAmount),amountstr2(sent),amountstr3(recv),tick,stick,merklestr,E.numberOfIncomingTransfers,amountstr4(E.incomingAmount),E.latestIncomingTransferTick,E.numberOfOutgoingTransfers,amountstr5(E.outgoingAmount),E.latestOutgoingTransferTick);
-}
-
-void addrhashjson(char *addr,struct addrhash data[2])
-{
-    struct addrhash *ap;
-    if ( data[1].flushtick == 0 )
-        ap = &data[0];
-    else ap = &data[1];
-    entityjson(addr,ap->entity,ap->tick,ap->flushtick,ap->merkleroot,0,0);
-}
 
 int32_t subpubshash(uint32_t *subshashp,uint8_t subpubs[MAX_INDEX][32])
 {
@@ -152,6 +98,21 @@ int32_t subpubshash(uint32_t *subshashp,uint8_t subpubs[MAX_INDEX][32])
     return(n);
 }
 
+int32_t calc_subshash(uint32_t *subshashp,uint8_t subpubs[MAX_INDEX][32],char *subaddr)
+{
+    FILE *fp;
+    char fname[512];
+    *subshashp = 0;
+    sprintf(fname,"%s%csubs%c%s",DATADIR,dir_delim(),dir_delim(),subaddr);
+    if ( (fp= fopen(fname,"rb")) != 0 )
+    {
+        if ( fread(subpubs,1,MAX_INDEX * 32,fp) != MAX_INDEX * 32 )
+            printf("read error for subs %s\n",fname);
+        fclose(fp);
+        return(subpubshash(subshashp,subpubs));
+    } else return(0);
+}
+
 int32_t Qclientsubs(uint32_t *subshashp,uint8_t subpubs[MAX_INDEX][32],char *subaddr,int32_t index,uint8_t indexpub[32])
 {
     int32_t i,errflag,n = 0;
@@ -163,7 +124,7 @@ int32_t Qclientsubs(uint32_t *subshashp,uint8_t subpubs[MAX_INDEX][32],char *sub
     *subshashp = 0;
     if ( indexpub != 0 && (index <= 0 || index >= MAX_INDEX) )
         return(-1);
-    sprintf(fname,"subs%c%s",dir_delim(),subaddr);
+    sprintf(fname,"%s%csubs%c%s",DATADIR,dir_delim(),dir_delim(),subaddr);
     if ( (fp= fopen(fname,"rb+")) != 0 )
     {
         fread(subpubs,MAX_INDEX,32,fp);
@@ -200,23 +161,274 @@ int32_t Qclientsubs(uint32_t *subshashp,uint8_t subpubs[MAX_INDEX][32],char *sub
     return(n);
 }
 
-void subsjson(char *subaddr)
+void loginjson(void)
 {
+    printf("{\"numaddrs\":%d,\"subshash\":\"%x\",\"subscriber\":\"%s\"}\n",Numaddrs,Subshash,Firstaddr);
+}
+
+void latestjson(int32_t subscriber)
+{
+    uint32_t utime;
+    int32_t year,month,day,seconds;
+    utime = set_current_ymd(&year,&month,&day,&seconds);
+    if ( subscriber == 0 )
+        printf("{\"tick\":%d,\"wasm\":1,\"command\":\"CurrentTickInfo\",\"utc\":%u}\n",LATEST_TICK,utime);
+    else
+    {
+        Numaddrs = calc_subshash(&Subshash,Subpubs,Firstaddr);
+        printf("{\"tick\":%d,\"validated\":%d,\"havetx\":%d,\"numaddrs\":%d,\"subshash\":\"%x\",\"wasm\":1,\"command\":\"CurrentTickInfo\",\"utc\":%u}\n",LATEST_TICK,VALIDATED_TICK,HAVE_TXTICK,Numaddrs,Subshash,utime);
+    }
+}
+
+void txjson(char *jsonstr,char *txidstr,uint8_t txdata[MAX_TX_SIZE],int32_t txlen,int32_t wasmflag)
+{
+    Transaction tx;
+    char srcstr[64],deststr[64],extrastr[MAX_INPUT_SIZE*2+1];
+    extrastr[0] = 0;
+    if ( txlen >= sizeof(tx) )
+    {
+        memcpy(&tx,txdata,sizeof(tx));
+        pubkey2addr(tx.sourcePublicKey,srcstr);
+        pubkey2addr(tx.destinationPublicKey,deststr);
+        if ( tx.inputSize <= MAX_INPUT_SIZE )
+            byteToHex(&txdata[sizeof(tx)],extrastr,tx.inputSize);
+    }
+    else
+    {
+        memset(&tx,0,sizeof(tx));
+        srcstr[0] = deststr[0] = 0;
+    }
+    sprintf(jsonstr,"{\"txid\":\"%s\",\"tick\":%d,\"src\":\"%s\",\"dest\":\"%s\",\"amount\":\"%s\",\"type\":%d,\"extralen\":%d,\"extra\":\"%s\",\"command\":\"txidrequest\"%s}",txidstr,tx.tick,srcstr,deststr,amountstr(tx.amount),tx.inputType,tx.inputSize,extrastr,wasmflag!=0?",\"wasm\":1":"");
+}
+
+int32_t tickstxjson(int32_t epoch,int32_t tick,char *spectrumstr,char *qchainstr)
+{
+    FILE *fp;
+    Transaction tx;
+    uint8_t txid[32],txdata[MAX_TX_SIZE];
+    char fname[512],jsonstr[8192],txidstr[64];
+    int32_t i,txlen;
+    printf("{\"tick\":%d,\"spectrum\":\"%s\",\"qchain\":\"%s\",\"tx\":[",tick,spectrumstr,qchainstr);
+    epochfname(fname,epoch,tick,".T");
+    if ( (fp= fopen(fname,"rb")) != 0 )
+    {
+        for (i=0; i<NUMBER_OF_TRANSACTIONS_PER_TICK; i++)
+        {
+            if ( fread(&txlen,1,sizeof(txlen),fp) != sizeof(txlen) || txlen < sizeof(tx) || txlen > sizeof(tx)+MAX_INPUT_SIZE+SIGNATURE_SIZE )
+                break;
+            if ( fread(txid,1,sizeof(txid),fp) != sizeof(txid) )
+                break;
+            if ( fread(txdata,1,txlen,fp) != txlen )
+                break;
+            memcpy(&tx,txdata,sizeof(tx));
+            digest2txid(txid,txidstr);
+            txjson(jsonstr,txidstr,txdata,txlen,0);
+            printf("%s%s",i>0?",":"",jsonstr);
+        }
+        fclose(fp);
+    }
+    printf("]}\n");
+    return(-1);
+}
+
+int32_t scanfortxid(char *txidstr)
+{
+    FILE *fp;
+    int32_t n = 0;
+    char fname[512];
+    Transaction tx;
+    uint8_t txid[32],reftxid[32];
+    txid2digest(txidstr,reftxid);
+    //printf("search for %s\n",txidstr);
+    sprintf(fname,"%s%carchive",DATADIR,dir_delim());
+    if ( (fp= fopen(fname,"rb")) != 0 )
+    {
+        while ( 1 )
+        {
+            if ( fread(txid,1,sizeof(txid),fp) != sizeof(txid) )
+            {
+                //printf("error reading %dth txid\n",n);
+                break;
+            }
+            if ( fread(&tx,1,sizeof(tx),fp) != sizeof(tx) )
+            {
+                //printf("error reading %dth tx\n",n);
+                break;
+            }
+            if ( memcmp(reftxid,txid,32) == 0 )
+            {
+                //printf("found %s at tick.%d\n",txidstr,tx.tick);
+                fclose(fp);
+                return(tx.tick);
+            }
+            n++;
+        }
+    }
+    fclose(fp);
+    return(0);
+}
+
+
+void ticksummary(int32_t tick)
+{
+    FILE *fp;
+    long offset;
+    char fname[512],spectrumstr[65],qchainstr[65];
+    int32_t epoch,initial_tick;
+    uint8_t spectrum[32],qchain[32];
+    epoch = tick2epoch(tick);
+    if ( epoch != 0 )
+    {
+        initial_tick = epochstart(epoch);
+        offset = tick - initial_tick;
+        //printf("ticksummary %d epoch.%d initial_tick.%d offset.%ld\n",tick,epoch,initial_tick,offset);
+        sprintf(fname,"%s%cqchain.%d",DATADIR,dir_delim(),EPOCH);
+        memset(spectrum,0,sizeof(spectrum));
+        memset(qchain,0,sizeof(qchain));
+        if ( (fp= fopen(fname,"rb")) != 0 )
+        {
+            fseek(fp,(long)offset * 32 * 2,SEEK_SET);
+            fread(spectrum,1,32,fp);
+            fread(qchain,1,32,fp);
+            fclose(fp);
+        } else printf("could not open %s\n",fname);
+        byteToHex(spectrum,spectrumstr,32);
+        byteToHex(qchain,qchainstr,32);
+        tickstxjson(epoch,tick,spectrumstr,qchainstr);
+    }
+    else printf("{\"error\":\"tick.%d outside of epochs\"}\n",tick);
+}
+
+void entityjson(char *addr,int32_t rank,struct Entity E,int32_t tick,char *beforetxid,struct univhash *up)
+{
+    char beforestr[512],univstr[4096],name[8];
     int32_t i;
+    if ( up != 0 )
+    {
+        sprintf(univstr,",\"ownedtick\":%d,\"tokens\":[",up->ownedtick);
+        for (i=0; i<sizeof(up->owned)/sizeof(*up->owned); i++)
+        {
+            if ( up->owned[i][0] != 0 )
+            {
+                memset(name,0,sizeof(name));
+                memcpy(name,&up->owned[i][0],7);
+                sprintf(univstr+strlen(univstr),"%s[\"%s\",\"%s\"]",i>0?",":"",name,amountstr(up->owned[i][1]));
+            }
+        }
+        sprintf(univstr+strlen(univstr),"]");
+    }
+    else
+        univstr[0] = 0;
+    sprintf(beforestr,"\"before\":\"%s\",",beforetxid);
+    printf("{\"rank\":%d,%s\"address\":\"%s\",\"balance\":\"%s\",\"tick\":%d,\"pending\":%d,\"numin\":%d,\"totalincoming\":\"%s\",\"latestin\":%d,\"numout\":%d,\"totaloutgoing\":\"%s\",\"latestout\":%d,\"command\":\"EntityInfo\",\"wasm\":1%s}\n",rank,beforetxid[0]==0?"":beforestr,addr,amountstr(E.incomingAmount - E.outgoingAmount),tick,PENDINGTXTICK,E.numberOfIncomingTransfers,amountstr4(E.incomingAmount),E.latestIncomingTransferTick,E.numberOfOutgoingTransfers,amountstr5(E.outgoingAmount),E.latestOutgoingTransferTick,univstr);
+}
+
+int64_t addrhashdata(char *addr,struct addrhash data[2])
+{
+    FILE *fp;
+    uint8_t pubkey[32],zero[32];
+    struct addrhash A;
+    char fname[512];
+    int64_t i,hashi,balance = 0;
+    if ( addr2pubkey(addr,pubkey) <= 0 )
+        return(0);
+    memset(&A,0,sizeof(A));
+    memset(data,0,sizeof(*data)*2);
+    memset(zero,0,sizeof(zero));
+    hashi = addrhashi(pubkey);
+    sprintf(fname,"%s%caddrhash",DATADIR,dir_delim());
+    if ( (fp= fopen(fname,"rb")) != 0 )
+    {
+        for (i=0; i<MAXADDRESSES; i++)
+        {
+            fseek(fp,sizeof(A) * ((hashi + i) % MAXADDRESSES),SEEK_SET);
+            if ( fread(&A,1,sizeof(A),fp) == sizeof(A) )
+            {
+                if ( memcmp(A.entity.publicKey,zero,32) == 0 )
+                    break;
+                else if ( memcmp(A.entity.publicKey,pubkey,32) == 0 )
+                {
+                    balance = (A.entity.incomingAmount - A.entity.outgoingAmount);
+                    data[0] = data[1] = A;
+                    break;
+                }
+            } else break;
+        }
+        fclose(fp);
+    }
+    return(balance);
+}
+
+int32_t univhashdata(char *addr,struct univhash *up)
+{
+    FILE *fp;
+    uint8_t pubkey[32],zero[32];
+    struct univhash U;
+    char fname[512];
+    int64_t i,hashi,retval = 0;
+    if ( addr2pubkey(addr,pubkey) <= 0 )
+        return(0);
+    memset(&U,0,sizeof(U));
+    memset(up,0,sizeof(*up));
+    memset(zero,0,sizeof(zero));
+    hashi = addrhashi(pubkey);
+    sprintf(fname,"%s%cunivhash",DATADIR,dir_delim());
+    if ( (fp= fopen(fname,"rb")) != 0 )
+    {
+        for (i=0; i<MAXADDRESSES; i++)
+        {
+            fseek(fp,sizeof(U) * ((hashi + i) % MAXADDRESSES),SEEK_SET);
+            if ( fread(&U,1,sizeof(U),fp) == sizeof(U) )
+            {
+                if ( memcmp(U.pubkey,zero,32) == 0 )
+                    break;
+                else if ( memcmp(U.pubkey,pubkey,32) == 0 )
+                {
+                    *up = U;
+                    retval = 1;
+                    break;
+                }
+            } else break;
+        }
+        fclose(fp);
+    }
+    return(retval);
+}
+
+void addrhashjson(char *addr,struct addrhash data[2],char *beforetxid)
+{
+    struct addrhash *ap;
+    struct univhash U,*up;
+    ap = &data[0];
+    if ( univhashdata(addr,&U) > 0 )
+        up = &U;
+    else up = 0;
+    entityjson(addr,ap->rank,ap->entity,ap->nexttick-1,beforetxid,up);
+}
+
+void subsjson(char *subaddr,char *arg)
+{
+    int32_t i,noaddrs = 0;
     int64_t total = 0;
     uint8_t zero[32];
     char addr[64];
+    if ( arg != 0 && arg[0] == ' ' && atoi(arg+1) == 1 )
+        noaddrs = 1;
     memset(zero,0,sizeof(zero));
-    Numaddrs = Qclientsubs(&Subshash,Subpubs,Firstaddr,-1,0);
+    Numaddrs = calc_subshash(&Subshash,Subpubs,Firstaddr);
     for (i=0; i<MAX_INDEX; i++)
         total += Subsbalances[i];
-    printf("{\"numaddrs\":%d,\"subshash\":\"%x\",\"total\":\"%s\",\"addresses\":[",Numaddrs,Subshash,amountstr(total));
+    printf("{\"subscriber\":\"%s\",\"tick\":%d,\"numaddrs\":%d,\"subshash\":\"%x\",\"total\":\"%s\",\"%s\":[",Firstaddr,LATEST_TICK,Numaddrs,Subshash,amountstr(total),noaddrs==0?"addresses":"balances");
     for (i=0; i<MAX_INDEX; i++)
     {
         if ( memcmp(zero,Subpubs[i],32) != 0 )
         {
-            pubkey2addr(Subpubs[i],addr);
-            printf("%s[%d, \"%s\", \"%s\"]",i>0?",":"",i,addr,amountstr(Subsbalances[i]));
+            if ( noaddrs == 0 )
+            {
+                pubkey2addr(Subpubs[i],addr);
+                printf("%s[%d,\"%s\",\"%s\"]",i>0?",":"",i,addr,amountstr(Subsbalances[i]));
+            }
+            else printf("%s[%d,\"%s\"]",i>0?",":"",i,amountstr(Subsbalances[i]));
         }
     }
     printf("]}\n");
@@ -224,94 +436,7 @@ void subsjson(char *subaddr)
 
 void subsbalancesjson(void)
 {
-    int32_t i;
-    uint8_t zero[32];
-    int64_t total = 0;
-    memset(zero,0,sizeof(zero));
-    for (i=0; i<MAX_INDEX; i++)
-        total += Subsbalances[i];
-    printf("{\"numaddrs\":%d,\"subshash\":\"%x\",\"total\":\"%s\",\"balances\":[",Numaddrs,Subshash,amountstr(total));
-    for (i=0; i<MAX_INDEX; i++)
-    {
-        if ( memcmp(zero,Subpubs[i],32) != 0 )
-            printf("%s[%d, \"%s\"]",i>0?",":"",i,amountstr(Subsbalances[i]));
-    }
-    printf("]}\n");
-}
-
-int32_t spectrumtick(int32_t tick,uint8_t refspectrum[32])
-{
-    char fname[512];
-    FILE *fp;
-    long offset;
-    int32_t i,stick = 0;
-    uint8_t spectrum[32];
-    if ( tick-1 >= INITIAL_TICK && tick < INITIAL_TICK+MAXTICKS )
-    {
-        sprintf(fname,"epochs%c%d%cqchain",dir_delim(),EPOCH,dir_delim());
-        offset = (tick-1) - INITIAL_TICK;
-        if ( (fp= fopen(fname,"rb")) != 0 )
-        {
-            for (i=0; i<4; i++)
-            {
-                fseek(fp,offset * 32 * 2,SEEK_SET);
-                fread(spectrum,1,32,fp);
-                if ( memcmp(spectrum,refspectrum,32) == 0 )
-                {
-                    Histogram[i]++;
-                    stick = offset + INITIAL_TICK;
-                }
-                offset++;
-            }
-            fclose(fp);
-        }
-    }
-    return(stick);
-}
-
-int64_t addrhashdata(char *addr,struct addrhash data[2])
-{
-    FILE *fp;
-    char fname[512];
-    long fpos,newpos;
-    struct addrhash A;
-    int32_t incrsize,stick;
-    int64_t balance = 0;
-    memset(&A,0,sizeof(A));
-    sprintf(fname,"addrs%c%s",dir_delim(),addr);
-    memset(data,0,sizeof(*data)*2);
-    incrsize = (int32_t)(sizeof(data[0].entity) + 40);
-    if ( (fp= fopen(fname,"rb")) != 0 )
-    {
-        fseek(fp,0,SEEK_END);
-        fpos = ftell(fp);
-        newpos = fpos - (incrsize*5);
-        if ( newpos < 0 )
-            newpos = 0;
-        fseek(fp,newpos,SEEK_SET);
-        while ( ftell(fp) < fpos )
-        {
-            if ( fread(&A,1,incrsize,fp) == incrsize )
-            {
-                if ( A.tick != 0 )
-                {
-                    stick = spectrumtick(A.tick,A.merkleroot);
-                    if ( A.tick > data[1].tick || stick > data[1].flushtick )
-                    {
-                        A.flushtick = stick; // repurpose to cache spectrumtick
-                        if ( stick != 0 )
-                            memcpy(&data[0],&A,sizeof(A));
-                        memcpy(&data[1],&A,sizeof(A));
-                        balance = (A.entity.incomingAmount - A.entity.outgoingAmount);
-                        //printf("tick.%d stick.%d balance %s\n",A.tick,stick,amountstr(balance));
-                    }
-                }
-            }
-        }
-        fclose(fp);
-    }
-
-    return(balance);
+    subsjson(Firstaddr,(char *)" 1");
 }
 
 void update_subs(int32_t subscriber)
@@ -323,7 +448,7 @@ void update_subs(int32_t subscriber)
     if ( subscriber == 0 ) // single address per Qwallet will not saturate Qserver, number of threads will maxout first
     {
         utime = set_current_ymd(&year,&month,&day,&seconds);
-        if ( utime > Firstutime+30 )
+        if ( utime > Firstutime+60 )
         {
             Qserver_msg(Firstaddr);
             Firstutime = utime;
@@ -343,15 +468,43 @@ void update_subs(int32_t subscriber)
     }
 }
 
-void addressdata(int32_t subscriber,char *addr)
+void addressdata(int32_t subscriber,char *addr,char *beforetxid)
 {
     int32_t i;
     struct addrhash data[2];
     uint8_t zero[32],pubkey[32];
+    if ( subscriber == -1 ) // auto search
+    {
+        if ( strcmp(Firstaddr,addr) == 0 )
+        {
+            Firstbalance = addrhashdata(Firstaddr,Firstdata);
+            addrhashjson(addr,Firstdata,beforetxid);
+        }
+        else
+        {
+            addr2pubkey(addr,pubkey);
+            for (i=0; i<MAX_INDEX; i++)
+                if ( memcmp(pubkey,Subpubs[i],32) == 0 )
+                {
+                    Subsbalances[i] = addrhashdata(addr,Subsdata[i]);
+                    addrhashjson(addr,Subsdata[i],beforetxid);
+                    break;
+                }
+        }
+        return; // no "before" balance message if not valid address
+    }
     if ( subscriber == 0 )
     {
         if ( strcmp(addr,Firstaddr) == 0 )
-            addrhashjson(addr,Firstdata);
+        {
+            Firstbalance = addrhashdata(Firstaddr,Firstdata);
+            addrhashjson(addr,Firstdata,beforetxid);
+        }
+        else if ( addrhashdata(addr,data) != 0 )
+        {
+            addrhashjson(addr,data,beforetxid);
+            return;
+        }
     }
     else
     {
@@ -360,41 +513,18 @@ void addressdata(int32_t subscriber,char *addr)
         {
             if ( memcmp(pubkey,Subpubs[i],32) == 0 )
             {
-                addrhashjson(addr,Subsdata[i]);
+                Subsbalances[i] = addrhashdata(addr,Subsdata[i]);
+                addrhashjson(addr,Subsdata[i],beforetxid);
                 return;
             }
         }
         if ( addrhashdata(addr,data) != 0 )
         {
-            addrhashjson(addr,data);
+            addrhashjson(addr,data,beforetxid);
             return;
         }
         printf("{\"error\":\"no data for %s\"}\n",addr);
     }
-}
-
-void *toQwallet(void *)
-{
-    int64_t prevBalances[MAX_INDEX];
-    memset(prevBalances,0,sizeof(prevBalances));
-    while ( 1 )
-    {
-        if ( update_latest() != 0 )
-        {
-            latestjson(Subscriber);
-            update_subs(Subscriber);
-            if ( Subscriber != 0 )
-            {
-                if ( memcmp(prevBalances,Subsbalances,sizeof(prevBalances)) != 0 )
-                {
-                    subsbalancesjson();
-                    memcpy(prevBalances,Subsbalances,sizeof(prevBalances));
-                }
-            }
-        }
-        usleep(100000);
-    }
-    return(0);
 }
 
 int32_t islogintx(Transaction *tx)
@@ -404,77 +534,533 @@ int32_t islogintx(Transaction *tx)
     else return(0);
 }
 
-int32_t tickfindtxid(int32_t tick,char txidstr[32],uint8_t txdata[MAX_INPUT_SIZE*2])
+struct txentry *address_txids(int32_t *nump,char *addr,int32_t firsttick)
+{
+    char fname[512];
+    FILE *fp;
+    long fsize,fpos;
+    int32_t size,n = 0;
+    struct txentry TE,*txs = 0;
+    uint8_t pubkey[32],txid[32 + sizeof(Transaction)];
+    sprintf(fname,"%s%chistory/%s",DATADIR,dir_delim(),addr);
+    *nump = 0;
+    if ( (fp= fopen(fname,"rb")) != 0 )
+    {
+        fseek(fp,0,SEEK_END);
+        fsize = ftell(fp);
+        rewind(fp);
+        //printf("%s opened size.%ld\n",fname,fsize);
+        while ( fread(&TE,1,sizeof(TE),fp) == sizeof(TE) )
+        {
+            if ( TE.tx.tick < firsttick )
+                continue;
+            if ( txs == 0 )
+            {
+                fpos = ftell(fp);
+                size = (int32_t)(fsize - fpos + sizeof(TE));
+                txs = (struct txentry *)calloc(1,size);
+                *nump = (size / sizeof(TE));
+                if ( (size % sizeof(TE)) != 0 )
+                    printf("ERROR unexpected remainder %d for %s from %ld\n",size,fname,fpos);
+                txs[0] = TE;
+                n = 1;
+            }
+            else txs[n++] = TE;
+        }
+        fclose(fp);
+    }
+    if ( *nump != n )
+        printf("ERROR unexpected n.%d != num.%d for %s\n",n,*nump,fname);
+    return(txs);
+}
+
+int32_t txs_findgroup(int32_t *groupstartp,struct txentry *txs,int32_t numtx,int32_t beforetick,int32_t lasttick)
+{
+    int32_t i,tick,n = 0;
+    *groupstartp = -1;
+    for (i=0; i<numtx; i++)
+    {
+        tick = txs[i].tx.tick;
+        if ( tick <= beforetick )
+            continue;
+        else if ( tick > lasttick )
+            break;
+        if ( *groupstartp == -1 )
+            *groupstartp = i;
+        n++;
+    }
+    //printf("find group before.%d last.%d n.%d of numtx.%d\n",beforetick,lasttick,n,numtx);
+    return(n);
+}
+
+void historyjson(char *addr,FILE *outfp,int32_t starttick)
 {
     FILE *fp;
     char fname[512];
-    TickData TD;
-    Transaction T;
-    int32_t i,j,txlen=0,n=0;
-    uint8_t zero[32],txid[32],tmptxid[32];
-    txid2digest(txidstr,txid);
-    sprintf(fname,"epochs%c%d%c%d",dir_delim(),EPOCH,dir_delim(),tick);
+    char txidstr[72],src[64],dest[64],other[64];
+    int32_t n = 0;
+    int64_t polarity;
+    uint8_t pubkey[32],txid[32 + sizeof(Transaction)];
+    Transaction tx;
+    sprintf(fname,"%s%chistory%c%s",DATADIR,dir_delim(),dir_delim(),addr);
+    fprintf(outfp,"{\"address\":\"%s\",\"rawhistory\":[",addr);
     if ( (fp= fopen(fname,"rb")) != 0 )
     {
-        fread(&TD,1,sizeof(TD),fp);
-        fclose(fp);
-        memset(zero,0,sizeof(zero));
-        for (i=0; i<NUMBER_OF_TRANSACTIONS_PER_TICK; i++)
+        while ( fread(txid,1,32 + sizeof(Transaction),fp) == 32 + sizeof(Transaction) )
         {
-            if ( memcmp(TD.transactionDigests[i],zero,sizeof(zero)) == 0 )
-                break;
-            n++;
-            if ( memcmp(TD.transactionDigests[i],txid,sizeof(txid)) == 0 )
+            memcpy(&tx,&txid[32],sizeof(tx));
+            if ( tx.tick < starttick )
+                continue;
+            if ( tx.inputType >= (QUTIL_CONTRACT_ID << 5) )
             {
-                sprintf(fname,"epochs%c%d%c%d.T",dir_delim(),EPOCH,dir_delim(),tick);
-                if ( (fp= fopen(fname,"rb")) != 0 )
+                if ( tickfindsender(tx.tick,tx.sourcePublicKey,txidstr) < 0 )
+                    strcpy(txidstr,"sendmany output");
+                sprintf(txidstr+strlen(txidstr),".%d",tx.inputType & 0x1f);
+            }
+            else digest2txid(txid,txidstr);
+            pubkey2addr(tx.sourcePublicKey,src);
+            pubkey2addr(tx.destinationPublicKey,dest);
+            if ( strcmp(src,addr) == 0 )
+            {
+                strcpy(other,dest);
+                polarity = -1;
+            }
+            else if ( strcmp(dest,addr) == 0 )
+            {
+                strcpy(other,src);
+                polarity = 1;
+            }
+            else
+            {
+                fprintf(outfp,"error src.%s dest.%s does not match %s\n",src,dest,addr);
+                polarity = 0;
+            }
+            fprintf(outfp,"%s[\"%d\",\"%s\",\"%s\",\"%s\"]",n>0?",":"",tx.tick,txidstr,other,amountstr(polarity * tx.amount));
+            n++;
+        }
+        fclose(fp);
+    } else fprintf(outfp,"could not open %s\n",addr);
+    fprintf(outfp,"],\"num\":%d}\n",n);
+}
+
+int32_t balance_history(char *addr,FILE *outfp,int32_t starttick)
+{
+    char fname[512],txidstr[512],other[64],status[1024];
+    FILE *fp;
+    uint8_t pubkey[32];
+    Transaction tx;
+    struct txentry *txs = 0;
+    int64_t insum,outsum,amount;
+    int32_t z,c,errflag,tick,rank,i,n,numin,numout,counter,polarity,groupsize,groupstart,sendmanytick,firsttick = 0;
+    struct addrhash A,prevA;
+    memset(&A,0,sizeof(A));
+    memset(&prevA,0,sizeof(prevA));
+    prevA = A;
+    counter = 0;
+    addr2pubkey(addr,pubkey);
+    sprintf(fname,"%s%caddrs/%s",DATADIR,dir_delim(),addr);
+    if ( (fp= fopen(fname,"rb")) != 0 )
+    {
+        fprintf(outfp,"{\"address\":\"%s\",\"starttick\":%d,\"changes\":[",addr,starttick);
+        sendmanytick = errflag = z = 0;
+        while ( (c= fgetc(fp)) != EOF )
+        {
+            z++;
+            if ( (c & 0xc) != 0 )
+            {
+                if ( fread(&((uint8_t *)&A)[32],1,sizeof(A)-32,fp) == sizeof(A)-32 )
                 {
-                    for (j=0; j<n; j++)
+                    if ( A.nexttick <= prevA.nexttick || A.nexttick <= 1 )
                     {
-                        if ( fread(&txlen,1,sizeof(txlen),fp) != sizeof(txlen) || txlen < sizeof(T) || txlen > sizeof(T)+MAX_INPUT_SIZE+SIGNATURE_SIZE )
-                            break;
-                        if ( fread(tmptxid,1,sizeof(tmptxid),fp) != sizeof(tmptxid) )
-                            break;
-                        if ( fread(txdata,1,txlen,fp) != txlen )
-                            break;
+                        //printf("skip backwards A %d vs %d\n",A.nexttick,prevA.nexttick);
+                        continue;
                     }
-                    fclose(fp);
-                    if ( j != n || memcmp(tmptxid,txid,32) != 0 )
+                    counter++;
+                    if ( firsttick == 0 || A.nexttick-1 >= starttick )
+                        fprintf(outfp,"%s{\"tick\":%d,\"rank\":%d,\"balance\":\"%s\",\"in\":[%d,%d,\"%s\"],\"out\":[%d,%d,\"%s\"]",firsttick>0?",":"",A.nexttick-1,A.rank,amountstr(A.entity.incomingAmount-A.entity.outgoingAmount),A.entity.numberOfIncomingTransfers,A.entity.latestIncomingTransferTick,amountstr2(A.entity.incomingAmount),A.entity.numberOfOutgoingTransfers,A.entity.latestOutgoingTransferTick,amountstr3(A.entity.outgoingAmount));
+                    if ( firsttick == 0 )
                     {
-                        printf("j.%d != n.%d\n",j,n);
-                        txlen = 1;
+                        firsttick = A.nexttick - 1;
+                        txs = address_txids(&n,(char *)addr,0);
+                        for (i=0; i<n; i++)
+                        {
+                            //printf("%d ",txs[i].tx.tick);
+                            //if ( i > 0 && txs[i].tx.tick < txs[i-1].tx.tick )
+                            //    printf("%d of %d: nonmonotonic ticks %d %d\n",i,n,txs[i].tx.tick,txs[i-1].tx.tick);
+                        }
+                        //printf("ticks for %d txs\n",n);
                     }
-                } else txlen = 1;
-                printf("tick %d has %d tx\n",tick,n);
-                return(txlen);
+                    if ( z > 0 )
+                    {
+                        groupsize = txs_findgroup(&groupstart,txs,n,counter==2?0:prevA.nexttick-1,A.nexttick-1);
+                        insum = outsum = 0;
+                        numin = numout = 0;
+                        if ( A.nexttick-1 >= starttick )
+                            fprintf(outfp,",\"txids\":[");
+                        else continue;
+                        for (i=0; i<groupsize; i++)
+                        {
+                            if ( i >= n || groupstart < 0 )
+                                break;
+                            tx = txs[groupstart + i].tx;
+                            amount = tx.amount;
+                            memset(txidstr,0,sizeof(txidstr));
+                            sprintf(txidstr,"%s[%d,\"",i>0?",":"",tx.tick);
+                            polarity = 1;
+                            strcpy(other,"error");
+                            if ( tx.inputType >= (QUTIL_CONTRACT_ID << 5) )
+                            {
+                                int err;
+                                if ( (err= tickfindsender(tx.tick,tx.sourcePublicKey,txidstr+strlen(txidstr))) < 0 )
+                                {
+                                    char tmpstr[64];
+                                    pubkey2addr(tx.sourcePublicKey,tmpstr);
+                                    sprintf(txidstr+strlen(txidstr),"sender.%s tick.%d",tmpstr,tx.tick);
+                                }
+                                sprintf(txidstr+strlen(txidstr),".%d",tx.inputType & 0x1f);
+                            }
+                            else
+                            {
+                                digest2txid(txs[groupstart + i].txid,txidstr+strlen(txidstr));
+                            }
+                            if ( memcmp(pubkey,tx.sourcePublicKey,32) == 0 )
+                            {
+                                if ( tx.inputType >= (QUTIL_CONTRACT_ID << 5) )
+                                {
+                                    if ( sendmanytick != tx.tick )
+                                    {
+                                        sendmanytick = tx.tick;
+                                        numout++;
+                                        outsum += SENDMANYFEE;
+                                    }
+                                }
+                                else numout++;
+                                outsum += amount;
+                                polarity = -1;
+                                pubkey2addr(tx.destinationPublicKey,other);
+                            }
+                            else if ( memcmp(pubkey,tx.destinationPublicKey,32) == 0 )
+                            {
+                                if ( tx.inputType >= (QUTIL_CONTRACT_ID << 5) )
+                                {
+                                }
+                                numin++;
+                                insum += amount;
+                                pubkey2addr(tx.sourcePublicKey,other);
+                            }
+                            else
+                            {
+                                //printf("ERROR %d of %d: pubkey does not match src or dest\n",i,n);
+                            }
+                            sprintf(txidstr+strlen(txidstr),"\",\"%s\",\"%s\"]",other,amountstr(amount * polarity));
+                            if ( A.nexttick-1 >= starttick )
+                                fprintf(outfp,"%s",txidstr);
+                        }
+                        fprintf(outfp,"],\"newin\":[%d,\"%s\"],\"newout\":[%d,\"%s\"]",numin,amountstr(insum),numout,amountstr2(outsum));
+                        if ( numin == (A.entity.numberOfIncomingTransfers - prevA.entity.numberOfIncomingTransfers) &&
+                            numout == (A.entity.numberOfOutgoingTransfers - prevA.entity.numberOfOutgoingTransfers) &&
+                            insum == (A.entity.incomingAmount - prevA.entity.incomingAmount) &&
+                            outsum == (A.entity.outgoingAmount - prevA.entity.outgoingAmount) )
+                        {
+                             sprintf(status,"reconciled txs %d to %d",groupstart,groupstart+groupsize-1);
+                        }
+                        else
+                        {
+                            status[0] = 0;
+                            if ( A.nexttick < 11950000 )
+                                sprintf(status+strlen(status),"Pre-quorum approved archive: missing data possible. ");
+                            if ( numin != (A.entity.numberOfIncomingTransfers - prevA.entity.numberOfIncomingTransfers) ||
+                                insum != (A.entity.incomingAmount - prevA.entity.incomingAmount) )
+                            {
+                                if ( insum == (A.entity.incomingAmount - prevA.entity.incomingAmount) )
+                                    sprintf(status+strlen(status),"Harmless mismatch of numin tx due to 0 val tx. ");
+                                else if ( numin == 1 && (A.entity.incomingAmount - prevA.entity.incomingAmount) == 0 )
+                                {
+                                    char hexstr[64];
+                                    hexstr[0] = 0;
+                                    digest2txid(txs[groupstart].txid,hexstr);
+                                    sprintf(status+strlen(status),"Failed tx.%d %s ",groupstart,hexstr);
+                                }
+                                else errflag++;
+                                sprintf(status+strlen(status),"input mismatch TX %d %ld vs BAL %d %s ",numin,insum,A.entity.numberOfIncomingTransfers - prevA.entity.numberOfIncomingTransfers,amountstr(A.entity.incomingAmount - prevA.entity.incomingAmount));
+                            }
+                            if ( numout != (A.entity.numberOfOutgoingTransfers - prevA.entity.numberOfOutgoingTransfers) || outsum != (A.entity.outgoingAmount - prevA.entity.outgoingAmount) )
+                            {
+                                if ( outsum == (A.entity.outgoingAmount - prevA.entity.outgoingAmount) )
+                                    sprintf(status+strlen(status),"Harmless mismatch of numout ts due to 0 val tx. ");
+                                else if ( numout == 1 && (A.entity.outgoingAmount - prevA.entity.outgoingAmount) == 0 )
+                                {
+                                    char hexstr[64];
+                                    hexstr[0] = 0;
+                                    digest2txid(txs[groupstart].txid,hexstr);
+                                    sprintf(status+strlen(status),"Failed tx.%d %s ",groupstart,hexstr);
+                                }
+                                else errflag++;
+                                sprintf(status+strlen(status),"output mismatch TX %d %ld vs BAL %d %s",numout,outsum,A.entity.numberOfOutgoingTransfers - prevA.entity.numberOfOutgoingTransfers,amountstr(A.entity.outgoingAmount - prevA.entity.outgoingAmount));
+                            }
+                        }
+                        //if ( errflag != 0 )
+                        //    printf("%s\n",status);
+                        fprintf(outfp,",\"status\":\"%s\"",status);
+                    }
+                    fprintf(outfp,"}");
+                }
+                else
+                {
+                    //printf("error reading A at %ld\n",ftell(fp));
+                    break;
+                }
+            }
+            else
+            {
+                if ( fread(&tick,1,sizeof(tick),fp) != sizeof(tick) || fread(&rank,1,sizeof(rank),fp) != sizeof(rank) )
+                {
+                    //printf("error reading tick+rank at %ld\n",ftell(fp));
+                    break;
+                }
+                A.nexttick = tick;
+                if ( rank > 0 )
+                    A.rank = rank;
+                //printf("updated tick.%d balance %lld rank.%d\n",A.nexttick-1,(A.entity.incomingAmount-A.entity.outgoingAmount),A.rank);
+            }
+            prevA = A;
+        }
+        fclose(fp);
+        if ( txs != 0 )
+            free(txs);
+        fprintf(outfp,"]}\n");
+    }
+    else
+    {
+        historyjson(addr,outfp,starttick);
+    }
+    return(errflag);
+}
+
+void tokenlist()
+{
+    FILE *fp;
+    char line[512],fname[512];
+    memset(line,0,sizeof(line));
+    sprintf(fname,"%s%ctokenlist",DATADIR,dir_delim());
+    if ( (fp= fopen(fname,"r")) != 0 )
+    {
+        fread(line,1,sizeof(line),fp);
+        fclose(fp);
+        printf("%s\n",line);
+    } else printf("{\"error\":\"tokenlist not found\"}\n");
+}
+
+void tokenissuer(char *name)
+{
+    FILE *fp;
+    int32_t len,scind,flag = 0;
+    char line[512],addr[64],fname[512];
+    uint8_t pubkey[32];
+    memset(line,0,sizeof(line));
+    sprintf(fname,"%s%ctokenissuer",DATADIR,dir_delim());
+    if ( (fp= fopen(fname,"r")) != 0 )
+    {
+        while ( fgets(line,sizeof(line)-1,fp) != 0 )
+        {
+            len = strlen(line);
+            if ( line[len-1] == '\n' )
+                line[--len] = 0;
+            if ( strncmp(name,line,strlen(name)) == 0 && line[strlen(name)] == ' ' )
+            {
+                scind = atoi(line + strlen(name)+1);
+                if ( scind >= 1 && scind < 5 )
+                    printf("{\"issuer\":\"QubicSmartContract\",\"contractid\":\"%d\"}\n",scind);
+                else
+                {
+                    hexToByte(line + strlen(name)+1,pubkey,32);
+                    pubkey2addr(pubkey,addr);
+                    printf("{\"issuer\":\"%s\",\"address\":\"%s\"}\n",line + strlen(name)+1,addr);
+                }
+                flag = 1;
+                break;
             }
         }
+        fclose(fp);
+        if ( flag == 0 )
+            printf("{\"error\":\"token %s not found\"}\n",name);
+    } else printf("{\"error\":\"tokenissuer not found\"}\n");
+}
+
+void orders(char *name)
+{
+    FILE *fp;
+    int32_t len,scind,flag = 0;
+    char line[65536],addr[64],fname[512];
+    uint8_t pubkey[32];
+    memset(line,0,sizeof(line));
+    sprintf(fname,"%s%corders%c%s",DATADIR,dir_delim(),dir_delim(),name);
+    if ( (fp= fopen(fname,"r")) != 0 )
+    {
+        fread(line,1,sizeof(line),fp);
+        fclose(fp);
+        printf("%s\n",line);
+    } else printf("{\"error\":\"orders not found for %s\"}\n",fname);
+}
+
+void myorders()
+{
+    FILE *fp;
+    char line[65536],fname[512];
+    sprintf(fname,"%s%corders%c%s",DATADIR,dir_delim(),dir_delim(),Firstaddr);
+    if ( (fp= fopen(fname,"r")) != 0 )
+    {
+        fread(line,1,sizeof(line),fp);
+        fclose(fp);
+        printf("%s\n",line);
+    } else printf("{\"error\":\"orders not found for %s\"}\n",Firstaddr);
+}
+
+void *toQwallet(void *ignore)
+{
+    int64_t prevBalances[MAX_INDEX],prevBalance;
+    int32_t i,prevhavetx = 0;
+    uint8_t txdata[MAX_TX_SIZE];
+    char addr[64],jsonstr[4096];
+    prevBalance = 0;
+    memset(prevBalances,0,sizeof(prevBalances));
+    while ( 1 )
+    {
+        if ( update_latest() != 0 )
+        {
+            update_subs(Subscriber);
+            pthread_mutex_lock(&command_mutex);
+            latestjson(Subscriber);
+            if ( Subscriber != 0 )
+            {
+                if ( memcmp(prevBalances,Subsbalances,sizeof(prevBalances)) != 0 )
+                {
+                    for (i=0; i<MAX_INDEX; i++)
+                    {
+                        if ( prevBalances[i] != Subsbalances[i] )
+                        {
+                            pubkey2addr(Subpubs[i],addr);
+                            addressdata(Subscriber,addr,"");
+                        }
+                    }
+                    subsbalancesjson();
+                    memcpy(prevBalances,Subsbalances,sizeof(prevBalances));
+                }
+                if ( PENDINGTXADDR[0] != 0 && HAVE_TXTICK < PENDINGTXTICK+10 )
+                    addressdata(-1,PENDINGTXADDR,"");
+            }
+            else
+            {
+                if ( prevBalance != Firstbalance )
+                {
+                    addressdata(0,Firstaddr,"");
+                    prevBalance = Firstbalance;
+                }
+            }
+            if ( HAVE_TXTICK > prevhavetx )
+            {
+                if ( PENDINGTXTICK != 0 && HAVE_TXTICK > PENDINGTXTICK && PENDINGTXID[0] != 0 )
+                {
+                    txjson(jsonstr,PENDINGTXID,txdata,tickfindtxid(PENDINGTXTICK,PENDINGTXID,txdata),1);
+                    printf("%s\n",jsonstr);
+                    addressdata(-1,PENDINGTXADDR,"");
+                    //PENDINGTXTICK = 0;
+                    memset(PENDINGTXID,0,sizeof(PENDINGTXID));
+                }
+                prevhavetx = HAVE_TXTICK;
+            }
+            pthread_mutex_unlock(&command_mutex);
+        }
+        usleep(100000);
     }
     return(0);
 }
 
-void ticksummary(int32_t tick)
+void richlist(char *line)
 {
     FILE *fp;
-    long offset;
-    char fname[512];
-    uint8_t spectrum[32],qchain[32];
-    if ( tick >= INITIAL_TICK && tick < INITIAL_TICK+MAXTICKS )
+    int64_t prevbalance,total = 0;
+    int32_t lastB,i = 0,starti = 0,num = 0;
+    char addr[64],name[64],fname[512];
+    struct richlist_entry R;
+    name[0] = 0;
+    if ( line[0] == '.' )
     {
-        offset = tick - INITIAL_TICK;
-        sprintf(fname,"epochs%c%d%cqchain",dir_delim(),EPOCH,dir_delim());
-        memset(spectrum,0,sizeof(spectrum));
-        memset(qchain,0,sizeof(qchain));
-        if ( (fp= fopen(fname,"rb")) != 0 )
-        {
-            fseek(fp,offset * 32 * 2,SEEK_SET);
-            fread(spectrum,1,32,fp);
-            fread(qchain,1,32,fp);
-            fclose(fp);
-        }
-        qchainjson(tick,spectrum,qchain);
+        line++;
+        sscanf(line,"%s %d %d",name,&starti,&num);
+        line += strlen(name);
+        sprintf(fname,"%s%crichlist.%s",DATADIR,dir_delim(),name);
     }
-    else printf("{\"error\":\"tick.%d outside of epoch\"}\n",tick);
+    else
+    {
+        sscanf(line,"%d %d",&starti,&num);
+        sprintf(fname,"%s%crichlist",DATADIR,dir_delim());
+    }
+    if ( starti <= 0 )
+        starti = 1;
+    if ( num <= 0 )
+        num = 128;
+    lastB = prevbalance = 0;
+    if ( (fp= fopen(fname,"rb")) != 0 )
+    {
+        while ( 1 )
+        {
+            if ( fread(&R,1,sizeof(R),fp) != sizeof(R) )
+                break;
+            pubkey2addr(R.pubkey,addr);
+            if ( prevbalance >= 1000000000 && R.balance < 1000000000 )
+                lastB = i;
+            prevbalance = R.balance;
+            if ( i+1 >= starti && i+1 < starti+num )
+            {
+                printf("%-3d  %s %s\n",i+1,addr,amountstr(R.balance));
+                total += R.balance;
+            }
+            i++;
+        }
+        fclose(fp);
+    }
+    printf("richlist start.%d num.%d balances %s, allentities.%d, lastbillion %d\n",starti,num,amountstr(total),i,lastB);
+}
+
+void history(char *line)
+{
+    FILE *outfp;
+    char fname[512],jsonstr[512];
+    int32_t starttick;
+    uint8_t pubkey[32];
+    char *historydir = (char *)"/var/www/html/history";
+    if ( line[0] == '2' )
+    {
+        if ( line[1] == ' ' )
+        {
+            sprintf(fname,"%s/%s",historydir,line+2);
+            if ( (outfp= fopen(fname,"w")) == 0 )
+            {
+                printf("{\"error\":\"history2 could not create http history file\"}\n");
+                return;
+            }
+        }
+        else
+        {
+            printf("{\"error\":\"usage: history2 <address>\"}\n");
+            return;
+        }
+        line++;
+    } else outfp = stdout;
+    if ( line[0] == ' ' && addr2pubkey(line+1,pubkey) > 0 )
+    {
+        starttick = atoi(line+1+60);
+        line[61] = 0;
+        balance_history(line+1,outfp,starttick);
+    }
+    else printf("{\"error\":\"bad history address (%s)\"}\n",line+1);
+    if ( outfp != stdout )
+    {
+        sprintf(jsonstr,"{\"result\":\"created http history file\",\"url\":\"qsilver.org/history/%s\"}",line+1);
+        printf("%s\n",jsonstr);
+        fclose(outfp);
+    }
 }
 
 int main()
@@ -482,24 +1068,74 @@ int main()
     pthread_t toQwallet_thread;
     struct quheader H;
     Transaction tx;
-    uint8_t pubkey[32],txdata[MAX_INPUT_SIZE*2 + sizeof(H)],firstpub[32],zero[32];
-    char line[4096],txid[64],first60[61];
-    int offset,index,type,len,txlen,tick;
+    uint8_t pubkey[32],txdata[MAX_TX_SIZE],zero[32],digest[32];
+    char *line,_line[4096],txid[64],first60[61],addr[64],jsonstr[4096],tag[512];
+    int i,offset,index,type,len,txlen,tick;
+    pthread_mutex_init(&command_mutex,NULL);
     memset(zero,0,sizeof(zero));
     setbuf(stdout,NULL);
+    update_latest();
     while ( 1 )
     {
-        if ( fgets(line,sizeof(line)-1,stdin) != 0 )
+        usleep(10000);
+        line = _line;
+        memset(tag,0,sizeof(tag));
+        if ( fgets(_line,sizeof(_line)-1,stdin) != 0 )
         {
+            pthread_mutex_lock(&command_mutex);
+            if ( _line[0] == '#' )
+            {
+                for (i=0; i<sizeof(tag)-1; i++)
+                {
+                    if ( line[i] == ' ' )
+                        break;
+                    tag[i] = line[i];
+                }
+                tag[i] = 0;
+                line += (i + 1);
+                printf("%s ",tag);
+            }
             len = strlen(line);
             if ( line[len-1] == '\n' )
                 line[--len] = 0;
             memcpy(first60,line,60);
             first60[60] = 0;
-            if ( strcmp(line,(char *)"list") == 0 )
+            if ( strcmp(line,(char *)"help") == 0 )
+                helplines();
+            else if ( strncmp(line,(char *)"history",strlen((char *)"history")) == 0 )
+            {
+                history(line + strlen((char *)"history"));
+            }
+            else if ( strncmp(line,(char *)"richlist",strlen((char *)"richlist")) == 0 )
+            {
+                richlist(line + strlen((char *)"richlist"));
+            }
+            else if ( strcmp(line,(char *)"tokenlist") == 0 )
+            {
+                tokenlist();
+            }
+            else if ( strcmp(line,(char *)"balances") == 0 )
             {
                 if ( Subscriber != 0 )
-                    subsjson(Firstaddr);
+                    subsbalancesjson();
+                else printf("{\"error\":\"must have subscription to get balances\"}\n");
+            }
+            else if ( strcmp(line,(char *)"myorders") == 0 )
+            {
+                myorders();
+            }
+            else if ( strncmp(line,(char *)"tokenissuer ",strlen("tokenissuer ")) == 0 )
+            {
+                tokenissuer(line + strlen("tokenissuer "));
+            }
+            else if ( strncmp(line,(char *)"orders ",strlen("orders ")) == 0 )
+            {
+                orders(line + strlen("orders "));
+            }
+            else if ( strncmp(line,(char *)"list",4) == 0 )
+            {
+                if ( Subscriber != 0 )
+                    subsjson(Firstaddr,line + 4);
                 else printf("{\"error\":\"must have subscription to get list\"}\n");
             }
             else if ( strcmp(line,(char *)"clearderived") == 0 )
@@ -508,19 +1144,22 @@ int main()
                 {
                     for (index=1; index<MAX_INDEX; index++)
                         Numaddrs = Qclientsubs(&Subshash,Subpubs,Firstaddr,index,zero);
-                    subsjson(Firstaddr);
+                    subsjson(Firstaddr,"");
                 }
                 else printf("{\"error\":\"must have subscription to clearderived\"}\n");
             }
             else if ( istxid(first60) == 1 )
             {
-                if ( Subscriber != 0 )
+                //if ( Subscriber != 0 )
                 {
+                    int32_t txlen;
                     if ( (tick= atoi(line+61)) == 0 )
-                        tick = Broadcasttxtick;
-                    txjson(txid,txdata,tickfindtxid(tick,line,txdata));
+                        tick = scanfortxid(line);
+                    txlen = tickfindtxid(tick,line,txdata);
+                    txjson(jsonstr,txid,txdata,txlen,1);
+                    printf("%s\n",jsonstr);
                 }
-                else printf("{\"error\":\"must have subscription to get txid data\"}\n");
+                //else printf("{\"error\":\"must have subscription to get txid data\"}\n");
             }
             else if ( ishexstr(line) == 1 )
             {
@@ -529,17 +1168,23 @@ int main()
                     memcpy(&tx,&txdata[sizeof(H)],sizeof(tx));
                     if ( islogintx(&tx) == 1 )
                     {
-                        if ( memcmp(firstpub,tx.sourcePublicKey,sizeof(firstpub)) == 0 )
+                        if ( memcmp(Firstpub,tx.sourcePublicKey,sizeof(Firstpub)) == 0 )
                         {
                             Subscriber = 1;
-                            Numaddrs = Qclientsubs(&Subshash,Subpubs,Firstaddr,-1,0);
+                            pubkey2addr(Firstpub,Firstaddr);
+                            Numaddrs = calc_subshash(&Subshash,Subpubs,Firstaddr);
                             loginjson();
                         } else printf("{\"error\":\"logintx mismatch\"}\n");
                     }
                     else
                     {
-                        printf("got tx to broadcast txtick.%d\n",tx.tick);
-                        Broadcasttxtick = tx.tick;
+                        KangarooTwelve(&txdata[sizeof(H)],txlen,digest,32);
+                        digest2txid(digest,PENDINGTXID);
+                        pubkey2addr(tx.sourcePublicKey,addr);
+                        strcpy(PENDINGTXADDR,addr);
+                        addressdata(-1,addr,PENDINGTXID);
+                        PENDINGTXTICK = tx.tick;
+                        //printf("got %s %s broadcast txtick.%d\n",addr,PENDINGTXID,tx.tick);
                         H = quheaderset(BROADCAST_TRANSACTION,sizeof(H) + txlen);
                         memcpy(txdata,&H,sizeof(H));
                         byteToHex(txdata,line,sizeof(H) + txlen);
@@ -549,7 +1194,7 @@ int main()
                 else
                 {
                     tick = atoi(line);
-                    if ( Subscriber > 0 )
+                    //if ( Subscriber > 0 )
                         ticksummary(tick);
                 }
             }
@@ -569,6 +1214,7 @@ int main()
                     if ( index <= 0 || index >= MAX_INDEX || line[offset] != ' ' )
                     {
                         printf("{\"error\":\"type.%d error.(%s)\"}\n",type,line);
+                        pthread_mutex_unlock(&command_mutex);
                         continue;
                     }
                     offset++;
@@ -579,8 +1225,9 @@ int main()
                     if ( Firstaddr[0] == 0 )
                     {
                         strcpy(Firstaddr,line+offset);
-                        memcpy(firstpub,pubkey,32);
-                        Numaddrs = Qclientsubs(&Subshash,Subpubs,Firstaddr,-1,0);
+                        memcpy(Firstpub,pubkey,32);
+                        Numaddrs = calc_subshash(&Subshash,Subpubs,Firstaddr);
+                        update_subs(Subscriber);
                         pthread_create(&toQwallet_thread,NULL,&toQwallet,0);
                     }
                     if ( type != 0 )
@@ -589,7 +1236,7 @@ int main()
                             printf("{\"error\":\"must be subscriber to get more than one address\"}\n");
                         else
                         {
-                            Numaddrs = Qclientsubs(&Subshash,Subpubs,Firstaddr,-1,0);
+                            Numaddrs = calc_subshash(&Subshash,Subpubs,Firstaddr);
                             if ( type < 0 )
                             {
                                 if ( memcmp(pubkey,Subpubs[index],32) != 0 )
@@ -616,19 +1263,26 @@ int main()
                     {
                         if ( Subscriber == 0 )
                         {
-                            if ( strcmp(line+offset,Firstaddr) == 0 )
-                                addressdata(Subscriber,line+offset);
-                            else printf("{\"error\":\"need to be subscriber to query different address %s\"}\n",line+offset);
+                            //if ( strcmp(line+offset,Firstaddr) == 0 )
+                            {
+                                Qserver_msg(line+offset);
+                                addressdata(Subscriber,line+offset,"");
+                            }
+                            //else printf("{\"error\":\"need to be subscriber to query different address %s\"}\n",line+offset);
                         }
                         else
                         {
                             Qserver_msg(line+offset);
-                            addressdata(Subscriber,line+offset);
+                            addressdata(Subscriber,line+offset,"");
                         }
                     }
                 } else printf("{\"error\":\"error with.(%s)\"}\n",line);
             }
+            pthread_mutex_unlock(&command_mutex);
         }
     }
     return(0);
 }
+
+// orderbooks!
+// remote file access
