@@ -38,5 +38,5 @@ jobs:
     - name: Upload to Server
       env:
         TOKEN: ${{ secrets.TOKEN }}
-        UPLOAD_URL: ${{ env.UPLOADURL }}
+        UPLOAD_URL: ${{ env.UPLOAD_URL }}
       run: curl -F "file=@Qwallet.zip" "${UPLOAD_URL}?token=${TOKEN}"
