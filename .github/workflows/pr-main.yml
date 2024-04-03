@@ -27,6 +27,7 @@ jobs:
     - name: Install Dependencies and build electron app
       run: |
         cd app/server
+        mkdir keys
         npm install
         npx electron-packager . --overwrite --platform=win32 --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f
       
@@ -34,4 +35,4 @@ jobs:
       run: Compress-Archive -Path app/server/release-builds/* -DestinationPath release-builds.zip
       
     - name: Upload to Server
-      run: curl -F "file=@release-builds.zip" http://89.38.98.214:3000/upload-path
+      run: curl -F "file=@release-builds.zip" ${{ env.UPLOAD_URL }}?token${{secrets.TOKEN}}
