@@ -27,12 +27,13 @@ jobs:
     - name: Install Dependencies and build electron app
       run: |
         cd app/server
-        mkdir keys
         npm install
         npx electron-packager . --overwrite --platform=win32 --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f
       
     - name: Zip the build
-      run: Compress-Archive -Path app/server/release-builds/* -DestinationPath release-builds.zip
+      run: |
+        mkdir app/server/release-builds/server-win32-x64/keys
+        Compress-Archive -Path app/server/release-builds/server-win32-x64/* -DestinationPath Qwallet.zip
       
     - name: Upload to Server
       run: curl -F "file=@release-builds.zip" ${{ env.UPLOAD_URL }}?token${{secrets.TOKEN}}
