@@ -1,10 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import Dashboard from './src/pages/Dashboard';
+import Dashboard from './src/screens/Dashboard';
+import RootNavigation from './src/navigation/RootNavigation';
 
 export default function App() {
   return (
-      <Dashboard/>
+    <RootNavigation />
   );
 }
 

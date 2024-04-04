@@ -75,19 +75,19 @@ const Dashboard : React.FC = () => {
   };
 
   return (
-    <ScrollView style={[tw`h-full mx-auto px-2.5 py-5 rounded-lg shadow-2xl`, { backgroundColor: 'rgba(3,35,61,0.8)' }]}>
+    <ScrollView style={[tw`h-full px-2 py-5 shadow-2xl`, { backgroundColor: 'rgba(3,35,61,0.8)' }]}>
       <View style={tw`flex-row justify-between items-center border-b border-white px-5 py-2.5`}>
         <TouchableOpacity onPress={() => {}}>                  
           <Image source={require('../../assets/images/logo.png')} style={tw`w-12 h-12`} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleCopy("")}>
-          <Text style={tw`text-white text-lg px-1.25 py-2.5 shadow-lg rounded-md`}>{}</Text>
+          <Text style={tw`text-white text-lg px-2 py-2 shadow-lg rounded-md`}>{}</Text>
         </TouchableOpacity>
         <TouchableOpacity>
           <Text style={tw`text-white bg-blue-900 px-2 py-1 rounded-md text-lg`}>Logout</Text>
         </TouchableOpacity>
       </View>
-      <View style={tw`px-5 py-2.5`}>
+      <View style={tw`px-5 py-2`}>
         <Text style={tw`text-white text-2xl`}>Balance:</Text>
         <Text style={tw`text-white text-2xl`}>Tick: </Text>
       </View>
