@@ -1,0 +1,110 @@
+name: Build and Upload Electron App on Windows, macOS, and Linux
+
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  build-and-upload-windows:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+      
+    - name: Install Dependencies and build client
+      run: |
+        mkdir app/server/dist
+        cd app/client
+        npm install
+        npm run build
+
+    - name: Install Dependencies and build electron app for Windows
+      run: |
+        cd app/server
+        npm install
+        npx electron-packager . --overwrite --platform=win32 --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f
+        mkdir app/server/release-builds/server-win32-x64/keys
+      
+    - name: Zip the Windows build
+      run: |
+        Compress-Archive -Path app/server/release-builds/server-win32-x64/* -DestinationPath Qwallet-Windows.zip
+      
+    - name: Upload Windows build to Server
+      env:
+        TOKEN: ${{ secrets.TOKEN }}
+        UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
+      run: curl -F "file=@Qwallet-Windows.zip" ${env:UPLOAD_URL}?token=${env:TOKEN}
+
+  build-and-upload-osx:
+    runs-on: macos-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+      
+    - name: Install Dependencies and build client
+      run: |
+        mkdir app/server/dist
+        cd app/client
+        npm install
+        npm run build
+
+    - name: Install Dependencies and build electron app for macOS
+      run: |
+        cd app/server
+        npm install
+        npx electron-packager . --overwrite --platform=darwin --arch=x64 --icon=logo.icns --prune=true --out=release-builds -f
+        mkdir app/server/release-builds/server-darwin-x64/keys
+      
+    - name: Zip the macOS build
+      run: zip -r Qwallet-macOS.zip app/server/release-builds/server-darwin-x64/*
+      
+    - name: Upload macOS build to Server
+      env:
+        TOKEN: ${{ secrets.TOKEN }}
+        UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
+      run: curl -F "file=@Qwallet-macOS.zip" $UPLOAD_URL?token=$TOKEN
+
+  build-and-upload-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+      
+    - name: Install Dependencies and build client
+      run: |
+        mkdir -p app/server/dist
+        cd app/client
+        npm install
+        npm run build
+
+    - name: Install Dependencies and build electron app for Linux
+      run: |
+        cd app/server
+        npm install
+        npx electron-packager . --overwrite --platform=linux --arch=x64 --icon=logo.png --prune=true --out=release-builds -f
+        mkdir app/server/release-builds/server-linux-x64/keys
+      
+    - name: Zip the Linux build
+      run: tar -czvf Qwallet-Linux.tar.gz -C app/server/release-builds/server-linux-x64/ .
+      
+    - name: Upload Linux build to Server
+      env:
+        TOKEN: ${{ secrets.TOKEN }}
+        UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
+      run: curl -F "file=@Qwallet-Linux.tar.gz" $UPLOAD_URL?token=$TOKEN
