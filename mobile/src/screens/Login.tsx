@@ -1,67 +1,126 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
+  Pressable,
   TextInput,
   Image,
-  Keyboard,
+  StyleSheet,
 } from "react-native";
-import Toast from "react-native-toast-message";
-import { useNavigation } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import tw from "tailwind-react-native-classnames";
+import Button from "../components/Button";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-const Login: React.FC = () => {
-  const navigation = useNavigation(); // Using React Navigation's hook
-
-  const [passwordInputType, setPasswordInputType] =
-    useState<string>("password");
-  const [loginWaiting, setLoginWaiting] = useState<boolean>(false);
-
-  const handleLogin = () => {};
-
-  // Other functions remain largely the same, with adjustments for React Native as needed
+const PasswordField: React.FC<{
+  onChange: (text: string) => void;
+  onSubmit: () => void;
+}> = ({ onChange, onSubmit }) => {
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   return (
-    <View style={tw`bg-gray-200 mx-auto p-10 rounded-lg shadow-2xl`}>
-      <Image
-        source={require("../../assets/images/logo.png")}
-        style={tw`w-24 h-24 mx-auto`}
+    <View style={tw`relative mb-4`}>
+      <TextInput
+        secureTextEntry={!passwordVisible}
+        style={tw`w-full p-2 border-b border-gray-300 bg-transparent text-gray-800 text-lg`}
+        placeholder="Password"
+        onChangeText={onChange}
+        onSubmitEditing={onSubmit}
       />
-      <Text style={tw`my-4 text-xl text-center text-gray-800`}>Login</Text>
-      <View style={tw`relative mb-4`}>
-        <TextInput
-          secureTextEntry={passwordInputType === "password"}
-          style={tw`w-full p-2 border-b border-gray-300 bg-transparent text-gray-800 text-lg`}
-          placeholder="Password"
-          onChangeText={(text) => {}}
-          onSubmitEditing={handleLogin}
-        />
-        <TouchableOpacity
-          onPress={() =>
-            setPasswordInputType((prev) =>
-              prev === "text" ? "password" : "text"
-            )
-          }
-          style={tw`absolute inset-y-0 right-0 flex items-center pr-3`}
-        >
-          <FontAwesomeIcon
-            icon={passwordInputType === "password" ? faEye : faEyeSlash}
-            size={20}
-          />
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity
-        onPress={handleLogin}
-        disabled={loginWaiting}
-        style={tw`my-2 bg-blue-500 py-2 rounded-lg`}
+      <Pressable
+        onPress={() => setPasswordVisible(!passwordVisible)}
+        style={[tw`absolute inset-y-4 right-0 flex items-center pr-3`]}
       >
-        <Text style={tw`text-center text-white text-lg`}>Login</Text>
-      </TouchableOpacity>
+        <FontAwesomeIcon
+          icon={passwordVisible ? faEyeSlash : faEye}
+          size={20}
+        />
+      </Pressable>
     </View>
   );
 };
+
+const Login: React.FC<{
+  navigation: NativeStackNavigationProp<any>;
+}> = ({ navigation }) => {
+  const [password, setPassword] = useState<string>("");
+
+  const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
+  const [loginWaiting, setLoginWaiting] = useState<boolean>(false);
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+  };
+
+  const handleKeyDown = () => {};
+  const handleCreate = () => {
+    navigation.navigate("Dashboard");
+  };
+  const handleRestore = () => {
+    navigation.navigate("Restore");
+  };
+  const handleLogin = () => {
+    navigation.navigate("Dashboard");
+  };
+
+  return (
+    <View style={[tw`mx-auto text-center my-auto`, styles.container]}>
+      <Image
+        source={require("../../assets/icon.png")}
+        style={tw`w-20 h-20 mx-auto`}
+      />
+      <Text style={[tw`text-xl font-bold my-4 mx-auto`, styles.text]}>
+        Login
+      </Text>
+      <Text
+        style={[tw`mb-5 text-base font-normal mx-auto`, styles.description]}
+      >
+        Enter your password to access your account.
+        {"\n"}Each password corresponds to a unique user account.
+      </Text>
+      <View style={tw`relative`}>
+        <PasswordField onChange={() => {}} onSubmit={handleLogin} />
+        {passwordStatus && (
+          <Text style={tw`w-full text-left text-red-600`}>
+            Password does not exist.
+          </Text>
+        )}
+        <Button
+          title="Login"
+          onPress={handleLogin}
+          disabled={passwordStatus || password === "" || loginWaiting}
+        />
+        <Button title="Create" onPress={handleCreate} />
+        <Pressable onPress={handleRestore}>
+          <Text style={tw`text-blue-500`}>
+            Restore your wallet from your seed
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#f8fafc",
+    padding: 40,
+    borderRadius: 10,
+    shadowOffset: { width: 0, height: 15 },
+    shadowOpacity: 0.25,
+    shadowRadius: 25,
+    elevation: 20,
+  },
+  text: {
+    color: "#374151",
+  },
+  description: {
+    lineHeight: 25,
+  },
+  iconPosition: {
+    top: 15,
+  },
+});
 
 export default Login;

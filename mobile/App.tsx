@@ -2,11 +2,7 @@ import { StyleSheet, ImageBackground, Dimensions, View } from "react-native";
 import RootNavigation from "./src/navigation/RootNavigation";
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <RootNavigation />
-    </View>
-  );
+  return <RootNavigation />;
 }
 
 const styles = StyleSheet.create({
@@ -14,7 +10,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    width: "100%",
     height: Dimensions.get("window").height,
   },
 });

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
+  Pressable,
   TextInput,
   ScrollView,
   Image,
@@ -55,16 +55,16 @@ const AddressModal: React.FC<AddressModalProps> = ({
       >
         <Text style={tw`text-lg font-bold`}>Addresses</Text>
         <View style={tw`flex-row items-center`}>
-          <TouchableOpacity onPress={handleAddAccount} disabled={addingStatus}>
+          <Pressable onPress={handleAddAccount} disabled={addingStatus}>
             <FontAwesomeIcon
               icon={faPlus}
               size={24}
               color={addingStatus ? "gray" : "black"}
             />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={toggleAccountModal} style={tw`ml-2`}>
+          </Pressable>
+          <Pressable onPress={toggleAccountModal} style={tw`ml-2`}>
             <FontAwesomeIcon icon={faTimes} size={24} color="black" />
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
       <ScrollView style={tw`max-h-[500px] mt-4`}>
@@ -75,23 +75,23 @@ const AddressModal: React.FC<AddressModalProps> = ({
                 key={`address-${idx}`}
                 style={tw`flex-row justify-between items-center py-2`}
               >
-                <TouchableOpacity onPress={() => handleCopy(item)}>
+                <Pressable onPress={() => handleCopy(item)}>
                   <FontAwesomeIcon icon={faCopy} size={20} color="black" />
-                </TouchableOpacity>
+                </Pressable>
                 <Text
                   onPress={() => handleClickAccount(item)}
                   style={tw`flex-1 mx-2 text-center`}
                 >
                   {item}
                 </Text>
-                <TouchableOpacity
+                <Pressable
                   onPress={() => {
                     setDeleteAccount(item);
                     toggleDeleteAccountModal();
                   }}
                 >
                   <FontAwesomeIcon icon={faTrash} size={20} color="black" />
-                </TouchableOpacity>
+                </Pressable>
               </View>
             )
         )}
@@ -114,24 +114,24 @@ const Dashboard: React.FC = () => {
       ]}
     >
       <View
-        style={tw`flex-row justify-between items-center border-b border-white px-5 py-2.5`}
+        style={tw`flex-row justify-between items-center border-b border-white px-5 py-2`}
       >
-        <TouchableOpacity onPress={() => {}}>
+        <Pressable onPress={() => {}}>
           <Image
             source={require("../../assets/images/logo.png")}
             style={tw`w-12 h-12`}
           />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleCopy("")}>
+        </Pressable>
+        <Pressable onPress={() => handleCopy("")}>
           <Text style={tw`text-white text-lg px-2 py-2 shadow-lg rounded-md`}>
             {}
           </Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
+        </Pressable>
+        <Pressable>
           <Text style={tw`text-white bg-blue-900 px-2 py-1 rounded-md text-lg`}>
             Logout
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
       <View style={tw`px-5 py-2`}>
         <Text style={tw`text-white text-2xl`}>Balance:</Text>
