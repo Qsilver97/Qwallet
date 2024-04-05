@@ -12,6 +12,7 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import tw from "tailwind-react-native-classnames";
 import Button from "../components/Button";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ccall, init } from "../../service/wasmManager";
 
 const Login: React.FC<{
   navigation: NativeStackNavigationProp<any>;
@@ -28,6 +29,9 @@ const Login: React.FC<{
   const handleKeyDown = () => {};
   const handleCreate = () => {
     navigation.navigate("Dashboard");
+    init();
+    const result = ccall();
+    console.log(result);
   };
   const handleRestore = () => {
     navigation.navigate("Restore");
