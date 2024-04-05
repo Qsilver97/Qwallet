@@ -13,39 +13,11 @@ import tw from "tailwind-react-native-classnames";
 import Button from "../components/Button";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-const PasswordField: React.FC<{
-  onChange: (text: string) => void;
-  onSubmit: () => void;
-}> = ({ onChange, onSubmit }) => {
-  const [passwordVisible, setPasswordVisible] = useState(false);
-
-  return (
-    <View style={tw`relative mb-4`}>
-      <TextInput
-        secureTextEntry={!passwordVisible}
-        style={tw`w-full p-2 border-b border-gray-300 bg-transparent text-gray-800 text-lg`}
-        placeholder="Password"
-        onChangeText={onChange}
-        onSubmitEditing={onSubmit}
-      />
-      <Pressable
-        onPress={() => setPasswordVisible(!passwordVisible)}
-        style={[tw`absolute inset-y-4 right-0 flex items-center pr-3`]}
-      >
-        <FontAwesomeIcon
-          icon={passwordVisible ? faEyeSlash : faEye}
-          size={20}
-        />
-      </Pressable>
-    </View>
-  );
-};
-
 const Login: React.FC<{
   navigation: NativeStackNavigationProp<any>;
 }> = ({ navigation }) => {
   const [password, setPassword] = useState<string>("");
-
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
   const [loginWaiting, setLoginWaiting] = useState<boolean>(false);
 
@@ -80,7 +52,24 @@ const Login: React.FC<{
         {"\n"}Each password corresponds to a unique user account.
       </Text>
       <View style={tw`relative`}>
-        <PasswordField onChange={() => {}} onSubmit={handleLogin} />
+        <View style={tw`relative mb-4`}>
+          <TextInput
+            secureTextEntry={!passwordVisible}
+            style={tw`w-full p-2 border-b border-gray-300 bg-transparent text-gray-800 text-lg`}
+            placeholder="Password"
+            onChangeText={handlePasswordChange}
+            onSubmitEditing={handleLogin}
+          />
+          <Pressable
+            onPress={() => setPasswordVisible(!passwordVisible)}
+            style={[tw`absolute inset-y-4 right-0 flex items-center pr-3`]}
+          >
+            <FontAwesomeIcon
+              icon={passwordVisible ? faEyeSlash : faEye}
+              size={20}
+            />
+          </Pressable>
+        </View>{" "}
         {passwordStatus && (
           <Text style={tw`w-full text-left text-red-600`}>
             Password does not exist.
