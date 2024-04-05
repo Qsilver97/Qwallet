@@ -1,5 +1,5 @@
 # Qwallet for QUBIC
-Easy to use end user wallet for Qubic
+Easy to use end user wallet for Qubic.
 
 # Goals
 The goal of Qwallet is to be an easy to use wallet for Qubic that enables the user to access all the major functions of the Qubic network, including most Smart Contracts (SC).
