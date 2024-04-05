@@ -11,18 +11,21 @@ import { SocketProvider } from './context/SocketContext';
 import { AuthProvider } from './context/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { NetworkProvider } from './context/NetworkContext';
 
 function App() {
     return (
         <>
             <Provider store={store}>
                 <AuthProvider>
-                    <SocketProvider wsUrl={SERVER_URL}>
-                        <ThemeProvider>
-                            <ToastContainer />
-                            <AppRoutes />
-                        </ThemeProvider>
-                    </SocketProvider>
+                    <NetworkProvider defaultNetwork='mainnet'>
+                        <SocketProvider wsUrl={SERVER_URL}>
+                            <ThemeProvider>
+                                <ToastContainer />
+                                <AppRoutes />
+                            </ThemeProvider>
+                        </SocketProvider>
+                    </NetworkProvider>
                 </AuthProvider>
             </Provider>
         </>
