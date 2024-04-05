@@ -29,9 +29,8 @@ jobs:
         cd app/server
         npm install
         npx electron-packager . --overwrite --platform=win32 --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f
-        ls
         mkdir ./release-builds/server-win32-x64/keys
-        ls ./release-builds/server-win32-x64/
+        touch ./release-builds/server-win32-x64/keys/.keep
       
     - name: Zip the Windows build
       run: |
