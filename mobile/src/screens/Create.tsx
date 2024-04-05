@@ -1,17 +1,22 @@
 import React, { useState } from "react";
+import { ScrollView } from "react-native";
 import {
-  View,
-  Text,
+  VStack,
   Image,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
-} from "react-native";
+  Text,
+  Input,
+  Button,
+  IconButton,
+  Icon,
+  Radio,
+} from "native-base";
+import { MaterialIcons } from "@expo/vector-icons";
 import tw from "tailwind-react-native-classnames";
-import Input from "../components/Input";
-import Button from "../components/Button";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-const CreateScreen = () => {
+const Create: React.FC<{
+  navigation: NativeStackNavigationProp<any>;
+}> = ({ navigation }) => {
   const [step, setStep] = useState<"password" | "seedType">("password");
   const [passwordInputType, setPasswordInputType] = useState<
     "password" | "text"
@@ -28,20 +33,20 @@ const CreateScreen = () => {
     );
   };
 
-  // Handlers for Input, Radio, and Button would be defined here...
-
   return (
-    <ScrollView contentContainerStyle={tw`p-4 items-center justify-center`}>
-      <View
-        style={tw`bg-white dark:bg-black w-full max-w-[500px] p-10 rounded-lg shadow-lg text-center`}
+    <ScrollView contentContainerStyle={{ padding: 4 }}>
+      <VStack
+        space={5}
+        w="90%"
+        maxW="300px"
+        style={tw`items-center mx-auto my-auto`}
       >
-        <Image
-          source={require("../path/to/your/images/logo.png")}
-          style={tw`w-24 h-24 mx-auto`}
-        />
-        <Text style={tw`text-xl dark:text-white my-4`}>Create</Text>
+        <Image source={require("../../assets/icon.png")} alt="Logo" size="xl" />
+        <Text fontSize="xl" my="4">
+          Create
+        </Text>
 
-        <Text style={tw`text-base dark:text-white mb-6`}>
+        <Text fontSize="md" mb="6">
           {step === "password"
             ? "Secure your account with a new password."
             : "There are two ways to create your account."}
@@ -50,76 +55,96 @@ const CreateScreen = () => {
         {step === "password" && (
           <>
             <Input
+              w="100%"
+              type={passwordInputType}
               value={password}
-              onChangeText={setPassword}
+              onChangeText={(text) => setPassword(text)}
               placeholder="Password"
-              secureTextEntry={passwordInputType === "password"}
+              InputRightElement={
+                <IconButton
+                  icon={
+                    <Icon
+                      as={
+                        <MaterialIcons
+                          name={
+                            passwordInputType === "password"
+                              ? "visibility"
+                              : "visibility-off"
+                          }
+                        />
+                      }
+                      size={5}
+                    />
+                  }
+                  onPress={togglePasswordVisibility}
+                />
+              }
             />
             {!passwordStatus && (
-              <Text style={tw`text-red-600 text-left w-full`}>
-                Password already exists.
-              </Text>
+              <Text color="red.600">Password already exists.</Text>
             )}
             <Input
+              w="100%"
+              type={passwordInputType}
               value={confirmPassword}
-              onChangeText={setConfirmPassword}
+              onChangeText={(text) => setConfirmPassword(text)}
               placeholder="Confirm Password"
-              secureTextEntry={passwordInputType === "password"}
             />
             {password !== confirmPassword && (
-              <Text style={tw`text-red-600 text-left w-full`}>
-                Passwords do not match.
-              </Text>
+              <Text color="red.600">Passwords do not match.</Text>
             )}
 
-            <TouchableOpacity
-              onPress={togglePasswordVisibility}
-              style={tw`absolute right-3 top-[15px]`}
-            >
-              <Text style={tw`text-gray-500`}>
-                {passwordInputType === "password" ? "Show" : "Hide"}
-              </Text>
-            </TouchableOpacity>
-
-            <View style={tw`flex-row justify-between mt-4`}>
-              <Button title="Back" onPress={() => setStep("password")} />
+            <Button.Group space={2} mt="4" w="80%">
+              <Button onPress={() => navigation.navigate("Login")} w="50%">
+                Back
+              </Button>
               <Button
-                title="Next"
                 onPress={() => setStep("seedType")}
-                disabled={!passwordStatus || password !== confirmPassword}
-              />
-            </View>
+                w="50%"
+                isDisabled={!passwordStatus || password !== confirmPassword}
+              >
+                Next
+              </Button>
+            </Button.Group>
           </>
         )}
 
         {step === "seedType" && (
           <>
-            <View style={tw`flex-row justify-evenly mb-3`}>
-              {/* <Radio
-                label="24 Words"
-                checked={seedType === "24words"}
-                onChange={() => setSeedType("24words")}
-              />
-              <Radio
-                label="55 Chars"
-                checked={seedType === "55chars"}
-                onChange={() => setSeedType("55chars")}
-              /> */}
-            </View>
+            <Radio.Group
+              name="seedType"
+              accessibilityLabel="Choose seed type"
+              value={seedType}
+              onChange={(nextValue) => {
+                setSeedType(nextValue);
+              }}
+              flexDirection="row"
+              justifyContent="space-evenly"
+              mb="3"
+              space="2"
+              w="100%"
+            >
+              <Radio value="24words" my="1">
+                24 Words
+              </Radio>
+              <Radio value="55chars" my="1">
+                55 Chars
+              </Radio>
+            </Radio.Group>
 
-            <View style={tw`flex-row justify-between mt-4`}>
-              <Button title="Back" onPress={() => setStep("password")} />
-              <Button
-                title="Create"
-                onPress={() => {}}
-                disabled={creatingStatus}
-              />
-            </View>
+            <Button.Group space={2} mt="4" w="80%">
+              <Button onPress={() => setStep("password")} w="50%">
+                Back
+              </Button>
+              <Button onPress={() => {}} isDisabled={creatingStatus} w="50%">
+                Create
+              </Button>
+            </Button.Group>
           </>
         )}
-      </View>
+      </VStack>
     </ScrollView>
   );
 };
 
-export default CreateScreen;
+export default Create;

@@ -1,119 +1,104 @@
 import React, { useState } from "react";
 import {
-  View,
+  VStack,
   Text,
+  Input,
+  Icon,
+  Button,
   Pressable,
-  TextInput,
   Image,
-  StyleSheet,
-} from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import tw from "tailwind-react-native-classnames";
-import Button from "../components/Button";
+  ScrollView,
+  IconButton,
+  useToast,
+} from "native-base";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ccall, init } from "../../service/wasmManager";
+import { MaterialIcons } from "@expo/vector-icons";
+import tw from "tailwind-react-native-classnames";
 
 const Login: React.FC<{
   navigation: NativeStackNavigationProp<any>;
 }> = ({ navigation }) => {
   const [password, setPassword] = useState<string>("");
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
   const [loginWaiting, setLoginWaiting] = useState<boolean>(false);
 
-  const handlePasswordChange = (value: string) => {
-    setPassword(value);
-  };
+  const toast = useToast();
 
-  const handleKeyDown = () => {};
-  const handleCreate = () => {
-    navigation.navigate("Dashboard");
-    init();
-    const result = ccall();
-    console.log(result);
-  };
-  const handleRestore = () => {
-    navigation.navigate("Restore");
-  };
   const handleLogin = () => {
-    navigation.navigate("Dashboard");
+    setLoginWaiting(true);
+    setTimeout(() => {
+      setLoginWaiting(false);
+      navigation.navigate("Dashboard");
+      setPasswordStatus(true);
+      toast.show({ description: "Login failed. Please try again." });
+    }, 2000);
   };
 
   return (
-    <View style={[tw`mx-auto text-center my-auto`, styles.container]}>
-      <Image
-        source={require("../../assets/icon.png")}
-        style={tw`w-20 h-20 mx-auto`}
-      />
-      <Text style={[tw`text-xl font-bold my-4 mx-auto`, styles.text]}>
-        Login
-      </Text>
-      <Text
-        style={[tw`mb-5 text-base font-normal mx-auto`, styles.description]}
+    <ScrollView contentContainerStyle={{ padding: 4 }}>
+      <VStack
+        style={tw`items-center my-auto mx-auto`}
+        w="90%"
+        maxW="300px"
+        space={5}
       >
-        Enter your password to access your account.
-        {"\n"}Each password corresponds to a unique user account.
-      </Text>
-      <View style={tw`relative`}>
-        <View style={tw`relative mb-4`}>
-          <TextInput
-            secureTextEntry={!passwordVisible}
-            style={tw`w-full p-2 border-b border-gray-300 bg-transparent text-gray-800 text-lg`}
-            placeholder="Password"
-            onChangeText={handlePasswordChange}
-            onSubmitEditing={handleLogin}
-          />
-          <Pressable
-            onPress={() => setPasswordVisible(!passwordVisible)}
-            style={[tw`absolute inset-y-4 right-0 flex items-center pr-3`]}
-          >
-            <FontAwesomeIcon
-              icon={passwordVisible ? faEyeSlash : faEye}
-              size={20}
+        <Image source={require("../../assets/icon.png")} alt="Logo" size="xl" />
+        <Text fontSize="2xl">Login</Text>
+        <Text textAlign="center">
+          Enter your password to access your account.{"\n"}
+          Each password corresponds to a unique user account.
+        </Text>
+        <Input
+          style={tw`w-full`}
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Password"
+          type={passwordVisible ? "text" : "password"}
+          InputRightElement={
+            <IconButton
+              icon={
+                <Icon
+                  as={
+                    <MaterialIcons
+                      name={passwordVisible ? "visibility" : "visibility-off"}
+                    />
+                  }
+                  size="md"
+                />
+              }
+              onPress={() => setPasswordVisible(!passwordVisible)}
+              size="md"
+              style={tw`mr-2`}
             />
-          </Pressable>
-        </View>{" "}
+          }
+        />
         {passwordStatus && (
-          <Text style={tw`w-full text-left text-red-600`}>
-            Password does not exist.
-          </Text>
+          <Text color="red.600">Password does not exist.</Text>
         )}
         <Button
-          title="Login"
           onPress={handleLogin}
-          disabled={passwordStatus || password === "" || loginWaiting}
-        />
-        <Button title="Create" onPress={handleCreate} />
-        <Pressable onPress={handleRestore}>
-          <Text style={tw`text-blue-500`}>
+          isLoading={loginWaiting}
+          isDisabled={password === "" || loginWaiting}
+          style={tw`w-full`}
+        >
+          Login
+        </Button>
+        <Button
+          onPress={() => navigation.navigate("Create")}
+          variant="outline"
+          style={tw`w-full`}
+        >
+          Create
+        </Button>
+        <Pressable onPress={() => navigation.navigate("Restore")}>
+          <Text color="info.500" mt="2">
             Restore your wallet from your seed
           </Text>
         </Pressable>
-      </View>
-    </View>
+      </VStack>
+    </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#f8fafc",
-    padding: 40,
-    borderRadius: 10,
-    shadowOffset: { width: 0, height: 15 },
-    shadowOpacity: 0.25,
-    shadowRadius: 25,
-    elevation: 20,
-  },
-  text: {
-    color: "#374151",
-  },
-  description: {
-    lineHeight: 25,
-  },
-  iconPosition: {
-    top: 15,
-  },
-});
 
 export default Login;
