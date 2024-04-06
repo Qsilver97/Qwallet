@@ -1,5 +1,5 @@
 # Qwallet for QUBIC
-Easy to use end user wallet for Qubic
+Easy to use end user wallet for Qubic.
 
 # Goals
 The goal of Qwallet is to be an easy to use wallet for Qubic that enables the user to access all the major functions of the Qubic network, including most Smart Contracts (SC).
@@ -8,6 +8,7 @@ The main target OS for the UI is windows and osx, to achieve this a wasm based s
 
 
 # User accounts
+
 Qwallet manages user funds based on accounts. An account is simple a seed associated with a password. The seed is encrypted with the password and saved to a filename based on the hash of the password.
 
 The user can have a seed generated for them automatically simply by trying to login with a password for the first time. If the password starts with a 'Q' the qubic 55 lowercase alphabetic seed is generated, if the password does not start with 'Q' then a 24 word bip39 seed is created. The actual seed is not saved on disk and all instances of seeds, subseeds, privatekeys are immediately scrubbed from memory after their use. The addseed command can be used to create an account with pre-existing seed and link it to a password, the Qpassword convention is not used for external seeds added.
