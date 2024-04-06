@@ -12,15 +12,14 @@ import {
 } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import tw from "tailwind-react-native-classnames";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
 
-const Create: React.FC<{
-  navigation: NativeStackNavigationProp<any>;
-}> = ({ navigation }) => {
+const Create: React.FC = () => {
   const [step, setStep] = useState<"password" | "seedType">("password");
   const [passwordInputType, setPasswordInputType] = useState<
     "password" | "text"
   >("password");
+  const navigation = useNavigation();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordStatus, setPasswordStatus] = useState(true);

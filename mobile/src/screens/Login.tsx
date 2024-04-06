@@ -11,13 +11,12 @@ import {
   IconButton,
   useToast,
 } from "native-base";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { MaterialIcons } from "@expo/vector-icons";
 import tw from "tailwind-react-native-classnames";
+import { useNavigation } from "@react-navigation/native";
 
-const Login: React.FC<{
-  navigation: NativeStackNavigationProp<any>;
-}> = ({ navigation }) => {
+const Login: React.FC = () => {
+  const navigation = useNavigation();
   const [password, setPassword] = useState<string>("");
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
