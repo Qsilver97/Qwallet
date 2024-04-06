@@ -38,7 +38,7 @@ const Login: React.FC<{
   return (
     <ScrollView contentContainerStyle={{ padding: 4 }}>
       <VStack
-        style={tw`items-center my-auto mx-auto`}
+        style={tw`items-center mx-auto pt-16`}
         w="90%"
         maxW="300px"
         space={5}

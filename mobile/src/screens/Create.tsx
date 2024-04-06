@@ -39,7 +39,7 @@ const Create: React.FC<{
         space={5}
         w="90%"
         maxW="300px"
-        style={tw`items-center mx-auto my-auto`}
+        style={tw`items-center mx-auto pt-16`}
       >
         <Image source={require("../../assets/icon.png")} alt="Logo" size="xl" />
         <Text fontSize="xl" my="4">
@@ -136,7 +136,13 @@ const Create: React.FC<{
               <Button onPress={() => setStep("password")} w="50%">
                 Back
               </Button>
-              <Button onPress={() => {}} isDisabled={creatingStatus} w="50%">
+              <Button
+                onPress={() => {
+                  navigation.navigate("Confirm");
+                }}
+                isDisabled={creatingStatus}
+                w="50%"
+              >
                 Create
               </Button>
             </Button.Group>
