@@ -13,8 +13,8 @@ import { RootState } from "../redux/store";
 import { toast } from "react-toastify";
 import ClipLoader from "react-spinners/ClipLoader";
 import { setBalances } from "../redux/appSlice";
-
-type TransactionItem = [number, string, string, string];
+import { TransactionItem } from "../utils/interfaces";
+import NetworkSwitcher from "../components/NetworkSwitcher";
 
 const Dashboard: React.FC = () => {
     const { login, logout, user } = useAuth();
@@ -251,6 +251,7 @@ const Dashboard: React.FC = () => {
                         </span>
                     </div>
                     <div className="flex items-center gap-[10px] cursor-pointer">
+                        <NetworkSwitcher />
                         <a className="text-[18px] bg-[#1e2975] px-2 rounded-[5px]" onClick={handleLogout} >Logout</a>
                         {/* <FontAwesomeIcon className="text-[32px]" icon={faGear} onClick={handleLogout} /> */}
                     </div>
