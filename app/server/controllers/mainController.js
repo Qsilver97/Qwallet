@@ -21,10 +21,10 @@ exports.createAccount = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
-    let liveSocket = socketManager.initLiveSocket();
+    const { password, socketUrl } = req.body;
+    let liveSocket = socketManager.initLiveSocket(socketUrl);
     liveSocketController(liveSocket)
     await delay(1000);
-    const { password } = req.body;
     let realPassword;
     stateManager.init();
     const resultFor24words = await wasmManager.ccall({ command: `checkavail ${password}`, flag: 'login' });
@@ -231,10 +231,10 @@ exports.transfer = async (req, res) => {
 }
 
 exports.socket = async (req, res) => {
-    const { command } = req.body;
+    const { command, socketUrl } = req.body;
     let liveSocket = socketManager.getLiveSocket();
     if (!liveSocket) {
-        liveSocket = socketManager.initLiveSocket();
+        liveSocket = socketManager.initLiveSocket(socketUrl);
         liveSocketController(liveSocket)
         await delay(500);
     }
@@ -269,4 +269,8 @@ exports.history = async (req, res) => {
     const { address } = req.body;
     const result = await socketSync(`history ${address}`);
     res.send(result);
+}
+
+exports.switchNetwork = async (req, res) => {
+    res.send('success');
 }
