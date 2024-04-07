@@ -1,6 +1,8 @@
 import { StyleSheet, Dimensions } from "react-native";
 import RootNavigation from "./src/navigation/RootNavigation";
 import { NativeBaseProvider, extendTheme } from "native-base";
+import { useEffect } from "react";
+import nodejs from "nodejs-mobile-react-native";
 
 const config = {
   useSystemColorMode: true,
@@ -26,6 +28,13 @@ const config = {
 const theme = extendTheme({ ...config });
 
 export default function App() {
+  useEffect(() => {
+    console.log(nodejs);
+    // nodejs.start("main.js");
+    // nodejs.channel.addListener("message", (msg) => {
+    //   alert("From node: " + msg);
+    // });
+  });
   return (
     <NativeBaseProvider theme={theme}>
       <RootNavigation />
