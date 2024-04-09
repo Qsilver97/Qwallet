@@ -1,4 +1,4 @@
-package com.anonymous.QWallet
+package com.anonymous.qwallet
 
 import android.app.Application
 import android.content.res.Configuration
