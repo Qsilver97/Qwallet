@@ -274,3 +274,8 @@ exports.history = async (req, res) => {
 exports.switchNetwork = async (req, res) => {
     res.send('success');
 }
+
+exports.tokens = async (req, res) => {
+    const result = await socketSync('tokenlist');
+    res.send(result);
+}
