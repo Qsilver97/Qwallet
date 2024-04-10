@@ -18,5 +18,6 @@ router.post('/balances', mainController.balances);
 router.post('/transfer-status', mainController.transferStatus);
 router.post('/history', mainController.history);
 router.post('/switch-network', mainController.switchNetwork);
+router.post('/tokens', mainController.tokens);
 
 module.exports = router;

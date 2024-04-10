@@ -9,6 +9,7 @@ interface AppState {
     theme: 'light' | 'dark';
     tick: string;
     balances: string[];
+    tokens: string[];
 }
 
 interface UpdateBalancePayload {
@@ -25,6 +26,7 @@ const initialState: | AppState = {
     theme: 'light',
     tick: "",
     balances: Array(100).fill(""),
+    tokens: [],
 };
 
 export const appSlice = createSlice({
@@ -52,17 +54,21 @@ export const appSlice = createSlice({
                 state.balances[index] = balance;
             }
         },
+        setTokens: (state, action: PayloadAction<string[]>) => {
+            state.tokens = action.payload;
+        },
         toggleTheme: (state) => {
             state.theme = state.theme === 'light' ? 'dark' : 'light';
         },
-        resetState: () => {
+        resetState: (state) => {
+            state = initialState;
             return initialState;
         },
     },
 });
 
 // Export actions
-export const { setSeedType, setPassword, setSeeds, setIsAuthenticated, toggleTheme, setTick, setBalances, resetState } = appSlice.actions;
+export const { setSeedType, setPassword, setSeeds, setIsAuthenticated, toggleTheme, setTick, setBalances, resetState, setTokens } = appSlice.actions;
 
 // Export reducer
 export default appSlice.reducer;
