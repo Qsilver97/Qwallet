@@ -303,8 +303,8 @@ const Dashboard: React.FC = () => {
                                     {
                                         tokens.map((item, idx) => {
                                             return <div className="flex justify-between items-center" key={idx}>
-                                                <div className="flex gap-2 items-center">
-                                                    <span className="w-[100px]">{item}</span>
+                                                <div className="flex gap-2 items-center justify-between min-w-[100px]">
+                                                    <span>{item}</span>
                                                     <span>0</span>
                                                 </div>
                                                 <input className="text-white p-[10px] my-2 mr-[5px] border-[1.5px] border-[#17517a] rounded-[5px] max-w-[720px] w-full outline-none bg-transparent" placeholder="Address" />
