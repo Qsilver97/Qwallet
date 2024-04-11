@@ -6,7 +6,7 @@ export const channelInit = () => {
   nodejs.channel.addListener("message", (msg) => {
     try {
       const res = JSON.parse(msg);
-      eventEmitter.emit(msg.action, res);
+      eventEmitter.emit(res.action, res);
     } catch (err) {}
   });
 };

@@ -90,7 +90,6 @@ exports.login = async ({ password }) => {
           }
         }
       }
-      const matchStatus = await checkSubshash();
       if (
         stateManager.getLocalSubshash() != "" &&
         stateManager.getRemoteSubshash() == stateManager.getLocalSubshash()

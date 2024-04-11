@@ -20,6 +20,7 @@ rn_bridge.channel.on("message", async (msg) => {
           JSON.stringify({
             action: "S2C/login",
             success: true,
+            data: success,
           })
         );
       } else {

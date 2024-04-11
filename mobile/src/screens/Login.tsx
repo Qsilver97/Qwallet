@@ -22,6 +22,7 @@ import { NativeSyntheticEvent, TextInputKeyPressEventData } from "react-native";
 import Toast from "react-native-toast-message";
 import { login } from "../api/api";
 import eventEmitter from "../api/eventEmitter";
+import { UserDetailType, useAuth } from "../context/AuthContext";
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
@@ -31,8 +32,7 @@ const Login: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
   const [loginWaiting, setLoginWaiting] = useState<boolean>(false);
-
-  const toast = useToast();
+  const auth = useAuth();
 
   const handlePasswordChange = (value: string) => {
     dispatch(setPassword(value));
@@ -48,26 +48,35 @@ const Login: React.FC = () => {
 
   const handleLogin = () => {
     if (password === "") {
-      Toast.show({ type: "info", text1: "Input password" });
+      Toast.show({ type: "error", text1: "Input password" });
       return;
     }
-    Toast.show({ type: "info", text1: "Input password" });
 
     setLoginWaiting(true);
     login(password);
-    setTimeout(() => {
-      setLoginWaiting(false);
-      setPasswordStatus(true);
-      Toast.show({ type: "error", text1: "Login failed. Please try again." });
-    }, 1000);
+    // setTimeout(() => {
+    //   setLoginWaiting(false);
+    //   setPasswordStatus(true);
+    //   Toast.show({ type: "error", text1: "Login failed. Please try again." });
+    // }, 5000);
   };
   useEffect(() => {
     eventEmitter.on("S2C/login", (res) => {
-      console.log("Event");
-      setPasswordStatus(true);
+      if (res.success) {
+        Toast.show({ type: "success", text1: "Login Success!" });
+        const userInfo: UserDetailType = res.data;
+        // auth.login()
+        auth.login(userInfo);
+        dispatch(resetState());
+        dispatch(setIsAuthenticated(true));
+      } else {
+        setPasswordStatus(true);
+        dispatch(setIsAuthenticated(false));
+        Toast.show({ type: "error", text1: res.error });
+      }
       setLoginWaiting(false);
     });
-  });
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={{ padding: 4 }}>

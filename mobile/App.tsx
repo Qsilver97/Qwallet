@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
 import { channelInit, login } from "./src/api/api";
 import Toast from "react-native-toast-message";
+import { AuthProvider } from "./src/context/AuthContext";
 
 const config = {
   useSystemColorMode: true,
@@ -37,12 +38,12 @@ export default function App() {
   }, []);
   return (
     <Provider store={store}>
-      <NativeBaseProvider theme={theme}>
-        <RootNavigation />
-        <Toast />
-        {/* <Text>{text}</Text> */}
-        {/* <Button onPress={() => login("123")}>onPress</Button> */}
-      </NativeBaseProvider>
+      <AuthProvider>
+        <NativeBaseProvider theme={theme}>
+          <RootNavigation />
+          <Toast />
+        </NativeBaseProvider>
+      </AuthProvider>
     </Provider>
   );
 }
