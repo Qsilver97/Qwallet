@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import Modal from "../components/common/Modal";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { useSocket } from "../context/SocketContext";
 import { handleCopy } from "../utils/helper";
 import axios from "axios";
 import { SERVER_URL } from "../utils/constants";
@@ -12,14 +11,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { toast } from "react-toastify";
 import ClipLoader from "react-spinners/ClipLoader";
-import { setBalances, setTokens } from "../redux/appSlice";
+import { setBalances, setMarketcap, setRichlist, setTokens } from "../redux/appSlice";
 import { TransactionItem } from "../utils/interfaces";
 import NetworkSwitcher from "../components/NetworkSwitcher";
 
 const Dashboard: React.FC = () => {
     const { login, logout, user } = useAuth();
     const dispatch = useDispatch();
-    const socket = useSocket();
     const navigate = useNavigate();
 
 
@@ -30,7 +28,7 @@ const Dashboard: React.FC = () => {
     const [isTransferModalOpen, setIsTransferModalOpen] = useState<boolean>(false);
     const toggleTransferModal = () => setIsTransferModalOpen(!isTransferModalOpen);
 
-    const { tick, balances, tokens } = useSelector((state: RootState) => state.app);
+    const { tick, balances, tokens, richlist, marketcap } = useSelector((state: RootState) => state.app);
 
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
     const [deleteAccount, setDeleteAccount] = useState<string>("");
@@ -154,20 +152,6 @@ const Dashboard: React.FC = () => {
         setCurrentAddress(address);
     }
 
-
-    useEffect(() => {
-        // if (socket) {
-        //     socket.on('live', (data) => {
-        //         console.log(data);
-        //         if (data.command == 'CurrentTickInfo') {
-        //             setTick(data.tick);
-        //         } else if (data.command == 'EntityInfo') {
-        //             setBalances((prev) => ({ ...prev, [data.address]: data.balance }));
-        //         }
-        //     })
-        // }
-    }, [socket])
-
     useEffect(() => {
         if (sendingStatus == 'open' || sendingStatus == 'pending') {
             setIsTransferModalOpen(true);
@@ -233,13 +217,15 @@ const Dashboard: React.FC = () => {
 
     useEffect(() => {
         axios.post(
-            `${SERVER_URL}/api/balances`
+            `${SERVER_URL}/api/basic-info`
         ).then((resp) => {
             resp.data.balances.map((item: [number, string]) => {
                 dispatch(setBalances({ index: item[0], balance: item[1] }));
             })
-        }).catch((error) => {
-            console.log(error.response);
+            dispatch(setTokens(resp.data.tokens));
+            dispatch(setRichlist(resp.data.richlist));
+            dispatch(setMarketcap(resp.data.marketcap));
+            console.log(resp.data, 'basicinfo');
         })
 
         const handleResize = () => {
@@ -269,7 +255,11 @@ const Dashboard: React.FC = () => {
                 </header>
                 <div className="p-[10px_20px] md:p-[20px_60px]">
                     <div className="flex gap-2 sm:gap-5 text-[1.5rem] sm:text-[1.75rem]">
-                        <h3>Balance: {balances.reduce((acc, currentValue) => acc + Number(currentValue), 0)}</h3>
+                        <h3>
+                            Balance: {balances.reduce((acc, currentValue) => acc + Number(currentValue), 0)}
+                            &nbsp;|&nbsp;
+                            <span className="text-[1.rem] sm:text-[1.25rem]">${balances.reduce((acc, currentValue) => acc + Number(currentValue), 0) * parseFloat(marketcap.price)}</span>
+                        </h3>
                         <h3>Tick: {tick}</h3>
                     </div>
                     <div className="flex gap-5 w-full h-full overflow-auto overflow-y-hidden p-5 border-[1.5px] border-[#17517a] rounded-[5px] mt-2">
@@ -282,6 +272,19 @@ const Dashboard: React.FC = () => {
                                     return <div className={`p-2 cursor-pointer flex items-center flex-col ${currentAddress == item ? " shadow-[2px_2px_2px_2px_rgba(0,0,0,0.6)] bg-[#17517a] " : " shadow-[2px_2px_2px_2px_rgba(0,0,0,0.3)] "}`} key={`item${idx}`} onClick={() => handleSelectAccount(item)} onContextMenu={(e) => { e.preventDefault(); setDeleteAccount(item); toggleDeleteAccountModal() }}>
                                         <div>{`${item.slice(0, 5)}...${item.slice(-5)}`}</div>
                                         <span>{+balances[idx] | 0}</span>
+                                        <div className="flex justify-between text-[12px] w-full gap-1">
+                                            <span className="bg-[#2e802e] px-1">
+                                                {richlist['QU'] &&
+                                                    richlist['QU'].find((jtem) => jtem[1] == item)?.[0] ? richlist['QU'].find((jtem) => jtem[1] == item)?.[0] : 'no rank'
+                                                }
+                                            </span>
+                                            <span className="">
+                                                {
+                                                    balances[idx] &&
+                                                    <span className="">${Math.round((parseFloat(balances[idx]) * parseFloat(marketcap.price)) * 100) / 100}</span>
+                                                }
+                                            </span>
+                                        </div>
                                     </div>
                             })
                         }
