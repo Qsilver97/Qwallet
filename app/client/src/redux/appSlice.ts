@@ -1,6 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // Define the initial state type
+interface UpdateMarketcapPayload {
+    supply: string,
+    price: string,
+    marketcap: string,
+}
+
+type RichlistItemArray = [number, string, string];
+
+interface RichlistInterface {
+    [key: string]: RichlistItemArray[];
+}
+
 interface AppState {
     isAuthenticated: boolean | null;
     seedType: string;
@@ -10,11 +22,18 @@ interface AppState {
     tick: string;
     balances: string[];
     tokens: string[];
+    richlist: RichlistInterface;
+    marketcap: UpdateMarketcapPayload;
 }
 
 interface UpdateBalancePayload {
     index: number;
     balance: string;
+}
+
+interface UpdateRichlistPayload {
+    name: string;
+    richlist: RichlistItemArray[];
 }
 
 // Initial state
@@ -27,6 +46,12 @@ const initialState: | AppState = {
     tick: "",
     balances: Array(100).fill(""),
     tokens: [],
+    richlist: {},
+    marketcap: {
+        supply: "0",
+        price: "0",
+        marketcap: "0",
+    },
 };
 
 export const appSlice = createSlice({
@@ -60,15 +85,23 @@ export const appSlice = createSlice({
         toggleTheme: (state) => {
             state.theme = state.theme === 'light' ? 'dark' : 'light';
         },
+        updateRichlist: (state, action: PayloadAction<UpdateRichlistPayload>) => {
+            state.richlist = { ...state.richlist, [action.payload.name]: action.payload.richlist };
+        },
+        setRichlist: (state, action: PayloadAction<any>) => {
+            state.richlist = { ...action.payload };
+        },
+        setMarketcap: (state, action: PayloadAction<UpdateMarketcapPayload>) => {
+            state.marketcap = { ...action.payload };
+        },
         resetState: (state) => {
-            state = initialState;
-            return initialState;
+            Object.assign(state, initialState);
         },
     },
 });
 
 // Export actions
-export const { setSeedType, setPassword, setSeeds, setIsAuthenticated, toggleTheme, setTick, setBalances, resetState, setTokens } = appSlice.actions;
+export const { setSeedType, setPassword, setSeeds, setIsAuthenticated, toggleTheme, setTick, setBalances, resetState, setTokens, updateRichlist, setMarketcap, setRichlist } = appSlice.actions;
 
 // Export reducer
 export default appSlice.reducer;

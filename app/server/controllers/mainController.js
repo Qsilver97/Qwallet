@@ -279,3 +279,23 @@ exports.tokens = async (req, res) => {
     const result = await socketSync('tokenlist');
     res.send(result);
 }
+exports.basicInfo = async (req, res) => {
+
+    let liveSocket = socketManager.getLiveSocket();
+    if (!liveSocket) {
+        res.status(401).send('Socket server error.');
+        return
+    }
+    const balances = await socketSync('balances');
+    const marketcap = await socketSync('marketcap');
+    const tokens = await socketSync('tokenlist');
+    const richlist = {};
+    const qurichlist = await socketSync('richlist');
+    richlist[qurichlist.name] = qurichlist.richlist;
+    for (let idx = 0; idx < tokens.tokens.length; idx++) {
+        const richlistResult = await socketSync(`richlist.${tokens.tokens[idx]}`)
+        richlist[richlistResult.name] = richlistResult.richlist;
+    }
+
+    res.send({ balances: balances.balances, marketcap, tokens: tokens.tokens, richlist });
+}
