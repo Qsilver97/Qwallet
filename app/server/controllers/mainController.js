@@ -279,7 +279,6 @@ exports.tokens = async (req, res) => {
     const result = await socketSync('tokenlist');
     res.send(result);
 }
-
 exports.basicInfo = async (req, res) => {
 
     let liveSocket = socketManager.getLiveSocket();
