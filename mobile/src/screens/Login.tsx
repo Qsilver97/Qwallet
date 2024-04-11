@@ -20,6 +20,8 @@ import { RootState } from "../redux/store";
 import { NativeSyntheticEvent, TextInputKeyPressEventData } from "react-native";
 // import nodejs from "nodejs-mobile-react-native";
 import Toast from "react-native-toast-message";
+import { login } from "../api/api";
+import eventEmitter from "../api/eventEmitter";
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
@@ -43,59 +45,29 @@ const Login: React.FC = () => {
       handleLogin();
     }
   };
+
   const handleLogin = () => {
     if (password === "") {
       Toast.show({ type: "info", text1: "Input password" });
       return;
     }
+    Toast.show({ type: "info", text1: "Input password" });
 
     setLoginWaiting(true);
-
-    // Send login request to the Node.js layer
-    // nodejs.channel.send(
-    //   JSON.stringify({
-    //     action: "login",
-    //     data: { password },
-    //   })
-    // );
-
-    const handleMessage = (msg: string) => {
-      const data = JSON.parse(msg);
-
-      if (data.action === "loginResponse") {
-        setLoginWaiting(false);
-
-        if (data.success) {
-          // Perform success actions, e.g., navigate to Dashboard
-          dispatch(setIsAuthenticated(true));
-          navigation.navigate("Dashboard");
-        } else {
-          // Show error toast
-          Toast.show({
-            type: "error",
-            text1: data.error || "Login failed. Please try again.",
-          });
-        }
-      }
-    };
-
-    // Listen for a message from the Node.js layer
-    // nodejs.channel.addListener("message", handleMessage);
-
-    // Don't forget to remove the listener when the component unmounts
-    // return () => {
-    //   nodejs.channel.removeListener("message", handleMessage);
-    // };
+    login(password);
+    setTimeout(() => {
+      setLoginWaiting(false);
+      setPasswordStatus(true);
+      Toast.show({ type: "error", text1: "Login failed. Please try again." });
+    }, 1000);
   };
-  // const handleLogin = () => {
-  //   setLoginWaiting(true);
-  //   setTimeout(() => {
-  //     setLoginWaiting(false);
-  //     // navigation.navigate("Dashboard");
-  //     setPasswordStatus(true);
-  //     Toast.show({ type: "error", text1: "Login failed. Please try again." });
-  //   }, 500);
-  // };
+  useEffect(() => {
+    eventEmitter.on("S2C/login", (res) => {
+      console.log("Event");
+      setPasswordStatus(true);
+      setLoginWaiting(false);
+    });
+  });
 
   return (
     <ScrollView contentContainerStyle={{ padding: 4 }}>
@@ -142,7 +114,8 @@ const Login: React.FC = () => {
         <Button
           onPress={handleLogin}
           isLoading={loginWaiting}
-          isDisabled={password === "" || loginWaiting}
+          // isDisabled={password === "" || loginWaiting}
+          isDisabled={loginWaiting}
           style={tw`w-full`}
         >
           Login

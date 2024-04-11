@@ -32,7 +32,14 @@ rn_bridge.channel.on("message", async (msg) => {
         );
       }
     }
-  } catch (err) {}
+  } catch (err) {
+    rn_bridge.channel.send(
+      JSON.stringify({
+        action: "S2C/error",
+        error: err.message,
+      })
+    );
+  }
 });
 
 rn_bridge.channel.send("Node was initialized.");

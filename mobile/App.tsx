@@ -2,10 +2,10 @@ import { StyleSheet, Dimensions, Text } from "react-native";
 import RootNavigation from "./src/navigation/RootNavigation";
 import { Button, NativeBaseProvider, extendTheme } from "native-base";
 import { useEffect, useState } from "react";
-import nodejs from "nodejs-mobile-react-native";
-// import axios from "axios";
 import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
+import { channelInit, login } from "./src/api/api";
+import Toast from "react-native-toast-message";
 
 const config = {
   useSystemColorMode: true,
@@ -33,25 +33,15 @@ const theme = extendTheme({ ...config });
 export default function App() {
   const [text, setText] = useState("");
   useEffect(() => {
-    nodejs.start("main.js");
-    nodejs.channel.addListener("message", (msg) => {
-      setText("From node: " + msg);
-    });
+    channelInit();
   }, []);
   return (
     <Provider store={store}>
       <NativeBaseProvider theme={theme}>
         <RootNavigation />
-        <Text>{text}</Text>
-        <Button
-          onPress={() =>
-            nodejs.channel.send(
-              JSON.stringify({ action: "C2S/login", data: { password: "123" } })
-            )
-          }
-        >
-          onPress
-        </Button>
+        <Toast />
+        {/* <Text>{text}</Text> */}
+        {/* <Button onPress={() => login("123")}>onPress</Button> */}
       </NativeBaseProvider>
     </Provider>
   );
