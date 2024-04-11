@@ -3,6 +3,9 @@ import RootNavigation from "./src/navigation/RootNavigation";
 import { Button, NativeBaseProvider, extendTheme } from "native-base";
 import { useEffect, useState } from "react";
 import nodejs from "nodejs-mobile-react-native";
+// import axios from "axios";
+import { Provider } from "react-redux";
+import { store } from "./src/redux/store";
 
 const config = {
   useSystemColorMode: true,
@@ -36,17 +39,21 @@ export default function App() {
     });
   }, []);
   return (
-    <NativeBaseProvider theme={theme}>
-      <RootNavigation />
-      <Text>{text}</Text>
-      <Button
-        onPress={() =>
-          nodejs.channel.send(JSON.stringify({ type: "C2S", data: "REQ" }))
-        }
-      >
-        onPress
-      </Button>
-    </NativeBaseProvider>
+    <Provider store={store}>
+      <NativeBaseProvider theme={theme}>
+        <RootNavigation />
+        <Text>{text}</Text>
+        <Button
+          onPress={() =>
+            nodejs.channel.send(
+              JSON.stringify({ action: "C2S/login", data: { password: "123" } })
+            )
+          }
+        >
+          onPress
+        </Button>
+      </NativeBaseProvider>
+    </Provider>
   );
 }
 

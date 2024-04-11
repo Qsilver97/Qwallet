@@ -9,7 +9,7 @@
     "web": "expo start --web",
     "clean": "cd android && gradlew clean && cd ..",
     "build": "expo build:android -t app-bundle",
-    "nodestart": "nodemon"
+    "node": "nodemon"
   },
   "dependencies": {
     "@expo/metro-runtime": "^3.1.3",
@@ -44,6 +44,7 @@
     "@babel/core": "^7.20.0",
     "@types/react": "~18.2.45",
     "@types/react-dom": "^18.2.24",
+    "metro-react-native-babel-transformer": "^0.77.0",
     "nodemon": "^3.1.0",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.1.3"

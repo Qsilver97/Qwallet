@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   VStack,
   Text,
@@ -14,25 +14,88 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import tw from "tailwind-react-native-classnames";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { resetState, setIsAuthenticated, setPassword } from "../redux/appSlice";
+import { RootState } from "../redux/store";
+import { NativeSyntheticEvent, TextInputKeyPressEventData } from "react-native";
+// import nodejs from "nodejs-mobile-react-native";
+import Toast from "react-native-toast-message";
 
 const Login: React.FC = () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
-  const [password, setPassword] = useState<string>("");
+
+  const { password } = useSelector((state: RootState) => state.app);
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
   const [loginWaiting, setLoginWaiting] = useState<boolean>(false);
 
   const toast = useToast();
 
-  const handleLogin = () => {
-    setLoginWaiting(true);
-    setTimeout(() => {
-      setLoginWaiting(false);
-      navigation.navigate("Dashboard");
-      setPasswordStatus(true);
-      toast.show({ description: "Login failed. Please try again." });
-    }, 2000);
+  const handlePasswordChange = (value: string) => {
+    dispatch(setPassword(value));
   };
+
+  const handleKeyDown = (
+    event: NativeSyntheticEvent<TextInputKeyPressEventData>
+  ) => {
+    if (event.nativeEvent.key === "Enter") {
+      handleLogin();
+    }
+  };
+  const handleLogin = () => {
+    if (password === "") {
+      Toast.show({ type: "info", text1: "Input password" });
+      return;
+    }
+
+    setLoginWaiting(true);
+
+    // Send login request to the Node.js layer
+    // nodejs.channel.send(
+    //   JSON.stringify({
+    //     action: "login",
+    //     data: { password },
+    //   })
+    // );
+
+    const handleMessage = (msg: string) => {
+      const data = JSON.parse(msg);
+
+      if (data.action === "loginResponse") {
+        setLoginWaiting(false);
+
+        if (data.success) {
+          // Perform success actions, e.g., navigate to Dashboard
+          dispatch(setIsAuthenticated(true));
+          navigation.navigate("Dashboard");
+        } else {
+          // Show error toast
+          Toast.show({
+            type: "error",
+            text1: data.error || "Login failed. Please try again.",
+          });
+        }
+      }
+    };
+
+    // Listen for a message from the Node.js layer
+    // nodejs.channel.addListener("message", handleMessage);
+
+    // Don't forget to remove the listener when the component unmounts
+    // return () => {
+    //   nodejs.channel.removeListener("message", handleMessage);
+    // };
+  };
+  // const handleLogin = () => {
+  //   setLoginWaiting(true);
+  //   setTimeout(() => {
+  //     setLoginWaiting(false);
+  //     // navigation.navigate("Dashboard");
+  //     setPasswordStatus(true);
+  //     Toast.show({ type: "error", text1: "Login failed. Please try again." });
+  //   }, 500);
+  // };
 
   return (
     <ScrollView contentContainerStyle={{ padding: 4 }}>
@@ -51,7 +114,8 @@ const Login: React.FC = () => {
         <Input
           style={tw`w-full`}
           value={password}
-          onChangeText={setPassword}
+          onChangeText={handlePasswordChange}
+          onKeyPress={handleKeyDown}
           placeholder="Password"
           type={passwordVisible ? "text" : "password"}
           InputRightElement={

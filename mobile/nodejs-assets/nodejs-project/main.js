@@ -1,22 +1,38 @@
 var rn_bridge = require("rn-bridge");
-var createModule = require("./utils/a.out");
+const { login } = require("./controller");
+const wasmManager = require("./managers/wasmManager");
+const stateManager = require("./managers/stateManager");
 
-var wasm = createModule();
+const init = () => {
+  wasmManager.init();
+  stateManager.init();
+};
+
+init();
+
 rn_bridge.channel.on("message", async (msg) => {
-  const result = await wasm.ccall(
-    "qwallet",
-    "string",
-    ["string"],
-    ["checkavail", "login"]
-  );
-  const message = {
-    type: "S2C",
-    data: result,
-  };
   try {
-    if (JSON.parse(msg).type == "C2S")
-      rn_bridge.channel.send(JSON.stringify(message));
+    const message = JSON.parse(msg);
+    if (message.action === "C2S/login") {
+      const success = await login({ password: message.data?.password });
+      if (typeof success != "string") {
+        rn_bridge.channel.send(
+          JSON.stringify({
+            action: "S2C/login",
+            success: true,
+          })
+        );
+      } else {
+        rn_bridge.channel.send(
+          JSON.stringify({
+            action: "S2C/login",
+            success: false,
+            error: "Invalid password",
+          })
+        );
+      }
+    }
   } catch (err) {}
 });
 
-// rn_bridge.channel.send("Node was initialized.");
+rn_bridge.channel.send("Node was initialized.");
