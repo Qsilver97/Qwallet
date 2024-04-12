@@ -20,10 +20,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.qwallet",
-      "config": {
-        "emulatorPort": 5555
-      }
+      "package": "com.anonymous.qwallet"
+      // "config": {
+      //   "emulatorPort": 5555
+      // }
     },
     "web": {
       "favicon": "./assets/favicon.png"

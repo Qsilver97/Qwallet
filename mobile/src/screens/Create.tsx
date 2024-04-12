@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import {
   VStack,
@@ -13,6 +13,9 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import tw from "tailwind-react-native-classnames";
 import { useNavigation } from "@react-navigation/native";
+import Toast from "react-native-toast-message";
+import eventEmitter from "../api/eventEmitter";
+import { create } from "../api/api";
 
 const Create: React.FC = () => {
   const [step, setStep] = useState<"password" | "seedType">("password");
@@ -31,6 +34,23 @@ const Create: React.FC = () => {
       prevType === "password" ? "text" : "password"
     );
   };
+  const handleCreate = () => {
+    setCreatingStatus(true);
+    let passwordPrefix = "";
+    if (seedType == "55chars") passwordPrefix = "Q";
+    create(`login ${passwordPrefix}${password}`);
+  };
+
+  useEffect(() => {
+    eventEmitter.on("S2C/create", (res) => {
+      if (res.success) {
+        Toast.show({ type: "success", text1: "Login Success!" });
+      } else {
+        setPasswordStatus(true);
+        Toast.show({ type: "error", text1: res.error });
+      }
+    });
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={{ padding: 4 }}>
@@ -136,9 +156,7 @@ const Create: React.FC = () => {
                 Back
               </Button>
               <Button
-                onPress={() => {
-                  navigation.navigate("Confirm");
-                }}
+                onPress={handleCreate}
                 isDisabled={creatingStatus}
                 w="50%"
               >

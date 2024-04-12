@@ -65,7 +65,6 @@ const Login: React.FC = () => {
       if (res.success) {
         Toast.show({ type: "success", text1: "Login Success!" });
         const userInfo: UserDetailType = res.data;
-        // auth.login()
         auth.login(userInfo);
         dispatch(resetState());
         dispatch(setIsAuthenticated(true));

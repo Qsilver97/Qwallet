@@ -110,3 +110,11 @@ exports.login = async ({ password }) => {
     return err.message;
   }
 };
+
+exports.create = async ({ command }) => {
+  const result = await wasmManager.ccall({
+    command,
+    flag: "create",
+  });
+  return result;
+};
