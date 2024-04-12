@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useDispatch } from 'react-redux';
 import { io, Socket } from 'socket.io-client';
-import { setBalances, setTick } from '../redux/appSlice';
+import { setBalances, setTick, updateRichlist } from '../redux/appSlice';
 
 interface SocketContextType {
     socket: Socket | undefined;
@@ -43,6 +43,10 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, wsUrl 
                 data.balances.map((item: [number, string]) => {
                     dispatch(setBalances({ index: item[0], balance: item[1] }));
                 })
+            } else if (data.richlist) {
+                dispatch(updateRichlist(data));
+            } else if (data.marketcap) {
+
             }
         })
 
