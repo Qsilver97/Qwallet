@@ -16,7 +16,7 @@ import {
   faTimes,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
-import Clipboard from "@react-native-community/clipboard";
+// import Clipboard from "@react-native-community/clipboard";
 import tw from "tailwind-react-native-classnames";
 import Toast from "react-native-toast-message";
 
@@ -102,7 +102,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
 
 const Dashboard: React.FC = () => {
   const handleCopy = (text: string) => {
-    Clipboard.setString(text);
+    // Clipboard.setString(text);
     Toast.show({ type: "success", text1: "Copied to clipboard" });
   };
 
