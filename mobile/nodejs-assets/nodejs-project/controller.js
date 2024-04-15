@@ -1,5 +1,5 @@
 const wasmManager = require("./managers/wasmManager");
-// const stateManager = require("./managers/stateManager");
+const stateManager = require("./managers/stateManager");
 // const socketManager = require("./managers/socketManager");
 // const { delay, socketSync } = require("./utils/helpers");
 // const liveSocketController = require("./liveSocketController");
