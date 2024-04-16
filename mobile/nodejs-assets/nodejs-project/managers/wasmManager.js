@@ -4,10 +4,21 @@ const createModule = require("../utils/a.out.js");
 let wasm;
 
 module.exports = {
-  init: () => {
-    wasm = createModule();
+  init: (rootDirectory) => {
+    let Module = {
+        onRuntimeInitialized: function () {
+            console.log("WebAssembly module initialized.");
+        }
+    };
+
+    // Check if a custom root directory is provided and set it
+    if (rootDirectory) {
+        Module['rootDirectory'] = rootDirectory;
+    }
+
+    wasm = createModule(Module); // Pass the Module object to createModule
     return wasm;
-  },
+},
   getWasm: () => {
     if (!wasm) {
       throw new Error("Wasm not initialized!");

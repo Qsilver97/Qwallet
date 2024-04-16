@@ -34,28 +34,6 @@
 #include "qshared/qtime.c"
 #include "qshared/qtx.c"
 
-#ifdef ANDROID
-void setupFileSystem(){
-    MAIN_THREAD_EM_ASM(
-        FS.mkdir('/qwallet');
-        FS.mkdir('/qwallet/keys');
-        FS.mount(NODEFS, { root: '/sdcard/Android/data/com.anonymous.qwallet/files' }, '/qwallet');
-        FS.syncfs(true, function (err) {
-            assert(!err); });
-    );
-}
-#else
-void setupFileSystem(){
-    MAIN_THREAD_EM_ASM(
-        FS.mkdir('/qwallet');
-        FS.mkdir('/qwallet/keys');
-        FS.mount(NODEFS, { root: '.' }, '/qwallet');
-        FS.syncfs(true, function (err) {
-            assert(!err); });
-    );
-}
-#endif
-
 struct pendingtx
 {
     char address[64],dest[64],txid[64],password[512];
@@ -896,7 +874,16 @@ int main()
     int32_t i;
     printf("main was CALLED.%d\n",MAIN_count);
     MAIN_count++;
-    setupFileSystem();
+    MAIN_THREAD_EM_ASM({
+        var rootDirectory = Module['rootDirectory'] || '.';
+        console.log("Setting up filesystem at root directory: " + rootDirectory);
+        FS.mkdir('/qwallet');
+        FS.mkdir('/qwallet/keys');
+        FS.mount(NODEFS, { root: rootDirectory }, '/qwallet');
+        FS.syncfs(true, function (err) {
+            assert(!err, 'Error setting up filesystem: ' + err);
+        });
+    });
     //pthread_t mainloop_thread;
     //pthread_create(&mainloop_thread,NULL,&mainloop,0);
     start_timer();
