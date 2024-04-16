@@ -47,11 +47,18 @@ const Backup: React.FC = () => {
         <View style={tw`relative`}>
           {typeof seeds === "string" && (
             <TouchableOpacity onPress={() => {}}>
-              <TextInput
-                style={tw`p-2 border-b border-gray-300 bg-transparent text-gray-800`}
-                value={seeds}
-                editable={false}
-              />
+              <TouchableOpacity onPress={() => {}}>
+                <ScrollView
+                  horizontal={true}
+                  showsHorizontalScrollIndicator={false}
+                >
+                  <TextInput
+                    style={tw`p-2 border-b border-gray-300 bg-transparent text-gray-800`}
+                    value={seeds}
+                    editable={false}
+                  />
+                </ScrollView>
+              </TouchableOpacity>
             </TouchableOpacity>
           )}
           {Array.isArray(seeds) && (
