@@ -29,7 +29,9 @@ rn_bridge.channel.on("message", async (msg) => {
     const message = JSON.parse(msg);
 
     if (message.action === "C2S/login") {
+      console.log(message.data)
       const success = await login({ password: message.data?.password });
+      console.log(success)
       if (typeof success != "string") {
         rn_bridge.channel.send(
           JSON.stringify({

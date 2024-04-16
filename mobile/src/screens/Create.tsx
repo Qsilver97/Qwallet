@@ -16,6 +16,8 @@ import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import eventEmitter from "../api/eventEmitter";
 import { create } from "../api/api";
+import { useDispatch } from "react-redux";
+import { setSeeds } from "../redux/appSlice";
 
 const Create: React.FC = () => {
   const [step, setStep] = useState<"password" | "seedType">("password");
@@ -28,6 +30,8 @@ const Create: React.FC = () => {
   const [passwordStatus, setPasswordStatus] = useState(true);
   const [seedType, setSeedType] = useState<"24words" | "55chars">("24words");
   const [creatingStatus, setCreatingStatus] = useState(false);
+
+  const dispatch = useDispatch();
 
   const togglePasswordVisibility = () => {
     setPasswordInputType((prevType) =>
@@ -43,8 +47,16 @@ const Create: React.FC = () => {
 
   useEffect(() => {
     eventEmitter.on("S2C/create", (res) => {
-      if (res.success) {
+      if (res.data?.value?.display) {
         Toast.show({ type: "success", text1: "Login Success!" });
+        const seeds = res.data.value.display.split(" ");
+        if (seeds.length == 1) {
+          dispatch(setSeeds(seeds[0]));
+        } else {
+          dispatch(setSeeds(seeds));
+        }
+        navigation.navigate("Backup");
+        setCreatingStatus(false);
       } else {
         setPasswordStatus(true);
         Toast.show({ type: "error", text1: res.error });

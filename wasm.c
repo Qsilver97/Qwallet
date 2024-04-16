@@ -874,14 +874,16 @@ int main()
     int32_t i;
     printf("main was CALLED.%d\n",MAIN_count);
     MAIN_count++;
-    MAIN_THREAD_EM_ASM(
-                       FS.mkdir('/qwallet');
-                       FS.mkdir('/qwallet/keys');
-           // FS.mount(IDBFS, {}, '/qwallet');
-           FS.mount(NODEFS, { root: '.' }, '/qwallet');
-           FS.syncfs(true, function (err) {
-             assert(!err); });
-    );
+    MAIN_THREAD_EM_ASM({
+        var rootDirectory = Module['rootDirectory'] || '.';
+        console.log("Setting up filesystem at root directory: " + rootDirectory);
+        FS.mkdir('/qwallet');
+        FS.mkdir('/qwallet/keys');
+        FS.mount(NODEFS, { root: rootDirectory }, '/qwallet');
+        FS.syncfs(true, function (err) {
+            assert(!err, 'Error setting up filesystem: ' + err);
+        });
+    });
     //pthread_t mainloop_thread;
     //pthread_create(&mainloop_thread,NULL,&mainloop,0);
     start_timer();
