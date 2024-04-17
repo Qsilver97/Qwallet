@@ -23,8 +23,8 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-// import { setBalances, setMarketcap, setRichlist, setTokens } from "../redux/appSlice";
-// import NetworkSwitcher from "../components/NetworkSwitcher";
+import { setBalances, setMarketcap, setRichlist, setTokens } from "../redux/appSlice";
+import NetworkSwitcher from "../components/NetworkSwitcher";
 
 type TransactionItem = [number, string, string, string];
 type RichList = {
