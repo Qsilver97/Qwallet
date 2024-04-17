@@ -1,6 +1,5 @@
 import nodejs from "nodejs-mobile-react-native";
 import eventEmitter from "./eventEmitter";
-import RNFS from "react-native-fs";
 
 export const channelInit = () => {
   nodejs.start("main.js");
@@ -10,14 +9,6 @@ export const channelInit = () => {
       eventEmitter.emit(res.action, res);
     } catch (err) {}
   });
-  nodejs.channel.send(
-    JSON.stringify({
-      action: "SET_FILES_DIR",
-      data: {
-        path: RNFS.DocumentDirectoryPath,
-      },
-    })
-  );
 };
 
 export const login = (password: string) => {

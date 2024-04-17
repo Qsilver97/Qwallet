@@ -101,6 +101,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
 );
 
 const Dashboard: React.FC = () => {
+  
   const handleCopy = (text: string) => {
     // Clipboard.setString(text);
     Toast.show({ type: "success", text1: "Copied to clipboard" });
