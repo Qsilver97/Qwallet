@@ -84,13 +84,13 @@ const Backup: React.FC = () => {
             <Text style={tw`ml-2`}>I've Made a Backup</Text>
           </View>
 
-          <View style={tw`flex-row justify-between`}>
+          <View style={tw`flex-row`}>
             <Button.Group space={2} mt="4" w="80%" margin={"auto"}>
               <Button onPress={handleBack} w="50%">
                 Back
               </Button>
               <Button onPress={handleNext} w="50%">
-                Create
+                Next
               </Button>
             </Button.Group>
           </View>

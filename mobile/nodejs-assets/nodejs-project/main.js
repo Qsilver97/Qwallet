@@ -17,7 +17,7 @@ const createDirectoryIfNotExists = async (directoryPath) => {
 const init = async () => {
   const keyDirectoryPath = path.join("/sdcard/Android/data/com.anonymous.qwallet/files", "keys");
   await createDirectoryIfNotExists(keyDirectoryPath);
-  wasmManager.init();
+  wasmManager.init('/sdcard/Android/data/com.anonymous.qwallet/files');
   stateManager.init();
   // await wasmManager.ccall({command:`keysdir ${__dirname}`, flag: "keysdir"})
 };
