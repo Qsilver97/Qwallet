@@ -19,6 +19,18 @@ import {
 // import Clipboard from "@react-native-community/clipboard";
 import tw from "tailwind-react-native-classnames";
 import Toast from "react-native-toast-message";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+// import { setBalances, setMarketcap, setRichlist, setTokens } from "../redux/appSlice";
+// import NetworkSwitcher from "../components/NetworkSwitcher";
+
+type TransactionItem = [number, string, string, string];
+type RichList = {
+  name: string,
+  richlist: [[number, string, string]],
+};
 
 interface AddressModalProps {
   isAccountModalOpen: boolean;
@@ -101,7 +113,38 @@ const AddressModal: React.FC<AddressModalProps> = ({
 );
 
 const Dashboard: React.FC = () => {
-  
+  const { login, logout, user } = useAuth();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+
+    const [isAccountModalOpen, setIsAccountModalOpen] = useState<boolean>(false);
+    const toggleAccountModal = () => setIsAccountModalOpen(!isAccountModalOpen);
+    const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState<boolean>(false);
+    const toggleDeleteAccountModal = () => setIsDeleteAccountModalOpen(!isDeleteAccountModalOpen);
+    const [isTransferModalOpen, setIsTransferModalOpen] = useState<boolean>(false);
+    const toggleTransferModal = () => setIsTransferModalOpen(!isTransferModalOpen);
+
+    const { tick, balances, tokens, richlist, marketcap } = useSelector((state: RootState) => state.app);
+
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+    const [deleteAccount, setDeleteAccount] = useState<string>("");
+    const [currentAddress, setCurrentAddress] = useState<string>("");
+    const [displayAddress, setDisplayAddress] = useState(currentAddress);
+    const [allAddresses, setAllAddresses] = useState<string[]>([]);
+    const [addingStatus, setAddingStatus] = useState<boolean>(false);
+    const [deletingStatus, setDeletingStatus] = useState<boolean>(false);
+    const [toAddress, setToAddress] = useState<string>("");
+    const [amount, setAmount] = useState<string>("");
+    const [sendingStatus, setSendingStatus] = useState<'open' | 'pending' | 'closed' | 'rejected'>('closed');
+    const [statusInterval, setStatusInterval] = useState<any>();
+    const [sendingResult, setSendingResult] = useState<string>('');
+    const [transactionId, setTrasactionId] = useState<string>('');
+    const [expectedTick, setExpectedTick] = useState<number>();
+    const [histories, setHistories] = useState<TransactionItem[]>([]);
+    const [subTitle, setSubTitle] = useState<'Activity' | 'Token'>('Token');
+
+
   const handleCopy = (text: string) => {
     // Clipboard.setString(text);
     Toast.show({ type: "success", text1: "Copied to clipboard" });
