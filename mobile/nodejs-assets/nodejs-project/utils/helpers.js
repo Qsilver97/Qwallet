@@ -1,4 +1,3 @@
-const axios = require('axios');
 const socketManager = require('../managers/socketManager');
 const stateManager = require('../managers/stateManager');
 

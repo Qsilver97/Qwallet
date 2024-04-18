@@ -22,7 +22,6 @@ const init = async () => {
   await createDirectoryIfNotExists(keyDirectoryPath);
   wasmManager.init("/sdcard/Android/data/com.anonymous.qwallet/files");
   stateManager.init();
-  // await wasmManager.ccall({command:`keysdir ${__dirname}`, flag: "keysdir"})
 };
 
 init();

@@ -1,15 +1,15 @@
 const wasmManager = require("./managers/wasmManager");
 const stateManager = require("./managers/stateManager");
 const rn_bridge = require("rn-bridge");
-// const socketManager = require("./managers/socketManager");
+const socketManager = require("./managers/socketManager");
 const { delay, socketSync } = require("./utils/helpers");
-// const liveSocketController = require("./liveSocketController");
+const liveSocketController = require("./liveSocketController");
 
 exports.login = async ({ password }) => {
   try {
     let liveSocket = socketManager.initLiveSocket();
-      liveSocketController(liveSocket);
-      await delay(1000);
+    liveSocketController(liveSocket);
+    await delay(1000);
     let realPassword;
     stateManager.init();
     const resultFor24words = await wasmManager.ccall({
@@ -147,22 +147,27 @@ exports.addAccout = async ({ password, index }) => {
     command: `logintx ${password}`,
     flag: "logintx",
   });
-  // const hexSocketResult = await socketSync(hexResult.value.display);
-  // if (!hexSocketResult) {
-  //     rn_bridge.channel.send(
-  //       JSON.stringify({
-  //         action: "S2C/add-account",
-  //         data: "Socket server error",
-  //       })
-  //     );
-  //     return;
-  // }
+  const hexSocketResult = await socketSync(hexResult.value.display);
+  if (!hexSocketResult) {
+    rn_bridge.channel.send(
+      JSON.stringify({
+        action: "S2C/add-account",
+        data: "Socket server error",
+      })
+    );
+    return;
+  }
 
-  // const plusResult = await socketSync(`+${index} ${addResult.value.display}`)
-  // if (!plusResult) {
-  //     res.status(401).send('Socket server error');
-  //     return;
-  // }
+  const plusResult = await socketSync(`+${index} ${addResult.value.display}`);
+  if (!plusResult) {
+    rn_bridge.channel.send(
+      JSON.stringify({
+        action: "S2C/err",
+        data: "Socket server error",
+      })
+    );
+    return;
+  }
   const remoteSubshas = stateManager.getRemoteSubshash();
 
   if (localSubshash != "" && remoteSubshas == localSubshash) {

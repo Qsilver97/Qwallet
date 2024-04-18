@@ -1,8 +1,8 @@
 // const socketManager = require('../managers/socketManager');
-const stateManager = require('../managers/stateManager');
-const { setRemoteSubshash } = require('../managers/stateManager');
-const wasmManager = require('../managers/wasmManager');
-const { splitAtFirstSpace } = require('../utils/helpers');
+const stateManager = require('./managers/stateManager');
+const { setRemoteSubshash } = require('./managers/stateManager');
+const wasmManager = require('./managers/wasmManager');
+const { splitAtFirstSpace } = require('./utils/helpers');
 
 module.exports = function (liveSocket) {
     // let socket = socketManager.getIO();
