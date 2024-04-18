@@ -133,7 +133,7 @@ int32_t issuerpubkey(const char *assetname,uint8_t pubkey[32])
     }
     for (i=0; i<sizeof(ASSETS)/sizeof(*ASSETS); i++)
     {
-        if ( strcmp(assetname,ASSETS[i].assetname) == 0 )
+        if ( strcmp(assetname,ASSETS[i].name) == 0 )
         {
             memcpy(pubkey,ASSETS[i].pubkey,32);
             return(i);
