@@ -41,8 +41,14 @@ export const history = (address:string) => {
   );
 }
 
-export const token = () => {
+export const getToken = () => {
   nodejs.channel.send(
-    JSON.stringify({ action: "C2S/token", data: { } })
+    JSON.stringify({ action: "C2S/tokens", data: { } })
+  );
+}
+
+export const basicInfo = () => {
+  nodejs.channel.send(
+    JSON.stringify({ action: "C2S/basic-info", data: { } })
   );
 }

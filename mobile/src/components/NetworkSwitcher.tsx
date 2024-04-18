@@ -6,10 +6,10 @@ const NetworkSwitcher = () => {
   const { network, switchingStatus, switchNetwork } = useNetwork();
 
   return (
-    <View style={tw`flex-row gap-2`}>
+    <View style={tw`flex-row `}>
       <Button
         style={tw`px-2 ${
-          network === "mainnet" ? "bg-green-300" : "bg-slate-700"
+          network === "mainnet" ? "bg-green-300" : ""
         } ${switchingStatus ? "cursor-wait" : ""}`}
         onPress={() => switchNetwork("mainnet")}
         isDisabled={switchingStatus}
@@ -19,7 +19,7 @@ const NetworkSwitcher = () => {
       </Button>
       <Button
         style={tw`px-2 ${
-          network === "testnet" ? "bg-green-300" : "bg-slate-700"
+          network === "testnet" ? "bg-green-300" : ""
         } ${switchingStatus ? "cursor-wait" : ""}`}
         onPress={() => switchNetwork("testnet")}
         isDisabled={switchingStatus}

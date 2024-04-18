@@ -454,7 +454,7 @@ exports.tokens = async () => {
   const result = await socketSync("tokenlist");
   rn_bridge.channel.send(
     JSON.stringify({
-      action: "S2C/transfer",
+      action: "S2C/tokens",
       data: result,
     })
   );

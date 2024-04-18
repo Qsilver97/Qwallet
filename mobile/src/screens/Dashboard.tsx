@@ -30,7 +30,7 @@ import {
   setTokens,
 } from "../redux/appSlice";
 import NetworkSwitcher from "../components/NetworkSwitcher";
-import { addAccount, history, token } from "../api/api";
+import { addAccount, basicInfo, history, getToken } from "../api/api";
 import eventEmitter from "../api/eventEmitter";
 import { useNavigation } from "@react-navigation/native";
 import { Button, FlatList, VStack } from "native-base";
@@ -88,7 +88,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
           </Pressable>
         </View>
       </View>
-      <ScrollView style={tw`max-h-[500px] mt-4`}>
+      <ScrollView style={tw` mt-4`}>
         {allAddresses.map(
           (item, idx) =>
             item !== "" && (
@@ -174,6 +174,8 @@ const Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
+    basicInfo()
+    getToken()
     eventEmitter.on("S2C/add-account", (res) => {
       if (res.data) {
         console.log(res);
@@ -185,22 +187,36 @@ const Dashboard: React.FC = () => {
     });
     eventEmitter.on("S2C/history", (res) => {
       if (res.data) {
-        console.log(res);
+        console.log("History", res);
         setHistories(res.data.changes[1].txids)
       } else {
         Toast.show({ type: "error", text1: res.data.value.display });
         setHistories([]);
       }
     });
-    eventEmitter.on("S2C/token", (res) => {
+    eventEmitter.on("S2C/tokens", (res) => {
+      if (res.data.tokens) {
+        dispatch(setTokens(res.data.tokens));
+      } else {
+        Toast.show({ type: "error", text1: "Error ocurred!" });
+      }
+    });
+    eventEmitter.on("S2C/basic-info", (res) => {
       if (res.data) {
         console.log(res);
+        res.data.balances.map((item: [number, string]) => {
+            dispatch(setBalances({ index: item[0], balance: item[1] }));
+        })
         dispatch(setTokens(res.data.tokens));
+        dispatch(setRichlist(res.data.richlist));
+        dispatch(setMarketcap(res.data.marketcap));
+        console.log(res.data, 'basicinfo');
       } else {
         Toast.show({ type: "error", text1: res.data.value.display });
       }
     });
   }, []);
+
 
   const handleLogout = () => {
     logout();
@@ -328,26 +344,6 @@ const Dashboard: React.FC = () => {
     }
   }, [screenWidth, currentAddress]);
 
-  // useEffect(() => {
-  //     axios.post(
-  //         `${SERVER_URL}/api/basic-info`
-  //     ).then((resp) => {
-  //         resp.data.balances.map((item: [number, string]) => {
-  //             dispatch(setBalances({ index: item[0], balance: item[1] }));
-  //         })
-  //         dispatch(setTokens(resp.data.tokens));
-  //         dispatch(setRichlist(resp.data.richlist));
-  //         dispatch(setMarketcap(resp.data.marketcap));
-  //         console.log(resp.data, 'basicinfo');
-  //     })
-
-  //     const handleResize = () => {
-  //         setScreenWidth(window.innerWidth);
-  //     };
-  //     window.addEventListener('resize', handleResize);
-  //     return () => window.removeEventListener('resize', handleResize);
-  // }, [])
-
   const handleCopy = (text: string) => {
     // Clipboard.setString(text);
     Toast.show({ type: "success", text1: "Copied to clipboard" });
@@ -405,15 +401,15 @@ const Dashboard: React.FC = () => {
         </View>
 
         <ScrollView
-          style={tw`flex-row gap-5 w-full h-full overflow-auto overflow-y-hidden`}
+          style={tw`flex-row  w-full h-full`}
         >
           <TouchableOpacity
             style={tw`p-2 ${
               addingStatus ? "cursor-wait" : ""
-            } flex-row items-center shadow-[2_2_2_2_rgba(0,0,0,0.3)]`}
+            } flex-row items-center`}
             onPress={handleAddAccount}
           >
-            <FontAwesomeIcon icon={faPlus} style={tw`p-3 text-6`} />
+            <FontAwesomeIcon icon={faPlus} style={tw`p-3 text-base`} />
           </TouchableOpacity>
           {allAddresses.map((item, idx) => {
             if (item !== "")
@@ -422,15 +418,15 @@ const Dashboard: React.FC = () => {
                   key={`item${idx}`}
                   style={tw`p-2 ${
                     currentAddress === item
-                      ? "shadow-[2_2_2_2_rgba(0,0,0,0.6)] bg-[#17517a]"
-                      : "shadow-[2_2_2_2_rgba(0,0,0,0.3)]"
+                      ? ""
+                      : ""
                   } flex-col items-center`}
                   onPress={() => handleSelectAccount(item)}
                 >
                   <Text>{`${item.slice(0, 5)}...${item.slice(-5)}`}</Text>
                   <Text>{+balances[idx] | 0}</Text>
                   <View
-                    style={tw`flex-row justify-between w-full gap-1 text-xs`}
+                    style={tw`flex-row justify-between w-full text-xs`}
                   >
                     <Text style={tw`bg-green-600 px-1`}>
                       {richlist["QU"]?.find((jtem) => jtem[1] === item)?.[0] ??
@@ -455,12 +451,12 @@ const Dashboard: React.FC = () => {
           <TextInput
             placeholder="Address"
             onChangeText={(text) => console.log("Address Set:", text)}
-            style={tw`text-white p-2 my-2 mr-1 rounded-lg max-w-[720px] w-full bg-transparent`}
+            style={tw`text-white p-2 my-2 mr-1 rounded-lg w-full bg-transparent`}
           />
           <TextInput
             placeholder="Amount"
             onChangeText={(text) => console.log("Amount Set:", text)}
-            style={tw`text-white p-2 my-2 mr-1 rounded-lg w-30 bg-transparent`}
+            style={tw`text-white p-2 my-2 mr-1 rounded-lg w-32 bg-transparent`}
             keyboardType="numeric"
           />
           <Button
@@ -470,8 +466,8 @@ const Dashboard: React.FC = () => {
             Send
           </Button>
         </View>
-        <View style={tw`mt-10 max-h-[500px]`}>
-          <View style={tw`flex-row gap-5 mb-5`}>
+        <View style={tw`mt-10 `}>
+          <View style={tw`flex-row  mb-5`}>
             <Text
               onPress={() => setSubTitle("Token")}
               style={tw`${
@@ -491,7 +487,7 @@ const Dashboard: React.FC = () => {
           </View>
           {subTitle === "Token" && (
             <ScrollView
-              style={tw`relative overflow-auto shadow-lg rounded-lg p-5`}
+              style={tw`relative shadow-lg rounded-lg p-5`}
             >
               {tokens.map((item, idx) => (
                 <View
@@ -501,16 +497,16 @@ const Dashboard: React.FC = () => {
                   <Text>{item}</Text>
                   <TextInput
                     placeholder="Address"
-                    style={tw`text-white p-2 my-2 mr-1 border border-blue-800 rounded-lg max-w-[720px] w-full bg-transparent`}
+                    style={tw`text-white p-2 my-2 mr-1 rounded-lg w-full bg-transparent`}
                   />
                   <TextInput
                     placeholder="Amount"
-                    style={tw`text-white p-2 my-2 mr-1 border border-blue-800 rounded-lg w-30 bg-transparent`}
+                    style={tw`text-white p-2 my-2 mr-1 rounded-lg w-32 bg-transparent`}
                     keyboardType="numeric"
                   />
                   <Button
                     onPress={() => console.log("Send Token")}
-                    style={tw`py-2 px-5 bg-blue-800 border-none rounded-lg text-white text-lg `}
+                    style={tw`py-2 px-5 bg-blue-800 rounded-lg text-white text-lg `}
                   >
                     Send
                   </Button>
@@ -520,7 +516,7 @@ const Dashboard: React.FC = () => {
           )}
           {subTitle === "Activity" && (
             <ScrollView
-              style={tw`relative overflow-auto shadow-lg rounded-lg p-5`}
+              style={tw`relative  shadow-lg rounded-lg p-5`}
             >
               {/* <FlatList
           data={histories}
@@ -539,12 +535,12 @@ const Dashboard: React.FC = () => {
         </View>
         <View style={tw`mt-5 flex-wrap flex-row`}>
           <TextInput
-            style={tw`text-white p-2 my-2 mr-1 border border-[#17517a] rounded-lg max-w-[720] w-full bg-transparent`}
+            style={tw`text-white p-2 my-2 mr-1 border rounded-lg w-full bg-transparent`}
             placeholder="Address"
             onChangeText={setToAddress}
           />
           <TextInput
-            style={tw`text-white p-2 my-2 mr-1 border border-[#17517a] rounded-lg w-[120] bg-transparent`}
+            style={tw`text-white p-2 my-2 mr-1 border rounded-lg  bg-transparent`}
             placeholder="Amount"
             onChangeText={setAmount}
             keyboardType="numeric"
