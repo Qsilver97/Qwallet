@@ -6,12 +6,12 @@ import {
   TextInput,
   ScrollView,
   Image,
-  Modal,
   TouchableOpacity,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faAdd,
+  faCheck,
   faCopy,
   faPlus,
   faTimes,
@@ -40,7 +40,16 @@ import {
 } from "../api/api";
 import eventEmitter from "../api/eventEmitter";
 import { useNavigation } from "@react-navigation/native";
-import { Button, FlatList, Flex, IconButton, VStack } from "native-base";
+import {
+  Button,
+  FlatList,
+  Flex,
+  IconButton,
+  VStack,
+  Modal,
+  HStack,
+  Icon,
+} from "native-base";
 
 type TransactionItem = [number, string, string, string];
 type RichList = {
@@ -223,7 +232,10 @@ const Dashboard: React.FC = () => {
     eventEmitter.on("S2C/transfer", (res) => {
       if (res.data) {
         console.log("Transfer: ", res.data);
-        if (res.data.value.result == "0") {
+        if (res.data == "failed") {
+          setSendingStatus("rejected");
+          Toast.show({ type: "error", text1: "Transfer Failed!" });
+        } else if (res.data.value.result == "0") {
           setSendingStatus("pending");
         } else if (res.data.value.result == "1") {
           setSendingResult(res.data.value.display);
@@ -232,7 +244,7 @@ const Dashboard: React.FC = () => {
           setSendingStatus("rejected");
         }
       } else {
-        Toast.show({ type: "error", text1: res.data.value.display });
+        Toast.show({ type: "error", text1: "Error Occured" });
         setSendingStatus("rejected");
       }
     });
@@ -403,12 +415,12 @@ const Dashboard: React.FC = () => {
             {allAddresses.map((item, idx) => {
               if (item !== "")
                 return (
-                  <View
+                  <TouchableOpacity
                     key={`item${idx}`}
                     style={tw`p-2 ${
                       currentAddress === item ? "" : ""
                     } flex-col items-center bg-blue-800 w-32 mx-2`}
-                    // onPress={() => handleSelectAccount(item)}
+                    onPress={() => handleSelectAccount(item)}
                   >
                     <Text style={tw`text-white`}>{`${item.slice(
                       0,
@@ -432,7 +444,7 @@ const Dashboard: React.FC = () => {
                           }`}
                       </Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 );
             })}
           </ScrollView>
@@ -440,21 +452,22 @@ const Dashboard: React.FC = () => {
         <View style={tw`mt-5 flex-wrap flex-row`}>
           <TextInput
             placeholder="Address"
-            onChangeText={(text) => console.log("Address Set:", text)}
-            style={tw`text-white p-2 my-2 mr-1 border rounded-lg w-full bg-transparent`}
+            onChangeText={(text) => setToAddress(text)}
+            style={tw`p-2 my-2 mr-1 border rounded-lg w-full bg-transparent`}
           />
           <TextInput
             placeholder="Amount"
-            onChangeText={(text) => console.log("Amount Set:", text)}
-            style={tw`text-white p-2 my-2 mr-1 border rounded-lg w-32 bg-transparent`}
+            onChangeText={(text) => setAmount(text)}
+            style={tw`p-2 my-2 mr-1 border rounded-lg w-32 bg-transparent`}
             keyboardType="numeric"
           />
-          <Button
-            onPress={handleTransfer}
-            style={tw`my-2 py-2 px-5 bg-blue-800  rounded-lg text-white text-lg `}
-          >
-            Send
-          </Button>
+          <TouchableOpacity onPress={handleTransfer}>
+            <Text
+              style={tw`my-2 py-2 px-5 bg-blue-800  rounded-lg text-white text-lg `}
+            >
+              Send
+            </Text>
+          </TouchableOpacity>
         </View>
         <View style={tw`mt-5 pt-3 border-t`}>
           <View style={tw`flex-row  mb-2`}>
@@ -487,21 +500,22 @@ const Dashboard: React.FC = () => {
               <View style={tw`mt-2 flex-wrap flex-row`}>
                 <TextInput
                   placeholder="Address"
-                  onChangeText={(text) => console.log("Address Set:", text)}
+                  onChangeText={(text) => setToAddress(text)}
                   style={tw`text-white p-2 my-2 mr-1 border rounded-lg w-full bg-transparent`}
                 />
                 <TextInput
                   placeholder="Amount"
-                  onChangeText={(text) => console.log("Amount Set:", text)}
+                  onChangeText={(text) => setAmount(text)}
                   style={tw`text-white p-2 my-2 mr-1 border rounded-lg w-32 bg-transparent`}
                   keyboardType="numeric"
                 />
-                <Button
-                  onPress={handleTransfer}
-                  style={tw`my-2 py-2 px-5 bg-blue-800  rounded-lg text-white text-lg `}
-                >
-                  Send
-                </Button>
+                <TouchableOpacity onPress={handleTransfer}>
+                  <Text
+                    style={tw`my-2 py-2 px-5 bg-blue-800  rounded-lg text-white text-lg `}
+                  >
+                    Send
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
           )}
@@ -538,6 +552,180 @@ const Dashboard: React.FC = () => {
           )}
         </View>
       </VStack>
+      <Modal isOpen={isAccountModalOpen} onClose={toggleAccountModal}>
+        <Modal.Content>
+          <Modal.Header borderBottomWidth="1" borderColor="white">
+            <HStack justifyContent="space-between" alignItems="center">
+              <Text style={tw`text-xl`}>Addresses</Text>
+              <HStack space={2}>
+                <Pressable onPress={handleAddAccount} disabled={addingStatus}>
+                  <Icon
+                    as={<FontAwesomeIcon icon={faPlus} />}
+                    size="sm"
+                    style={tw`${addingStatus ? "opacity-50" : "opacity-100"}`}
+                  />
+                </Pressable>
+                <Pressable onPress={toggleAccountModal}>
+                  <Icon
+                    as={<FontAwesomeIcon icon={faTimes} />}
+                    size="sm"
+                    style={tw`opacity-100`}
+                  />
+                </Pressable>
+              </HStack>
+            </HStack>
+          </Modal.Header>
+          <ScrollView style={tw`p-2 mb-2`}>
+            {allAddresses.map(
+              (item, idx) =>
+                item !== "" && (
+                  <HStack
+                    justifyContent="space-between"
+                    alignItems="center"
+                    key={`address-${idx}`}
+                    space={5}
+                  >
+                    <Pressable onPress={() => handleCopy(item)}>
+                      <Icon
+                        as={<FontAwesomeIcon icon={faCopy} />}
+                        size="sm"
+                        style={tw`opacity-100`}
+                      />
+                    </Pressable>
+                    <Text
+                      onPress={() => handleClickAccount(item)}
+                      style={tw`font-mono`}
+                    >
+                      {item}
+                    </Text>
+                    <Pressable
+                      onPress={() => {
+                        setDeleteAccount(item);
+                        toggleDeleteAccountModal();
+                      }}
+                    >
+                      <Icon
+                        as={<FontAwesomeIcon icon={faTrash} />}
+                        size="sm"
+                        style={tw`opacity-100`}
+                      />
+                    </Pressable>
+                  </HStack>
+                )
+            )}
+          </ScrollView>
+        </Modal.Content>
+      </Modal>
+      <Modal
+        isOpen={isDeleteAccountModalOpen}
+        onClose={toggleDeleteAccountModal}
+      >
+        <Modal.Content maxWidth="400px">
+          <Modal.CloseButton />
+          <Modal.Header
+            borderBottomWidth="1"
+            borderColor="white"
+            _text={{ fontSize: "lg" }}
+          >
+            Delete this account?
+          </Modal.Header>
+          <Modal.Body>
+            <Text>{deleteAccount}</Text>
+            <HStack justifyContent="flex-end" mt="4" space="4">
+              <Button
+                isDisabled={deletingStatus}
+                onPress={handleDeleteAccount}
+                bg="red.500"
+                _text={{ color: "white" }}
+                _hover={{ bg: "red.600" }}
+              >
+                Yes
+              </Button>
+              <Button
+                onPress={toggleDeleteAccountModal}
+                bg="blue.600"
+                _text={{ color: "white" }}
+                _hover={{ bg: "blue.700" }}
+              >
+                No
+              </Button>
+            </HStack>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
+      <Modal isOpen={isTransferModalOpen} onClose={toggleTransferModal}>
+        <Modal.Content maxWidth="400px">
+          {(sendingStatus === "closed" || sendingStatus === "rejected") && (
+            <Modal.Header>
+              <HStack
+                justifyContent="space-between"
+                alignItems="center"
+                space={5}
+              >
+                <Text style={tw`text-xl`}>
+                  {sendingResult === "no command pending"
+                    ? "Success"
+                    : sendingStatus === "closed"
+                    ? "Sending..."
+                    : "Failed"}
+                </Text>
+                <Pressable onPress={toggleTransferModal}>
+                  <Icon as={<FontAwesomeIcon icon={faTimes} />} />
+                </Pressable>
+              </HStack>
+            </Modal.Header>
+          )}
+
+          {sendingStatus === "open" || sendingStatus === "pending" ? (
+            <Modal.Body>
+              <VStack space={5} alignItems="center">
+                {/* Place your ClipLoader equivalent here */}
+              </VStack>
+            </Modal.Body>
+          ) : (
+            <>
+              {sendingStatus === "closed" ? (
+                <VStack space={4} alignItems="center" my={4} px={8}>
+                  <Text style={tw`uppercase text-sm font-bold text-indigo-500`}>
+                    Transaction ID
+                  </Text>
+                  <Text style={tw`mt-1 text-lg font-medium`}>
+                    {transactionId}
+                  </Text>
+                  {sendingResult === "no command pending" ? (
+                    <Icon
+                      as={<FontAwesomeIcon icon={faCheck} />}
+                      size="xl"
+                      mt={4}
+                    />
+                  ) : (
+                    <>
+                      <HStack space={2} alignItems="center">
+                        <Text style={tw`text-indigo-500 font-semibold`}>
+                          Expected Tick:
+                        </Text>
+                        <Text>{expectedTick}</Text>
+                      </HStack>
+                      <HStack space={2} alignItems="center">
+                        <Text style={tw`text-indigo-500 font-semibold`}>
+                          Status:
+                        </Text>
+                        <Text>{sendingResult}</Text>
+                      </HStack>
+                    </>
+                  )}
+                </VStack>
+              ) : (
+                <Modal.Body>
+                  <VStack space={5} alignItems="center">
+                    <Text style={tw`text-xl`}>Failed</Text>
+                  </VStack>
+                </Modal.Body>
+              )}
+            </>
+          )}
+        </Modal.Content>
+      </Modal>
     </ScrollView>
   );
 };
