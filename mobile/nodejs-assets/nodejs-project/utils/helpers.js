@@ -5,16 +5,16 @@ exports.delay = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-exports.log = (msg) => {
-    axios.post(
-        `https://qwallet-e9af6-default-rtdb.firebaseio.com/.json`,
-        {
-            msg,
-            timestamp: (new Date).toTimeString()
-        }
-    ).then((resp) => { })
-        .catch((error) => { })
-}
+// exports.log = (msg) => {
+//     axios.post(
+//         `https://qwallet-e9af6-default-rtdb.firebaseio.com/.json`,
+//         {
+//             msg,
+//             timestamp: (new Date).toTimeString()
+//         }
+//     ).then((resp) => { })
+//         .catch((error) => { })
+// }
 
 exports.socketSync = async (value) => {
     const socket = socketManager.getLiveSocket();

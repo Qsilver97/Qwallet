@@ -1,5 +1,18 @@
 var rn_bridge = require("rn-bridge");
-const { login, create, addAccout, history } = require("./controller");
+const {
+  login,
+  create,
+  addAccout,
+  history,
+  fetchUser,
+  deleteAccount,
+  restoreAccount,
+  transfer,
+  transferStatus,
+  switchNetwork,
+  tokens,
+  basicInfo,
+} = require("./controller");
 const wasmManager = require("./managers/wasmManager");
 const stateManager = require("./managers/stateManager");
 const path = require("path");
@@ -67,7 +80,47 @@ rn_bridge.channel.on("message", async (msg) => {
       }
 
       case "C2S/history": {
-        history(message.data.address)
+        history(message.data.address);
+        break;
+      }
+      case "C2S/fetch-user": {
+        fetchUser();
+        break;
+      }
+      case "C2S/delete-account": {
+        deleteAccount(
+          message.data.password,
+          message.data.index,
+          message.data.address
+        );
+        break;
+      }
+      case "C2S/restore": {
+        restoreAccount(
+          message.data.password,
+          message.data.seeds,
+          message.data.seedType
+        );
+        break;
+      }
+      case "C2S/transfer": {
+        transfer(
+          message.data.toAddress,
+          message.data.fromIdx,
+          message.data.amount
+        );
+        break;
+      }
+      case "C2S/switch-network": {
+        switchNetwork();
+        break;
+      }
+      case "C2S/tokens": {
+        tokens()
+        break;
+      }
+      case "C2S/basic-info": {
+        basicInfo()
         break;
       }
       // Socket

@@ -459,7 +459,7 @@ exports.tokens = async () => {
     })
   );
 };
-exports.basicInfo = async (req, res) => {
+exports.basicInfo = async () => {
   let liveSocket = socketManager.getLiveSocket();
   if (!liveSocket) {
     rn_bridge.channel.send(
