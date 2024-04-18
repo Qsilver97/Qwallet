@@ -1,10 +1,11 @@
+    
 
-
-//#define TESTNET
+#define TESTNET
 #define QSERVER
 // https://www.tecmint.com/increase-set-open-file-limits-in-linux/#:~:text=You%20can%20increase%20the%20limit,configure%20kernel%20parameters%20at%20runtime.
 // https://unix.stackexchange.com/questions/307046/real-time-file-synchronization
 // https://github.com/lsyncd/lsyncd/issues/394
+// set timezone! timedatectl set-timezone UTC
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -69,7 +70,11 @@ struct assetname
     int32_t index,extra;
 } *Assetnames;
 
-#include "qconn.c"
+#ifdef __APPLE__
+#include "../qshared/qconn.c"
+#else
+#include "qshared/qconn.c"
+#endif
 #include "qx.c"
 #include "qmutex.c"
 #include "qpeers.c"
@@ -586,6 +591,50 @@ void disp_asset(struct Asset *issued,struct Asset *owned)
     printf("name.(%s) %s %s %s\n",name,amountstr(owned->varStruct.ownership.numberOfUnits),issuer,owner);
 }
 
+void emit_quote(FILE *fp,int32_t commaflag,struct Orders_Output *quote)
+{
+    char addr[64];
+    pubkey2addr(quote->pubkey,addr);
+    fprintf(fp,"%s[\"%s\",\"%s\",\"%s\"]",commaflag!=0?",":"",addr,amountstr(quote->numberOfShares),amountstr2(quote->price));
+}
+
+void emit_quotes(FILE *fp,char *arrayname,struct Orders_Output *quotes,int32_t n)
+{
+    int32_t i,m = 0;
+    fprintf(fp,",\"%s\":[",arrayname);
+    for (i=0; i<n; i++)
+    {
+        if ( quotes[i].price != 0 )
+        {
+            emit_quote(fp,m>0,&quotes[i]);
+            m++;
+            //printf("i.%d m.%d %s\n",i,m,amountstr(quotes[i].price));
+        }
+    }
+    fprintf(fp,"]");
+}
+
+void emit_orderbook(struct issuerpub *asset)
+{
+    FILE *fp;
+    uint8_t zero[32];
+    char fname[512],issuer[64];
+    sprintf(fname,"%s%corders%c%s",DATADIR,dir_delim(),dir_delim(),asset->name);
+    if ( (fp= fopen(fname,"w")) != 0 )
+    {
+        memset(zero,0,sizeof(zero));
+        if ( memcmp(zero,asset->pubkey,32) == 0 )
+            strcpy(issuer,"QubicSmartContract");
+        else
+            pubkey2addr(asset->pubkey,issuer);
+        fprintf(fp,"{\"name\":\"%s\",\"issuer\":\"%s\"",asset->name,issuer);
+        emit_quotes(fp,"bids",asset->bids,sizeof(asset->bids)/sizeof(*asset->bids));
+        emit_quotes(fp,"asks",asset->asks,sizeof(asset->asks)/sizeof(*asset->asks));
+        fprintf(fp,"}");
+        fclose(fp);
+    }
+}
+
 void tests(int32_t tick)
 {
 #ifdef TESTNET
@@ -610,11 +659,11 @@ void tests(int32_t tick)
     if ( I.tick > LATEST_TICK )
         LATEST_TICK = I.tick;
     INITIAL_TICK = I.initialTick;
-    if ( tick == 0 )
+    //if ( tick == 0 )
     {
         printf("sendmany %s\n",amountstr(getFees((char *)"91.210.226.133",&fees)));
         printf("sendmany %s\n",amountstr(getFees((char *)"91.210.226.146",&fees)));
-        printf("sendmany %s\n",amountstr(getFees((char *)"194.158.200.8",&fees)));
+        //printf("sendmany %s\n",amountstr(getFees((char *)"194.158.200.8",&fees)));
         printf("sendmany %s\n",amountstr(getFees(DEFAULT_NODE_IP,&fees)));
         pubkey2addr(pubkey,checkaddr);
         RespondedEntity E = getBalance(DEFAULT_NODE_IP,DEFAULT_NODE_PORT,pubkey,merkleroot);
@@ -627,21 +676,32 @@ void tests(int32_t tick)
         for (i=0; i<n; i++)
             disp_asset(&assets[i].issuanceAsset,&assets[i].asset);
         printf("assets for %s\n","EOKXREPZIQRTTDHZUTVDGBUBIWVATNGUGCTOUWAJWBAVQWQZESDHQSTAVGQN");
-    }
-    //else
-    {
-        printf("get QX orderbooks\n");
-        for (i=0; i<NUMASSETS/NUMASSETS; i++)
-        {
-            qxGetAssetAskOrder(&ASKvu[0][i],DEFAULT_NODE_IP,-1,ASSETS[i].assetname,0);
-            qxGetAssetBidOrder(&BIDvu[0][i],DEFAULT_NODE_IP,-1,ASSETS[i].assetname,0);
-        }
-        //txtick = qxAddToBidOrder(rawhex,txidstr,digest,subseed,"QX",2222222,3,0);
         //txtick = qxIssueAsset(rawhex,txidstr,digest,subseed,"TEST","",100000000,0,0);
+        //sendrawtransaction(DEFAULT_NODE_IP,DEFAULT_NODE_PORT,rawhex);
         txtick = qxTransferAsset(rawhex,txidstr,digest,subseed,"TEST",(char *)"EOKXREPZIQRTTDHZUTVDGBUBIWVATNGUGCTOUWAJWBAVQWQZESDHQSTAVGQN",1,0);
         sendrawtransaction(DEFAULT_NODE_IP,DEFAULT_NODE_PORT,rawhex);
         printf("rawhex %s tick.%d\n",rawhex,txtick);
+        //sleep(10);
     }
+    //else
+    {
+        printf("get QX orderbooks\n"); //193934887
+        for (i=0; i<NUMASSETS; i++)
+        {
+            qxGetAssetAskOrder(&ASKvu[0][i],DEFAULT_NODE_IP,-1,ASSETS[i].name,0);
+            qxGetAssetBidOrder(&BIDvu[0][i],DEFAULT_NODE_IP,-1,ASSETS[i].name,0);
+        }
+        txtick = qxAddToAskOrder(rawhex,txidstr,digest,subseed,"QX",1000 + (rand() % 10000),1,0);
+        sendrawtransaction(DEFAULT_NODE_IP,DEFAULT_NODE_PORT,rawhex);
+        txtick = qxRemoveToBidOrder(rawhex,txidstr,digest,subseed,"QX",4444422,3,0);
+        sendrawtransaction(DEFAULT_NODE_IP,DEFAULT_NODE_PORT,rawhex);
+        txtick = qxAddToBidOrder(rawhex,txidstr,digest,subseed,"QX",1000 + (rand() % 10000),1,0);
+        sendrawtransaction(DEFAULT_NODE_IP,DEFAULT_NODE_PORT,rawhex);
+      printf("rawhex %s tick.%d\n",rawhex,txtick);
+    }
+    for (i=0; i<NUMASSETS; i++)
+        emit_orderbook(&ASSETS[i]);
+
 #endif
 }
 
@@ -653,7 +713,7 @@ int main(int argc, const char * argv[])
 {
     pthread_t findpeers_thread,fifoloop_thread;
     uint32_t utime = 0;
-    int32_t firsttick = 0,year,numflush,numsub,month,day,seconds,newepochflag = 0,latest = 0;
+    int32_t i,firsttick = 0,year,numflush,numsub,month,day,seconds,newepochflag = 0,latest = 0;
     //mutualexclusion("qserver",1);
     devurandom((uint8_t *)&utime,sizeof(utime));
     srand(utime);
@@ -669,14 +729,12 @@ int main(int argc, const char * argv[])
     memset(Addresses,0,sizeof(*Addresses) * MAXADDRESSES);
     Universe = (struct univhash *)calloc(MAXADDRESSES,sizeof(*Universe));
     memset(Universe,0,sizeof(*Universe) * MAXADDRESSES);
-#ifndef TESTNET
-    pthread_create(&findpeers_thread,NULL,&findpeers,0);
     pthread_create(&fifoloop_thread,NULL,&fifoloop,0);
-#endif
+//#ifndef TESTNET
+    pthread_create(&findpeers_thread,NULL,&findpeers,0);
+//#endif
     tests(0);
     latest = 0;
-    //struct QxFees_output fees;
-    //printf("sendmany %s\n",amountstr(getFees(DEFAULT_NODE_IP,&fees)));
     while ( 1 )
     {
         if ( EXITFLAG != 0 && LATEST_UTIME > EXITFLAG )
@@ -684,6 +742,7 @@ int main(int argc, const char * argv[])
         utime = set_current_ymd(&year,&month,&day,&seconds);
         if ( utime > LATEST_UTIME )
         {
+            tests(LATEST_TICK);
             LATEST_UTIME = utime;
             if ( newepochflag != 0 && utime > newepochflag+90 && EXITFLAG == 0 )
                 EXITFLAG = utime + 30;
@@ -704,6 +763,7 @@ int main(int argc, const char * argv[])
         }
         if ( LATEST_TICK > latest && INITIAL_TICK != 0 )
         {
+            tests(LATEST_TICK);
             numflush = numsub = 0;
             if ( LATEST_TICK == latest+1 )
             {
@@ -725,19 +785,22 @@ int main(int argc, const char * argv[])
                 update_sandwiches(LATEST_TICK);
             }
             latest = LATEST_TICK;
-            tests(LATEST_TICK);
+            for (i=0; i<NUMASSETS; i++)
+                emit_orderbook(&ASSETS[i]);
             printf("LATEST_TICK.%d REQ count.%d totalreq.%d Entitydata.%d numflush.%d numsub.%d\n",LATEST_TICK,qpubreq_count(),Totalreqs,Entitydata,numflush,numsub);
             if ( firsttick != 0 && EPOCH != 0 && (LATEST_TICK % 10) == 0 )
             {
                 richlist((char *)"");
                 if ( (LATEST_TICK % 100) == 0 )
                 {
-                    richlist((char *)"QX");
+                    for (i=0; i<NUMASSETS; i++)
+                        richlist((char *)ASSETS[i].name);
+                    /*richlist((char *)"QX");
                     richlist((char *)"QTRY");
                     richlist((char *)"RANDOM");
                     richlist((char *)"QUTIL");
                     richlist((char *)"QFT");
-                    richlist((char *)"QWALLET");
+                    richlist((char *)"QWALLET");*/
                 }
             }
             fflush(stdout);
@@ -750,9 +813,20 @@ int main(int argc, const char * argv[])
     return(0);
 }
 
-// testnet verify tx creation (transfer, buy/sell, cancel)
+// richlist REST
+// orderbook history
+// ASSETA <-> N*ASSETB+QU trading -> also needs parallel tx
+// myorders support can be done via orders files
+
+// testnet verify tx creation (-issue, -transfer, -bid/ask, cancel bid/ask)
+// verify orderbooks
+// verify resend of all txtypes
+// imported seed entropy calculator
+
 
 // minimize qclient footprint
-
 // sendmany txids?
-// last + 1 tick should not get tx even if included
+
+// weekly: update EPOCHS, spectrum/universe, verify supply, relaunches
+
+    
