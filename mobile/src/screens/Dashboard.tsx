@@ -40,102 +40,13 @@ import {
 } from "../api/api";
 import eventEmitter from "../api/eventEmitter";
 import { useNavigation } from "@react-navigation/native";
-import {
-  Button,
-  FlatList,
-  Flex,
-  IconButton,
-  VStack,
-  Modal,
-  HStack,
-  Icon,
-} from "native-base";
+import { Button, FlatList, VStack, Modal, HStack, Icon } from "native-base";
 
 type TransactionItem = [number, string, string, string];
 type RichList = {
   name: string;
   richlist: [[number, string, string]];
 };
-
-interface AddressModalProps {
-  isAccountModalOpen: boolean;
-  toggleAccountModal: () => void;
-  allAddresses: string[];
-  handleCopy: (address: string) => void;
-  handleAddAccount: () => void;
-  setDeleteAccount: (address: string) => void;
-  toggleDeleteAccountModal: () => void;
-  handleClickAccount: (address: string) => void;
-  addingStatus: boolean;
-}
-
-const AddressModal: React.FC<AddressModalProps> = ({
-  isAccountModalOpen,
-  toggleAccountModal,
-  allAddresses,
-  handleCopy,
-  handleAddAccount,
-  setDeleteAccount,
-  toggleDeleteAccountModal,
-  handleClickAccount,
-  addingStatus,
-}) => (
-  <Modal
-    animationType="slide"
-    transparent={true}
-    visible={isAccountModalOpen}
-    onRequestClose={toggleAccountModal}
-  >
-    <View style={tw`m-4 bg-white rounded-lg p-4`}>
-      <View
-        style={tw`flex-row justify-between items-center border-b border-gray-200 pb-4`}
-      >
-        <Text style={tw`text-lg font-bold`}>Addresses</Text>
-        <View style={tw`flex-row items-center`}>
-          <Pressable onPress={handleAddAccount} disabled={addingStatus}>
-            <FontAwesomeIcon
-              icon={faPlus}
-              size={24}
-              color={addingStatus ? "gray" : "black"}
-            />
-          </Pressable>
-          <Pressable onPress={toggleAccountModal} style={tw`ml-2`}>
-            <FontAwesomeIcon icon={faTimes} size={24} color="black" />
-          </Pressable>
-        </View>
-      </View>
-      <ScrollView style={tw` mt-4`}>
-        {allAddresses.map(
-          (item, idx) =>
-            item !== "" && (
-              <View
-                key={`address-${idx}`}
-                style={tw`flex-row justify-between items-center py-2`}
-              >
-                <Pressable onPress={() => handleCopy(item)}>
-                  <FontAwesomeIcon icon={faCopy} size={20} color="black" />
-                </Pressable>
-                <Text
-                  onPress={() => handleClickAccount(item)}
-                  style={tw`flex-1 mx-2 text-center`}
-                >
-                  {item}
-                </Text>
-                <Pressable
-                  onPress={() => {
-                    setDeleteAccount(item);
-                    toggleDeleteAccountModal();
-                  }}
-                >
-                  <FontAwesomeIcon icon={faTrash} size={20} color="black" />
-                </Pressable>
-              </View>
-            )
-        )}
-      </ScrollView>
-    </View>
-  </Modal>
-);
 
 const Dashboard: React.FC = () => {
   const { login, logout, user } = useAuth();
@@ -679,7 +590,7 @@ const Dashboard: React.FC = () => {
           {sendingStatus === "open" || sendingStatus === "pending" ? (
             <Modal.Body>
               <VStack space={5} alignItems="center">
-                {/* Place your ClipLoader equivalent here */}
+                {/* ClipLoader equivalent here */}
               </VStack>
             </Modal.Body>
           ) : (
