@@ -3,6 +3,7 @@ const stateManager = require('./managers/stateManager');
 const { setRemoteSubshash } = require('./managers/stateManager');
 const wasmManager = require('./managers/wasmManager');
 const { splitAtFirstSpace } = require('./utils/helpers');
+const rn_bridge = require("rn-bridge");
 
 module.exports = function (liveSocket) {
     // let socket = socketManager.getIO();
@@ -34,6 +35,12 @@ module.exports = function (liveSocket) {
                 stateManager.updateSocketState(flag.slice(1), data);
             }
             // socket.emit('live', data);
+            rn_bridge.channel.send(
+                JSON.stringify({
+                  action: "S2C/live",
+                  data
+                })
+              );
         } catch (error) {
 
         }

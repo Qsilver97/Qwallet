@@ -8,6 +8,7 @@ import { channelInit, login } from "./src/api/api";
 import Toast from "react-native-toast-message";
 import { AuthProvider } from "./src/context/AuthContext";
 import { NetworkProvider } from "./src/context/NetworkContext";
+import { SocketCom } from "./src/components/SocketComponent";
 
 const config = {
   useSystemColorMode: true,
@@ -39,6 +40,7 @@ export default function App() {
   }, []);
   return (
     <Provider store={store}>
+      <SocketCom />
       <AuthProvider>
         <NetworkProvider defaultNetwork="mainnet">
           <NativeBaseProvider theme={theme}>
