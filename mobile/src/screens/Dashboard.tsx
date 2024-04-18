@@ -343,11 +343,9 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <ScrollView style={tw`h-full`}>
+    <ScrollView style={tw`h-full`} nestedScrollEnabled>
       <VStack style={tw`p-4 w-full h-full rounded-xl`}>
-        <View
-          style={tw`border-b py-2`}
-        >
+        <View style={tw`border-b py-2`}>
           <View style={tw`px-2 flex flex-row items-center`}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Image
@@ -355,7 +353,10 @@ const Dashboard: React.FC = () => {
                 style={tw`w-20 h-20`}
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleCopy(currentAddress)} style={tw`flex-1`}>
+            <TouchableOpacity
+              onPress={() => handleCopy(currentAddress)}
+              style={tw`flex-1`}
+            >
               <Text
                 style={tw`p-2 flex-1 text-base bg-gray-800 rounded-md text-white`}
               >
@@ -475,46 +476,64 @@ const Dashboard: React.FC = () => {
             </Text>
           </View>
           {subTitle === "Token" && (
-            <ScrollView style={tw`relative shadow-md rounded-lg p-5`}>
-              {tokens.map((item, idx) => (
-                <View key={idx} style={tw`justify-between p-2`}>
-                  <Text style={tw`text-xl`}>{item}</Text>
-                  <TextInput
-                    placeholder="Address"
-                    style={tw`text-white p-2 my-2 mr-1 border rounded-lg w-full bg-transparent`}
-                  />
-                  <View style={tw`flex flex-row items-center justify-center`}>
-                    <TextInput
-                      placeholder="Amount"
-                      style={tw`w-1/2 text-white p-2 my-2 mr-1 border rounded-lg w-32 bg-transparent`}
-                      keyboardType="numeric"
-                    />
-                    <Button
-                      onPress={() => console.log("Send Token")}
-                      style={tw`w-1/2 py-3 px-5 bg-blue-800 rounded-lg text-white text-lg `}
-                    >
-                      Send
-                    </Button>
+            <View style={tw`relative shadow-md rounded-lg p-5`}>
+              <ScrollView horizontal={true} style={tw`flex flex-row`}>
+                {tokens.map((item, idx) => (
+                  <View key={idx} style={tw`p-2`}>
+                    <Text style={tw`text-xl`}>{item}</Text>
                   </View>
-                </View>
-              ))}
-            </ScrollView>
-          )}
-          {subTitle === "Activity" && (
-            <ScrollView style={tw`relative  shadow-md rounded-lg p-5`}>
-              {/* <FlatList
-          data={histories}
-          renderItem={({ item }) => (
-            <View style={tw`flex-row justify-between p-2 ${item.amount.startsWith('-') ? 'text-red-500' : 'text-green-500'}`}>
-              <Text onPress={() => console.log("Copy Txid:", item.txid)}>{item.txid}</Text>
-              <Text onPress={() => console.log("Copy Tick:", item.tick)}>{item.tick}</Text>
-              <Text onPress={() => console.log("Copy Address:", item.address)}>{item.address}</Text>
-              <Text onPress={() => console.log("Copy Amount:", item.amount)}>{item.amount}</Text>
+                ))}
+              </ScrollView>
+              <View style={tw`mt-5 flex-wrap flex-row`}>
+                <TextInput
+                  placeholder="Address"
+                  onChangeText={(text) => console.log("Address Set:", text)}
+                  style={tw`text-white p-2 my-2 mr-1 border rounded-lg w-full bg-transparent`}
+                />
+                <TextInput
+                  placeholder="Amount"
+                  onChangeText={(text) => console.log("Amount Set:", text)}
+                  style={tw`text-white p-2 my-2 mr-1 border rounded-lg w-32 bg-transparent`}
+                  keyboardType="numeric"
+                />
+                <Button
+                  onPress={handleTransfer}
+                  style={tw`my-2 py-2 px-5 bg-blue-800  rounded-lg text-white text-lg `}
+                >
+                  Send
+                </Button>
+              </View>
             </View>
           )}
-          keyExtractor={(item, index) => index.toString()}
-        /> */}
-            </ScrollView>
+          {subTitle === "Activity" && (
+            <View style={tw`relative  shadow-md rounded-lg p-5`}>
+              <FlatList nestedScrollEnabled 
+                data={histories}
+                renderItem={({ item }) => (
+                  <View
+                    style={tw`flex-row justify-between p-2 ${
+                      item[3].startsWith("-")
+                        ? "text-red-500"
+                        : "text-green-500"
+                    }`}
+                  >
+                    <Text onPress={() => console.log("Copy Txid:", item)}>
+                      {item[1]}
+                    </Text>
+                    <Text onPress={() => console.log("Copy Tick:", item)}>
+                      {item[0]}
+                    </Text>
+                    <Text onPress={() => console.log("Copy Address:", item)}>
+                      {item[2]}
+                    </Text>
+                    <Text onPress={() => console.log("Copy Amount:", item)}>
+                      {item[3]}
+                    </Text>
+                  </View>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </View>
           )}
         </View>
       </VStack>
