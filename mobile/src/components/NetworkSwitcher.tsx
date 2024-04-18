@@ -10,7 +10,7 @@ const NetworkSwitcher = () => {
       <Button
         style={tw`px-2 ${
           network === "mainnet" ? "bg-green-300" : ""
-        } ${switchingStatus ? "cursor-wait" : ""}`}
+        } ${switchingStatus ? "" : ""}`}
         onPress={() => switchNetwork("mainnet")}
         isDisabled={switchingStatus}
         _text={tw`text-white`}
@@ -20,7 +20,7 @@ const NetworkSwitcher = () => {
       <Button
         style={tw`px-2 ${
           network === "testnet" ? "bg-green-300" : ""
-        } ${switchingStatus ? "cursor-wait" : ""}`}
+        } ${switchingStatus ? "" : ""}`}
         onPress={() => switchNetwork("testnet")}
         isDisabled={switchingStatus}
         _text={tw`text-white`}

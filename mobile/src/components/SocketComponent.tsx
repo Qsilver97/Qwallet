@@ -7,7 +7,7 @@ export const SocketCom: React.FC = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     eventEmitter.on("S2C/live", (res) => {
-      console.log(res.data);
+      // console.log(res.data);
       if (res.data.command == "CurrentTickInfo") {
         dispatch(setTick(res.data.tick));
       } else if (res.data.command == "EntityInfo") {
