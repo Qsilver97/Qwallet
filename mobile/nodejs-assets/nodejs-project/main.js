@@ -1,5 +1,5 @@
 var rn_bridge = require("rn-bridge");
-const { login, create } = require("./controller");
+const { login, create, addAccout } = require("./controller");
 const wasmManager = require("./managers/wasmManager");
 const stateManager = require("./managers/stateManager");
 const path = require("path");
@@ -8,16 +8,19 @@ const fs = require("fs").promises;
 const createDirectoryIfNotExists = async (directoryPath) => {
   try {
     await fs.mkdir(directoryPath, { recursive: true });
-    console.log(directoryPath)
+    console.log(directoryPath);
   } catch (error) {
     console.log(`Error creating directory ${directoryPath}:${error}`);
   }
 };
 
 const init = async () => {
-  const keyDirectoryPath = path.join("/sdcard/Android/data/com.anonymous.qwallet/files", "keys");
+  const keyDirectoryPath = path.join(
+    "/sdcard/Android/data/com.anonymous.qwallet/files",
+    "keys"
+  );
   await createDirectoryIfNotExists(keyDirectoryPath);
-  wasmManager.init('/sdcard/Android/data/com.anonymous.qwallet/files');
+  wasmManager.init("/sdcard/Android/data/com.anonymous.qwallet/files");
   stateManager.init();
   // await wasmManager.ccall({command:`keysdir ${__dirname}`, flag: "keysdir"})
 };
@@ -29,9 +32,9 @@ rn_bridge.channel.on("message", async (msg) => {
     const message = JSON.parse(msg);
 
     if (message.action === "C2S/login") {
-      console.log(message.data)
+      console.log(message.data);
       const success = await login({ password: message.data?.password });
-      console.log(success)
+      console.log(success);
       if (typeof success != "string") {
         rn_bridge.channel.send(
           JSON.stringify({
@@ -59,6 +62,13 @@ rn_bridge.channel.on("message", async (msg) => {
           data: result,
         })
       );
+    } else if (message.action === "C2S/add-account") {
+      console.log(message.data);
+      const result = await addAccout({
+        password: message.data?.password,
+        index: message.data?.index,
+      });
+      console.log(result);
     }
   } catch (err) {
     rn_bridge.channel.send(

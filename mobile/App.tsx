@@ -7,6 +7,7 @@ import { store } from "./src/redux/store";
 import { channelInit, login } from "./src/api/api";
 import Toast from "react-native-toast-message";
 import { AuthProvider } from "./src/context/AuthContext";
+import { NetworkProvider } from "./src/context/NetworkContext";
 
 const config = {
   useSystemColorMode: true,
@@ -39,10 +40,12 @@ export default function App() {
   return (
     <Provider store={store}>
       <AuthProvider>
-        <NativeBaseProvider theme={theme}>
-          <RootNavigation />
-          <Toast />
-        </NativeBaseProvider>
+        <NetworkProvider defaultNetwork="mainnet">
+          <NativeBaseProvider theme={theme}>
+            <RootNavigation />
+            <Toast />
+          </NativeBaseProvider>
+        </NetworkProvider>
       </AuthProvider>
     </Provider>
   );

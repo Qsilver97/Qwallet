@@ -1,29 +1,33 @@
+import { Button, View } from "native-base";
 import { useNetwork } from "../context/NetworkContext";
+import tw from "tailwind-react-native-classnames";
 
 const NetworkSwitcher = () => {
   const { network, switchingStatus, switchNetwork } = useNetwork();
 
   return (
-    <div className="flex gap-2">
-      <button
-        className={`bg-slate-700 px-2 ${
-          network === "mainnet" ? "bg-green-300" : ""
+    <View style={tw`flex-row gap-2`}>
+      <Button
+        style={tw`px-2 ${
+          network === "mainnet" ? "bg-green-300" : "bg-slate-700"
         } ${switchingStatus ? "cursor-wait" : ""}`}
-        onClick={() => switchNetwork("mainnet")}
-        disabled={switchingStatus}
+        onPress={() => switchNetwork("mainnet")}
+        isDisabled={switchingStatus}
+        _text={tw`text-white`}
       >
         Mainnet
-      </button>
-      <button
-        className={`bg-slate-700 px-2 ${
-          network === "testnet" ? "bg-green-300" : ""
+      </Button>
+      <Button
+        style={tw`px-2 ${
+          network === "testnet" ? "bg-green-300" : "bg-slate-700"
         } ${switchingStatus ? "cursor-wait" : ""}`}
-        onClick={() => switchNetwork("testnet")}
-        disabled={switchingStatus}
+        onPress={() => switchNetwork("testnet")}
+        isDisabled={switchingStatus}
+        _text={tw`text-white`}
       >
         Testnet
-      </button>
-    </div>
+      </Button>
+    </View>
   );
 };
 

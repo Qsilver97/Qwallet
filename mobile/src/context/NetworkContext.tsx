@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { createContext, useContext, ReactNode, useState } from 'react';
-import { SERVER_URL } from '../utils/constants';
 import { useAuth } from './AuthContext';
 
 interface NetworkConfig {
@@ -48,20 +47,20 @@ export const NetworkProvider = ({ children, defaultNetwork }: { children: ReactN
     const switchNetwork = (network: NetworkType) => {
         console.log(network)
         setSwitchingStatus(true);
-        axios.post(
-            `${SERVER_URL}/api/switch-network`,
-            {
-                password: auth.user?.password,
-                socketUrl: networks[network].wssUrl
-            }
-        ).then((resp) => {
-            auth.login(resp.data);
-            setNetwork(network);
-        }).catch(() => {
+        // axios.post(
+        //     `${SERVER_URL}/api/switch-network`,
+        //     {
+        //         password: auth.user?.password,
+        //         socketUrl: networks[network].wssUrl
+        //     }
+        // ).then((resp) => {
+        //     auth.login(resp.data);
+        //     setNetwork(network);
+        // }).catch(() => {
             
-        }).finally(() => {
-            setSwitchingStatus(false);
-        })
+        // }).finally(() => {
+        //     setSwitchingStatus(false);
+        // })
     };
 
     const value = {
