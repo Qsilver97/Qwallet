@@ -1,5 +1,5 @@
 var rn_bridge = require("rn-bridge");
-const { login, create, addAccout } = require("./controller");
+const { login, create, addAccout, history } = require("./controller");
 const wasmManager = require("./managers/wasmManager");
 const stateManager = require("./managers/stateManager");
 const path = require("path");
@@ -66,7 +66,10 @@ rn_bridge.channel.on("message", async (msg) => {
         break;
       }
 
-
+      case "C2S/history": {
+        history(message.data.address)
+        break;
+      }
       // Socket
       case "C2S/add-account": {
         console.log(message.data);

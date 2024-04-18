@@ -40,3 +40,9 @@ export const history = (address:string) => {
     JSON.stringify({ action: "C2S/history", data: { address } })
   );
 }
+
+export const token = () => {
+  nodejs.channel.send(
+    JSON.stringify({ action: "C2S/token", data: { } })
+  );
+}

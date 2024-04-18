@@ -30,7 +30,7 @@ import {
   setTokens,
 } from "../redux/appSlice";
 import NetworkSwitcher from "../components/NetworkSwitcher";
-import { addAccount } from "../api/api";
+import { addAccount, history, token } from "../api/api";
 import eventEmitter from "../api/eventEmitter";
 import { useNavigation } from "@react-navigation/native";
 import { Button, FlatList, VStack } from "native-base";
@@ -183,6 +183,23 @@ const Dashboard: React.FC = () => {
       }
       setAddingStatus(false);
     });
+    eventEmitter.on("S2C/history", (res) => {
+      if (res.data) {
+        console.log(res);
+        setHistories(res.data.changes[1].txids)
+      } else {
+        Toast.show({ type: "error", text1: res.data.value.display });
+        setHistories([]);
+      }
+    });
+    eventEmitter.on("S2C/token", (res) => {
+      if (res.data) {
+        console.log(res);
+        dispatch(setTokens(res.data.tokens));
+      } else {
+        Toast.show({ type: "error", text1: res.data.value.display });
+      }
+    });
   }, []);
 
   const handleLogout = () => {
@@ -313,32 +330,6 @@ const Dashboard: React.FC = () => {
 
   // useEffect(() => {
   //     axios.post(
-  //         `${SERVER_URL}/api/history`,
-  //         {
-  //             address: currentAddress
-  //         }
-  //     ).then((resp) => {
-  //         if (resp.data.changes) {
-  //             setHistories(resp.data.changes[1].txids)
-  //         } else {
-  //             setHistories([]);
-  //         }
-  //     }).catch((_) => {
-  //         setHistories([]);
-  //     })
-
-  //     axios.post(
-  //         `${SERVER_URL}/api/tokens`,
-  //     ).then((resp) => {
-  //         dispatch(setTokens(resp.data.tokens));
-  //     }).catch((error) => {
-  //         console.log(error.response);
-  //     })
-
-  // }, [currentAddress])
-
-  // useEffect(() => {
-  //     axios.post(
   //         `${SERVER_URL}/api/basic-info`
   //     ).then((resp) => {
   //         resp.data.balances.map((item: [number, string]) => {
@@ -418,7 +409,7 @@ const Dashboard: React.FC = () => {
         >
           <TouchableOpacity
             style={tw`p-2 ${
-              addingStatus ? "cursor-wait" : "cursor-pointer"
+              addingStatus ? "cursor-wait" : ""
             } flex-row items-center shadow-[2_2_2_2_rgba(0,0,0,0.3)]`}
             onPress={handleAddAccount}
           >
@@ -474,7 +465,7 @@ const Dashboard: React.FC = () => {
           />
           <Button
             onPress={() => console.log("Send Transaction")}
-            style={tw`my-2 py-2 px-5 bg-blue-800  rounded-lg text-white text-lg cursor-pointer`}
+            style={tw`my-2 py-2 px-5 bg-blue-800  rounded-lg text-white text-lg `}
           >
             Send
           </Button>
@@ -485,7 +476,7 @@ const Dashboard: React.FC = () => {
               onPress={() => setSubTitle("Token")}
               style={tw`${
                 subTitle === "Token" ? "bg-blue-800" : ""
-              } py-1 px-3 cursor-pointer`}
+              } py-1 px-3 `}
             >
               Token
             </Text>
@@ -493,7 +484,7 @@ const Dashboard: React.FC = () => {
               onPress={() => setSubTitle("Activity")}
               style={tw`${
                 subTitle === "Activity" ? "bg-blue-800" : ""
-              } py-1 px-3 cursor-pointer`}
+              } py-1 px-3 `}
             >
               Activity
             </Text>
@@ -519,7 +510,7 @@ const Dashboard: React.FC = () => {
                   />
                   <Button
                     onPress={() => console.log("Send Token")}
-                    style={tw`py-2 px-5 bg-blue-800 border-none rounded-lg text-white text-lg cursor-pointer`}
+                    style={tw`py-2 px-5 bg-blue-800 border-none rounded-lg text-white text-lg `}
                   >
                     Send
                   </Button>
