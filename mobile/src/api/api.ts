@@ -33,8 +33,8 @@ export const addAccount = (
 };
 
 export const deleteAccount = (
-  password: string,
-  index: number,
+  password: string | undefined,
+  index: number | undefined,
   address: string
 ) => {
   nodejs.channel.send(

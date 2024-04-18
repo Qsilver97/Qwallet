@@ -33,6 +33,7 @@ import NetworkSwitcher from "../components/NetworkSwitcher";
 import {
   addAccount,
   basicInfo,
+  deleteAccount as deleteAccountF,
   getHistory,
   getToken,
   transfer,
@@ -235,7 +236,20 @@ const Dashboard: React.FC = () => {
         setSendingStatus("rejected");
       }
     });
+    eventEmitter.on("S2C/delete-account", (res) => {
+      if (res.data) {
+        if (user?.accountInfo.addresses.indexOf(deleteAccount) == 0) {
+          handleLogout();
+        }
+        // delete balances[deleteAccount];
+        toggleDeleteAccountModal();
+      } else {
+        Toast.show({ type: "error", text1: res });
+      }
+      setDeletingStatus(false);
+    });
   }, []);
+
   useEffect(() => {
     if (currentAddress != "") getHistory(currentAddress);
     getToken();
@@ -246,30 +260,16 @@ const Dashboard: React.FC = () => {
     navigation.navigate("Login");
   };
 
-  // const handleDeleteAccount = () => {
-  //     if (deletingStatus) return;
-  //     setDeletingStatus(true)
-  //     if (deleteAccount != "")
-  //         axios.post(
-  //             `${SERVER_URL}/api/delete-account`,
-  //             {
-  //                 password: user?.password,
-  //                 index: user?.accountInfo.addresses.indexOf(deleteAccount),
-  //                 address: deleteAccount,
-  //             }
-  //         ).then((resp) => {
-  //             if (user?.accountInfo.addresses.indexOf(deleteAccount) == 0) {
-  //                 handleLogout();
-  //             }
-  //             // delete balances[deleteAccount];
-  //             login(resp.data);
-  //         }).catch(() => {
-
-  //         }).finally(() => {
-  //             toggleDeleteAccountModal();
-  //             setDeletingStatus(false);
-  //         })
-  // }
+  const handleDeleteAccount = () => {
+    if (deletingStatus) return;
+    setDeletingStatus(true);
+    if (deleteAccount != "")
+      deleteAccountF(
+        user?.password,
+        user?.accountInfo.addresses.indexOf(deleteAccount),
+        deleteAccount
+      );
+  };
 
   const handleTransfer = () => {
     if (toAddress == "" || amount == "" || amount == "0") {
@@ -456,8 +456,8 @@ const Dashboard: React.FC = () => {
             Send
           </Button>
         </View>
-        <View style={tw`mt-10 `}>
-          <View style={tw`flex-row  mb-5`}>
+        <View style={tw`mt-5 pt-3 border-t`}>
+          <View style={tw`flex-row  mb-2`}>
             <Text
               onPress={() => setSubTitle("Token")}
               style={tw`${
@@ -476,7 +476,7 @@ const Dashboard: React.FC = () => {
             </Text>
           </View>
           {subTitle === "Token" && (
-            <View style={tw`relative shadow-md rounded-lg p-5`}>
+            <View style={tw`relative shadow-md rounded-lg p-4`}>
               <ScrollView horizontal={true} style={tw`flex flex-row`}>
                 {tokens.map((item, idx) => (
                   <View key={idx} style={tw`p-2`}>
@@ -484,7 +484,7 @@ const Dashboard: React.FC = () => {
                   </View>
                 ))}
               </ScrollView>
-              <View style={tw`mt-5 flex-wrap flex-row`}>
+              <View style={tw`mt-2 flex-wrap flex-row`}>
                 <TextInput
                   placeholder="Address"
                   onChangeText={(text) => console.log("Address Set:", text)}
@@ -507,7 +507,8 @@ const Dashboard: React.FC = () => {
           )}
           {subTitle === "Activity" && (
             <View style={tw`relative  shadow-md rounded-lg p-5`}>
-              <FlatList nestedScrollEnabled 
+              <FlatList
+                nestedScrollEnabled
                 data={histories}
                 renderItem={({ item }) => (
                   <View
