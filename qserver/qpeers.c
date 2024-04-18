@@ -258,15 +258,15 @@ void *peerthread(void *_ipaddr)
             {
                 if ( ((LATEST_TICK + i) % (Numpeers/2 + 1)) == (peerid/2) )
                 {
-                    printf("%s %s tick.%d\n",ipaddr,ASSETS[i].assetname,LATEST_TICK);
+                    printf("%s %s tick.%d\n",ipaddr,ASSETS[i].name,LATEST_TICK);
                     if ( ASKvu[peerid][i] == 0 || LATEST_TICK > ASKvutick[peerid][i]+QUOTEVU_TIMEOUT )
                     {
-                        sock = qxGetAssetAskOrder(&ASKvu[peerid][i],ipaddr,sock,ASSETS[i].assetname,0);
+                        sock = qxGetAssetAskOrder(&ASKvu[peerid][i],ipaddr,sock,ASSETS[i].name,0);
                         ASKvutick[peerid][i] = LATEST_TICK;
                     }
                     if ( BIDvu[peerid][i] == 0 || LATEST_TICK > BIDvutick[peerid][i]+QUOTEVU_TIMEOUT )
                     {
-                        sock = qxGetAssetBidOrder(&BIDvu[peerid][i],ipaddr,sock,ASSETS[i].assetname,0);
+                        sock = qxGetAssetBidOrder(&BIDvu[peerid][i],ipaddr,sock,ASSETS[i].name,0);
                         BIDvutick[peerid][i] = LATEST_TICK;
                     }
                 }
