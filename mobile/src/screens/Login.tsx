@@ -68,6 +68,7 @@ const Login: React.FC = () => {
         auth.login(userInfo);
         dispatch(resetState());
         dispatch(setIsAuthenticated(true));
+        navigation.navigate("Dashboard")
       } else {
         setPasswordStatus(true);
         dispatch(setIsAuthenticated(false));

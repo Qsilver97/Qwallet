@@ -33,6 +33,7 @@ import NetworkSwitcher from "../components/NetworkSwitcher";
 import { addAccount } from "../api/api";
 import eventEmitter from "../api/eventEmitter";
 import { useNavigation } from "@react-navigation/native";
+import { Button, FlatList, VStack } from "native-base";
 
 type TransactionItem = [number, string, string, string];
 type RichList = {
@@ -180,7 +181,7 @@ const Dashboard: React.FC = () => {
       } else {
         Toast.show({ type: "error", text1: res.data.value.display });
       }
-      setAddingStatus(false)
+      setAddingStatus(false);
     });
   }, []);
 
@@ -363,20 +364,26 @@ const Dashboard: React.FC = () => {
 
   return (
     <ScrollView style={tw`h-full`}>
-      <View
-        style={tw`mx-auto w-full max-w-7xl bg-[rgba(3,35,61,0.8)] h-full rounded-xl shadow-[0_15px_25px_rgba(0,0,0,0.5)] p-5`}
-      >
+      <VStack style={tw`p-4 w-full h-full rounded-xl`}>
         <View
-          style={tw`flex flex-row justify-between items-center border-b border-white`}
+          style={tw`flex flex-col justify-between items-center border-b border-white`}
         >
-          <TouchableOpacity onPress={() => navigate.goBack()}>
-            <Image source={require("../../assets/icon.png")} style={tw`w-12 h-12`} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleCopy(currentAddress)}>
-            <Text style={tw`text-base sm:text-lg bg-gray-700 p-1 rounded-md`}>
-              {currentAddress}
-            </Text>
-          </TouchableOpacity>
+          <View style={tw`flex flex-row items-center`}>
+            <TouchableOpacity onPress={() => navigate.goBack()}>
+              <Image
+                source={require("../../assets/icon.png")}
+                style={tw`w-12 h-12`}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleCopy(currentAddress)}>
+              <Text
+                style={tw`p-1 flex-1 text-base bg-gray-800 rounded-md text-white`}
+              >
+                {displayAddress}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           <View style={tw`flex flex-row items-center`}>
             <NetworkSwitcher />
             <TouchableOpacity
@@ -394,6 +401,7 @@ const Dashboard: React.FC = () => {
               (acc, currentValue) => acc + Number(currentValue),
               0
             )}
+            {" | "}
             <Text style={tw`text-lg`}>
               $
               {balances.reduce(
@@ -404,30 +412,155 @@ const Dashboard: React.FC = () => {
           </Text>
           <Text style={tw`text-2xl`}>Tick: {tick}</Text>
         </View>
-        <View style={tw`flex flex-row gap-5`}>
-          {allAddresses.map((item, idx) => (
-            <TouchableOpacity key={idx} style={tw`p-2`}>
-              <Text>{`${item.slice(0, 5)}...${item.slice(-5)}`}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        <View style={tw`flex flex-wrap`}>
+
+        <ScrollView
+          style={tw`flex-row gap-5 w-full h-full overflow-auto overflow-y-hidden`}
+        >
+          <TouchableOpacity
+            style={tw`p-2 ${
+              addingStatus ? "cursor-wait" : "cursor-pointer"
+            } flex-row items-center shadow-[2_2_2_2_rgba(0,0,0,0.3)]`}
+            onPress={handleAddAccount}
+          >
+            <FontAwesomeIcon icon={faPlus} style={tw`p-3 text-6`} />
+          </TouchableOpacity>
+          {allAddresses.map((item, idx) => {
+            if (item !== "")
+              return (
+                <TouchableOpacity
+                  key={`item${idx}`}
+                  style={tw`p-2 ${
+                    currentAddress === item
+                      ? "shadow-[2_2_2_2_rgba(0,0,0,0.6)] bg-[#17517a]"
+                      : "shadow-[2_2_2_2_rgba(0,0,0,0.3)]"
+                  } flex-col items-center`}
+                  onPress={() => handleSelectAccount(item)}
+                >
+                  <Text>{`${item.slice(0, 5)}...${item.slice(-5)}`}</Text>
+                  <Text>{+balances[idx] | 0}</Text>
+                  <View
+                    style={tw`flex-row justify-between w-full gap-1 text-xs`}
+                  >
+                    <Text style={tw`bg-green-600 px-1`}>
+                      {richlist["QU"]?.find((jtem) => jtem[1] === item)?.[0] ??
+                        "no rank"}
+                    </Text>
+                    <Text>
+                      {balances[idx] &&
+                        `$${
+                          Math.round(
+                            parseFloat(balances[idx]) *
+                              parseFloat(marketcap.price) *
+                              100
+                          ) / 100
+                        }`}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+          })}
+        </ScrollView>
+        <View style={tw`mt-5 flex-wrap flex-row`}>
           <TextInput
-            style={tw`text-white p-2 border border-blue-800 rounded-md w-full`}
             placeholder="Address"
+            onChangeText={(text) => console.log("Address Set:", text)}
+            style={tw`text-white p-2 my-2 mr-1 rounded-lg max-w-[720px] w-full bg-transparent`}
           />
           <TextInput
-            style={tw`text-white p-2 border border-blue-800 rounded-md w-32`}
             placeholder="Amount"
+            onChangeText={(text) => console.log("Amount Set:", text)}
+            style={tw`text-white p-2 my-2 mr-1 rounded-lg w-30 bg-transparent`}
             keyboardType="numeric"
           />
-          <TouchableOpacity
-            style={tw`bg-blue-800 px-5 py-2 rounded-md text-white text-base`}
+          <Button
+            onPress={() => console.log("Send Transaction")}
+            style={tw`my-2 py-2 px-5 bg-blue-800  rounded-lg text-white text-lg cursor-pointer`}
           >
-            <Text>Send</Text>
-          </TouchableOpacity>
+            Send
+          </Button>
         </View>
-      </View>
+        <View style={tw`mt-10 max-h-[500px]`}>
+          <View style={tw`flex-row gap-5 mb-5`}>
+            <Text
+              onPress={() => setSubTitle("Token")}
+              style={tw`${
+                subTitle === "Token" ? "bg-blue-800" : ""
+              } py-1 px-3 cursor-pointer`}
+            >
+              Token
+            </Text>
+            <Text
+              onPress={() => setSubTitle("Activity")}
+              style={tw`${
+                subTitle === "Activity" ? "bg-blue-800" : ""
+              } py-1 px-3 cursor-pointer`}
+            >
+              Activity
+            </Text>
+          </View>
+          {subTitle === "Token" && (
+            <ScrollView
+              style={tw`relative overflow-auto shadow-lg rounded-lg p-5`}
+            >
+              {tokens.map((item, idx) => (
+                <View
+                  key={idx}
+                  style={tw`flex-row justify-between items-center p-2`}
+                >
+                  <Text>{item}</Text>
+                  <TextInput
+                    placeholder="Address"
+                    style={tw`text-white p-2 my-2 mr-1 border border-blue-800 rounded-lg max-w-[720px] w-full bg-transparent`}
+                  />
+                  <TextInput
+                    placeholder="Amount"
+                    style={tw`text-white p-2 my-2 mr-1 border border-blue-800 rounded-lg w-30 bg-transparent`}
+                    keyboardType="numeric"
+                  />
+                  <Button
+                    onPress={() => console.log("Send Token")}
+                    style={tw`py-2 px-5 bg-blue-800 border-none rounded-lg text-white text-lg cursor-pointer`}
+                  >
+                    Send
+                  </Button>
+                </View>
+              ))}
+            </ScrollView>
+          )}
+          {subTitle === "Activity" && (
+            <ScrollView
+              style={tw`relative overflow-auto shadow-lg rounded-lg p-5`}
+            >
+              {/* <FlatList
+          data={histories}
+          renderItem={({ item }) => (
+            <View style={tw`flex-row justify-between p-2 ${item.amount.startsWith('-') ? 'text-red-500' : 'text-green-500'}`}>
+              <Text onPress={() => console.log("Copy Txid:", item.txid)}>{item.txid}</Text>
+              <Text onPress={() => console.log("Copy Tick:", item.tick)}>{item.tick}</Text>
+              <Text onPress={() => console.log("Copy Address:", item.address)}>{item.address}</Text>
+              <Text onPress={() => console.log("Copy Amount:", item.amount)}>{item.amount}</Text>
+            </View>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        /> */}
+            </ScrollView>
+          )}
+        </View>
+        <View style={tw`mt-5 flex-wrap flex-row`}>
+          <TextInput
+            style={tw`text-white p-2 my-2 mr-1 border border-[#17517a] rounded-lg max-w-[720] w-full bg-transparent`}
+            placeholder="Address"
+            onChangeText={setToAddress}
+          />
+          <TextInput
+            style={tw`text-white p-2 my-2 mr-1 border border-[#17517a] rounded-lg w-[120] bg-transparent`}
+            placeholder="Amount"
+            onChangeText={setAmount}
+            keyboardType="numeric"
+          />
+          <Button onPress={() => {}}>Send</Button>
+        </View>
+      </VStack>
     </ScrollView>
   );
 };
