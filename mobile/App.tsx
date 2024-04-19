@@ -7,6 +7,9 @@ import { store } from "./src/redux/store";
 import { channelInit, login } from "./src/api/api";
 import Toast from "react-native-toast-message";
 import { AuthProvider } from "./src/context/AuthContext";
+import { NetworkProvider } from "./src/context/NetworkContext";
+import { SocketCom } from "./src/components/SocketComponent";
+import RNFS from 'react-native-fs';
 
 const config = {
   useSystemColorMode: true,
@@ -34,15 +37,18 @@ const theme = extendTheme({ ...config });
 export default function App() {
   const [text, setText] = useState("");
   useEffect(() => {
-    channelInit();
+    channelInit(RNFS.DocumentDirectoryPath);
   }, []);
   return (
     <Provider store={store}>
+      <SocketCom />
       <AuthProvider>
-        <NativeBaseProvider theme={theme}>
-          <RootNavigation />
-          <Toast />
-        </NativeBaseProvider>
+        <NetworkProvider defaultNetwork="mainnet">
+          <NativeBaseProvider theme={theme}>
+            <RootNavigation />
+            <Toast />
+          </NativeBaseProvider>
+        </NetworkProvider>
       </AuthProvider>
     </Provider>
   );

@@ -47,16 +47,20 @@ const Create: React.FC = () => {
 
   useEffect(() => {
     eventEmitter.on("S2C/create", (res) => {
-      if (res.data?.value?.display) {
-        Toast.show({ type: "success", text1: "Login Success!" });
-        const seeds = res.data.value.display.split(" ");
-        if (seeds.length == 1) {
-          dispatch(setSeeds(seeds[0]));
+      if (res.data?.value) {
+        if (res.data.value.result >= 0) {
+          Toast.show({ type: "success", text1: "Login Success!" });
+          const seeds = res.data.value.display.split(" ");
+          if (seeds.length == 1) {
+            dispatch(setSeeds(seeds[0]));
+          } else {
+            dispatch(setSeeds(seeds));
+          }
+          navigation.navigate("Backup");
+          setCreatingStatus(false);
         } else {
-          dispatch(setSeeds(seeds));
+          Toast.show({ type: "error", text1: res.data.value.display });
         }
-        navigation.navigate("Backup");
-        setCreatingStatus(false);
       } else {
         setPasswordStatus(true);
         Toast.show({ type: "error", text1: res.error });
