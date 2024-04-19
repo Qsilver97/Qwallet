@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Input, Button, Text, useToast, View, Radio, VStack } from "native-base";
+import {
+  Input,
+  Button,
+  Text,
+  Image,
+  View,
+  Radio,
+  VStack,
+  ScrollView,
+} from "native-base";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"; // Adjusted for React Native
-import { MaterialIcons } from "@expo/vector-icons";
 import { RootState } from "../redux/store";
 import { useNavigation } from "@react-navigation/native";
 import tw from "tailwind-react-native-classnames";
 import eventEmitter from "../api/eventEmitter";
 import { setPassword, setSeedType } from "../redux/appSlice";
 import { passwordAvail, restore } from "../api/api";
-import { Image } from "react-native";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import PageWrapper from "../components/PageWrapper";
 
 const Restore: React.FC = () => {
   // Adjustments for React Native
@@ -102,147 +110,146 @@ const Restore: React.FC = () => {
   }, []);
 
   return (
-    <>
-      {step === "1" ? (
-        <View
-          style={tw`bg-light dark:bg-dark text-light dark:text-dark max-w-[500px] mx-auto p-[40px] rounded-[10px] shadow-[0_15px_25px_rgba(0,0,0,0.5)] text-center`}
-        >
-          <Image
-            source={require("../../assets/icon.png")}
-            style={{ width: 100, height: 100, alignSelf: "center" }}
-          />
-          <Text
-            style={tw`my-[15px] mx-auto text-light dark:text-dark text-[2rem]`}
-          >
-            Restore
-          </Text>
-          <Text style={tw`mb-[20px] leading-[25px] text-[1rem] font-normal`}>
-            {passwordStep
-              ? "Secure your account with a new password."
-              : "There are two ways to restore your account."}
-          </Text>
-          <View style={tw`relative`}>
-            {passwordStep ? (
-              <>
-                <View style={tw`relative`}>
-                  <Input
-                    // type={passwordInputType}
-                    onChangeText={handlePassword}
-                    placeholder="Password"
-                  />
-                  {!passwordStatus && (
-                    <Text style={tw`w-full text-left text-red-600`}>
-                      Password already exist.
-                    </Text>
-                  )}
-                  <FontAwesomeIcon
-                    icon={passwordInputType === "password" ? faEye : faEyeSlash}
-                    style={tw`absolute top-[15px] right-3 text-gray-500 cursor-pointer`}
-                    // onPress={() => handleEye()}
-                  />
-                  <Input
-                    // type={passwordInputType}
-                    onChangeText={handleConfirmPassword}
-                    placeholder="Confirm password"
-                  />
-                  {password !== confirmPassword && (
-                    <Text style={tw`w-full text-left text-red-600`}>
-                      Password does not match.
-                    </Text>
-                  )}
-                </View>
-                <View style={tw`flex gap-2`}>
-                  <Button onPress={() => navigation.goBack()}>Back</Button>
-                  <Button
-                    onPress={() => setPasswordStep(!passwordStep)}
-                    isDisabled={
-                      !passwordStatus ||
-                      password !== confirmPassword ||
-                      password === ""
-                    }
-                  >
-                    Next
-                  </Button>
-                </View>
-              </>
-            ) : (
-              <>
-                <View style={tw`flex justify-evenly mb-3`}>
-                  <Radio.Group
-                    name="options"
-                    accessibilityLabel="options"
-                    value={seedType}
-                    onChange={handleSeedType}
-                  >
-                    <VStack
-                      space={4}
-                      direction="row"
-                      alignItems="center"
-                      justifyContent="center"
+    <ScrollView contentContainerStyle={{ padding: 4 }}>
+      <VStack
+        space={5}
+        w="90%"
+        maxW="300px"
+        style={tw`items-center mx-auto pt-16`}
+      >
+        <Image source={require("../../assets/icon.png")} alt="Logo" size="xl" />
+        {step === "1" ? (
+          <View style={tw`items-center mx-auto pt-16`}>
+            <Text style={tw`my-4 mx-auto text-2xl`}>Restore</Text>
+            <Text style={tw`mb-4 font-normal`}>
+              {passwordStep
+                ? "Secure your account with a new password."
+                : "There are two ways to restore your account."}
+            </Text>
+            <View style={tw`relative`}>
+              {passwordStep ? (
+                <>
+                  <View style={tw`relative`}>
+                    <Input
+                      // type={passwordInputType}
+                      onChangeText={handlePassword}
+                      placeholder="Password"
+                    />
+                    {!passwordStatus && (
+                      <Text style={tw`w-full text-left text-red-600`}>
+                        Password already exist.
+                      </Text>
+                    )}
+                    <FontAwesomeIcon
+                      icon={
+                        passwordInputType === "password" ? faEye : faEyeSlash
+                      }
+                      style={tw`absolute top-4 right-3 text-gray-500`}
+                      // onPress={() => handleEye()}
+                    />
+                    <Input
+                      // type={passwordInputType}
+                      onChangeText={handleConfirmPassword}
+                      placeholder="Confirm password"
+                    />
+                    {password !== confirmPassword && (
+                      <Text style={tw`w-full text-left text-red-600`}>
+                        Password does not match.
+                      </Text>
+                    )}
+                  </View>
+                  <View style={tw`flex justify-center`}>
+                    <Button.Group space={2} mt="4" w="80%" style={tw`mx-auto`}>
+                      <Button onPress={() => navigation.goBack()} w="50%">
+                        Back
+                      </Button>
+                      <Button
+                        onPress={() => setPasswordStep(!passwordStep)}
+                        isDisabled={
+                          !passwordStatus ||
+                          password !== confirmPassword ||
+                          password === ""
+                        }
+                        w="1/2"
+                      >
+                        Next
+                      </Button>
+                    </Button.Group>
+                  </View>
+                </>
+              ) : (
+                <>
+                  <View style={tw`flex justify-evenly mb-3`}>
+                    <Radio.Group
+                      name="options"
+                      accessibilityLabel="options"
+                      value={seedType}
+                      onChange={handleSeedType}
                     >
-                      <View>
-                        <Radio value="24words" my={1}>
-                          24 Words
-                        </Radio>
-                        <Text>24 Words</Text>
-                      </View>
-                      <View>
-                        <Radio value="55chars" my={1}>
-                          55 Chars
-                        </Radio>
-                        <Text>55 Chars</Text>
-                      </View>
-                    </VStack>
-                  </Radio.Group>
-                </View>
-                <View style={tw`flex gap-2`}>
-                  <Button onPress={() => setPasswordStep(!passwordStep)}>
-                    Back
-                  </Button>
-                  <Button onPress={() => setStep("2")}>Next</Button>
-                </View>
-              </>
-            )}
-          </View>
-        </View>
-      ) : (
-        <View
-          style={tw`bg-light dark:bg-dark text-light dark:text-dark max-w-[500px] mx-auto p-[40px] rounded-[10px] shadow-[0_15px_25px_rgba(0,0,0,0.5)] text-center`}
-        >
-          <Image
-            source={require("../../assets/icon.png")}
-            style={{ width: 100, height: 100, alignSelf: "center" }}
-          />
-          <Text
-            style={tw`my-[15px] mx-auto text-light dark:text-dark text-[2rem]`}
-          >
-            Confirm Seeds
-          </Text>
-          <Text style={tw`mb-[20px] leading-[25px] text-[1rem] font-normal`}>
-            Please enter the backup seeds you have saved.
-          </Text>
-          <View style={tw`relative`}>
-            {seedType === "55chars" && (
-              <Input
-                type="text"
-                onChangeText={handleRestoreSeeds}
-                placeholder="Input seeds you've just created."
-              />
-            )}
-            {seedType === "24words" && (
-              // Here you might need a more advanced setup for the grid, possibly custom styling or a FlatList
-              <Text>Seed input grid goes here</Text>
-            )}
-            <View style={tw`flex gap-2`}>
-              <Button onPress={() => setStep("1")}>Back</Button>
-              <Button onPress={handleNext} isDisabled={recovering}>
-                Next
-              </Button>
+                      <VStack
+                        space={4}
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <View>
+                          <Radio value="24words" my={1}>
+                            24 Words
+                          </Radio>
+                          <Text>24 Words</Text>
+                        </View>
+                        <View>
+                          <Radio value="55chars" my={1}>
+                            55 Chars
+                          </Radio>
+                          <Text>55 Chars</Text>
+                        </View>
+                      </VStack>
+                    </Radio.Group>
+                  </View>
+                  <View style={tw`flex`}>
+                    <Button onPress={() => setPasswordStep(!passwordStep)}>
+                      Back
+                    </Button>
+                    <Button onPress={() => setStep("2")}>Next</Button>
+                  </View>
+                </>
+              )}
             </View>
           </View>
-        </View>
-      )}
-    </>
+        ) : (
+          <View style={tw` mx-auto text-center`}>
+            <Image
+              source={require("../../assets/icon.png")}
+              style={{ width: 100, height: 100, alignSelf: "center" }}
+            />
+            <Text style={tw`my-4 mx-auto text-base`}>Confirm Seeds</Text>
+            <Text style={tw`mb-4text-base font-normal`}>
+              Please enter the backup seeds you have saved.
+            </Text>
+            <View style={tw`relative`}>
+              {seedType === "55chars" && (
+                <Input
+                  type="text"
+                  onChangeText={handleRestoreSeeds}
+                  placeholder="Input seeds you've just created."
+                />
+              )}
+              {seedType === "24words" && (
+                // Here you might need a more advanced setup for the grid, possibly custom styling or a FlatList
+                <Text>Seed input grid goes here</Text>
+              )}
+              <View style={tw`flex`}>
+                <Button onPress={() => setStep("1")}>Back</Button>
+                <Button onPress={handleNext} isDisabled={recovering}>
+                  Next
+                </Button>
+              </View>
+            </View>
+          </View>
+        )}
+      </VStack>
+    </ScrollView>
   );
 };
 
