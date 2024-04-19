@@ -1,8 +1,11 @@
 import nodejs from "nodejs-mobile-react-native";
 import eventEmitter from "./eventEmitter";
 
-export const channelInit = () => {
+export const channelInit = (path:string) => {
   nodejs.start("main.js");
+  nodejs.channel.send(
+    JSON.stringify({ action: "C2S/INIT", data: { path } })
+  );
   nodejs.channel.addListener("message", (msg) => {
     try {
       const res = JSON.parse(msg);

@@ -27,22 +27,21 @@ const createDirectoryIfNotExists = async (directoryPath) => {
   }
 };
 
-const init = async () => {
-  const keyDirectoryPath = path.join(
-    "/sdcard/Android/data/com.anonymous.qwallet/files",
-    "keys"
-  );
+const init = async (keypath) => {
+  const keyDirectoryPath = path.join(keypath, "keys");
   await createDirectoryIfNotExists(keyDirectoryPath);
-  wasmManager.init("/sdcard/Android/data/com.anonymous.qwallet/files");
+  wasmManager.init(keypath);
   stateManager.init();
 };
-
-init();
 
 rn_bridge.channel.on("message", async (msg) => {
   try {
     const message = JSON.parse(msg);
     switch (message.action) {
+      case "C2S/INIT": {
+        init(message.data.path);
+        break;
+      }
       case "C2S/login": {
         console.log(message.data);
         const success = await login({ password: message.data?.password });
@@ -116,11 +115,11 @@ rn_bridge.channel.on("message", async (msg) => {
         break;
       }
       case "C2S/tokens": {
-        tokens()
+        tokens();
         break;
       }
       case "C2S/basic-info": {
-        basicInfo()
+        basicInfo();
         break;
       }
       // Socket
