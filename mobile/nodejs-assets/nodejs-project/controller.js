@@ -331,7 +331,7 @@ exports.restoreAccount = async (password, seeds, seedType) => {
   if (command == null) {
     rn_bridge.channel.send(
       JSON.stringify({
-        action: "S2C/restore-account",
+        action: "S2C/restore",
         data: "error",
       })
     );
@@ -340,7 +340,7 @@ exports.restoreAccount = async (password, seeds, seedType) => {
   const recoverResult = await wasmManager.ccall({ command, flag: "recover" });
   rn_bridge.channel.send(
     JSON.stringify({
-      action: "S2C/restore-account",
+      action: "S2C/restore",
       data: recoverResult,
     })
   );
