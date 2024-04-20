@@ -1,27 +1,35 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-    mode: 'jit',
-    purge: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
-    darkMode: 'class', // or 'media' or 'class'
-    content: [],
-    theme: {
-        extend: {
-            colors: {
-                light: '#e0e0e0', // Light mode background
-                dark: '#1A202C', // Dark mode background
-            },
-            backgroundColor: {
-                light: 'rgba(230,230,230,0.8)', // Light mode background
-                dark: 'rgba(3,35,61,0.8)', // Dark mode background
-            },
-            textColor: {
-                light: 'rgba(3,35,61)', // Light mode text
-                dark: '#FFFFFF', // Dark mode text
-            },
-        },
+  mode: 'jit',
+  purge: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
+  darkMode: 'class', // or 'media' or 'class'
+  content: [],
+  theme: {
+    extend: {
+      colors: {
+        dark: '#1C1C1C',
+        darkGunmetal: '#192B3B',
+        babyBlue: '#B4CCF9',
+        hawakesBlue: '#D2E0FC',
+        moonstoneBlue: '#879FCB',
+        crystalBlue: '#59B2F6',
+        jeansBlue: '#8BCDFF',
+        celestialBlue: '#2C91DE',
+        'dark-input': '#16161E',
+        gray: '#898CA9',
+        'dark-gray': {
+          400: "#707070",
+          500: '#878787'},
+        'dark-blue': '#13098B'
+      },
     },
-    variants: {
-        extend: {},
-    },
-    plugins: [],
+    fontFamily: {
+        'Montserrat': ['Montserrat', 'sans-serif'],
+        'Inter': ['Inter', 'sans-serif']
+    }
+  },
+  variants: {
+    extend: {},
+  },
+  plugins: [],
 }
