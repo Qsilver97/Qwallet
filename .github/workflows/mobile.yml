@@ -1,12 +1,14 @@
 name: Build Android and iOS mobile app
 
 on:
-  push:
-    branches: 
-      - staging
+    pull_request:
+        types: [closed]
+        branches:
+        - staging
 
 jobs:
   react-native-android-build-apk:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v3
@@ -46,5 +48,13 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: app-release.apk
+          name: Android-APKs
           path: mobile/android/app/build/outputs/apk/release/*.apk
+      - name: Upload APKs to Server
+        env:
+            TOKEN: ${{ secrets.TOKEN }}
+            UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
+        run: |
+            for apk in mobile/android/app/build/outputs/apk/release/*.apk; do
+                curl -F "file=@$apk" $UPLOAD_URL?token=$TOKEN
+            done
