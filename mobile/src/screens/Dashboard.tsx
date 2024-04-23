@@ -319,10 +319,15 @@ const Dashboard: React.FC = () => {
             {" | "}
             <Text style={tw`text-lg`}>
               $
-              {balances.reduce(
-                (acc, currentValue) => acc + Number(currentValue),
-                0
-              ) * parseFloat(marketcap.price)}
+              {Math.floor(
+                balances.reduce(
+                  (acc, currentValue) => acc + Number(currentValue),
+                  0
+                ) *
+                  parseFloat(marketcap.price) *
+                  1000
+              ) / 1000}
+              {/* Only extract 3 float digit */}
             </Text>
           </Text>
           <Text style={tw`text-2xl`}>Tick: {tick}</Text>
@@ -626,18 +631,18 @@ const Dashboard: React.FC = () => {
                     />
                   ) : (
                     <>
-                      <HStack space={2} alignItems="center">
+                      <VStack space={2} alignItems="left">
                         <Text style={tw`text-indigo-500 font-semibold`}>
                           Expected Tick:
                         </Text>
                         <Text>{expectedTick}</Text>
-                      </HStack>
-                      <HStack space={2} alignItems="center">
+                      </VStack>
+                      <VStack space={2} alignItems="left">
                         <Text style={tw`text-indigo-500 font-semibold`}>
                           Status:
                         </Text>
                         <Text>{sendingResult}</Text>
-                      </HStack>
+                      </VStack>
                     </>
                   )}
                 </VStack>
