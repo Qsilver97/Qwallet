@@ -460,7 +460,7 @@ struct EntityOrder
 
 struct issuerpub
 {
-    const char *assetname,*addr;
+    const char *name,*addr;
     uint8_t pubkey[32];
     struct Orders_Output bids[256],asks[256];
 };
