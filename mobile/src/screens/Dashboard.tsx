@@ -129,7 +129,7 @@ const Dashboard: React.FC = () => {
     });
     eventEmitter.on("S2C/basic-info", (res) => {
       if (res.data) {
-        // console.log("Basic Info: "res);
+
         res.data.balances.map((item: [number, string]) => {
           dispatch(setBalances({ index: item[0], balance: item[1] }));
         });
@@ -166,7 +166,7 @@ const Dashboard: React.FC = () => {
         }
         login(res.data);
         // delete balances[deleteAccount];
-        setIsDeleteAccountModalOpen(false)
+        setIsDeleteAccountModalOpen(false);
       } else {
         Toast.show({ type: "error", text1: res });
       }
@@ -271,7 +271,9 @@ const Dashboard: React.FC = () => {
       <VStack style={tw`p-4 w-full h-full rounded-xl`}>
         <View style={tw`border-b py-2`}>
           <View style={tw`px-2 flex flex-row items-center`}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity
+              onPress={() => handleClickAccount(currentAddress)}
+            >
               <Image
                 source={require("../../assets/icon.png")}
                 style={tw`w-20 h-20`}
