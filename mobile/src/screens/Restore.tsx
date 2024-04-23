@@ -19,6 +19,7 @@ import { setPassword, setSeedType } from "../redux/appSlice";
 import { passwordAvail, restore } from "../api/api";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import PageWrapper from "../components/PageWrapper";
+import { TextInput } from "react-native";
 
 const Restore: React.FC = () => {
   // Adjustments for React Native
@@ -119,7 +120,7 @@ const Restore: React.FC = () => {
       >
         <Image source={require("../../assets/icon.png")} alt="Logo" size="xl" />
         {step === "1" ? (
-          <View style={tw`items-center mx-auto pt-16`}>
+          <View style={tw`items-center mx-auto`}>
             <Text style={tw`my-4 mx-auto text-2xl`}>Restore</Text>
             <Text style={tw`mb-4 font-normal`}>
               {passwordStep
@@ -196,35 +197,40 @@ const Restore: React.FC = () => {
                           <Radio value="24words" my={1}>
                             24 Words
                           </Radio>
-                          <Text>24 Words</Text>
                         </View>
                         <View>
                           <Radio value="55chars" my={1}>
                             55 Chars
                           </Radio>
-                          <Text>55 Chars</Text>
                         </View>
                       </VStack>
                     </Radio.Group>
                   </View>
-                  <View style={tw`flex`}>
-                    <Button onPress={() => setPasswordStep(!passwordStep)}>
+                  <Button.Group space={2} mt="4" w="80%">
+                    <Button
+                      onPress={() => setPasswordStep(!passwordStep)}
+                      w="50%"
+                    >
                       Back
                     </Button>
-                    <Button onPress={() => setStep("2")}>Next</Button>
-                  </View>
+                    <Button
+                      onPress={() => setStep("2")}
+                      w="50%"
+                      isDisabled={
+                        !passwordStatus || password !== confirmPassword
+                      }
+                    >
+                      Next
+                    </Button>
+                  </Button.Group>
                 </>
               )}
             </View>
           </View>
         ) : (
           <View style={tw` mx-auto text-center`}>
-            <Image
-              source={require("../../assets/icon.png")}
-              style={{ width: 100, height: 100, alignSelf: "center" }}
-            />
             <Text style={tw`my-4 mx-auto text-base`}>Confirm Seeds</Text>
-            <Text style={tw`mb-4text-base font-normal`}>
+            <Text style={tw`mb-4 text-base font-normal`}>
               Please enter the backup seeds you have saved.
             </Text>
             <View style={tw`relative`}>
@@ -236,15 +242,36 @@ const Restore: React.FC = () => {
                 />
               )}
               {seedType === "24words" && (
-                // Here you might need a more advanced setup for the grid, possibly custom styling or a FlatList
-                <Text>Seed input grid goes here</Text>
+                <View style={tw`p-2.5 text-center`}>
+                  {Array.from({ length: 24 }).map((_, idx) => (
+                    <View
+                      key={`seed${idx}`}
+                      style={tw`flex-row items-center border-b border-white`}
+                    >
+                      <Text style={tw`w-4 text-center mx-2`}>{idx + 1}</Text>
+                      <TextInput
+                        onChangeText={(text) =>
+                          handleRestoreSeedsFor24(text, idx)
+                        }
+                        style={tw`flex-1 text-center m-0 p-0`}
+                        placeholderTextColor="white"
+                      />
+                    </View>
+                  ))}
+                </View>
               )}
-              <View style={tw`flex`}>
-                <Button onPress={() => setStep("1")}>Back</Button>
-                <Button onPress={handleNext} isDisabled={recovering}>
+              <Button.Group space={2} mt="4" w="80%">
+                <Button onPress={() => setStep("1")} w="50%">
+                  Back
+                </Button>
+                <Button
+                  onPress={handleNext}
+                  w="50%"
+                  isDisabled={!passwordStatus || password !== confirmPassword}
+                >
                   Next
                 </Button>
-              </View>
+              </Button.Group>
             </View>
           </View>
         )}
