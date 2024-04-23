@@ -1,3 +1,9 @@
+type ModeProps = {
+    wsUrl: string;
+    type: 'mainnet' | 'testnet';
+    // add some more if need
+}
+
 type SidebarItemProps = {
     icon: string;
     label: string;
@@ -21,4 +27,4 @@ type AssetItemProps = {
     colorClassName: string;
 };
 
-export type { SidebarItemProps, SummaryItemProps, AssetItemProps }
+export type { SidebarItemProps, SummaryItemProps, AssetItemProps, ModeProps }

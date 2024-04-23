@@ -1,4 +1,4 @@
-import { AssetItemProps, SidebarItemProps, SummaryItemProps } from "./interfaces";
+import { AssetItemProps, ModeProps, SidebarItemProps, SummaryItemProps } from "./interfaces";
 
 const sideBarItems: SidebarItemProps[] = [
     {
@@ -30,12 +30,6 @@ const sideBarItems: SidebarItemProps[] = [
         label: 'Settings',
         active: false,
         link: '/settings',
-    },
-    {
-        icon: '/assets/images/sidebar/profile.svg',
-        label: 'Profile',
-        active: false,
-        link: '/profile',
     },
 ]
 
@@ -103,4 +97,28 @@ const assetsItems: AssetItemProps[] = [
     },
 ]
 
-export { sideBarItems, summaryItems, assetsItems, summaryAccountItems };
+const marketOptions = [
+    {
+        label: 'On',
+        value: true
+    },
+    {
+        label: 'Off',
+        value: false
+    },
+]
+
+const MODES: ModeProps[] = [
+    {
+        wsUrl: 'wss://qsilver.org:5555',
+        type: 'mainnet',
+    },
+    {
+        wsUrl: 'wss://qsilver.org:5555',
+        type: 'testnet',
+    }
+]
+
+const SERVER_URL = "http://localhost:3000";
+
+export { sideBarItems, summaryItems, assetsItems, summaryAccountItems, marketOptions, SERVER_URL, MODES };
