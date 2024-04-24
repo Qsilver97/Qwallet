@@ -1,4 +1,4 @@
-package com.anonymous.qwallet
+package com.qsilver.qwallet
 
 import android.os.Build
 import android.os.Bundle
