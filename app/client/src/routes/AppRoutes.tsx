@@ -5,6 +5,7 @@ import { UnprotectedRoute } from "./UnProtectedRoute";
 import { AuthProvider } from "../contexts/AuthContext";
 import Loading from "../components/commons/Loading";
 import { SERVER_URL } from "../utils/constants";
+import { ToastContainer } from "react-toastify";
 
 const Dashboard = React.lazy(() => import("../pages/Dashboard"));
 const Accounts = React.lazy(() => import("../pages/Accounts/Accounts"));
@@ -21,6 +22,7 @@ const SignUpChars = React.lazy(() => import("../pages/SignUp/SignUpChars"));
 
 const AppRoutes: React.FC = () => (
     <BrowserRouter>
+        <ToastContainer />
         <AuthProvider wsUrl={SERVER_URL}>
             <Suspense fallback={<Loading />}>
                 <Routes>
@@ -31,8 +33,14 @@ const AppRoutes: React.FC = () => (
                             path="/signup/options"
                             element={<AccountOptions />}
                         />
-                        <Route path="/signup/24words" element={<SignUpSeeds />} />
-                        <Route path="/signup/55chars" element={<SignUpChars />} />
+                        <Route
+                            path="/signup/24words"
+                            element={<SignUpSeeds />}
+                        />
+                        <Route
+                            path="/signup/55chars"
+                            element={<SignUpChars />}
+                        />
                     </Route>
                     <Route element={<ProtectedRoute />}>
                         <Route path="/" element={<Dashboard />} />

@@ -12,13 +12,14 @@ import { MODES, SERVER_URL, sideBarItems } from "../utils/constants";
 import { io, Socket } from "socket.io-client";
 import axios from "axios";
 import { ModeProps } from "../utils/interfaces";
+import { toast } from "react-toastify";
 
 interface AuthContextType {
     isAuthenticated: boolean;
     activeTabIdx: number;
     socket: Socket | undefined;
     seedType: string;
-    setSeedType: Dispatch<SetStateAction<'55chars' | '24words'>>;
+    setSeedType: Dispatch<SetStateAction<"55chars" | "24words">>;
     login: (password: string) => void;
     logout: () => void;
     create: () => void;
@@ -39,21 +40,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 }) => {
     const navigate = useNavigate();
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [mode, setMode] = useState<ModeProps>(MODES[0]);
-    const [seedType, setSeedType] = useState<'55chars' | '24words'>("24words");
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [seedType, setSeedType] = useState<"55chars" | "24words">("24words");
     const [seeds, setSeeds] = useState<string>("");
     const [socket, setSocket] = useState<Socket>();
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [activeTabIdx, setActiveTabIdx] = useState(0);
 
+    const [tick, setTick] = useState("");
+    const [balances, setBalances] = useState(0);
+
     const [password, setPassword] = useState<string>("");
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [confirmPassword, setConfirmPassword] = useState<string>("");
 
     const login = (password: string) => {
-        // implement password validation - empty password
+        if (!password || !confirmPassword) {
+            toast.error("Password Invalid");
+            return;
+        }
+
         axios
             .post(`${SERVER_URL}/api/login`, {
                 password,
@@ -63,23 +68,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 setIsAuthenticated(true);
             })
             .catch(() => {
+                toast.error("Couldn't log in");
                 setIsAuthenticated(false);
             })
             .finally(() => { });
     };
 
     const toAccountOption = (password: string, confirmPassword: string) => {
-        // implement password validation - empty and compare
-        //...
+        if (!(password === confirmPassword) || !password || !confirmPassword) {
+            toast.error("Password Invalid");
+            return;
+        }
+
         setPassword(password);
         setConfirmPassword(confirmPassword);
 
-        // Dont need to navigate, the Link button automatically redirects
         navigate("/signup/options");
     };
 
     const create = () => {
         let passwordPrefix = "";
+        console.log(seedType);
+
         if (seedType == "55chars") passwordPrefix = "Q";
         axios
             .post(`${SERVER_URL}/api/ccall`, {
@@ -99,7 +109,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                         setSeeds(seeds);
                     }
                 }
-                navigate(`/create/${seedType}`)
+                navigate(`signup/${seedType}`);
             })
             .catch((error) => {
                 console.error(error);
@@ -131,7 +141,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             } else if (data.balances) {
                 console.log(data.balances, 2);
                 data.balances.map((item: [number, string]) => {
-                    console.log(item)
                     // dispatch(setBalances({ index: item[0], balance: item[1] }));
                 });
             } else if (data.richlist) {
@@ -146,10 +155,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             newSocket.close();
         };
     }, [wsUrl]);
-
-    useEffect(() => {
-        console.log(setMode, seeds, confirmPassword)
-    }, [])
 
     return (
         <AuthContext.Provider
