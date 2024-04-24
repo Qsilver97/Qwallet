@@ -65,10 +65,7 @@ const SignUp = () => {
                             </Button>
                         </Link>
 
-                        <Link
-                            to={"/signup/options"}
-                            className="inline-block w-full lg:w-fit"
-                        >
+                        <a className="inline-block w-full lg:w-fit">
                             <Button
                                 variant="primary"
                                 size="wide"
@@ -76,7 +73,7 @@ const SignUp = () => {
                             >
                                 Next
                             </Button>
-                        </Link>
+                        </a>
                     </div>
                 </div>
             </div>
