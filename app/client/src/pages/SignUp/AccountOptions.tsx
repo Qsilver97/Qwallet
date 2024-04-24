@@ -5,10 +5,14 @@ import { useAuth } from "../../contexts/AuthContext";
 import LoginContainer from "../Login/LoginContainer";
 
 const AccountOptions = () => {
-    const { create, setSeedType } = useAuth();
+    const { create, setSeedType, seedType } = useAuth();
 
     const handleCreateAccount = () => {
         create();
+    };
+
+    const handleCheckboxChange = (seed: "24words" | "55chars") => {
+        setSeedType(seed);
     };
 
     return (
@@ -38,8 +42,8 @@ const AccountOptions = () => {
                                 name="accountOption"
                                 id="24words"
                                 className="w-5 h-5"
-                                defaultChecked
-                                onClick={() => setSeedType("24words")}
+                                checked={seedType === "24words"}
+                                onChange={() => handleCheckboxChange("24words")}
                             />
                             <label
                                 htmlFor="24words"
@@ -54,7 +58,8 @@ const AccountOptions = () => {
                                 name="accountOption"
                                 id="55chars"
                                 className="w-5 h-5"
-                                onClick={() => setSeedType("55chars")}
+                                checked={seedType === "55chars"}
+                                onChange={() => handleCheckboxChange("55chars")}
                             />
                             <label
                                 htmlFor="55chars"
@@ -76,7 +81,6 @@ const AccountOptions = () => {
                         </Link>
 
                         <a
-                            // to={`/signup/${nextPageUrl}`}
                             className="inline-block w-full lg:w-fit cursor-pointer"
                             onClick={() => handleCreateAccount()}
                         >
