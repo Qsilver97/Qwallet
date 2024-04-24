@@ -9,33 +9,11 @@ import Toast from "react-native-toast-message";
 import { AuthProvider } from "./src/context/AuthContext";
 import { NetworkProvider } from "./src/context/NetworkContext";
 import { SocketCom } from "./src/components/SocketComponent";
-import RNFS from 'react-native-fs';
-
-const config = {
-  useSystemColorMode: true,
-  components: {
-    Button: {
-      defaultProps: {
-        colorScheme: "info",
-      },
-    },
-    IconButton: {
-      defaultProps: {
-        colorScheme: "info",
-      },
-    },
-    Input: {
-      defaultProps: {
-        colorScheme: "info",
-      },
-    },
-  },
-};
-
-const theme = extendTheme({ ...config });
+import RNFS from "react-native-fs";
+import theme from "./src/ThemeCofig";
+import { ColorProvider } from "./src/context/ColoreContext";
 
 export default function App() {
-  const [text, setText] = useState("");
   useEffect(() => {
     channelInit(RNFS.DocumentDirectoryPath);
   }, []);
@@ -43,12 +21,14 @@ export default function App() {
     <Provider store={store}>
       <SocketCom />
       <AuthProvider>
-        <NetworkProvider defaultNetwork="mainnet">
-          <NativeBaseProvider theme={theme}>
-            <RootNavigation />
-            <Toast />
-          </NativeBaseProvider>
-        </NetworkProvider>
+        <NativeBaseProvider theme={theme}>
+          <ColorProvider>
+            <NetworkProvider defaultNetwork="mainnet">
+              <RootNavigation />
+              <Toast />
+            </NetworkProvider>
+          </ColorProvider>
+        </NativeBaseProvider>
       </AuthProvider>
     </Provider>
   );
