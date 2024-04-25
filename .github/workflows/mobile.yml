@@ -1,24 +1,22 @@
 name: Build Android and iOS mobile app
 
 on:
-    pull_request:
-        types: [closed]
-        branches:
-        - main
+  push:
+    branches:
+      - staging
 
 jobs:
   react-native-android-build-apk:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v3
 
-      - name: Set up JDK 17
+      - name: Set up JDK 20
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '20'
           distribution: 'temurin'
-          cache: gradle  # This caches Gradle dependencies and wrapper
+          cache: gradle
 
       - name: Cache node modules
         uses: actions/cache@v2
@@ -30,6 +28,7 @@ jobs:
       - name: Install npm dependencies
         run: |
           cd mobile && npm install
+          cd nodejs-assets/nodejs-project && npm install
       - name: Cache Gradle Wrapper and Caches
         uses: actions/cache@v2
         with:
