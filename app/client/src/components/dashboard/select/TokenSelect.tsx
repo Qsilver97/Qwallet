@@ -70,7 +70,7 @@ const TokenSelect: React.FC<TokenSelectProps> = ({
 
                 {!showTokenDescription && (
                     <span className="font-Inter font-bold text-2xl">
-                        ${selectedToken?.amount}
+                        ${selectedToken?.name}
                     </span>
                 )}
             </div>

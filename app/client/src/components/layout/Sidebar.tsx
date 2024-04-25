@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { Text } from "../../components/commons";
 
 const Sidebar = () => {
-    const { activeTabIdx, handleClickSideBar } = useAuth();
+    const { logout, activeTabIdx, handleClickSideBar } = useAuth();
 
     return (
         <>
@@ -29,7 +29,7 @@ const Sidebar = () => {
                     className="absolute bottom-10 left-5 flex gap-5"
                 >
                     <img src="assets/images/ui/logout.svg" />
-                    <Text weight="medium" size="lg">
+                    <Text weight="medium" size="lg" onClick={logout}>
                         Log out
                     </Text>
                 </Link>

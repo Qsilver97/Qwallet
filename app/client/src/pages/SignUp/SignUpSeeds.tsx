@@ -37,13 +37,13 @@ const SignUpSeeds = () => {
                             type="checkbox"
                             name="makeBackup"
                             id="backup"
-                            className="w-4 h-4"
+                            className="w-4 h-4 cursor-pointer"
                             checked={backup}
                             onChange={() => setBackup((prev) => !prev)}
                         />
                         <label
                             htmlFor="backup"
-                            className="text-lg font-semibold font-Montserrat"
+                            className="text-lg font-semibold font-Montserrat cursor-pointer"
                         >
                             I've made a backup
                         </label>
