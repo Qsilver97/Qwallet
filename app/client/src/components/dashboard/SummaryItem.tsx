@@ -8,7 +8,7 @@ const SummaryItem: React.FC<SummaryItemProps> = ({ icon, label, amount }) => {
                 <img src={icon} alt={label} className="w-12 h-12 p-2 bg-[#B0B0B030] rounded-lg" />
                 <div>
                     <div className="font-medium text-sm font-Inter">{label}</div>
-                    <div className="text-2xl font-bold font-Inter">${amount}</div>
+                    <div className="text-2xl font-bold font-Inter">{amount}</div>
                 </div>
             </div>
         </div>
