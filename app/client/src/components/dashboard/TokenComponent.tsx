@@ -1,5 +1,6 @@
 import React from 'react'
 import { AssetItemProps } from '../../utils/interfaces'
+import { useAuth } from '../../contexts/AuthContext'
 
 interface TokensProps {
     tokens: AssetItemProps[]
@@ -7,6 +8,7 @@ interface TokensProps {
 }
 
 const TokenComponent: React.FC<TokensProps> = ({ tokens, onSend }) => {
+    const { tokenBalances, currentAddress } = useAuth();
     return (
         <div className="overflow-hidden">
             <table className="w-full">
@@ -38,7 +40,11 @@ const TokenComponent: React.FC<TokensProps> = ({ tokens, onSend }) => {
                                     </span>
                                 </div>
                             </td>
-                            <td className="text-white py-2">{token.amount}</td>
+                            {
+                                tokenBalances[token.name]?
+                                <td className="text-white py-2">{tokenBalances[token.name][currentAddress]}</td>:
+                                <td className="text-white py-2">0</td>
+                            }
                             <td className="py-2 flex justify-center">
                                 <button
                                     className=" px-3 py-1 bg-white/10 font-Inter font-medium rounded-md cursor-pointer hover:bg-dark-gray-400 transition-colors duration-200"
