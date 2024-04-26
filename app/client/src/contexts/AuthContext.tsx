@@ -251,6 +251,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
     useEffect(() => {
         async function init() {
+            await login(password);
+        }
+        init();
+    }, [mode])
+
+    useEffect(() => {
+        async function init() {
             setLoading(true)
             await fetchInfo()
             setLoading(false)

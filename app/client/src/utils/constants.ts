@@ -114,7 +114,7 @@ const MODES: ModeProps[] = [
         type: 'mainnet',
     },
     {
-        wsUrl: 'wss://qsilver.org:5555',
+        wsUrl: 'ws://93.190.141.12:5678',
         type: 'testnet',
     }
 ]
