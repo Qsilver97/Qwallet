@@ -1,6 +1,6 @@
 import { StyleSheet, Dimensions, Text } from "react-native";
 import RootNavigation from "./src/navigation/RootNavigation";
-import { Button, NativeBaseProvider, extendTheme, theme } from "native-base";
+import { Button, NativeBaseProvider, extendTheme } from "native-base";
 import { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
@@ -11,6 +11,7 @@ import { NetworkProvider } from "./src/context/NetworkContext";
 import { SocketCom } from "./src/components/SocketComponent";
 import RNFS from "react-native-fs";
 import { ColorProvider } from "./src/context/ColorContex";
+import theme from "./src/utils/ThemeConfig";
 
 export default function App() {
   const [text, setText] = useState("");
@@ -25,8 +26,8 @@ export default function App() {
           <NativeBaseProvider theme={theme}>
             <ColorProvider>
               <RootNavigation />
+              <Toast />
             </ColorProvider>
-            <Toast />
           </NativeBaseProvider>
         </NetworkProvider>
       </AuthProvider>
