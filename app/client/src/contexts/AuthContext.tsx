@@ -76,29 +76,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
     const [loading, setLoading] = useState<boolean>(true);
 
-    const login = (password: string) => {
+    const login = async (password: string) => {
+        setLoading(true);
         if (!password) {
             toast.error("Password Invalid");
             return;
         }
+        let resp;
+        try {
+            resp = await axios
+                .post(`${SERVER_URL}/api/login`, {
+                    password,
+                    socketUrl: mode.wsUrl,
+                })
+        } catch (error) {
+        }
 
-        axios
-            .post(`${SERVER_URL}/api/login`, {
-                password,
-                socketUrl: mode.wsUrl,
-            })
-            .then((resp) => {
-                setIsAuthenticated(resp.data.isAuthenticated);
-                setPassword(resp.data.password);
-                setAccountInfo(resp.data.accountInfo)
-                fetchInfo()
-            })
-            .catch((error) => {
-                console.log(error.response)
-                toast.error("Couldn't log in");
-                setIsAuthenticated(false);
-            })
-            .finally(() => { });
+        if (resp && resp.status == 200) {
+            setIsAuthenticated(resp.data.isAuthenticated);
+            setPassword(resp.data.password);
+            setAccountInfo(resp.data.accountInfo)
+            await fetchInfo()
+        } else {
+            toast.error("Couldn't log in");
+            setIsAuthenticated(false);
+        }
+        setLoading(false)
     };
 
     const logout = () => {
@@ -182,11 +185,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         })
     }
 
-    const fetchInfo = () => {
-        setLoading(true);
-        axios.post(
-            `${SERVER_URL}/api/fetch-user`
-        ).then((resp) => {
+    const fetchInfo = async () => {
+        let resp;
+        try {
+            resp = await axios.post(
+                `${SERVER_URL}/api/fetch-user`
+            )
+        } catch (error) {
+
+        }
+
+        if (resp && resp.status == 200) {
             const data = resp.data;
             setIsAuthenticated(data.isAuthenticated);
             setPassword(data.password);
@@ -198,11 +207,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             setMarketcap(data.marketcap);
             setTokens(['QU', ...data.tokens]);
             setRichlist(data.richlist);
-        }).catch(() => {
+        } else {
 
-        }).finally(() => {
-            setLoading(false);
-        })
+        }
     }
 
     useEffect(() => {
@@ -243,7 +250,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     }, [accountInfo])
 
     useEffect(() => {
-        fetchInfo()
+        async function init() {
+            setLoading(true)
+            await fetchInfo()
+            setLoading(false)
+        }
+        init()
     }, [])
 
     return (
