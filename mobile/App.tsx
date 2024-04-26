@@ -1,6 +1,6 @@
 import { StyleSheet, Dimensions, Text } from "react-native";
 import RootNavigation from "./src/navigation/RootNavigation";
-import { Button, NativeBaseProvider, extendTheme } from "native-base";
+import { Button, NativeBaseProvider, extendTheme, theme } from "native-base";
 import { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
@@ -9,30 +9,8 @@ import Toast from "react-native-toast-message";
 import { AuthProvider } from "./src/context/AuthContext";
 import { NetworkProvider } from "./src/context/NetworkContext";
 import { SocketCom } from "./src/components/SocketComponent";
-import RNFS from 'react-native-fs';
-
-const config = {
-  useSystemColorMode: true,
-  components: {
-    Button: {
-      defaultProps: {
-        colorScheme: "info",
-      },
-    },
-    IconButton: {
-      defaultProps: {
-        colorScheme: "info",
-      },
-    },
-    Input: {
-      defaultProps: {
-        colorScheme: "info",
-      },
-    },
-  },
-};
-
-const theme = extendTheme({ ...config });
+import RNFS from "react-native-fs";
+import { ColorProvider } from "./src/context/ColorContex";
 
 export default function App() {
   const [text, setText] = useState("");
@@ -45,7 +23,9 @@ export default function App() {
       <AuthProvider>
         <NetworkProvider defaultNetwork="mainnet">
           <NativeBaseProvider theme={theme}>
-            <RootNavigation />
+            <ColorProvider>
+              <RootNavigation />
+            </ColorProvider>
             <Toast />
           </NativeBaseProvider>
         </NetworkProvider>
