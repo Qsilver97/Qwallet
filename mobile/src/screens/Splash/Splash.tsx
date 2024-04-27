@@ -30,7 +30,7 @@ const Splash: React.FC = () => {
     if (index < slides.length - 1) {
       swiperRef.current?.scrollBy(1);
     } else {
-      navigation.navigate("Login");
+      navigation.navigate("WalletSetup");
     }
   };
 
@@ -69,7 +69,11 @@ const Splash: React.FC = () => {
         })}
       </Swiper>
       <Box px={5} pt={4} pb={8} bgColor={bgColor}>
-        <Button title="Get Stated" onPress={handlePress}></Button>
+        <Button
+          title="Get Stated"
+          onPress={handlePress}
+          type="primary"
+        ></Button>
       </Box>
     </>
   );

@@ -8,6 +8,7 @@ import Backup from "../screens/Backup";
 import Confirm from "../screens/Confirm";
 import Restore from "../screens/Restore";
 import Splash from "../screens/Splash/Splash";
+import WalletSetup from "../screens/Setup/WalletSetup";
 
 type RootStackParamList = {
   Dashboard: undefined;
@@ -19,6 +20,7 @@ type RootStackParamList = {
   Cli: undefined;
   CliSocket: undefined;
   Splash: undefined;
+  WalletSetup: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -28,6 +30,7 @@ const RootNavigation: React.FC = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen name="Splash" component={Splash} />
+        <Stack.Screen name="WalletSetup" component={WalletSetup} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Create" component={Create} />
