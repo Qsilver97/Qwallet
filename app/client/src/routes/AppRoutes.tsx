@@ -19,6 +19,8 @@ const AccountOptions = React.lazy(
 );
 const SignUpSeeds = React.lazy(() => import("../pages/SignUp/SignUpSeeds"));
 const SignUpChars = React.lazy(() => import("../pages/SignUp/SignUpChars"));
+const BackupChars = React.lazy(() => import("../pages/SignUp/BackupChars"));
+const BackupSeeds = React.lazy(() => import("../pages/SignUp/BackupSeeds"));
 
 const AppRoutes: React.FC = () => (
     <BrowserRouter>
@@ -40,6 +42,14 @@ const AppRoutes: React.FC = () => (
                         <Route
                             path="/signup/55chars"
                             element={<SignUpChars />}
+                        />
+                        <Route
+                            path="/backup/55chars"
+                            element={<BackupChars />}
+                        />
+                        <Route
+                            path="/backup/24words"
+                            element={<BackupSeeds />}
                         />
                     </Route>
                     <Route element={<ProtectedRoute />}>
