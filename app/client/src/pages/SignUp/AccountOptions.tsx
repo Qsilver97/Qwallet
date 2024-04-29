@@ -7,10 +7,6 @@ import LoginContainer from "../Login/LoginContainer";
 const AccountOptions = () => {
     const { create, setSeedType, seedType } = useAuth();
 
-    const handleCreateAccount = () => {
-        create();
-    };
-
     const handleCheckboxChange = (seed: "24words" | "55chars") => {
         setSeedType(seed);
     };
@@ -41,13 +37,13 @@ const AccountOptions = () => {
                                 type="radio"
                                 name="accountOption"
                                 id="24words"
-                                className="w-5 h-5"
+                                className="w-5 h-5 cursor-pointer"
                                 checked={seedType === "24words"}
                                 onChange={() => handleCheckboxChange("24words")}
                             />
                             <label
                                 htmlFor="24words"
-                                className="text-base font-semibold font-Inter"
+                                className="text-base font-semibold font-Inter cursor-pointer"
                             >
                                 24 Words
                             </label>
@@ -57,13 +53,13 @@ const AccountOptions = () => {
                                 type="radio"
                                 name="accountOption"
                                 id="55chars"
-                                className="w-5 h-5"
+                                className="w-5 h-5 cursor-pointer"
                                 checked={seedType === "55chars"}
                                 onChange={() => handleCheckboxChange("55chars")}
                             />
                             <label
                                 htmlFor="55chars"
-                                className="text-base font-semibold font-Inter"
+                                className="text-base font-semibold font-Inter cursor-pointer"
                             >
                                 55 Chars
                             </label>
@@ -82,7 +78,7 @@ const AccountOptions = () => {
 
                         <a
                             className="inline-block w-full lg:w-fit cursor-pointer"
-                            onClick={() => handleCreateAccount()}
+                            onClick={create}
                         >
                             <Button variant="primary" size="wide">
                                 Next
