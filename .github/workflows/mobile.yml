@@ -3,7 +3,7 @@ name: Build Android and iOS mobile app
 on:
   push:
     branches:
-      - staging
+      - main
 
 jobs:
   react-native-android-build-apk:
