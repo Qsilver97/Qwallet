@@ -84,6 +84,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [loading, setLoading] = useState<boolean>(true);
 
     const login = async (password: string) => {
+        if(password == "") {
+            return
+        }
         setLoading(true);
         if (!password) {
             toast.error("Password Invalid");

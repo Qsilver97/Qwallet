@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Button, Text } from "../../components/commons";
@@ -8,14 +7,14 @@ const BackupChars = () => {
     // const { login } = useAuth();
     const navigate = useNavigate();
 
-    const [password, setPassword] = useState<string>("");
+    // const [password, setPassword] = useState<string>("");
 
     // const handleChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     //     setPassword(e.target.value);
     // };
 
-    const handleLogin = () => {
-        console.log(password);
+    const handleNext = () => {
+        // console.log(password);
     };
 
     return (
@@ -60,7 +59,7 @@ const BackupChars = () => {
                             <Button
                                 variant="primary"
                                 size="wide"
-                                onClick={handleLogin}
+                                onClick={handleNext}
                             >
                                 Next
                             </Button>

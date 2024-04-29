@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import LoginContainer from "../Login/LoginContainer";
@@ -6,7 +5,7 @@ import Button from "../../components/commons/Button";
 import ColumnGrid from "./ColumnGrid";
 
 const BackupSeeds = () => {
-    const [backup, setBackup] = useState(false);
+    // const [backup, setBackup] = useState(false);
 
     return (
         <LoginContainer>
