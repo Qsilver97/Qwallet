@@ -1,15 +1,15 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { Button as NButton } from "native-base";
+import { Button as NButton, IButtonProps } from "native-base";
 import { useColors } from "../../context/ColorContex";
 
-interface IProps {
+interface IProps extends IButtonProps {
   title: String;
   onPress: () => void;
   type?: "primary" | "disabled";
 }
 
-const Button: React.FC<IProps> = ({ title, onPress, type }) => {
+const Button: React.FC<IProps> = ({ title, onPress, type, ...props }) => {
   const { btnBgColor, textColor, main, gray } = useColors();
 
   return (
@@ -21,6 +21,7 @@ const Button: React.FC<IProps> = ({ title, onPress, type }) => {
         bgColor: type == "primary" ? main.jeansBlue : gray.gray80,
       }}
       onPress={onPress}
+      {...props}
     >
       {title}
     </NButton>

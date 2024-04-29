@@ -1,8 +1,10 @@
 import React from "react";
-import { TextInput, TextInputProps } from "react-native";
+import { Input as NInput, IInputProps, Pressable, Icon } from "native-base";
 import tw from "tailwind-react-native-classnames";
+import { useColors } from "../../context/ColorContex";
+import { MaterialIcons } from "@expo/vector-icons";
 
-interface InputProps extends TextInputProps {
+interface InputProps extends IInputProps {
   placeholder: string;
   onChangeText: (value: string) => void;
 }
@@ -12,17 +14,43 @@ const Input: React.FC<InputProps> = ({
   value,
   placeholder,
   onChangeText,
+  type,
   ...props
 }) => {
+  const { textColor, gray } = useColors();
+  const [show, setShow] = React.useState(type == "text");
+
   return (
-    <TextInput
-      style={tw`w-full px-4 py-2 border-b border-white bg-transparent text-white text-lg`}
-      placeholder={placeholder}
-      value={value}
-      onChangeText={onChangeText}
-      editable={editable}
-      {...props}
-    />
+    <>
+      <NInput
+        w={{
+          base: "75%",
+          md: "25%",
+        }}
+        type={show ? "text" : "password"}
+        placeholder={placeholder}
+        placeholderTextColor={gray.gray20}
+        value={value}
+        onChangeText={onChangeText}
+        editable={editable}
+        color={textColor}
+        borderColor={gray.gray80}
+        rounded="lg"
+        InputRightElement={
+          <Pressable onPress={() => setShow(!show)}>
+            <Icon
+              as={
+                <MaterialIcons name={show ? "visibility" : "visibility-off"} />
+              }
+              size={5}
+              mr="2"
+              color={textColor}
+            />
+          </Pressable>
+        }
+        {...props}
+      />
+    </>
   );
 };
 
