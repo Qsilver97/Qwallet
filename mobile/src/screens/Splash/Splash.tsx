@@ -4,6 +4,7 @@ import Swiper from "react-native-swiper";
 import { useColors } from "../../context/ColorContex";
 import Button from "../../components/UI/Button";
 import { useNavigation } from "@react-navigation/native";
+import ButtonBox from "../../components/UI/ButtonBox";
 
 const slides = [
   {
@@ -68,13 +69,13 @@ const Splash: React.FC = () => {
           );
         })}
       </Swiper>
-      <Box px={5} pt={4} pb={8} bgColor={bgColor}>
+      <ButtonBox>
         <Button
           title="Get Stated"
           onPress={handlePress}
           type="primary"
         ></Button>
-      </Box>
+      </ButtonBox>
     </>
   );
 };

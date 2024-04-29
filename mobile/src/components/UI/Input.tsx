@@ -37,16 +37,20 @@ const Input: React.FC<InputProps> = ({
         borderColor={gray.gray80}
         rounded="lg"
         InputRightElement={
-          <Pressable onPress={() => setShow(!show)}>
-            <Icon
-              as={
-                <MaterialIcons name={show ? "visibility" : "visibility-off"} />
-              }
-              size={5}
-              mr="2"
-              color={textColor}
-            />
-          </Pressable>
+          type == "password" ? (
+            <Pressable onPress={() => setShow(!show)}>
+              <Icon
+                as={
+                  <MaterialIcons
+                    name={show ? "visibility-off" : "visibility"}
+                  />
+                }
+                size={5}
+                mr="2"
+                color={textColor}
+              />
+            </Pressable>
+          ) : undefined
         }
         {...props}
       />
