@@ -17,13 +17,13 @@ const Profile = () => {
                     <InnerContainer gapVariant="forms">
                         <div className="space-y-8">
                             <Input
-                                label="New Password"
+                                label="Old Password"
                                 inputId="newPassword"
                                 gapVariant="strech"
                                 inputStyle="forms"
                             />
                             <Input
-                                label="Old Password"
+                                label="New Password"
                                 inputId="oldPassword"
                                 gapVariant="strech"
                                 inputStyle="forms"

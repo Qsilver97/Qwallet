@@ -4,6 +4,11 @@ type ModeProps = {
     // add some more if need
 }
 
+type SelectOption = {
+    name: string;
+    iconUrl: string;
+};
+
 type SidebarItemProps = {
     icon: string;
     label: string;
@@ -43,4 +48,4 @@ interface RichListInterface {
     [address: string]: [number, string, string][];
 }
 
-export type { SidebarItemProps, SummaryItemProps, AssetItemProps, ModeProps, AccountInfoInterface, MarketcapInterface, RichListInterface }
+export type { SelectOption, SidebarItemProps, SummaryItemProps, AssetItemProps, ModeProps, AccountInfoInterface, MarketcapInterface, RichListInterface }

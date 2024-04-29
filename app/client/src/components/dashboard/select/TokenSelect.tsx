@@ -5,12 +5,14 @@ import { SelectOption } from "../../commons/Select";
 
 interface TokenSelectProps {
     options: SelectOption[];
-    showTokenDescription?: boolean;
+    showSelectDescription?: boolean;
+    hideTokenValue?: boolean;
 }
 
 const TokenSelect: React.FC<TokenSelectProps> = ({
     options,
-    showTokenDescription,
+    showSelectDescription,
+    hideTokenValue,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState<SelectOption>(
@@ -29,7 +31,7 @@ const TokenSelect: React.FC<TokenSelectProps> = ({
         return selectedOption.value === item.name;
     });
 
-    const style = showTokenDescription
+    const style = showSelectDescription
         ? {
               container: "px-4 py-3 rounded-xl",
               img: "w-6 h-6",
@@ -58,7 +60,7 @@ const TokenSelect: React.FC<TokenSelectProps> = ({
                         <span className="w-full font-Inter font-medium text-xs mr-2">
                             {selectedOption.value}
                         </span>
-                        {showTokenDescription && (
+                        {showSelectDescription && (
                             <span className="font-Inter font-medium text-[10px] text-inactive">
                                 OPTIONS CONTRACTS
                             </span>
@@ -68,7 +70,7 @@ const TokenSelect: React.FC<TokenSelectProps> = ({
                     <img src={style.chevronIcon} alt="chevron-down" />
                 </div>
 
-                {!showTokenDescription && (
+                {!hideTokenValue && (
                     <span className="font-Inter font-bold text-2xl">
                         ${selectedToken?.name}
                     </span>
