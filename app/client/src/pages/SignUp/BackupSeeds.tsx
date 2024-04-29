@@ -1,14 +1,12 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import LoginContainer from "../Login/LoginContainer";
 import Button from "../../components/commons/Button";
-import { useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
+import ColumnGrid from "./ColumnGrid";
 
-const SignUpChars = () => {
+const BackupSeeds = () => {
     const [backup, setBackup] = useState(false);
-
-    const { seeds } = useAuth();
 
     return (
         <LoginContainer>
@@ -18,7 +16,7 @@ const SignUpChars = () => {
                 className="w-3/6 lg:w-auto"
             />
 
-            <div className="w-2/5 flex flex-col gap-[60px]">
+            <div className="w-full flex flex-col gap-[60px]">
                 <img
                     src="/assets/images/logo.svg"
                     alt="Logo"
@@ -32,26 +30,7 @@ const SignUpChars = () => {
                         for safe keeping
                     </p>
 
-                    <p className="mx-auto text-base font-semibold font-Inter underline underline-offset-4">
-                        {seeds}
-                    </p>
-
-                    <div className="flex items-center gap-5">
-                        <input
-                            type="checkbox"
-                            name="makeBackup"
-                            id="backup"
-                            className="w-4 h-4"
-                            checked={backup}
-                            onChange={() => setBackup((prev) => !prev)}
-                        />
-                        <label
-                            htmlFor="backup"
-                            className="text-lg font-semibold font-Montserrat cursor-pointer"
-                        >
-                            I've made a backup
-                        </label>
-                    </div>
+                    <ColumnGrid inputValues />
 
                     <div className="flex justify-center gap-8 lg:gap-20">
                         <Link
@@ -65,7 +44,7 @@ const SignUpChars = () => {
                         </Link>
 
                         <Link
-                            to={"/backup/55chars"}
+                            to={"/dashboard"}
                             className="inline-block w-full lg:w-fit"
                         >
                             <Button variant="primary" size="wide">
@@ -79,4 +58,4 @@ const SignUpChars = () => {
     );
 };
 
-export default SignUpChars;
+export default BackupSeeds;
