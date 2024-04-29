@@ -8,15 +8,11 @@ const Dashboard = () => {
     return (
         <>
             <Layout>
-                <div className="flex w-full justify-between">
-                    <div className="max-w-[calc(100%-270px)] w-full flex flex-col gap-5">
-                        <Summary />
-                        <Tokens />
-                    </div>
-                    <div className="w-[250px] flex flex-col gap-5">
-                        <Assets />
-                        <Ads />
-                    </div>
+                <div className="w-full grid grid-cols-[minmax(auto,calc(100%-270px))_250px] grid-rows-[auto_230px] gap-5">
+                    <Summary />
+                    <Assets />
+                    <Tokens />
+                    <Ads />
                 </div>
             </Layout>
         </>

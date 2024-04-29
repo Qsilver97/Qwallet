@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -16,7 +16,7 @@ html {
     height: 100vh;
     overflow-x: hidden;
 
-    background-color: #192B3B;
+    background-color: #192b3b;
     color: white;
 }
 
@@ -31,24 +31,45 @@ body {
 
 .scrollbar-w-1::-webkit-scrollbar {
     width: 1px;
-  }
-  
-  /* Color of the scrollbar thumb */
-  .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
-    background-color: rgba(209, 213, 219, 0.1);
-  }
-  
-  /* Color of the scrollbar track */
-  .scrollbar-track-gray-100::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
+}
 
-  input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+/* Color of the scrollbar thumb */
+.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+    background-color: rgba(209, 213, 219, 0.1);
+}
+
+/* Color of the scrollbar track */
+.scrollbar-track-gray-100::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 img {
-  user-select: none;
+    user-select: none;
+}
+
+.scrolling {
+    /* Set a custom scrollbar width */
+    /* scrollbar-width: none; */
+    /* Set the scrollbar color */
+    scrollbar-color: #333 transparent;
+}
+
+.scrolling::-webkit-scrollbar {
+    display: none; /* Hide the scrollbar in WebKit browsers (Chrome, Safari) */
+}
+
+/* This targets the scrollbar thumb */
+.scrolling::-webkit-scrollbar-thumb {
+    background-color: transparent; /* Set color of the scrollbar thumb */
+}
+
+/* This targets the scrollbar track */
+.scrolling::-webkit-scrollbar-track {
+    background-color: transparent; /* Set color of the scrollbar track */
 }

@@ -1,4 +1,5 @@
 const fs = require('fs').promises;
+const os = require('os');
 const path = require('path');
 const express = require('express');
 const app = express();
@@ -17,18 +18,18 @@ const originalConsoleLog = console.log;
 const originalConsoleError = console.error;
 
 exports.startServer = async () => {
-
-    async function createDirectoryIfNotExists(directoryPath) {
-        try {
-            await fs.mkdir(directoryPath, { recursive: true });
-        } catch (error) {
-            log(`Error creating directory ${directoryPath}:${error}`);
+    // Get the home directory path
+    const homeDir = os.homedir();
+    // Path for the new 'qwallet/keys' directory
+    const keysPath = path.join(homeDir, 'qwallet/keys');
+    // Create the 'qwallet/keys' directory recursively
+    fs.mkdir(keysPath, { recursive: true }, (error) => {
+        if (error) {
+            console.error('Error creating directory:', error);
+        } else {
+            console.log(`Directory 'qwallet/keys' created at: ${keysPath}`);
         }
-    }
-
-    const keyDirectoryPath = path.join(__dirname, 'keys');
-    log(keyDirectoryPath)
-    createDirectoryIfNotExists(keyDirectoryPath);
+    });
 
     async function init() {
         // Initialize WebSocket communication, WASM manager and UserState manager

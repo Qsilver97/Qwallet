@@ -67,7 +67,10 @@ jobs:
         npx electron-packager . --overwrite --platform=darwin --arch=x64 --icon=logo.icns --prune=true --out=release-builds -f
       
     - name: Zip the macOS build
-      run: zip -r Qwallet-macOS.zip app/server/release-builds/server-darwin-x64/*
+      run: |
+        mkdir Qwallet-macOS
+        cp -rf app/server/release-builds/server-darwin-x64/* ./Qwallet-macOS/
+        zip -r Qwallet-macOS.zip Qwallet-macOS/*
       
     - name: Upload macOS build to Server
       env:
