@@ -11,7 +11,12 @@ import { useNavigate } from "react-router-dom";
 import { MODES, SERVER_URL, sideBarItems } from "../utils/constants";
 import { io, Socket } from "socket.io-client";
 import axios from "axios";
-import { AccountInfoInterface, MarketcapInterface, ModeProps, RichListInterface } from "../utils/interfaces";
+import {
+    AccountInfoInterface,
+    MarketcapInterface,
+    ModeProps,
+    RichListInterface,
+} from "../utils/interfaces";
 import { toast } from "react-toastify";
 import { Loading } from "../components/commons";
 
@@ -66,51 +71,55 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
     const [tick, setTick] = useState("");
     const [balances, setBalances] = useState<Balances>({});
-    const [tokenBalances, setTokenBalances] = useState<{ [name: string]: Balances }>({});
+    const [tokenBalances, setTokenBalances] = useState<{
+        [name: string]: Balances;
+    }>({});
     const [marketcap, setMarketcap] = useState<MarketcapInterface>();
     const [tokens, setTokens] = useState<string[]>([]);
     const [richlist, setRichlist] = useState<RichListInterface>({});
-    const [currentAddress, setCurrentAddress] = useState<string>('');
+    const [currentAddress, setCurrentAddress] = useState<string>("");
 
     const [password, setPassword] = useState<string>("");
 
     const [loading, setLoading] = useState<boolean>(true);
 
-    const login = (password: string) => {
+    const login = async (password: string) => {
+        setLoading(true);
         if (!password) {
             toast.error("Password Invalid");
             return;
         }
-
-        axios
-            .post(`${SERVER_URL}/api/login`, {
+        let resp;
+        try {
+            resp = await axios.post(`${SERVER_URL}/api/login`, {
                 password,
                 socketUrl: mode.wsUrl,
-            })
-            .then((resp) => {
-                setIsAuthenticated(resp.data.isAuthenticated);
-                setPassword(resp.data.password);
-                setAccountInfo(resp.data.accountInfo)
-                fetchInfo()
-            })
-            .catch((error) => {
-                console.log(error.response)
-                toast.error("Couldn't log in");
-                setIsAuthenticated(false);
-            })
-            .finally(() => { });
+            });
+        } catch (error) {}
+
+        if (resp && resp.status == 200) {
+            setIsAuthenticated(resp.data.isAuthenticated);
+            setPassword(resp.data.password);
+            setAccountInfo(resp.data.accountInfo);
+            await fetchInfo();
+        } else {
+            toast.error("Couldn't log in");
+            setIsAuthenticated(false);
+        }
+        setLoading(false);
     };
 
     const logout = () => {
-        axios.post(
-            `${SERVER_URL}/api/logout`
-        ).then((resp) => {
-            setIsAuthenticated(resp.data.isAuthenticated);
-            setPassword(resp.data.password);
-            setAccountInfo(resp.data.accountInfo)
-        }).catch(() => {
-            toast.error("Can't logout");
-        })
+        axios
+            .post(`${SERVER_URL}/api/logout`)
+            .then((resp) => {
+                setIsAuthenticated(resp.data.isAuthenticated);
+                setPassword(resp.data.password);
+                setAccountInfo(resp.data.accountInfo);
+            })
+            .catch(() => {
+                toast.error("Can't logout");
+            });
         // navigate("/login");
     };
 
@@ -166,44 +175,48 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         if (index == -1) {
             index = accountInfo?.addresses.length;
         }
-        axios.post(
-            `${SERVER_URL}/api/add-account`,
-            {
+        axios
+            .post(`${SERVER_URL}/api/add-account`, {
                 password: password,
-                index
-            }
-        ).then((resp) => {
-            setIsAuthenticated(resp.data.isAuthenticated);
-            setPassword(resp.data.password);
-            setAccountInfo(resp.data.accountInfo)
-            // fetchInfo()
-        }).catch(() => {
+                index,
+            })
+            .then((resp) => {
+                setIsAuthenticated(resp.data.isAuthenticated);
+                setPassword(resp.data.password);
+                setAccountInfo(resp.data.accountInfo);
+                // fetchInfo()
+            })
+            .catch(() => {});
+    };
 
-        })
-    }
+    const fetchInfo = async () => {
+        let resp;
+        try {
+            resp = await axios.post(`${SERVER_URL}/api/fetch-user`);
+        } catch (error) {}
 
-    const fetchInfo = () => {
-        setLoading(true);
-        axios.post(
-            `${SERVER_URL}/api/fetch-user`
-        ).then((resp) => {
+        if (resp && resp.status == 200) {
             const data = resp.data;
             setIsAuthenticated(data.isAuthenticated);
             setPassword(data.password);
             setAccountInfo(data.accountInfo);
-            data.balances.map((item: [number, string]) => {
+            data.balances?.map((item: [number, string]) => {
                 if (data.accountInfo?.addresses[item[0]])
-                    setBalances((prev) => { return { ...prev, [data.accountInfo?.addresses[item[0]]]: parseFloat(item[1]) } });
+                    setBalances((prev) => {
+                        return {
+                            ...prev,
+                            [data.accountInfo?.addresses[item[0]]]: parseFloat(
+                                item[1]
+                            ),
+                        };
+                    });
             });
             setMarketcap(data.marketcap);
-            setTokens(['QU', ...data.tokens]);
+            setTokens(["QU", ...(data?.tokens || [])]);
             setRichlist(data.richlist);
-        }).catch(() => {
-
-        }).finally(() => {
-            setLoading(false);
-        })
-    }
+        } else {
+        }
+    };
 
     useEffect(() => {
         const newSocket = io(wsUrl);
@@ -215,14 +228,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             } else if (data.command == "EntityInfo") {
                 console.log(data.balance, 1);
                 if (data.address)
-                    setBalances((prev) => { return { ...prev, [data.address]: parseFloat(data.balance) } });
+                    setBalances((prev) => {
+                        return {
+                            ...prev,
+                            [data.address]: parseFloat(data.balance),
+                        };
+                    });
             } else if (data.balances) {
                 data.balances.map((item: [number, string]) => {
                     if (data[0])
-                        setBalances((prev) => { return { ...prev, [data[0]]: parseFloat(item[1]) } });
+                        setBalances((prev) => {
+                            return { ...prev, [data[0]]: parseFloat(item[1]) };
+                        });
                 });
             } else if (data.richlist) {
-                setRichlist((prev) => { return { ...prev, [data.name]: data.richlist } })
+                setRichlist((prev) => {
+                    return { ...prev, [data.name]: data.richlist };
+                });
             } else if (data.marketcap) {
                 console.log(data.marketcap, 4);
             }
@@ -234,17 +256,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     }, [wsUrl]);
 
     useEffect(() => {
-        setTokenBalances((prev) => { return { ...prev, 'QU': balances } })
-    }, [balances])
+        setTokenBalances((prev) => {
+            return { ...prev, QU: balances };
+        });
+    }, [balances]);
 
     useEffect(() => {
-        if (accountInfo)
-            setCurrentAddress(accountInfo.addresses[0])
-    }, [accountInfo])
+        if (accountInfo) setCurrentAddress(accountInfo.addresses[0]);
+    }, [accountInfo]);
 
     useEffect(() => {
-        fetchInfo()
-    }, [])
+        async function init() {
+            await login(password);
+        }
+        init();
+    }, [mode]);
+
+    useEffect(() => {
+        async function init() {
+            setLoading(true);
+            await fetchInfo();
+            setLoading(false);
+        }
+        init();
+    }, []);
 
     return (
         <AuthContext.Provider
@@ -273,10 +308,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 setCurrentAddress,
             }}
         >
-            {loading ?
-                <Loading /> :
-                children
-            }
+            {loading ? <Loading /> : children}
         </AuthContext.Provider>
     );
 };
