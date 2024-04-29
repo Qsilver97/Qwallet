@@ -6,7 +6,7 @@ import { assetsItems } from "../../utils/constants";
 import { useAuth } from "../../contexts/AuthContext";
 
 const Summary: React.FC = () => {
-    const { marketcap } = useAuth();
+    const { marketcap, tick } = useAuth();
 
     const options = assetsItems.map((item) => ({
         label: item.icon,
@@ -29,7 +29,7 @@ const Summary: React.FC = () => {
                 <SummaryItem
                     label="Tick"
                     icon="/assets/images/dashboard/totalAssets.svg"
-                    amount={`${marketcap?.price}`}
+                    amount={`${tick}`}
                 />
             </div>
             <TokenSelect options={options} />
