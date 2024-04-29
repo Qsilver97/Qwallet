@@ -31,12 +31,6 @@ const sideBarItems: SidebarItemProps[] = [
         active: false,
         link: '/settings',
     },
-    {
-        icon: '/assets/images/ui/logout.svg',
-        label: 'Log out',
-        active: false,
-        link: '/login',
-    },
 ]
 
 const summaryItems: SummaryItemProps[] = [
@@ -120,7 +114,7 @@ const MODES: ModeProps[] = [
         type: 'mainnet',
     },
     {
-        wsUrl: 'ws://93.190.141.12:5678',
+        wsUrl: 'wss://qsilver.org:5555',
         type: 'testnet',
     }
 ]

@@ -35,11 +35,7 @@ const Trading = () => {
                     />
 
                     <div className="space-y-2">
-                        <TokenSelect
-                            options={options}
-                            showSelectDescription
-                            hideTokenValue
-                        />
+                        <TokenSelect options={options} showTokenDescription />
 
                         <div className="grid grid-cols-[70%_30%] gap-2">
                             <div className="flex flex-col gap-2">

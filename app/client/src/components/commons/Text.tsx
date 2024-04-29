@@ -3,7 +3,7 @@ import React, { ReactNode } from "react";
 type TextProps = {
     children: ReactNode;
     size?: "base" | "xs" | "sm" | "lg" | "xl";
-    weight?: "base" | "light" | "medium" | "semibold" | "bold";
+    weight?: "base" | "light" | "medium" | "semibold";
     font?: "inter" | "montserrat";
     className?: string;
     onClick?: () => void;
@@ -29,7 +29,6 @@ const Text: React.FC<TextProps> = ({
         light: "light",
         medium: "medium",
         semibold: "semibold",
-        bold: "bold",
     };
     const fontTypes = {
         inter: "Inter",
