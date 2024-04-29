@@ -102,6 +102,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             setPassword(resp.data.password);
             setAccountInfo(resp.data.accountInfo);
             await fetchInfo();
+
         } else {
             toast.error("Couldn't log in");
             setIsAuthenticated(false);
@@ -192,8 +193,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const fetchInfo = async () => {
         let resp;
         try {
-            resp = await axios.post(`${SERVER_URL}/api/fetch-user`);
-        } catch (error) {}
+            resp = await axios.post(
+                `${SERVER_URL}/api/fetch-user`
+            )
+        } catch (error) {
+
+        }
 
         if (resp && resp.status == 200) {
             const data = resp.data;
