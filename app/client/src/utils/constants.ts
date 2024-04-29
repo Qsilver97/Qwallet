@@ -31,6 +31,12 @@ const sideBarItems: SidebarItemProps[] = [
         active: false,
         link: '/settings',
     },
+    {
+        icon: '/assets/images/ui/logout.svg',
+        label: 'Log out',
+        active: false,
+        link: '/login',
+    },
 ]
 
 const summaryItems: SummaryItemProps[] = [

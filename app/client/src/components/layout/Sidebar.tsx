@@ -24,15 +24,6 @@ const Sidebar = () => {
                         />
                     );
                 })}
-                <Link
-                    to={"/login"}
-                    className="absolute bottom-10 left-5 flex gap-5"
-                >
-                    <img src="assets/images/ui/logout.svg" />
-                    <Text weight="medium" size="lg" onClick={logout}>
-                        Log out
-                    </Text>
-                </Link>
             </div>
         </>
     );
