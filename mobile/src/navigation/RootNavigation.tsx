@@ -63,7 +63,7 @@ const RootNavigation: React.FC = () => {
         <Stack.Screen
           name="Create"
           component={Create}
-          options={{ title: "Create New Wallet" }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Backup"
