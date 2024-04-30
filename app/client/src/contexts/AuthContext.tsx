@@ -34,9 +34,7 @@ interface AuthContextType {
     richlist: RichListInterface;
     currentAddress: string;
     tokenBalances: { [name: string]: Balances };
-    passwordAvailStatus: boolean;
     setSeedType: Dispatch<SetStateAction<"55chars" | "24words">>;
-    setPasswordAvailStatus: Dispatch<SetStateAction<boolean>>;
     setMode: Dispatch<SetStateAction<ModeProps>>;
     setCurrentAddress: Dispatch<SetStateAction<string>>;
     login: (password: string) => void;
@@ -82,7 +80,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [currentAddress, setCurrentAddress] = useState<string>("");
 
     const [password, setPassword] = useState<string>("");
-    const [passwordAvailStatus, setPasswordAvailStatus] = useState<boolean>(false);
 
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -256,11 +253,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             }
         });
 
-        newSocket.on("passwordAvail", (data) => {
-            console.log(data, 'aaaaa');
-            setPasswordAvailStatus(data);
-        })
-
         return () => {
             newSocket.close();
         };
@@ -308,11 +300,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 balances,
                 tokenBalances,
                 currentAddress,
-                passwordAvailStatus,
                 handleAddAccount,
                 setMode,
                 setSeedType,
-                setPasswordAvailStatus,
                 handleClickSideBar,
                 login,
                 logout,

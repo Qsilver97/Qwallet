@@ -11,7 +11,7 @@ const Dashboard = React.lazy(() => import("../pages/Dashboard"));
 const Accounts = React.lazy(() => import("../pages/Accounts/Accounts"));
 const Trading = React.lazy(() => import("../pages/Trading/Trading"));
 const Activity = React.lazy(() => import("../pages/Activity/Activity"));
-const Settings = React.lazy(() => import("../pages/Settings"));
+const Settings = React.lazy(() => import("../pages/Settings/Settings"));
 const Login = React.lazy(() => import("../pages/Login/Login"));
 const SignUp = React.lazy(() => import("../pages/SignUp/SignUp"));
 const AccountOptions = React.lazy(

@@ -36,7 +36,7 @@ const ColumnGrid = ({ inputValues = false, handleInputSeed }: ColumnGridProps) =
                 ))}
             {!inputValues && blurBackground && (
                 <>
-                    <div className="bg-gray bg-opacity-40 backdrop-filter backdrop-blur-sm absolute top-0 left-0 w-[110%] h-[110%] -translate-x-[5%] -translate-y-[5%] rounded-lg"></div>
+                    <div className="bg-dark-gray-400 bg-opacity-40 backdrop-filter backdrop-blur-md absolute top-0 left-0 w-[108%] h-[115%] -translate-x-[5%] -translate-y-[5%] rounded-lg"></div>
                     <div
                         className="cursor-pointer flex gap-2 rounded-full bg-dark py-4 px-14 absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                         onClick={() => setBlurBackground(false)}

@@ -16,8 +16,9 @@ const BackupChars = () => {
     };
 
 
-    const handleNext = () => {
-        // console.log(password);
+    const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        navigate('/login')
     };
 
     return (
@@ -64,8 +65,8 @@ const BackupChars = () => {
                                 variant="primary"
                                 size="wide"
                                 onClick={handleNext}
-                                disable={seeds == backupSeeds}
-                                className={seeds == backupSeeds ? "cursor-pointer" : "cursor-not-allowed"}
+                                disable={seeds != backupSeeds}
+                                className={seeds != backupSeeds ? "cursor-not-allowed" : "cursor-pointer"}
                             >
                                 Next
                             </Button>

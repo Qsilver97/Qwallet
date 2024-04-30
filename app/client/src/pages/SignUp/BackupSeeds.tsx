@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import LoginContainer from "../Login/LoginContainer";
 import Button from "../../components/commons/Button";
@@ -9,6 +9,7 @@ import { useState } from "react";
 const BackupSeeds = () => {
     // const [backup, setBackup] = useState(false);
     const { seeds } = useAuth();
+    const navigate = useNavigate();
 
     const [backupSeeds, setBackupSeeds] = useState<string[]>([]);
 
@@ -35,6 +36,11 @@ const BackupSeeds = () => {
         prevSeeds[idx] = e.target.value;
         setBackupSeeds(prevSeeds);
     }
+
+    const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        navigate('/login')
+    };
 
     return (
         <LoginContainer>
@@ -79,6 +85,7 @@ const BackupSeeds = () => {
                                 size="wide"
                                 disable={typeof seeds == 'object' && !areArraysEqual(seeds, backupSeeds)}
                                 className={typeof seeds == 'object' && !areArraysEqual(seeds, backupSeeds) ? 'cursor-not-allowed' : 'cursor-pointer'}
+                                onClick={handleNext}
                             >
                                 Next
                             </Button>

@@ -4,6 +4,7 @@ import SummaryItem from "./SummaryItem";
 import TokenSelect from "./select/TokenSelect";
 import { assetsItems } from "../../utils/constants";
 import { useAuth } from "../../contexts/AuthContext";
+import MetricsChart from "./chart/MetricsChart";
 
 const Summary: React.FC = () => {
     const { marketcap, tick } = useAuth();
@@ -33,9 +34,8 @@ const Summary: React.FC = () => {
                 />
             </div>
             <TokenSelect options={options} />
-            <div>
-                <img src="/assets/images/dashboard/chat.svg" />
-            </div>
+
+            <MetricsChart />
         </div>
     );
 };
