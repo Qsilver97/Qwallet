@@ -11,6 +11,7 @@ module.exports = function (io) {
         socket.on('passwordAvail', async (msg) => {
             const resultFor24words = await wasmManager.ccall(msg)
             const resultFor55chars = await wasmManager.ccall({ ...msg, command: msg.command.replace('checkavail ', 'checkavail Q') })
+            console.log(resultFor24words, resultFor55chars, '11111111111');
             socket.emit('passwordAvail', resultFor24words.value.result == 0 && resultFor55chars.value.result == 0)
         })
 

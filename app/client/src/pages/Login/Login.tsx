@@ -6,12 +6,13 @@ import LoginContainer from "./LoginContainer";
 import { useAuth } from "../../contexts/AuthContext";
 
 const Login = () => {
-    const { login } = useAuth();
+    const { login, socket, passwordAvailStatus } = useAuth();
 
     const [password, setPassword] = useState<string>("");
 
     const handleChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
+        socket?.emit('passwordAvail', { command: `checkavail ${e.target.value}`, flag: 'checkavail' });
     };
 
     const handleLogin = () => {
@@ -40,7 +41,9 @@ const Login = () => {
                         type="password"
                         onChange={handleChangePassword}
                     />
-
+                    {passwordAvailStatus && password != '' &&
+                        <p>Password does not exist.</p>
+                    }
                     <div className="flex justify-center gap-8 lg:gap-20">
                         <Link
                             to={"/signup"}
@@ -58,6 +61,8 @@ const Login = () => {
                                 variant="primary"
                                 size="wide"
                                 onClick={handleLogin}
+                                disable={passwordAvailStatus || password == ''}
+                                className={passwordAvailStatus || password == '' ? 'cursor-not-allowed' : ''}
                             >
                                 Login
                             </Button>
