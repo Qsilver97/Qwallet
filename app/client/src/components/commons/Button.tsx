@@ -7,7 +7,7 @@ interface ButtonProps {
     className?: string;
     disable?: boolean;
     children: React.ReactNode;
-    onClick?: () => void;
+    onClick?: (e?: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const Button: React.FC<ButtonProps> = ({

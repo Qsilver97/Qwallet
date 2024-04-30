@@ -4,9 +4,10 @@ import { Text } from "../../components/commons";
 
 type ColumnGridProps = {
     inputValues?: boolean;
+    handleInputSeed?: (e: React.ChangeEvent<HTMLInputElement>, idx: number) => void;
 };
 
-const ColumnGrid = ({ inputValues = false }: ColumnGridProps) => {
+const ColumnGrid = ({ inputValues = false, handleInputSeed }: ColumnGridProps) => {
     const [blurBackground, setBlurBackground] = useState(true);
 
     const { seeds } = useAuth();
@@ -24,6 +25,7 @@ const ColumnGrid = ({ inputValues = false }: ColumnGridProps) => {
                             <input
                                 type="text"
                                 className="border-none outline-none select-none text-center text-white m-0 p-0 bg-transparent w-full"
+                                onChange={(e) => { if (handleInputSeed) handleInputSeed(e, idx) }}
                             />
                         ) : (
                             <span>{seed}</span>
