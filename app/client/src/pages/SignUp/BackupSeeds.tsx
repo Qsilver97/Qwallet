@@ -36,15 +36,6 @@ const BackupSeeds = () => {
         setBackupSeeds(prevSeeds);
     }
 
-    const handleNext = (e?: React.MouseEvent<HTMLButtonElement>) => {
-        if (e) e.preventDefault();
-        if (typeof seeds == 'object') {
-            if (areArraysEqual(backupSeeds, seeds)) {
-
-            }
-        }
-    }
-
     return (
         <LoginContainer>
             <img
