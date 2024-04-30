@@ -64,7 +64,12 @@ const SignUpSeeds = () => {
                             to={"/backup/24words"}
                             className="inline-block w-full lg:w-fit"
                         >
-                            <Button variant="primary" size="wide">
+                            <Button
+                                variant="primary"
+                                size="wide"
+                                className={!backup ? "cursor-not-allowed" : "cursor-pointer"}
+                                disable={!backup}
+                            >
                                 Next
                             </Button>
                         </Link>
