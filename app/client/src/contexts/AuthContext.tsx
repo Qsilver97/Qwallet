@@ -36,6 +36,7 @@ interface AuthContextType {
     tokenBalances: { [name: string]: Balances };
     passwordAvailStatus: boolean;
     setSeedType: Dispatch<SetStateAction<"55chars" | "24words">>;
+    setPasswordAvailStatus: Dispatch<SetStateAction<boolean>>;
     setMode: Dispatch<SetStateAction<ModeProps>>;
     setCurrentAddress: Dispatch<SetStateAction<string>>;
     login: (password: string) => void;
@@ -311,6 +312,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 handleAddAccount,
                 setMode,
                 setSeedType,
+                setPasswordAvailStatus,
                 handleClickSideBar,
                 login,
                 logout,

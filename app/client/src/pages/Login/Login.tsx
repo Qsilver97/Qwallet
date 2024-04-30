@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../../components/commons/Button";
 import Input from "../../components/commons/Input";
@@ -6,7 +6,7 @@ import LoginContainer from "./LoginContainer";
 import { useAuth } from "../../contexts/AuthContext";
 
 const Login = () => {
-    const { login, socket, passwordAvailStatus } = useAuth();
+    const { login, socket, passwordAvailStatus, setPasswordAvailStatus } = useAuth();
 
     const [password, setPassword] = useState<string>("");
 
@@ -18,6 +18,10 @@ const Login = () => {
     const handleLogin = () => {
         login(password);
     };
+
+    useEffect(() => {
+        setPasswordAvailStatus(false);
+    }, [])
 
     return (
         <LoginContainer>
