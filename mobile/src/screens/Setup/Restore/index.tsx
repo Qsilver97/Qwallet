@@ -3,7 +3,7 @@ import { Box, Link, Text, TextArea, VStack } from "native-base";
 import Input from "../../../components/UI/Input";
 import { useColors } from "../../../context/ColorContex";
 import ButtonBox from "../../../components/UI/ButtonBox";
-import Button from "../../../components/UI/Button";
+import PageButton from "../../../components/UI/PageButton";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
@@ -150,7 +150,7 @@ const Restore: React.FC = () => {
         </Box>
       </VStack>
       <ButtonBox>
-        <Button
+        <PageButton
           title="Import"
           type="primary"
           isDisabled={
@@ -160,7 +160,7 @@ const Restore: React.FC = () => {
             lengthError
           }
           onPress={handleNext}
-        ></Button>
+        ></PageButton>
       </ButtonBox>
     </VStack>
   );

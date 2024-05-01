@@ -13,7 +13,7 @@ import {
 import { useColors } from "../../../context/ColorContex";
 import Input from "../../../components/UI/Input";
 import ButtonBox from "../../../components/UI/ButtonBox";
-import Button from "../../../components/UI/Button";
+import PageButton from "../../../components/UI/PageButton";
 import eventEmitter from "../../../api/eventEmitter";
 import { setSeeds } from "../../../redux/appSlice";
 import { useDispatch } from "react-redux";
@@ -146,7 +146,7 @@ const CreatePassword: React.FC = () => {
         </VStack>
       </ScrollView>
       <ButtonBox>
-        <Button
+        <PageButton
           title="Create Password"
           type="primary"
           isDisabled={
@@ -159,7 +159,7 @@ const CreatePassword: React.FC = () => {
           onPress={() => {
             handleCreate();
           }}
-        ></Button>
+        ></PageButton>
       </ButtonBox>
     </VStack>
   );

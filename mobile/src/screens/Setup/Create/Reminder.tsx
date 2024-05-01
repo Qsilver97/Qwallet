@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Image, VStack, Text, Box, HStack, Center } from "native-base";
 import { useColors } from "../../../context/ColorContex";
 import ButtonBox from "../../../components/UI/ButtonBox";
-import Button from "../../../components/UI/Button";
+import PageButton from "../../../components/UI/PageButton";
 import ReminderBar from "./Components/ReminderBar";
 import { getPasswordStrengthProps } from "../../../utils/utils";
 
@@ -112,11 +112,11 @@ const Reminder: React.FC<IProps> = () => {
             Remider Later
           </Text>
         </TouchableOpacity>
-        <Button
+        <PageButton
           title={step == 1 ? "Next" : step == 2 ? "Start" : ""}
           type="primary"
           onPress={handleNext}
-        ></Button>
+        ></PageButton>
       </ButtonBox>
     </VStack>
   );

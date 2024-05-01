@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Box, VStack, Image } from "native-base";
 import Swiper from "react-native-swiper";
 import { useColors } from "../../context/ColorContex";
-import Button from "../../components/UI/Button";
+import PageButton from "../../components/UI/PageButton";
 import { useNavigation } from "@react-navigation/native";
 import ButtonBox from "../../components/UI/ButtonBox";
 
@@ -70,11 +70,11 @@ const Splash: React.FC = () => {
         })}
       </Swiper>
       <ButtonBox>
-        <Button
+        <PageButton
           title="Get Stated"
           onPress={handlePress}
           type="primary"
-        ></Button>
+        ></PageButton>
       </ButtonBox>
     </>
   );
