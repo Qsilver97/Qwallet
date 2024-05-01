@@ -103,7 +103,7 @@ const Accounts = () => {
     //     },
     // ]
 
-    const pagesTotal = data.length % 10;
+    const pagesTotal = Math.round(data.length / 10);
 
     const options = assetsItems.map((item) => ({
         label: item.icon,
@@ -139,19 +139,21 @@ const Accounts = () => {
 
                         <div className="mt-4">
                             <AccountGrid data={data} currentPage={1} />
-
-                            <Pagination
-                                count={pagesTotal}
-                                shape="rounded"
-                                color="primary"
-                                className="w-fit mx-auto mt-7"
-                                renderItem={(item) => (
-                                    <PaginationItem
-                                        style={{ color: "#fff" }}
-                                        {...item}
-                                    />
-                                )}
-                            />
+                            {
+                                pagesTotal > 1 &&
+                                <Pagination
+                                    count={pagesTotal}
+                                    shape="rounded"
+                                    color="primary"
+                                    className="w-fit mx-auto mt-7"
+                                    renderItem={(item) => (
+                                        <PaginationItem
+                                            style={{ color: "#fff" }}
+                                            {...item}
+                                        />
+                                    )}
+                                />
+                            }
                         </div>
                     </InnerContainer>
                 </MainContent>
