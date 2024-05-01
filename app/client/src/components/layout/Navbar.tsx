@@ -5,19 +5,12 @@ import { Text } from "../commons";
 import SwitchButton from "../dashboard/SwitchButton";
 
 const Navbar = () => {
-    const { currentAddress } = useAuth();
+    const { accountInfo, currentAddress, setCurrentAddress } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
 
-    const addresses = [
-        "fasdfuioashdoifuhasdoifuhasoidufhasiodhfaioushdfi",
-        "fasdfuioashdoifuhasdoifuhasoidufhasiodhfaioushdfi",
-        "fasdfuioashdoifuhasdoifuhasoidufhasiodhfaioushdfi",
-        "fasdfuioashdoifuhasdoifuhasoidufhasiodhfaioushdfi",
-    ];
-
-    const handleSelectedAddress = () => {
+    const handleSelectedAddress = (address: string) => {
         setIsOpen(false);
-        // setCurrentAddress(address)
+        setCurrentAddress(address)
     };
 
     return (
@@ -35,9 +28,7 @@ const Navbar = () => {
                             className="uppercase cursor-pointer"
                             onClick={() => handleCopy(currentAddress)}
                         >
-                            {
-                                "fasdfuioashdoifuhasdoifuhasoidufhasiodhfaioushdfi"
-                            }
+                            {currentAddress}
                         </Text>
                         <img
                             src="assets/images/ui/chevron-down.svg"
@@ -47,13 +38,13 @@ const Navbar = () => {
                         />
 
                         {isOpen && (
-                            <div className="absolute top-8 w-max h-20 bg-[#151B1E] pl-1 pr-4 overflow-scroll overflow-x-hidden scrolling">
-                                {addresses.map((address) => (
+                            <div className="absolute top-8 w-max h-20 bg-[#151B1E] pl-1 pr-4 overflow-auto overflow-x-hidden scrolling">
+                                {accountInfo?.addresses.map((address) => (
                                     <Text
                                         weight="bold"
                                         className="uppercase py-1 cursor-pointer select-none"
                                         size="sm"
-                                        onClick={() => handleSelectedAddress()}
+                                        onClick={() => handleSelectedAddress(address)}
                                     >
                                         {address}
                                     </Text>

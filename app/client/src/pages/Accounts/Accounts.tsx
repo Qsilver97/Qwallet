@@ -11,7 +11,6 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useEffect, useState } from "react";
 import TokenSelect from "../../components/dashboard/select/TokenSelect";
 import { assetsItems } from "../../utils/constants";
-
 type DataType = {
     address: string;
     balance: number;
@@ -20,89 +19,28 @@ type DataType = {
 const Accounts = () => {
     const { accountInfo, balances, handleAddAccount } = useAuth();
     const [data, setData] = useState<DataType[]>([]);
-    accountInfo?.addresses.map((item) => {
-        return {
-            address: item,
-            balance: balances[item],
-        };
-    });
 
     useEffect(() => {
-        accountInfo?.addresses.map((item) => {
-            if (item != "") {
-                const prevData = [...data];
-                const idx = prevData.findIndex((temp) => temp.address == item);
-                let balance = 0;
-                if (balances[item]) {
-                    balance = balances[item];
-                }
-                if (idx == -1) {
-                    prevData.push({
-                        address: item,
-                        balance: balance,
-                    });
-                } else {
-                    prevData[idx] = {
-                        address: item,
-                        balance: balance,
-                    };
-                }
-                setData(prevData);
+        accountInfo?.addresses.forEach((item) => {
+            if (item !== "") {
+                setData((currentData) => {
+                    const idx = currentData.findIndex((temp) => temp.address === item);
+                    const balance = balances[item] || 0;
+
+                    if (idx === -1) {
+                        // If the address doesn't exist, add it
+                        return [...currentData, { address: item, balance }];
+                    } else {
+                        // If the address exists, update its balance
+                        return currentData.map((dataItem, index) =>
+                            index === idx ? { ...dataItem, balance } : dataItem
+                        );
+                    }
+                });
             }
         });
     }, [accountInfo, balances]);
-
-    // const data = [
-    //     {
-    //         address: 'NTMGHIDJKGHLDJGHIEVLJDFDJHFKSJDLKFJLKDSJFKJLKS',
-    //         balance: 250
-    //     },
-    //     {
-    //         address: 'NTMGHIDJKGHLDJGHIEVLJDFDJHFKSJDLKFJLKDSJFKJLKS',
-    //         balance: 250
-    //     },
-    //     {
-    //         address: 'NTMGHIDJKGHLDJGHIEVLJDFDJHFKSJDLKFJLKDSJFKJLKS',
-    //         balance: 250
-    //     },
-    //     {
-    //         address: 'NTMGHIDJKGHLDJGHIEVLJDFDJHFKSJDLKFJLKDSJFKJLKS',
-    //         balance: 250
-    //     },
-    //     {
-    //         address: 'NTMGHIDJKGHLDJGHIEVLJDFDJHFKSJDLKFJLKDSJFKJLKS',
-    //         balance: 250
-    //     },
-    //     {
-    //         address: 'NTMGHIDJKGHLDJGHIEVLJDFDJHFKSJDLKFJLKDSJFKJLKS',
-    //         balance: 250
-    //     },
-    //     {
-    //         address: 'NTMGHIDJKGHLDJGHIEVLJDFDJHFKSJDLKFJLKDSJFKJLKS',
-    //         balance: 250
-    //     },
-    //     {
-    //         address: 'NTMGHIDJKGHLDJGHIEVLJDFDJHFKSJDLKFJLKDSJFKJLKS',
-    //         balance: 250
-    //     },
-    //     {
-    //         address: 'NTMGHIDJKGHLDJGHIEVLJDFDJHFKSJDLKFJLKDSJFKJLKS',
-    //         balance: 250
-    //     },
-    //     {
-    //         address: 'NTMGHIDJKGHLDJGHIEVLJDFDJHFKSJDLKFJLKDSJFKJLKS',
-    //         balance: 250
-    //     },
-    //     {
-    //         address: 'NTMGHIDJKGHLDJGHIEVLJDFDJHFKSJDLKFJLKDSJFKJLKS',
-    //         balance: 250
-    //     },
-    //     {
-    //         address: 'NTMGHIDJKGHLDJGHIEVLJDFDJHFKSJDLKFJLKDSJFKJLKS',
-    //         balance: 250
-    //     },
-    // ]
-
+    
     const pagesTotal = Math.round(data.length / 10);
 
     const options = assetsItems.map((item) => ({
