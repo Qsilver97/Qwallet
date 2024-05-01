@@ -127,10 +127,10 @@ exports.fetchUser = async (req, res) => {
             richlist[richlistResult.name] = richlistResult.richlist;
         }
     } catch (error) {
-        
+
     }
 
-    res.send({...userState, ...{ balances: balances.balances, marketcap, tokens: tokens.tokens, richlist }});
+    res.send({ ...userState, ...{ balances: balances.balances, marketcap, tokens: tokens.tokens, richlist } });
 }
 
 exports.deleteAccount = async (req, res) => {
@@ -258,7 +258,7 @@ exports.socket = async (req, res) => {
     if (!liveSocket) {
         liveSocket = socketManager.initLiveSocket(socketUrl);
         liveSocketController(liveSocket)
-        await delay(500);
+        await delay(1500);
     }
     console.log(`Socket sent: ${command}`);
     liveSocket.send(command);

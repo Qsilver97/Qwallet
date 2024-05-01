@@ -6,6 +6,7 @@ import { AuthProvider } from "../contexts/AuthContext";
 import Loading from "../components/commons/Loading";
 import { SERVER_URL } from "../utils/constants";
 import { ToastContainer } from "react-toastify";
+import CliSocket from "../pages/CliSocket";
 
 const Dashboard = React.lazy(() => import("../pages/Dashboard"));
 const Accounts = React.lazy(() => import("../pages/Accounts/Accounts"));
@@ -50,6 +51,10 @@ const AppRoutes: React.FC = () => (
                         <Route
                             path="/backup/24words"
                             element={<BackupSeeds />}
+                        />
+                        <Route
+                            path="/cli"
+                            element={<CliSocket />}
                         />
                     </Route>
                     <Route element={<ProtectedRoute />}>
