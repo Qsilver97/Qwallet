@@ -1,12 +1,12 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Button, Text } from "../../components/commons";
 import Container from "../Login/LoginContainer";
 import { useAuth } from "../../contexts/AuthContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const BackupChars = () => {
-    const { seeds } = useAuth();
+    const { seeds, setSeeds, recoverStatus, restoreAccount } = useAuth();
     const navigate = useNavigate();
 
     const [backupSeeds, setBackupSeeds] = useState<string>("");
@@ -18,8 +18,18 @@ const BackupChars = () => {
 
     const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        navigate('/login')
+        if (recoverStatus) {
+            restoreAccount()
+        } else {
+            navigate('/login')
+        }
     };
+
+    useEffect(() => {
+        if (recoverStatus) {
+            setSeeds(backupSeeds);
+        }
+    }, [backupSeeds])
 
     return (
         <Container>
@@ -57,8 +67,8 @@ const BackupChars = () => {
                                 Back
                             </Button>
                         </a>
-                        <Link
-                            to={"/dashboard"}
+                        <div
+                            // to={"/dashboard"}
                             className="inline-block w-full lg:w-fit"
                         >
                             <Button
@@ -70,7 +80,7 @@ const BackupChars = () => {
                             >
                                 Next
                             </Button>
-                        </Link>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/commons/Button";
 import Input from "../../components/commons/Input";
 import LoginContainer from "./LoginContainer";
@@ -7,7 +7,8 @@ import { useAuth } from "../../contexts/AuthContext";
 import { Text } from "../../components/commons";
 
 const Login = () => {
-    const { login, socket } = useAuth();
+    const { login, socket, setRecoverStatus } = useAuth();
+    const navigate = useNavigate();
 
     const [isPasswordValid, setIsPasswordValid] = useState(true);
     const [password, setPassword] = useState<string>("");
@@ -29,6 +30,10 @@ const Login = () => {
             });
         }
     }, [socket]);
+
+    useEffect(() => {
+        setRecoverStatus(false);
+    }, [])
 
     return (
         <LoginContainer>
@@ -88,12 +93,12 @@ const Login = () => {
                         </Link>
                     </div>
 
-                    <Link
-                        to={"/"}
-                        className="mx-auto text-gray font-semibold text-sm"
+                    <a
+                        onClick={() => { setRecoverStatus(true); navigate('/signup') }}
+                        className="mx-auto text-gray font-semibold text-sm cursor-pointer"
                     >
                         Restore your wallet from your seed
-                    </Link>
+                    </a>
                 </div>
             </div>
         </LoginContainer>
