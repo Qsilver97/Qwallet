@@ -63,7 +63,7 @@ const Accounts = () => {
                                 className="cursor-pointer"
                                 onClick={handleAddAccount}
                             >
-                                <Button variant="primary">ADD ACCOUNT</Button>
+                                <Button variant="primary">ADD ADDRESS</Button>
                             </a>
                         </div>
 
