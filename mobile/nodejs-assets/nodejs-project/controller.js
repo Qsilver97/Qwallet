@@ -435,7 +435,7 @@ exports.transferStatus = async () => {
   }, 1000);
   rn_bridge.channel.send(
     JSON.stringify({
-      action: "S2C/transferstatus",
+      action: "S2C/transfer-status",
       data: result,
     })
   );
@@ -482,7 +482,7 @@ exports.basicInfo = async () => {
   }
   rn_bridge.channel.send(
     JSON.stringify({
-      action: "S2C/transfer",
+      action: "S2C/basic-info",
       data: {
         balances: balances.balances,
         marketcap,

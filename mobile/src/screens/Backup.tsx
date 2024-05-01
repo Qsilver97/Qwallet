@@ -17,7 +17,7 @@ import { useState } from "react";
 const Backup: React.FC = () => {
   const { seeds } = useSelector((state: RootState) => state.app);
   const [backuped, setBackuped] = useState(false);
-  const [seedsShowStatus, setSeedsShowStatus] = useState(false);
+  const [seedsShowStatus, setSeedsShowStatus] = useState(true);
 
   const navigation = useNavigation();
 

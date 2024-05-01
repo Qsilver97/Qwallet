@@ -5,8 +5,4 @@ const handleCopy = async (value: any) => {
     await navigator.clipboard.writeText(`${value}`);
 }
 
-const delay = (ms: number) => {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-export { handleCopy, delay }
+export {handleCopy}
