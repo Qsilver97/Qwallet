@@ -7,7 +7,7 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -15,6 +15,7 @@ import { RootState } from "../../../redux/store";
 import PageButton from "../../../components/UI/PageButton";
 import ButtonBox from "../../../components/UI/ButtonBox";
 import { useColors } from "../../../context/ColorContex";
+import { useNavigation } from "@react-navigation/native";
 
 const Confirm: React.FC = () => {
   const { bgColor, textColor, main, gray } = useColors();
@@ -22,8 +23,10 @@ const Confirm: React.FC = () => {
   const [blurBackground, setBlurBackground] = useState(true);
   const [currentSeedIndex, setCurrentSeedIndex] = useState(0);
   const [selectedCorrect, setSelectedCorrect] = useState(false);
-
   const [step, setStep] = useState(1);
+
+  const navigation = useNavigation();
+
   const handleSeedSelect = (selectedSeed: string) => {
     if (seeds[currentSeedIndex] === selectedSeed) {
       setSelectedCorrect(true);
@@ -38,6 +41,11 @@ const Confirm: React.FC = () => {
     }
   };
 
+  const handleNext = () => {
+    if (step == 1) setStep(2);
+    else navigation.navigate("Login");
+  };
+
   const getDisplaySeeds = useMemo(() => {
     let seedOptions = [seeds[currentSeedIndex]];
     while (seedOptions.length < 6) {
@@ -48,11 +56,6 @@ const Confirm: React.FC = () => {
     }
     return seedOptions.sort(() => Math.random() - 0.5);
   }, [currentSeedIndex]);
-
-  const handleNext = () => {
-    if (step == 1) setStep(2);
-  };
-
   const seedComponents = useMemo(() => {
     if (typeof seeds !== "string") {
       return seeds.map((seed, index) => {
@@ -190,7 +193,7 @@ const Confirm: React.FC = () => {
           title="Next"
           type="primary"
           onPress={handleNext}
-          isDisabled={step == 2 && currentSeedIndex != 23}
+          isDisabled={step == 2 && currentSeedIndex != 23 || selectedCorrect == false}
         />
       </ButtonBox>
     </VStack>
