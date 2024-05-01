@@ -3,10 +3,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useColors } from "../../../context/ColorContex";
 import CreatePassword from "./CreatePassword";
 import Reminder from "./Reminder";
+import Confirm from "./Confirm";
 
 type CreateStackParamList = {
   CreatePassword: undefined;
   Reminder: undefined;
+  Confirm: undefined;
 };
 
 const Stack = createNativeStackNavigator<CreateStackParamList>();
@@ -16,7 +18,7 @@ const Create: React.FC = () => {
 
   return (
     <Stack.Navigator
-      initialRouteName="Reminder"
+      initialRouteName="CreatePassword"
       screenOptions={{
         headerStyle: {
           backgroundColor: bgColor,
@@ -33,6 +35,11 @@ const Create: React.FC = () => {
         name="Reminder"
         component={Reminder}
         options={{ title: "Secure Alert" }}
+      />
+      <Stack.Screen
+        name="Confirm"
+        component={Confirm}
+        options={{ title: "Confrim Seeds Phrase" }}
       />
     </Stack.Navigator>
   );
