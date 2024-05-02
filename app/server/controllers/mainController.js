@@ -127,10 +127,10 @@ exports.fetchUser = async (req, res) => {
             richlist[richlistResult.name] = richlistResult.richlist;
         }
     } catch (error) {
-        
+
     }
 
-    res.send({...userState, ...{ balances: balances.balances, marketcap, tokens: tokens.tokens, richlist }});
+    res.send({ ...userState, ...{ balances: balances.balances, marketcap, tokens: tokens.tokens, richlist } });
 }
 
 exports.deleteAccount = async (req, res) => {
@@ -234,7 +234,7 @@ exports.restoreAccount = async (req, res) => {
 }
 
 exports.transfer = async (req, res) => {
-    const { toAddress, fromIdx, amount, tick } = req.body;
+    const { toAddress, fromIdx, amount, tick, tokenName } = req.body;
     const command = `send ${stateManager.getUserState().password},${fromIdx},${tick},${toAddress},${amount}`;
     const sendResult = await wasmManager.ccall({ command, flag: 'transfer' });
     const v1requestResult = await wasmManager.ccall({ command: 'v1request', flag: 'v1request' });
@@ -258,7 +258,7 @@ exports.socket = async (req, res) => {
     if (!liveSocket) {
         liveSocket = socketManager.initLiveSocket(socketUrl);
         liveSocketController(liveSocket)
-        await delay(500);
+        await delay(1500);
     }
     console.log(`Socket sent: ${command}`);
     liveSocket.send(command);

@@ -1,3 +1,4 @@
+import { useAuth } from "../../../contexts/AuthContext";
 import { Text } from "../../commons";
 import Input from "../../commons/Input";
 import TokenSubmitModal from "./TokenSubmitModal";
@@ -8,7 +9,9 @@ type TokenFormsModalProps = {
     setAmount: React.Dispatch<React.SetStateAction<string>>;
     addressToSend: string;
     setAddressToSend: React.Dispatch<React.SetStateAction<string>>;
-    modalPage: number;
+    transactionId: string;
+    sendingStatus: 'init' | 'confirm' | 'open' | 'pending' | 'success' | 'rejected' | 'closed';
+    expectedTick: number | undefined;
 };
 
 const TokenFormsModal = ({
@@ -17,11 +20,14 @@ const TokenFormsModal = ({
     setAmount,
     addressToSend,
     setAddressToSend,
-    modalPage,
+    transactionId,
+    expectedTick,
+    sendingStatus,
 }: TokenFormsModalProps) => {
+    const { balances, currentAddress } = useAuth();
     return (
         <div className="py-5 px-6 space-y-6 border-white/60 border rounded-2xl">
-            {modalPage === 1 && (
+            {sendingStatus === 'init' && (
                 <>
                     <div className="space-y-4">
                         <Input
@@ -45,41 +51,41 @@ const TokenFormsModal = ({
                     </div>
 
                     <div className="space-y-1.5">
-                        <div className="flex justify-between">
+                        {/* <div className="flex justify-between">
                             <label className="font-Inter font-light text-xs">
                                 Limit
                             </label>
                             <span className="font-Inter font-light text-xs">
                                 0.02 {tokenName} - 23 {tokenName}
                             </span>
-                        </div>
-                        <div className="flex justify-between">
-                            <label className="font-Inter font-light text-xs mr-auto">
-                                Fee
-                            </label>
-                            <span className="font-Inter font-light text-xs">
-                                0.02 {tokenName}
-                            </span>
-                        </div>
+                        </div> */}
                         <div className="flex justify-between">
                             <label className="font-Inter font-light text-xs mr-auto">
                                 Available
                             </label>
                             <span className="font-Inter font-light text-xs">
-                                1 {tokenName}
+                                {balances[currentAddress]} {tokenName}
                             </span>
                         </div>
                     </div>
                 </>
             )}
-            {modalPage === 2 && (
+            {sendingStatus === "confirm" && (
                 <TokenSubmitModal
                     amount={amount}
                     addressToSend={addressToSend}
                     token={tokenName}
                 />
             )}
-            {modalPage === 3 && (
+            {sendingStatus === 'pending' &&
+                <div className="break-all">
+                    Sending...
+                    <br />
+                    transactionId: {transactionId}<br />
+                    expectedTick: {expectedTick}
+                </div>
+            }
+            {sendingStatus === 'rejected' || sendingStatus === 'success' && (
                 <div className="space-y-7 grid justify-center">
                     <img
                         src="assets/images/ui/checked-blue.svg"
@@ -91,10 +97,10 @@ const TokenFormsModal = ({
                         <Text className="text-2xl text-center">
                             Transfer Success
                         </Text>
-                        <Text className="text-5xl text-center">342</Text>
+                        <Text className="text-5xl text-center">{amount}</Text>
                     </div>
 
-                    <Text className="text-center">{addressToSend}</Text>
+                    <Text className="text-center break-all">{addressToSend}</Text>
                 </div>
             )}
         </div>

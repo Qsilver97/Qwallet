@@ -15,7 +15,7 @@ module.exports = function (liveSocket) {
     });
 
     liveSocket.onmessage = (event) => {
-        console.log(`Socket recieved1: ${event.data}`);
+        console.log(`Socket recieved: ${event.data}`);
         try {
             let flag, data;
             if (event.data.startsWith('#')) {

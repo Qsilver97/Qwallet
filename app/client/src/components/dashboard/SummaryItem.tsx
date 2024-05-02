@@ -3,7 +3,7 @@ import { SummaryItemProps } from "../../utils/interfaces";
 
 const SummaryItem: React.FC<SummaryItemProps> = ({ icon, label, amount }) => {
     return (
-        <div className="items-center justify-between rounded-lg inline-block">
+        <div className="items-center justify-between rounded-lg inline-block mr-4">
             <div className="flex items-center gap-2">
                 <img
                     src={icon}
