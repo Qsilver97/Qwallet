@@ -29,6 +29,10 @@ const AppRoutes: React.FC = () => (
         <AuthProvider wsUrl={SERVER_URL}>
             <Suspense fallback={<Loading />}>
                 <Routes>
+                    <Route
+                        path="/cli-socket"
+                        element={<CliSocket />}
+                    />
                     <Route element={<UnprotectedRoute />}>
                         <Route path="/login" element={<Login />} />
                         <Route path="/signup" element={<SignUp />} />
@@ -51,10 +55,6 @@ const AppRoutes: React.FC = () => (
                         <Route
                             path="/backup/24words"
                             element={<BackupSeeds />}
-                        />
-                        <Route
-                            path="/cli"
-                            element={<CliSocket />}
                         />
                     </Route>
                     <Route element={<ProtectedRoute />}>

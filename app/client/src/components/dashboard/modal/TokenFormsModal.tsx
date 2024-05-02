@@ -85,7 +85,7 @@ const TokenFormsModal = ({
                     expectedTick: {expectedTick}
                 </div>
             }
-            {sendingStatus === 'rejected' || sendingStatus == 'success' && (
+            {sendingStatus === 'rejected' || sendingStatus === 'success' && (
                 <div className="space-y-7 grid justify-center">
                     <img
                         src="assets/images/ui/checked-blue.svg"
