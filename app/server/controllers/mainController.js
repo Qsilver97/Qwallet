@@ -234,7 +234,7 @@ exports.restoreAccount = async (req, res) => {
 }
 
 exports.transfer = async (req, res) => {
-    const { toAddress, fromIdx, amount, tick } = req.body;
+    const { toAddress, fromIdx, amount, tick, tokenName } = req.body;
     const command = `send ${stateManager.getUserState().password},${fromIdx},${tick},${toAddress},${amount}`;
     const sendResult = await wasmManager.ccall({ command, flag: 'transfer' });
     const v1requestResult = await wasmManager.ccall({ command: 'v1request', flag: 'v1request' });
