@@ -35,6 +35,7 @@ interface AuthContextType {
     currentAddress: string;
     tokenBalances: { [name: string]: Balances };
     recoverStatus: boolean;
+    mode: ModeProps;
     setRecoverStatus: Dispatch<SetStateAction<boolean>>;
     setSeedType: Dispatch<SetStateAction<"55chars" | "24words">>;
     setMode: Dispatch<SetStateAction<ModeProps>>;
@@ -321,6 +322,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 richlist,
                 tick,
                 balances,
+                mode,
                 tokenBalances,
                 currentAddress,
                 recoverStatus,

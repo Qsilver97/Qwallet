@@ -157,6 +157,13 @@ const assetsItems: AssetItemProps[] = [
         percentage: 0,
         colorClassName: 'bg-[#50AF95]',
     },
+    {
+        icon: '/assets/images/tokens/qft.svg',
+        name: 'QWALLET',
+        amount: '0',
+        percentage: 0,
+        colorClassName: 'bg-[#50AF00]',
+    },
 ]
 
 const marketOptions = [
