@@ -14,62 +14,29 @@ import { useColors } from "../../../context/ColorContex";
 import Input from "../../../components/UI/Input";
 import ButtonBox from "../../../components/UI/ButtonBox";
 import PageButton from "../../../components/UI/PageButton";
-import eventEmitter from "../../../api/eventEmitter";
-import { setSeeds } from "../../../redux/appSlice";
-import { useDispatch } from "react-redux";
-import { create } from "../../../api/api";
-import { checkPasswordStrength, getPasswordStrengthProps } from "../../../utils/utils";
+import {
+  checkPasswordStrength,
+  getPasswordStrengthProps,
+} from "../../../utils/utils";
+import { useAuth } from "@app/context/AuthContext";
 
 const CreatePassword: React.FC = () => {
-  const dispatch = useDispatch();
   const navigation = useNavigation();
   const { bgColor, textColor, gray, main } = useColors();
   const [checkAgreement, setCheckAgreement] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordStatus, setPasswordStatus] = useState(true);
-  const [seedType, setSeedType] = useState<"24words" | "55chars">("24words");
-  const [creatingStatus, setCreatingStatus] = useState(false);
   const [lengthError, setLengthError] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState<{
     label: string;
     color: string;
   }>(getPasswordStrengthProps(0));
+  const { setTempPassword } = useAuth();
 
   const handlePassword = (text: string) => {
     setPassword(text);
     setPasswordStrength(getPasswordStrengthProps(checkPasswordStrength(text)));
   };
-
-  const handleCreate = () => {
-    setCreatingStatus(true);
-    let passwordPrefix = "";
-    if (seedType == "55chars") passwordPrefix = "Q";
-    create(`login ${passwordPrefix}${password}`);
-  };
-
-  useEffect(() => {
-    eventEmitter.on("S2C/create", (res) => {
-      if (res.data?.value) {
-        if (res.data.value.result >= 0) {
-          Toast.show({ type: "success", text1: "Create Wallet Successly!" });
-          const seeds = res.data.value.display.split(" ");
-          if (seeds.length == 1) {
-            dispatch(setSeeds(seeds[0]));
-          } else {
-            dispatch(setSeeds(seeds));
-          }
-          navigation.navigate("Reminder");
-          setCreatingStatus(false);
-        } else {
-          Toast.show({ type: "error", text1: res.data.value.display });
-        }
-      } else {
-        setPasswordStatus(true);
-        Toast.show({ type: "error", text1: res.error });
-      }
-    });
-  }, []);
 
   return (
     <VStack
@@ -157,7 +124,8 @@ const CreatePassword: React.FC = () => {
             checkAgreement == false
           }
           onPress={() => {
-            handleCreate();
+            setTempPassword(password);
+            navigation.navigate("SeedType");
           }}
         ></PageButton>
       </ButtonBox>

@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Image, VStack, Text, Box, HStack, Center } from "native-base";
-import { useColors } from "../../../context/ColorContex";
-import ButtonBox from "../../../components/UI/ButtonBox";
-import PageButton from "../../../components/UI/PageButton";
+import { useColors } from "@app/context/ColorContex";
+import { getPasswordStrengthProps } from "@app/utils/utils";
+import ButtonBox from "@app/components/UI/ButtonBox";
+import PageButton from "@app/components/UI/PageButton";
 import ReminderBar from "./Components/ReminderBar";
-import { getPasswordStrengthProps } from "../../../utils/utils";
 
 interface IProps {}
 
@@ -16,7 +16,7 @@ const Reminder: React.FC<IProps> = () => {
   const [step, setStep] = useState<1 | 2>(1);
   const handleNext = () => {
     if (step == 1) setStep(2);
-    else navigation.navigate("Confirm");
+    else navigation.navigate("SelectSeedType");
   };
 
   return (
@@ -37,7 +37,7 @@ const Reminder: React.FC<IProps> = () => {
           justifyItems="center"
         >
           <Image
-            source={require("../../../../assets/images/02/01.png")}
+            source={require("@assets/images/02/01.png")}
             style={{ width: 214, height: 220 }}
             resizeMode="contain"
             alt="Splash Image"
