@@ -1,11 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import Button from "../../components/commons/Button";
 import { useAuth } from "../../contexts/AuthContext";
 import LoginContainer from "../Login/LoginContainer";
 
 const AccountOptions = () => {
-    const { create, setSeedType, seedType } = useAuth();
+    const navigate = useNavigate();
+    const { create, setSeedType, seedType, recoverStatus } = useAuth();
 
     const handleCheckboxChange = (seed: "24words" | "55chars") => {
         setSeedType(seed);
@@ -76,14 +77,25 @@ const AccountOptions = () => {
                             </Button>
                         </Link>
 
-                        <a
-                            className="inline-block w-full lg:w-fit cursor-pointer"
-                            onClick={create}
-                        >
-                            <Button variant="primary" size="wide">
-                                Next
-                            </Button>
-                        </a>
+                        {
+                            recoverStatus ?
+                                <a
+                                    className="inline-block w-full lg:w-fit cursor-pointer"
+                                    onClick={() => { navigate(`/backup/${seedType}`) }}
+                                >
+                                    <Button variant="primary" size="wide">
+                                        Next
+                                    </Button>
+                                </a> :
+                                <a
+                                    className="inline-block w-full lg:w-fit cursor-pointer"
+                                    onClick={create}
+                                >
+                                    <Button variant="primary" size="wide">
+                                        Next
+                                    </Button>
+                                </a>
+                        }
                     </div>
                 </div>
             </div>

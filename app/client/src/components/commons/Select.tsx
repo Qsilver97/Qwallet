@@ -9,12 +9,14 @@ interface TokenSelectProps {
     options: SelectOption[];
     placeholder?: string;
     font?: "base" | "sm";
+    isBorderStyle?: boolean;
 }
 
 const Select: React.FC<TokenSelectProps> = ({
     options,
     placeholder,
     font = "base",
+    isBorderStyle,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState<SelectOption | null>(
@@ -37,23 +39,34 @@ const Select: React.FC<TokenSelectProps> = ({
         sm: "text-xs",
     };
 
+    const style = isBorderStyle
+        ? {
+              icon: "assets/images/ui/chevron-down.svg",
+              container: "px-7 py-1.5 border border-white rounded-md",
+              option: `px-7 py-1.5 ${fontStyle["sm"]}`,
+          }
+        : {
+              icon: "assets/images/ui/chevron-down-light.svg",
+              container: "px-4 py-3 rounded-xl",
+              option: `px-3 py-2 ${fontStyle[font]}`,
+          };
+
     return (
         <div className="relative w-max z-10">
             <div className="flex gap-3 items-center">
                 <div
-                    className={`w-max flex items-center px-4 py-3 rounded-xl cursor-pointer`}
+                    className={`w-max flex items-center cursor-pointer ${style.container}`}
                     onClick={toggleSelect}
                 >
                     <span
-                        className={`w-full font-Inter mr-2 ${fontStyle[font]}`}
+                        className={`w-full font-Inter mr-2 ${
+                            isBorderStyle ? fontStyle["sm"] : fontStyle[font]
+                        }`}
                     >
                         {selectedOption?.label || defaultValue}
                     </span>
 
-                    <img
-                        src={"assets/images/ui/chevron-down-light.svg"}
-                        alt="chevron-down"
-                    />
+                    <img src={style.icon} alt="chevron-down" />
                 </div>
             </div>
 
@@ -62,7 +75,7 @@ const Select: React.FC<TokenSelectProps> = ({
                     {options.map((option, index) => (
                         <div
                             key={index}
-                            className={`${fontStyle[font]} font-Inter px-3 py-2 cursor-pointer hover:bg-dark-gray-400 transition-colors duration-300`}
+                            className={`${style.option} font-Inter font-medium cursor-pointer hover:bg-dark-gray-400 transition-colors duration-300`}
                             onClick={() => handleOptionClick(option)}
                         >
                             {option.label}

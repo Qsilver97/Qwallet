@@ -27,7 +27,7 @@ const Input = ({
         transparent: "bg-transparent",
     };
     const gaps = {
-        base: "gap-12",
+        base: "gap-5",
         strech: "gap-3",
         xs: "gap-1",
     };
@@ -40,7 +40,7 @@ const Input = ({
         },
         base: {
             input: `${backgrounds["base"]} max-w-xl h-10 px-3 outline-none rounded-[5px] font-Inter`,
-            label: "text-lg",
+            label: "font-Montserrat font-semibold text-lg",
             outerContainer: `flex flex-col ${gaps[gapVariant]}`,
         },
         modal: {
