@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Checkbox, Image, Radio, Text, VStack } from "native-base";
+import { Image, Radio, Text, VStack } from "native-base";
+import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
+import Toast from "react-native-toast-message";
+import { useAuth } from "@app/context/AuthContext";
+import { create } from "@app/api/api";
 import { useColors } from "@app/context/ColorContex";
 import { setSeedType, setSeeds } from "@app/redux/appSlice";
 import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
-import { useNavigation } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
 import eventEmitter from "@app/api/eventEmitter";
-import Toast from "react-native-toast-message";
-import { useAuth } from "@app/context/AuthContext";
-import { create } from "@app/api/api";
 
 const SeedType = () => {
   const { bgColor, textColor } = useColors();

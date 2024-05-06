@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Box, Link, Text, TextArea, VStack } from "native-base";
-import Input from "../../../components/UI/Input";
-import { useColors } from "../../../context/ColorContex";
-import ButtonBox from "../../../components/UI/ButtonBox";
-import PageButton from "../../../components/UI/PageButton";
-import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { passwordAvail, restore } from "../../../api/api";
-import { setPassword, setSeedType } from "../../../redux/appSlice";
-import eventEmitter from "../../../api/eventEmitter";
+import { useNavigation } from "@react-navigation/native";
+import { useColors } from "@app/context/ColorContex";
+import { RootState } from "@app/redux/store";
+import { setPassword, setSeedType } from "@app/redux/appSlice";
+import { passwordAvail, restore } from "@app/api/api";
+import eventEmitter from "@app/api/eventEmitter";
+import Input from "@app/components/UI/Input";
+import ButtonBox from "@app/components/UI/ButtonBox";
+import PageButton from "@app/components/UI/PageButton";
+
 
 const Restore: React.FC = () => {
   const navigation = useNavigation();

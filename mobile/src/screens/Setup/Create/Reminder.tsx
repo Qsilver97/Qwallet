@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Image, VStack, Text, Box, HStack, Center } from "native-base";
+import { Image, VStack, Text, Box } from "native-base";
 import { useColors } from "@app/context/ColorContex";
 import { getPasswordStrengthProps } from "@app/utils/utils";
 import ButtonBox from "@app/components/UI/ButtonBox";

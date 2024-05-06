@@ -1,22 +1,13 @@
-import {
-  Box,
-  Button,
-  HStack,
-  Icon,
-  ScrollView,
-  Text,
-  TextArea,
-  VStack,
-} from "native-base";
+import { Box, Button, HStack, Icon, Text, TextArea, VStack } from "native-base";
 import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { RootState } from "../../../redux/store";
-import PageButton from "../../../components/UI/PageButton";
-import ButtonBox from "../../../components/UI/ButtonBox";
-import { useColors } from "../../../context/ColorContex";
 import { useNavigation } from "@react-navigation/native";
+import { useColors } from "@app/context/ColorContex";
+import { RootState } from "@app/redux/store";
+import ButtonBox from "@app/components/UI/ButtonBox";
+import PageButton from "@app/components/UI/PageButton";
 
 const Confirm: React.FC = () => {
   const { bgColor, textColor, main, gray } = useColors();

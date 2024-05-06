@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import Toast from "react-native-toast-message";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   Box,
@@ -10,15 +9,15 @@ import {
   Text,
   VStack,
 } from "native-base";
-import { useColors } from "../../../context/ColorContex";
-import Input from "../../../components/UI/Input";
-import ButtonBox from "../../../components/UI/ButtonBox";
-import PageButton from "../../../components/UI/PageButton";
+import { useAuth } from "@app/context/AuthContext";
+import { useColors } from "@app/context/ColorContex";
 import {
   checkPasswordStrength,
   getPasswordStrengthProps,
-} from "../../../utils/utils";
-import { useAuth } from "@app/context/AuthContext";
+} from "@app/utils/utils";
+import Input from "@app/components/UI/Input";
+import ButtonBox from "@app/components/UI/ButtonBox";
+import PageButton from "@app/components/UI/PageButton";
 
 const CreatePassword: React.FC = () => {
   const navigation = useNavigation();

@@ -1,23 +1,23 @@
 import React, { useRef, useState } from "react";
-import { Box, VStack, Image } from "native-base";
+import { VStack, Image } from "native-base";
 import Swiper from "react-native-swiper";
-import { useColors } from "../../context/ColorContex";
-import PageButton from "../../components/UI/PageButton";
 import { useNavigation } from "@react-navigation/native";
-import ButtonBox from "../../components/UI/ButtonBox";
+import { useColors } from "@app/context/ColorContex";
+import ButtonBox from "@app/components/UI/ButtonBox";
+import PageButton from "@app/components/UI/PageButton";
 
 const slides = [
   {
-    image: require("../../../assets/images/01/01.png"),
-    text: require("../../../assets/images/01/text01.png"),
+    image: require("@assets/images/01/01.png"),
+    text: require("@assets/images/01/text01.png"),
   },
   {
-    image: require("../../../assets/images/01/02.png"),
-    text: require("../../../assets/images/01/text02.png"),
+    image: require("@assets/images/01/02.png"),
+    text: require("@assets/images/01/text02.png"),
   },
   {
-    image: require("../../../assets/images/01/03.png"),
-    text: require("../../../assets/images/01/text03.png"),
+    image: require("@assets/images/01/03.png"),
+    text: require("@assets/images/01/text03.png"),
   },
 ];
 
