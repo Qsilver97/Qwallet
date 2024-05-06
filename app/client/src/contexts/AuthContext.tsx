@@ -8,7 +8,7 @@ import React, {
     SetStateAction,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { MODES, SERVER_URL, sideBarItems } from "../utils/constants";
+import { MODES, SERVER_URL, assetsItems, sideBarItems } from "../utils/constants";
 import { io, Socket } from "socket.io-client";
 import axios from "axios";
 import {
@@ -19,6 +19,7 @@ import {
 } from "../utils/interfaces";
 import { toast } from "react-toastify";
 import { Loading } from "../components/commons";
+import { TokenOption } from "../components/commons/Select";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -37,6 +38,9 @@ interface AuthContextType {
     totalBalance: string;
     recoverStatus: boolean;
     mode: ModeProps;
+    tokenOptions: TokenOption[];
+    currentToken: TokenOption;
+    setCurrentToken: Dispatch<SetStateAction<TokenOption>>;
     setRecoverStatus: Dispatch<SetStateAction<boolean>>;
     setSeedType: Dispatch<SetStateAction<"55chars" | "24words">>;
     setMode: Dispatch<SetStateAction<ModeProps>>;
@@ -71,10 +75,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [seedType, setSeedType] = useState<"55chars" | "24words">("24words");
     const [seeds, setSeeds] = useState<string | string[]>("");
     const [socket, setSocket] = useState<Socket>();
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
     const [activeTabIdx, setActiveTabIdx] = useState(0);
     const [accountInfo, setAccountInfo] = useState<AccountInfoInterface>();
-    const [totalBalance, setTotalBalance] = useState<string>('0');
+    const [totalBalance, _] = useState<string>('0');
+    // const [totalBalance, setTotalBalance] = useState<string>('0');
 
     const [tick, setTick] = useState("");
     const [balances, setBalances] = useState<Balances>({});
@@ -86,6 +91,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [richlist, setRichlist] = useState<RichListInterface>({});
     const [currentAddress, setCurrentAddress] = useState<string>("");
     const [recoverStatus, setRecoverStatus] = useState<boolean>(false);
+
+    const tokenOptions: TokenOption[] = assetsItems.map((item) => ({
+        label: item.icon,
+        value: item.name,
+    }));
+
+    const [currentToken, setCurrentToken] = useState<TokenOption>(tokenOptions[0]);
 
     const [password, setPassword] = useState<string>("");
 
@@ -319,11 +331,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 const resp = await axios
                     .post(`${SERVER_URL}/api/check-authenticated`, () => {
                     })
-                if(resp.status == 200) {
+                if (resp.status == 200) {
                     setIsAuthenticated(true)
                 }
             } catch (error) {
-                
+
             }
             setLoading(false);
         }
@@ -349,6 +361,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 tokenBalances,
                 currentAddress,
                 recoverStatus,
+                currentToken,
+                tokenOptions,
+                setCurrentToken,
                 setRecoverStatus,
                 setSeeds,
                 handleAddAccount,

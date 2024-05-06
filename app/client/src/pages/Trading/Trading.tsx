@@ -43,7 +43,7 @@ const Trading = () => {
 
                         <div className="grid grid-cols-[70%_30%] gap-2">
                             <div className="flex flex-col gap-2">
-                                <Section>
+                                {/* <Section>
                                     <div>
                                         <div className="flex flex-col gap-2">
                                             <SwitchOptions
@@ -62,7 +62,7 @@ const Trading = () => {
 
                                         <img src="/assets/images/dashboard/chat.svg" />
                                     </div>
-                                </Section>
+                                </Section> */}
 
                                 <Section>
                                     <div className="flex justify-between w-full h-7">
@@ -70,7 +70,7 @@ const Trading = () => {
                                             Orders
                                         </span>
 
-                                        <div className="flex items-center">
+                                        {/* <div className="flex items-center">
                                             <Text
                                                 font="inter"
                                                 weight="medium"
@@ -84,12 +84,11 @@ const Trading = () => {
                                                 options={marketOptions}
                                                 font="sm"
                                             />
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </Section>
                             </div>
-
-                            <TradingAside />
+                            {/* <TradingAside /> */}
                         </div>
                     </div>
                 </MainContent>
