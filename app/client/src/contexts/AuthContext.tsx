@@ -34,6 +34,7 @@ interface AuthContextType {
     richlist: RichListInterface;
     currentAddress: string;
     tokenBalances: { [name: string]: Balances };
+    totalBalance: string;
     recoverStatus: boolean;
     mode: ModeProps;
     setRecoverStatus: Dispatch<SetStateAction<boolean>>;
@@ -73,6 +74,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [activeTabIdx, setActiveTabIdx] = useState(0);
     const [accountInfo, setAccountInfo] = useState<AccountInfoInterface>();
+    const [totalBalance, setTotalBalance] = useState<string>('0');
 
     const [tick, setTick] = useState("");
     const [balances, setBalances] = useState<Balances>({});
@@ -224,6 +226,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
         if (resp && resp.status == 200) {
             const data = resp.data;
+            console.log(data, 'aaaaaaaaaaaaaaaaaaaaa')
             setIsAuthenticated(data.isAuthenticated);
             setPassword(data.password);
             setAccountInfo(data.accountInfo);
@@ -305,8 +308,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             await fetchInfo();
             setLoading(false);
         }
-        init();
-    }, []);
+        if (isAuthenticated)
+            init();
+    }, [isAuthenticated]);
+
+    useEffect(() => {
+        async function checkAuthenticated() {
+            setLoading(true);
+            try {
+                const resp = await axios
+                    .post(`${SERVER_URL}/api/check-authenticated`, () => {
+                    })
+                if(resp.status == 200) {
+                    setIsAuthenticated(true)
+                }
+            } catch (error) {
+                
+            }
+            setLoading(false);
+        }
+        checkAuthenticated();
+    }, [])
 
     return (
         <AuthContext.Provider
@@ -322,6 +344,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 richlist,
                 tick,
                 balances,
+                totalBalance,
                 mode,
                 tokenBalances,
                 currentAddress,
