@@ -59,28 +59,35 @@ const SeedType = () => {
       justifyContent="center"
       justifyItems="center"
     >
-      <Image
-        source={require("@assets/images/01/02.png")}
-        style={{ width: 214, height: 220 }}
-        resizeMode="contain"
-        alt="Splash Image"
-      />
-      <Text fontSize={"3xl"}>{local.Create.SeedType.ChooseSeedType}</Text>
-      <Text>{local.Create.SeedType.TwoWays}</Text>
-
-      <Radio.Group
-        name="RadioGroup"
-        value={value}
-        onChange={(val) => setValue(val)}
+      <VStack
+        space={10}
+        alignItems="center"
+        flex={1}
+        justifyContent="center"
+        justifyItems="center"
       >
-        <Radio value="24words" my="2">
-          {local.Create.SeedType._24words}
-        </Radio>
-        <Radio value="55chars" my="2">
-          {local.Create.SeedType._55chars}
-        </Radio>
-      </Radio.Group>
+        <Image
+          source={require("@assets/images/01/02.png")}
+          style={{ width: 214, height: 220 }}
+          resizeMode="contain"
+          alt="Splash Image"
+        />
+        <Text fontSize={"3xl"}>{local.Create.SeedType.ChooseSeedType}</Text>
+        <Text>{local.Create.SeedType.TwoWays}</Text>
 
+        <Radio.Group
+          name="RadioGroup"
+          value={value}
+          onChange={(val) => setValue(val)}
+        >
+          <Radio value="24words" my="2">
+            {local.Create.SeedType._24words}
+          </Radio>
+          <Radio value="55chars" my="2">
+            {local.Create.SeedType._55chars}
+          </Radio>
+        </Radio.Group>
+      </VStack>
       <ButtonBox>
         <PageButton
           title={local.Create.SeedType.CreatePassword}

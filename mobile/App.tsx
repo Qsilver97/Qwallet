@@ -12,6 +12,9 @@ import { SocketCom } from "./src/components/SocketComponent";
 import RNFS from "react-native-fs";
 import { ColorProvider } from "./src/context/ColorContex";
 import theme from "./src/utils/ThemeConfig";
+import local from "@app/utils/locales";
+
+local.setLanguage("en");
 
 export default function App() {
   const [text, setText] = useState("");

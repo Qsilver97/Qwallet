@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { VStack, Image } from "native-base";
+import { VStack, Image, Text } from "native-base";
 import Swiper from "react-native-swiper";
 import { useNavigation } from "@react-navigation/native";
 import { useColors } from "@app/context/ColorContex";
@@ -7,26 +7,26 @@ import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
 import local from "@app/utils/locales";
 
-const slides = [
-  {
-    image: require("@assets/images/01/01.png"),
-    text: require("@assets/images/01/text01.png"),
-  },
-  {
-    image: require("@assets/images/01/02.png"),
-    text: require("@assets/images/01/text02.png"),
-  },
-  {
-    image: require("@assets/images/01/03.png"),
-    text: require("@assets/images/01/text03.png"),
-  },
-];
-
 const Splash: React.FC = () => {
   const { bgColor } = useColors();
   const [index, setIndex] = useState(0);
   const swiperRef = useRef(null);
   const navigation = useNavigation();
+
+  const slides = [
+    {
+      image: require("@assets/images/01/01.png"),
+      text: local.Splash.Text1,
+    },
+    {
+      image: require("@assets/images/01/02.png"),
+      text: local.Splash.Text2,
+    },
+    {
+      image: require("@assets/images/01/03.png"),
+      text: local.Splash.Text3,
+    },
+  ];
 
   const handlePress = () => {
     if (index < slides.length - 1) {
@@ -60,12 +60,14 @@ const Splash: React.FC = () => {
                 resizeMode="contain"
                 alt="Splash Image"
               />
-              <Image
-                source={slide.text}
-                style={{ height: 102 }}
-                resizeMode="contain"
-                alt="Splash Text"
-              />
+              <Text
+                fontSize="5xl"
+                textAlign={"center"}
+                textBreakStrategy="highQuality"
+                px={10}
+              >
+                {slide.text}
+              </Text>
             </VStack>
           );
         })}

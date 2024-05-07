@@ -36,7 +36,7 @@ const WalletSetup: React.FC<IProps> = () => {
           resizeMode="contain"
           alt="Splash Image"
         />
-        <Text color={textColor} fontSize={40}>
+        <Text color={textColor} fontSize={40} textAlign={"center"} px={10}>
           {local.WalletSetup.WalletSetup}
         </Text>
       </VStack>
