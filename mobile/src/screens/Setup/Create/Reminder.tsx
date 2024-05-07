@@ -7,6 +7,7 @@ import { getPasswordStrengthProps } from "@app/utils/utils";
 import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
 import ReminderBar from "./Components/ReminderBar";
+import local from "@app/utils/locales";
 
 interface IProps {}
 
@@ -44,13 +45,10 @@ const Reminder: React.FC<IProps> = () => {
           />
           <Box px={12}>
             <Text color={textColor} fontSize={"3xl"} textAlign={"center"}>
-              Secure Your Wallet
+              {local.Create.Reminder.Secure}
             </Text>
             <Text color={textColor} textAlign={"center"}>
-              Don't risk losing your funds. protect your wallet by saving your
-              Seed phrase in a place you trust.{"\n"}
-              It's the only way to recover your wallet if you get locked out of
-              the app or get a new device.
+              {local.Create.Reminder.Caption1}
             </Text>
           </Box>
         </VStack>
@@ -65,38 +63,38 @@ const Reminder: React.FC<IProps> = () => {
         >
           <VStack px={12} space={5}>
             <Text color={textColor} fontSize={"3xl"} textAlign={"center"}>
-              Secure Your Wallet
+              {local.Create.Reminder.Secure}
             </Text>
             <Text color={gray.gray30} fontSize={"xl"} fontWeight={"bold"}>
-              Secure your wallet's seeds phrase
+              {local.Create.Reminder.Caption2}
             </Text>
             <VStack color={textColor} textAlign={"center"} space={"2"}>
               <Text fontWeight={"bold"} ml={-3}>
-                Manual
+                {local.Create.Reminder.Manual}
               </Text>
+              <Text>{local.Create.Reminder.Caption3}</Text>
               <Text>
-                Write down your seed phrase on a piece of paper and store in a
-                safe place.
+                {local.Create.Reminder.SecurityLevel}:{" "}
+                {getPasswordStrengthProps(1).label}
               </Text>
-              <Text>Security level: {getPasswordStrengthProps(1).label}</Text>
               <ReminderBar strength={1} />
 
               <VStack space={"2"}>
                 <Text fontWeight={"bold"} ml={-3}>
-                  Risks are:{" "}
+                  {local.Create.Reminder.Risks}:{" "}
                 </Text>
-                <Text>You lose it</Text>
-                <Text>You forget where you put it</Text>
-                <Text>Someone else finds it</Text>
+                <Text>{local.Create.Reminder.Risk1}</Text>
+                <Text>{local.Create.Reminder.Risk2}</Text>
+                <Text>{local.Create.Reminder.Risk3}</Text>
               </VStack>
               <VStack space={2}>
-                <Text>Other options: Doesn't have to be paper!</Text>
+                <Text>{local.Create.Reminder.OtherOption}</Text>
                 <Text fontWeight={"bold"} ml={-3}>
-                  Tips:{" "}
+                  {local.Create.Reminder.Tips}:{" "}
                 </Text>
-                <Text>Store in bank vault</Text>
-                <Text>Store in a safe</Text>
-                <Text>Store in multiple secret places</Text>
+                <Text>{local.Create.Reminder.Tip1}</Text>
+                <Text>{local.Create.Reminder.Tip2}</Text>
+                <Text>{local.Create.Reminder.Tip3}</Text>
               </VStack>
             </VStack>
           </VStack>
@@ -109,11 +107,17 @@ const Reminder: React.FC<IProps> = () => {
             fontWeight={"bold"}
             color={main.moonStoneBlue}
           >
-            Remider Later
+            {local.Create.Reminder.RemiderLater}
           </Text>
         </TouchableOpacity>
         <PageButton
-          title={step == 1 ? "Next" : step == 2 ? "Start" : ""}
+          title={
+            step == 1
+              ? local.Create.Reminder.button_Next
+              : step == 2
+              ? local.Create.Reminder.button_Start
+              : ""
+          }
           type="primary"
           onPress={handleNext}
         ></PageButton>

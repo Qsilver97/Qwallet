@@ -8,6 +8,7 @@ import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
 import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
+import local from "@app/utils/locales";
 
 const Confirm: React.FC = () => {
   const { bgColor, textColor, main, gray } = useColors();
@@ -103,12 +104,10 @@ const Confirm: React.FC = () => {
         <VStack flex={1}>
           <VStack space={5} pt={10}>
             <Text fontSize="2xl" color={main.jeansBlue} textAlign="center">
-              Write Down Your Seed Phrase
+              {local.Create.Confirm.WriteDownSeedPhrase}
             </Text>
             <Text textAlign="center" px={16}>
-              This is your seed phrase. Write it down on a paper and keep it in
-              a safe place. You'll be asked to re-enter this phrase (in order)
-              on the next step.
+              {local.Create.Confirm.Caption1}
             </Text>
           </VStack>
           <Box textAlign="center" p={8}>
@@ -153,10 +152,10 @@ const Confirm: React.FC = () => {
         <VStack flex={1}>
           <VStack space={5} pt={10}>
             <Text fontSize="2xl" color={main.jeansBlue} textAlign="center">
-              Confirm Seed Phrase
+              {local.Create.Confirm.ConfirmSeedPhrase}
             </Text>
             <Text textAlign="center" px={16}>
-              Select each word in the order it was presented to you.
+              {local.Create.Confirm.Caption2}
             </Text>
           </VStack>
           <VStack textAlign="center" p={8} flex={1}>
@@ -201,12 +200,10 @@ const Confirm: React.FC = () => {
         <VStack flex={1} py={16}>
           <VStack space={5} pt={10}>
             <Text fontSize="2xl" color={main.jeansBlue} textAlign="center">
-              Write Down Your Seed Phrase
+              {local.Create.Confirm.WriteDownSeedPhrase}
             </Text>
             <Text textAlign="justify" px={10}>
-              This is your seed chars. Write it down on a paper and keep it in a
-              safe place. You'll be asked to re-enter this phrase (in order) on
-              the next step.
+              {local.Create.Confirm.Caption3}
             </Text>
           </VStack>
           <Box textAlign="center" py={20} px={8}>
@@ -226,10 +223,10 @@ const Confirm: React.FC = () => {
         <VStack flex={1} py={16}>
           <VStack space={5} pt={10}>
             <Text fontSize="2xl" color={main.jeansBlue} textAlign="center">
-              Enter your Seed Chars
+              {local.Create.Confirm.EnterSeedChar}
             </Text>
             <Text textAlign="justify" px={10}>
-              Please enter the seed chars you have saved.
+              {local.Create.Confirm.Caption4}
             </Text>
           </VStack>
           <Box textAlign="center" py={20} px={8}>
@@ -256,7 +253,7 @@ const Confirm: React.FC = () => {
       )}
       <ButtonBox>
         <PageButton
-          title="Next"
+          title={local.Create.Confirm.button_Next}
           type="primary"
           onPress={handleNext}
           isDisabled={

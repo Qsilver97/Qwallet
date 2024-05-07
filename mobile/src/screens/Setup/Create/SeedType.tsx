@@ -10,6 +10,7 @@ import { setSeedType, setSeeds } from "@app/redux/appSlice";
 import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
 import eventEmitter from "@app/api/eventEmitter";
+import local from "@app/utils/locales";
 
 const SeedType = () => {
   const { bgColor, textColor } = useColors();
@@ -30,7 +31,10 @@ const SeedType = () => {
     eventEmitter.on("S2C/create", (res) => {
       if (res.data?.value) {
         if (res.data.value.result >= 0) {
-          Toast.show({ type: "success", text1: "Create Wallet Successly!" });
+          Toast.show({
+            type: "success",
+            text1: local.Create.SeedType.toast_SuccessCreate,
+          });
           const seeds = res.data.value.display.split(" ");
           if (seeds.length == 1) {
             dispatch(setSeeds(seeds[0]));
@@ -61,8 +65,8 @@ const SeedType = () => {
         resizeMode="contain"
         alt="Splash Image"
       />
-      <Text fontSize={"3xl"}>Choose Seed Type</Text>
-      <Text>There are two ways to secure your wallet</Text>
+      <Text fontSize={"3xl"}>{local.Create.SeedType.ChooseSeedType}</Text>
+      <Text>{local.Create.SeedType.TwoWays}</Text>
 
       <Radio.Group
         name="RadioGroup"
@@ -70,16 +74,16 @@ const SeedType = () => {
         onChange={(val) => setValue(val)}
       >
         <Radio value="24words" my="2">
-          24 words
+          {local.Create.SeedType._24words}
         </Radio>
         <Radio value="55chars" my="2">
-          55 chars
+          {local.Create.SeedType._55chars}
         </Radio>
       </Radio.Group>
 
       <ButtonBox>
         <PageButton
-          title="Create Password"
+          title={local.Create.SeedType.CreatePassword}
           type="primary"
           onPress={handleCreate}
         />

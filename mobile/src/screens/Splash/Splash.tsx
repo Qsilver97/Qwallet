@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useColors } from "@app/context/ColorContex";
 import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
+import local from "@app/utils/locales";
 
 const slides = [
   {
@@ -71,7 +72,7 @@ const Splash: React.FC = () => {
       </Swiper>
       <ButtonBox>
         <PageButton
-          title="Get Stated"
+          title={local.Splash.GetStarted}
           onPress={handlePress}
           type="primary"
         ></PageButton>

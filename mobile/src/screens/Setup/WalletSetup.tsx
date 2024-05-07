@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useColors } from "@app/context/ColorContex";
 import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
+import local from "@app/utils/locales";
 
 
 interface IProps {}
@@ -30,30 +31,30 @@ const WalletSetup: React.FC<IProps> = () => {
         justifyItems="center"
       >
         <Image
-          source={require("../../../assets/images/01/04.png")}
+          source={require("@assets/images/01/04.png")}
           style={{ width: 214, height: 220 }}
           resizeMode="contain"
           alt="Splash Image"
         />
         <Text color={textColor} fontSize={40}>
-          Wallet Setup
+          {local.WalletSetup.WalletSetup}
         </Text>
       </VStack>
       <ButtonBox>
         <PageButton
-          title="Import Using Seed Phrase"
+          title={local.WalletSetup.button_ImportUsingSeedPhrase}
           type="disabled"
           onPress={() => {
             navigation.navigate("Restore");
           }}
         ></PageButton>
         <PageButton
-          title="Create New Wallet"
+          title={local.WalletSetup.button_CreateNewWallet}
           type="primary"
           onPress={() => navigation.navigate("Create")}
         ></PageButton>
         <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text textAlign={"center"}>Have Already Your Own Wallet?</Text>
+          <Text textAlign={"center"}>{local.WalletSetup.HaveAlreadyYourOwnWallet}</Text>
         </TouchableOpacity>
       </ButtonBox>
     </VStack>

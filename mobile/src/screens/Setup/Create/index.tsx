@@ -5,6 +5,7 @@ import CreatePassword from "./CreatePassword";
 import Reminder from "./Reminder";
 import Confirm from "./Confirm";
 import SeedType from "./SeedType";
+import local from "@app/utils/locales";
 
 type CreateStackParamList = {
   CreatePassword: undefined;
@@ -31,22 +32,22 @@ const Create: React.FC = () => {
       <Stack.Screen
         name="CreatePassword"
         component={CreatePassword}
-        options={{ title: "Create Password" }}
+        options={{ title: local.Title.CreatePassword }}
       />
       <Stack.Screen
         name="Reminder"
         component={Reminder}
-        options={{ title: "Secure Alert" }}
+        options={{ title: local.Title.Reminder }}
       />
       <Stack.Screen
         name="Confirm"
         component={Confirm}
-        options={{ title: "Confrim Seeds Phrase" }}
+        options={{ title: local.Title.Confirm }}
       />
       <Stack.Screen
         name="SeedType"
         component={SeedType}
-        options={{ title: "Select Seed Type" }}
+        options={{ title: local.Title.SeedType }}
       />
     </Stack.Navigator>
   );
