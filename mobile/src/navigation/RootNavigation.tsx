@@ -7,11 +7,11 @@ import Splash from "@app/screens/Splash/Splash";
 import WalletSetup from "@app/screens/Setup/WalletSetup";
 import Dashboard from "@app/screens/Dashboard";
 import Login from "@app/screens/Login";
-
 import Backup from "@app/screens/Backup";
 import Confirm from "@app/screens/Confirm";
 import Restore from "@app/screens/Setup/Restore";
 import Create from "@app/screens/Setup/Create";
+import Main from "@app/screens/Main";
 
 type RootStackParamList = {
   Dashboard: undefined;
@@ -24,6 +24,7 @@ type RootStackParamList = {
   CliSocket: undefined;
   Splash: undefined;
   WalletSetup: undefined;
+  Main: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -81,6 +82,11 @@ const RootNavigation: React.FC = () => {
           name="Restore"
           component={Restore}
           options={{ title: local.Title.Backup }}
+        />
+        <Stack.Screen
+          name="Main"
+          component={Main}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>
