@@ -15,11 +15,13 @@ import {
     AccountInfoInterface,
     MarketcapInterface,
     ModeProps,
+    OrderInterface,
     RichListInterface,
 } from "../utils/interfaces";
 import { toast } from "react-toastify";
 import { Loading } from "../components/commons";
 import { TokenOption } from "../components/commons/Select";
+import { mockOrders } from "../utils/mock";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -40,7 +42,10 @@ interface AuthContextType {
     mode: ModeProps;
     tokenOptions: TokenOption[];
     currentToken: TokenOption;
+    orders: OrderInterface | undefined;
+    tradingPageLoading: boolean;
     setCurrentToken: Dispatch<SetStateAction<TokenOption>>;
+    fetchTradingInfoPage: () => Promise<void>;
     setRecoverStatus: Dispatch<SetStateAction<boolean>>;
     setSeedType: Dispatch<SetStateAction<"55chars" | "24words">>;
     setMode: Dispatch<SetStateAction<ModeProps>>;
@@ -75,7 +80,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [seedType, setSeedType] = useState<"55chars" | "24words">("24words");
     const [seeds, setSeeds] = useState<string | string[]>("");
     const [socket, setSocket] = useState<Socket>();
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [activeTabIdx, setActiveTabIdx] = useState(0);
     const [accountInfo, setAccountInfo] = useState<AccountInfoInterface>();
     const [totalBalance, _] = useState<string>('0');
@@ -92,12 +97,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [currentAddress, setCurrentAddress] = useState<string>("");
     const [recoverStatus, setRecoverStatus] = useState<boolean>(false);
 
+    // trading page
+    const [orders, setOrders] = useState<OrderInterface>();
+    const [tradingPageLoading, setTradingPageLoading] = useState<boolean>(false);
+
     const tokenOptions: TokenOption[] = assetsItems.map((item) => ({
         label: item.icon,
         value: item.name,
     }));
 
-    const [currentToken, setCurrentToken] = useState<TokenOption>(tokenOptions[0]);
+    const [currentToken, setCurrentToken] = useState<TokenOption>(tokenOptions[5]);
 
     const [password, setPassword] = useState<string>("");
 
@@ -260,6 +269,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         }
     };
 
+    const fetchTradingInfoPage = async (): Promise<any> => {
+        setTradingPageLoading(true);
+        // let orders;
+        // try {
+        //     const resp = await axios.post(`${SERVER_URL}/api/trading-page-info`, {
+        //         token: currentToken.value
+        //     });
+        //     orders = resp.data;
+        // } catch (error) {
+        //     orders = [];
+        // }
+        setOrders(mockOrders)
+        setTradingPageLoading(false);
+        return mockOrders;
+    }
+
     useEffect(() => {
         const newSocket = io(wsUrl);
         setSocket(newSocket);
@@ -363,6 +388,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 recoverStatus,
                 currentToken,
                 tokenOptions,
+                orders,
+                tradingPageLoading,
+                fetchTradingInfoPage,
                 setCurrentToken,
                 setRecoverStatus,
                 setSeeds,
