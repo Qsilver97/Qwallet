@@ -10,6 +10,11 @@ exports.ccall = async (req, res) => {
     res.send(result);
 }
 
+exports.ccallV1request = async (req, res) => {
+    const result = await wasmManager.ccallV1request(req.body);
+    res.send(result);
+}
+
 exports.checkavail = async (req, res) => {
     const resultFor24words = await wasmManager.ccall(req.body);
     const resultFor55chars = await wasmManager.ccall({ ...req.body, command: req.body.command.replace('checkavail ', 'checkavail Q') });
@@ -223,7 +228,7 @@ exports.restoreAccount = async (req, res) => {
     if (seedType == '24words') {
         command = `addseed ${password},${seeds.join(' ')}`;
     } else if (seedType == '55chars') {
-        command = `addseed ${password},${seeds}`;
+        command = `addseed Q${password},${seeds}`;
     }
     if (command == null) {
         res.status(401).send('error');
