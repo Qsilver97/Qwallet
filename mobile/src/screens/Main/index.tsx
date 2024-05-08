@@ -4,22 +4,29 @@ import Settings from "./Settings";
 import Swap from "./Swap";
 import Wallet from "./Wallet";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faGear, faRefresh, faWallet } from "@fortawesome/free-solid-svg-icons";
+import {
+  faClockRotateLeft,
+  faGear,
+  faRightLeft,
+  faWallet,
+} from "@fortawesome/free-solid-svg-icons";
 import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useColors } from "@app/context/ColorContex";
+import Header from "./components/Header";
 
 const Tab = createBottomTabNavigator();
 
 function MyTabs() {
-  const { bgColor, textColor, gray } = useColors();
+  const { bgColor, main, gray } = useColors();
 
   const tabBarOptions = useCallback(
     (icon: IconProp): BottomTabNavigationOptions => ({
       tabBarIcon: ({ color, size }) => (
         <FontAwesomeIcon icon={icon} color={gray.gray40} size={size} />
       ),
-      tabBarActiveBackgroundColor: bgColor,
+      tabBarActiveBackgroundColor: main.hakesBlue,
+      tabBarActiveTintColor: main.darkGunmetal,
       tabBarInactiveBackgroundColor: bgColor,
     }),
     [bgColor, gray]
@@ -30,6 +37,7 @@ function MyTabs() {
       initialRouteName="Wallet"
       screenOptions={{
         tabBarActiveTintColor: "white",
+        header: () => <Header />,
       }}
     >
       <Tab.Screen
@@ -40,7 +48,12 @@ function MyTabs() {
       <Tab.Screen
         name="Swap"
         component={Swap}
-        options={tabBarOptions(faRefresh)}
+        options={tabBarOptions(faRightLeft)}
+      />
+      <Tab.Screen
+        name="Transaction"
+        component={Swap}
+        options={tabBarOptions(faClockRotateLeft)}
       />
       <Tab.Screen
         name="Settings"
