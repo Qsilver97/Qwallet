@@ -35,6 +35,7 @@ interface AuthContextType {
   logout: () => void;
   setTempPassword: React.Dispatch<React.SetStateAction<string>>;
   setBalances: React.Dispatch<React.SetStateAction<string[]>>;
+  setCurrentAddress: (value: React.SetStateAction<string>) => void;
 }
 
 type TransactionItem = [number, string, string, string];
@@ -129,6 +130,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         logout,
         setTempPassword,
         setBalances,
+        setCurrentAddress,
       }}
     >
       {children}
