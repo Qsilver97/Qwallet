@@ -10,6 +10,11 @@ exports.ccall = async (req, res) => {
     res.send(result);
 }
 
+exports.ccallV1request = async (req, res) => {
+    const result = await wasmManager.ccallV1request(req.body);
+    res.send(result);
+}
+
 exports.checkavail = async (req, res) => {
     const resultFor24words = await wasmManager.ccall(req.body);
     const resultFor55chars = await wasmManager.ccall({ ...req.body, command: req.body.command.replace('checkavail ', 'checkavail Q') });
@@ -223,7 +228,7 @@ exports.restoreAccount = async (req, res) => {
     if (seedType == '24words') {
         command = `addseed ${password},${seeds.join(' ')}`;
     } else if (seedType == '55chars') {
-        command = `addseed ${password},${seeds}`;
+        command = `addseed Q${password},${seeds}`;
     }
     if (command == null) {
         res.status(401).send('error');
@@ -320,4 +325,31 @@ exports.basicInfo = async (req, res) => {
     }
 
     res.send({ balances: balances.balances, marketcap, tokens: tokens.tokens, richlist });
+}
+
+exports.checkAuthenticated = async (req, res) => {
+    const isAuthenticated = stateManager.getUserState().isAuthenticated;
+    if (isAuthenticated) {
+        res.status(200).send(true);
+    } else {
+        res.status(402).send(false);
+    }
+}
+
+exports.fetchTradingPageInfo = async (req, res) => {
+    const { token } = req.body;
+    try {
+        const orders = await socketSync(`orders ${token}`);
+        res.status(200).send(orders);
+        return;
+    } catch (error) {
+        res.status(400).send('failed');
+        return;
+    }
+}
+
+exports.buySell = async (req, res) => {
+    const { flag, password, index, tick, currentToken, amount, price } = req.body;
+    await wasmManager.ccallV1request({ command: `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`, flag });
+    res.status(200).send(flag);
 }

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { handleCopy } from "../../utils/helper";
 import { Text } from "../commons";
-import SwitchButton from "../dashboard/SwitchButton";
 
 const Navbar = () => {
     const { accountInfo, currentAddress, setCurrentAddress } = useAuth();
@@ -52,7 +51,6 @@ const Navbar = () => {
                             </div>
                         )}
                     </div>
-                    <SwitchButton />
                 </div>
             </div>
         </>
