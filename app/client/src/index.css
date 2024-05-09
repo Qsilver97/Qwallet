@@ -61,15 +61,18 @@ img {
 }
 
 .scrolling::-webkit-scrollbar {
-    display: none; /* Hide the scrollbar in WebKit browsers (Chrome, Safari) */
+    display: none;
+    /* Hide the scrollbar in WebKit browsers (Chrome, Safari) */
 }
 
 /* This targets the scrollbar thumb */
 .scrolling::-webkit-scrollbar-thumb {
-    background-color: transparent; /* Set color of the scrollbar thumb */
+    background-color: transparent;
+    /* Set color of the scrollbar thumb */
 }
 
 /* This targets the scrollbar track */
 .scrolling::-webkit-scrollbar-track {
-    background-color: transparent; /* Set color of the scrollbar track */
+    background-color: transparent;
+    /* Set color of the scrollbar track */
 }
