@@ -1,12 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { HStack, Text, VStack } from "native-base";
 import { useColors } from "@app/context/ColorContex";
 import Tokenlist from "./components/Tokenlist";
 import { faMinus, faPlus, faShare } from "@fortawesome/free-solid-svg-icons";
 import TransferButton from "./components/TransferButton";
+import { useAuth } from "@app/context/AuthContext";
 
 const Wallet: React.FC = () => {
+  const { login, logout, user } = useAuth();
   const { bgColor, textColor, gray } = useColors();
+  const [currentAddress, setCurrentAddress] = useState<string>("");
+  const [allAddresses, setAllAddresses] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (user?.accountInfo) {
+      setCurrentAddress(user?.accountInfo.addresses[0]);
+      setAllAddresses(user?.accountInfo.addresses);
+    }
+  }, [login, user]);
+
   return (
     <VStack
       flex={1}
