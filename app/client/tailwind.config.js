@@ -28,6 +28,7 @@ export default {
         fontFamily: {
             Montserrat: ["Montserrat", "sans-serif"],
             Inter: ["Inter", "sans-serif"],
+            mono: ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"],
         },
     },
     variants: {

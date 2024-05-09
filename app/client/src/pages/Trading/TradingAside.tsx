@@ -1,43 +1,80 @@
-import { Checkbox } from "@mui/material";
 import Button from "../../components/commons/Button";
 import Input from "../../components/commons/Input";
 import Section from "../../components/commons/Section";
-import Select from "../../components/commons/Select";
 import { assetsItems } from "../../utils/constants";
-import Text from "../../components/commons/Text";
-import SwitchOptions from "../../components/commons/SwitchOptions";
+import { useState } from "react";
+import TokenSelect from "../../components/dashboard/select/TokenSelect";
+import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 const TradingAside = () => {
+    const { handleBuyCell } = useAuth();
+
+    const [quantity, setQuantity] = useState<string>();
+    const [price, setPrice] = useState<string>();
+
+    const handleChangeQuantity = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setQuantity(e.target.value);
+    }
+
+    const handleChangePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPrice(e.target.value);
+    }
+
+    const _handleBuyCell = (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell',) => {
+        if (!quantity || !price) {
+            toast.error('Input valid quantity or price.')
+            return
+        }
+        handleBuyCell(flag, quantity, price)
+    }
+
     const options = assetsItems.map((item) => ({
-        label: item.name,
-        value: item.icon,
+        label: item.icon,
+        value: item.name,
     }));
 
     return (
         <Section>
-            <Text size="xs" weight="medium" className="text-celestialBlue">
+            {/* <Text size="xs" weight="medium" className="text-celestialBlue">
                 SELECT A STRIKE PRICE
-            </Text>
+            </Text> */}
 
             <main className="flex flex-col gap-5">
-                <div className="flex flex-wrap xl:flex-nowrap justify-between items-center w-full">
+                {/* <div className="flex flex-wrap xl:flex-nowrap justify-between items-center w-full">
                     <Select options={options} placeholder="Type" />
 
                     <p className="text-sm font-Inter">08 Dec 23</p>
 
                     <Select options={options} placeholder="Strike" />
-                </div>
+                </div> */}
 
+                <TokenSelect
+                    options={options}
+                    showSelectDescription
+                    hideTokenValue
+                />
+                <div className="flex flex-col gap-5">
+                    <Input inputId="quantity" label="Quantity" placeholder="0" value={quantity} onChange={handleChangeQuantity} gapVariant="xs" />
+                    <Input inputId="price" label="Price" placeholder="0" value={price} onChange={handleChangePrice} gapVariant="xs" />
+                </div>
                 <div className="flex gap-2.5">
-                    <Button variant="primary" font="regular">
+                    <Button variant="primary" font="regular" onClick={() => _handleBuyCell('buy')}>
                         Buy
                     </Button>
-                    <Button variant="secondary" font="regular">
+                    <Button variant="primary" font="regular" onClick={() => _handleBuyCell('sell')}>
                         Sell
                     </Button>
                 </div>
-
-                <div className="flex flex-col gap-3">
+                <div className="flex gap-2.5">
+                    <Button variant="primary" font="regular" onClick={() => _handleBuyCell('cancelbuy')}>
+                        Cancel Buy
+                    </Button>
+                    <Button variant="primary" font="regular" onClick={() => _handleBuyCell('cancelsell')}>
+                        Cancel Sell
+                    </Button>
+                </div>
+                {/* <div className="flex flex-col gap-3">
                     <Text
                         size="xs"
                         weight="medium"
@@ -98,16 +135,16 @@ const TradingAside = () => {
                             <label>---</label>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </main>
 
-            <footer className="w-full">
+            {/* <footer className="w-full">
                 <SwitchOptions
                     options={["Order book", "Offers", "Trades"]}
                     defaultOption={0}
                     switchStyle="rounded"
                 />
-            </footer>
+            </footer> */}
         </Section>
     );
 };

@@ -48,4 +48,12 @@ interface RichListInterface {
     [address: string]: [number, string, string][];
 }
 
-export type { SelectOption, SidebarItemProps, SummaryItemProps, AssetItemProps, ModeProps, AccountInfoInterface, MarketcapInterface, RichListInterface }
+// trading page
+interface OrderInterface {
+    name: string;
+    issuer: string;
+    bids: [string, string, string][];
+    asks: [string, string, string][];
+}
+
+export type { SelectOption, SidebarItemProps, SummaryItemProps, AssetItemProps, ModeProps, AccountInfoInterface, MarketcapInterface, RichListInterface, OrderInterface }

@@ -8,17 +8,20 @@ import React, {
     SetStateAction,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { MODES, SERVER_URL, sideBarItems } from "../utils/constants";
+import { MODES, SERVER_URL, assetsItems, sideBarItems } from "../utils/constants";
 import { io, Socket } from "socket.io-client";
 import axios from "axios";
 import {
     AccountInfoInterface,
     MarketcapInterface,
     ModeProps,
+    OrderInterface,
     RichListInterface,
 } from "../utils/interfaces";
 import { toast } from "react-toastify";
 import { Loading } from "../components/commons";
+import { TokenOption } from "../components/commons/Select";
+import { mockOrders } from "../utils/mock";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -34,8 +37,15 @@ interface AuthContextType {
     richlist: RichListInterface;
     currentAddress: string;
     tokenBalances: { [name: string]: Balances };
+    totalBalance: string;
     recoverStatus: boolean;
     mode: ModeProps;
+    tokenOptions: TokenOption[];
+    currentToken: TokenOption;
+    orders: OrderInterface | undefined;
+    tradingPageLoading: boolean;
+    setCurrentToken: Dispatch<SetStateAction<TokenOption>>;
+    fetchTradingInfoPage: () => Promise<void>;
     setRecoverStatus: Dispatch<SetStateAction<boolean>>;
     setSeedType: Dispatch<SetStateAction<"55chars" | "24words">>;
     setMode: Dispatch<SetStateAction<ModeProps>>;
@@ -46,6 +56,7 @@ interface AuthContextType {
     create: () => void;
     restoreAccount: () => void;
     handleAddAccount: () => void;
+    handleBuyCell: (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell', amount: string, price: string) => Promise<void>;
     toAccountOption: (password: string, confirmPassword: string) => void;
     handleClickSideBar: (idx: number) => void;
 }
@@ -73,6 +84,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [activeTabIdx, setActiveTabIdx] = useState(0);
     const [accountInfo, setAccountInfo] = useState<AccountInfoInterface>();
+    const [totalBalance, _] = useState<string>('0');
+    // const [totalBalance, setTotalBalance] = useState<string>('0');
 
     const [tick, setTick] = useState("");
     const [balances, setBalances] = useState<Balances>({});
@@ -84,6 +97,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [richlist, setRichlist] = useState<RichListInterface>({});
     const [currentAddress, setCurrentAddress] = useState<string>("");
     const [recoverStatus, setRecoverStatus] = useState<boolean>(false);
+
+    // trading page
+    const [orders, setOrders] = useState<OrderInterface>();
+    const [tradingPageLoading, setTradingPageLoading] = useState<boolean>(false);
+
+    const tokenOptions: TokenOption[] = assetsItems.map((item) => ({
+        label: item.icon,
+        value: item.name,
+    }));
+
+    const [currentToken, setCurrentToken] = useState<TokenOption>(tokenOptions[5]);
 
     const [password, setPassword] = useState<string>("");
 
@@ -245,6 +269,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         }
     };
 
+    const fetchTradingInfoPage = async (): Promise<any> => {
+        setTradingPageLoading(true);
+        // let orders;
+        // try {
+        //     const resp = await axios.post(`${SERVER_URL}/api/trading-page-info`, {
+        //         token: currentToken.value
+        //     });
+        //     orders = resp.data;
+        // } catch (error) {
+        //     orders = [];
+        // }
+        setOrders(mockOrders)
+        setTradingPageLoading(false);
+        return mockOrders;
+    }
+
+    const handleBuyCell = async (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell', amount: string, price: string): Promise<any> => {
+        try {
+            const resp = await axios.post(`${SERVER_URL}/api/buy-cell`, {
+                flag,
+                password,
+                index: accountInfo?.addresses.indexOf(currentAddress),
+                tick: parseInt(tick) + 10,
+                currentToken: currentToken.value,
+                amount,
+                price,
+            })
+            console.log(resp.data);
+        } catch (error) {
+
+        }
+    }
+
     useEffect(() => {
         const newSocket = io(wsUrl);
         setSocket(newSocket);
@@ -305,8 +362,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             await fetchInfo();
             setLoading(false);
         }
-        init();
-    }, []);
+        if (isAuthenticated)
+            init();
+    }, [isAuthenticated]);
+
+    useEffect(() => {
+        async function checkAuthenticated() {
+            setLoading(true);
+            try {
+                const resp = await axios
+                    .post(`${SERVER_URL}/api/check-authenticated`, () => {
+                    })
+                if (resp.status == 200) {
+                    setIsAuthenticated(true)
+                }
+            } catch (error) {
+
+            }
+            setLoading(false);
+        }
+        checkAuthenticated();
+    }, [])
 
     return (
         <AuthContext.Provider
@@ -322,10 +398,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 richlist,
                 tick,
                 balances,
+                totalBalance,
                 mode,
                 tokenBalances,
                 currentAddress,
                 recoverStatus,
+                currentToken,
+                tokenOptions,
+                orders,
+                tradingPageLoading,
+                fetchTradingInfoPage,
+                setCurrentToken,
                 setRecoverStatus,
                 setSeeds,
                 handleAddAccount,
@@ -334,6 +417,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 handleClickSideBar,
                 login,
                 logout,
+                handleBuyCell,
                 toAccountOption,
                 create,
                 restoreAccount,
