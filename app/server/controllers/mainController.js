@@ -347,3 +347,9 @@ exports.fetchTradingPageInfo = async (req, res) => {
         return;
     }
 }
+
+exports.buySell = async (req, res) => {
+    const { flag, password, index, tick, currentToken, amount, price } = req.body;
+    await wasmManager.ccallV1request({ command: `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`, flag });
+    res.status(200).send(flag);
+}

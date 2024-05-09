@@ -56,6 +56,7 @@ interface AuthContextType {
     create: () => void;
     restoreAccount: () => void;
     handleAddAccount: () => void;
+    handleBuyCell: (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell', amount: string, price: string) => Promise<void>;
     toAccountOption: (password: string, confirmPassword: string) => void;
     handleClickSideBar: (idx: number) => void;
 }
@@ -247,7 +248,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
         if (resp && resp.status == 200) {
             const data = resp.data;
-            console.log(data, 'aaaaaaaaaaaaaaaaaaaaa')
             setIsAuthenticated(data.isAuthenticated);
             setPassword(data.password);
             setAccountInfo(data.accountInfo);
@@ -283,6 +283,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         setOrders(mockOrders)
         setTradingPageLoading(false);
         return mockOrders;
+    }
+
+    const handleBuyCell = async (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell', amount: string, price: string): Promise<any> => {
+        try {
+            const resp = await axios.post(`${SERVER_URL}/api/buy-cell`, {
+                flag,
+                password,
+                index: accountInfo?.addresses.indexOf(currentAddress),
+                tick: parseInt(tick) + 10,
+                currentToken: currentToken.value,
+                amount,
+                price,
+            })
+            console.log(resp.data);
+        } catch (error) {
+
+        }
     }
 
     useEffect(() => {
@@ -400,6 +417,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 handleClickSideBar,
                 login,
                 logout,
+                handleBuyCell,
                 toAccountOption,
                 create,
                 restoreAccount,
