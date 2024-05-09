@@ -23,8 +23,8 @@ export default function App() {
   }, []);
   return (
     <Provider store={store}>
-      <SocketCom />
       <AuthProvider>
+        <SocketCom />
         <NetworkProvider defaultNetwork="mainnet">
           <NativeBaseProvider theme={theme}>
             <ColorProvider>

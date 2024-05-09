@@ -20,15 +20,9 @@ interface AppState {
     seeds: string | string[];
     theme: 'light' | 'dark';
     tick: string;
-    balances: string[];
     tokens: string[];
     richlist: RichlistInterface;
     marketcap: UpdateMarketcapPayload;
-}
-
-interface UpdateBalancePayload {
-    index: number;
-    balance: string;
 }
 
 interface UpdateRichlistPayload {
@@ -44,7 +38,6 @@ const initialState: | AppState = {
     password: "",
     theme: 'light',
     tick: "",
-    balances: Array(100).fill(""),
     tokens: [],
     richlist: {},
     marketcap: {
@@ -73,12 +66,6 @@ export const appSlice = createSlice({
         setTick: (state, action: PayloadAction<string>) => {
             state.tick = action.payload;
         },
-        setBalances: (state, action: PayloadAction<UpdateBalancePayload>) => {
-            const { index, balance } = action.payload;
-            if (index >= 0 && index < state.balances.length) {
-                state.balances[index] = balance;
-            }
-        },
         setTokens: (state, action: PayloadAction<string[]>) => {
             state.tokens = action.payload;
         },
@@ -101,7 +88,7 @@ export const appSlice = createSlice({
 });
 
 // Export actions
-export const { setSeedType, setPassword, setSeeds, setIsAuthenticated, toggleTheme, setTick, setBalances, resetState, setTokens, updateRichlist, setMarketcap, setRichlist } = appSlice.actions;
+export const { setSeedType, setPassword, setSeeds, setIsAuthenticated, toggleTheme, setTick, resetState, setTokens, updateRichlist, setMarketcap, setRichlist } = appSlice.actions;
 
 // Export reducer
 export default appSlice.reducer;
