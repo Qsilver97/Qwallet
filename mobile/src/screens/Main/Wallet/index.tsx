@@ -5,9 +5,12 @@ import Tokenlist from "./components/Tokenlist";
 import { faMinus, faPlus, faShare } from "@fortawesome/free-solid-svg-icons";
 import TransferButton from "./components/TransferButton";
 import { useAuth } from "@app/context/AuthContext";
+import { useSelector } from "react-redux";
+import { RootState } from "@app/redux/store";
 
 const Wallet: React.FC = () => {
-  const { login, logout, user } = useAuth();
+  const { login, user, balances } = useAuth();
+  const { marketcap } = useSelector((store: RootState) => store.app);
   const { bgColor, textColor, gray } = useColors();
   const [currentAddress, setCurrentAddress] = useState<string>("");
   const [allAddresses, setAllAddresses] = useState<string[]>([]);
@@ -33,7 +36,15 @@ const Wallet: React.FC = () => {
           Total Balance
         </Text>
         <Text fontSize="3xl" textAlign="center">
-          $44,336.36
+          $
+          {Math.floor(
+            balances.reduce(
+              (acc, currentValue) => acc + Number(currentValue),
+              0
+            ) *
+              parseFloat(marketcap.price) *
+              1000
+          ) / 1000}
         </Text>
         <HStack w={"full"} justifyContent={"center"} space={4}>
           <TransferButton icon={faShare} title="SEND"></TransferButton>

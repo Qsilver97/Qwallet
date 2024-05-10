@@ -15,13 +15,11 @@ export const SocketCom: React.FC = () => {
       } else if (res.data.command == "EntityInfo") {
         // setBalances({ [res.data.address]: parseFloat(res.data.balance) });
       } else if (res.data.balances) {
-        res.data.balances.map((key: number, balance: string) => {
-          if (key >= 0 && key < balances.length) {
-            let tmp: string[] = [...balances];
-            tmp[key] = balance;
-            setBalances(tmp);
-          }
+        let tmp: string[] = [...balances];
+        res.data.balances.map((itm: [number, string]) => {
+          if (itm[0] >= 0 && itm[0] < balances.length) tmp[itm[0]] = itm[1];
         });
+        setBalances(tmp);
       } else if (res.data.richlist) {
         dispatch(updateRichlist(res.data));
       } else if (res.data.marketcap) {

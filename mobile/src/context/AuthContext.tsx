@@ -53,6 +53,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = (userDetails: UserDetailType | null) => {
     setUser(userDetails);
+    basicInfo();
+    console.log(userDetails?.accountInfo.subshash);
   };
   const logout = () => {
     // axios
@@ -69,7 +71,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    basicInfo();
     eventEmitter.on("S2C/history", (res) => {
       if (res.data) {
         setHistories(res.data.changes[1].txids);
@@ -87,13 +88,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
     eventEmitter.on("S2C/basic-info", (res) => {
       if (res.data) {
-        res.data.balances.map((key: number, balance: string) => {
-          if (key >= 0 && key < balances.length) {
-            let tmp: string[] = [...balances];
-            tmp[key] = balance;
-            setBalances(tmp);
-          }
+        console.log(res.data)
+        let tmp: string[] = [...balances];
+        res.data.balances.map((itm: [number, string]) => {
+          if (itm[0] >= 0 && itm[0] < balances.length) tmp[itm[0]] = itm[1];
         });
+        setBalances(tmp);
         dispatch(setTokens(res.data.tokens));
         dispatch(setRichlist(res.data.richlist));
         dispatch(setMarketcap(res.data.marketcap));

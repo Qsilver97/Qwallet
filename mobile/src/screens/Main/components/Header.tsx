@@ -89,13 +89,13 @@ const Header: React.FC = () => {
                     if (address != "")
                       return (
                         <TouchableOpacity
+                          key={key}
                           onPress={() => {
                             setCurrentAddress(address);
                             setIsOpen(false);
                           }}
                         >
                           <Text
-                            key={key}
                             fontSize={"md"}
                             numberOfLines={1}
                             ellipsizeMode="middle"

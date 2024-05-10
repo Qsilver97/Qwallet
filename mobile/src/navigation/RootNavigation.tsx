@@ -35,7 +35,7 @@ const RootNavigation: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Splash"
+        initialRouteName="Login"
         screenOptions={{
           headerStyle: {
             backgroundColor: bgColor,
