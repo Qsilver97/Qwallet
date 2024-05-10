@@ -6,9 +6,10 @@ import { useState } from "react";
 import TokenSelect from "../../components/dashboard/select/TokenSelect";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
+import TxModal from "../../components/dashboard/modal/TxModal";
 
 const TradingAside = () => {
-    const { handleBuyCell } = useAuth();
+    const { handleBuyCell, txStatus } = useAuth();
 
     const [quantity, setQuantity] = useState<string>();
     const [price, setPrice] = useState<string>();
@@ -36,6 +37,9 @@ const TradingAside = () => {
 
     return (
         <Section>
+            {txStatus != "" &&
+                <TxModal />
+            }
             {/* <Text size="xs" weight="medium" className="text-celestialBlue">
                 SELECT A STRIKE PRICE
             </Text> */}
