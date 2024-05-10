@@ -42,6 +42,7 @@ module.exports = {
             throw new Error("Wasm not initialized!");
         }
         const io = socketManager.getIO();
+        console.log(data.command, 'command')
         const result = await wasm.ccall(
             "qwallet",
             "string",
@@ -50,12 +51,14 @@ module.exports = {
         );
         io.emit("result", result);
         const parsedResult = JSON.parse(result);
+        console.log(parsedResult, 'parsedResult')
         const v1requestResult = JSON.parse(await wasm.ccall(
             "qwallet",
             "string",
             ["string"],
-            'v1request'
+            ['v1request']
         ))
+        console.log(v1requestResult, 'v1request')
         if(v1requestResult.display && v1requestResult.result == 0) {
             await socketSync(v1requestResult.display);
         }

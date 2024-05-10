@@ -55,7 +55,7 @@ const TokenModal: React.FC<TokenModalProps> = ({ onClose, token }) => {
             .then(() => {
                 const _statusInterval = setInterval(() => {
                     axios.post(
-                        `${SERVER_URL}/api/transfer-status`
+                        `${SERVER_URL}/api/tx-status`
                     ).then((resp) => {
                         console.log(resp.data);
                         if (resp.data.value.result == '0') {
