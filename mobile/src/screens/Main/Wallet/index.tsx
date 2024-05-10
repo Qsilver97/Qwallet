@@ -7,20 +7,15 @@ import TransferButton from "./components/TransferButton";
 import { useAuth } from "@app/context/AuthContext";
 import { useSelector } from "react-redux";
 import { RootState } from "@app/redux/store";
+import TransferModal from "./TransferModal";
 
 const Wallet: React.FC = () => {
-  const { login, user, balances } = useAuth();
+  const { login, user, balances, allAddresses, currentAddress } = useAuth();
   const { marketcap } = useSelector((store: RootState) => store.app);
   const { bgColor, textColor, gray } = useColors();
-  const [currentAddress, setCurrentAddress] = useState<string>("");
-  const [allAddresses, setAllAddresses] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (user?.accountInfo) {
-      setCurrentAddress(user?.accountInfo.addresses[0]);
-      setAllAddresses(user?.accountInfo.addresses);
-    }
-  }, [login, user]);
+  const [isShowTokenTranModal, setIsShowTokenTransModal] = useState(false);
+  const toggleModal = () => setIsShowTokenTransModal(!isShowTokenTranModal);
+  const handleTransfer = () => {};
 
   return (
     <VStack
@@ -33,26 +28,36 @@ const Wallet: React.FC = () => {
     >
       <VStack flex={1} pt={14}>
         <Text fontSize="2xl" textAlign="center" color={gray.gray40}>
-          Total Balance
+          Balance
         </Text>
         <Text fontSize="3xl" textAlign="center">
-          $
+          {/* {balances.reduce(
+            (acc, currentValue) => acc + Number(currentValue),
+            0
+          )} */}
+          {balances[allAddresses.indexOf(currentAddress)]}| $
           {Math.floor(
-            balances.reduce(
-              (acc, currentValue) => acc + Number(currentValue),
-              0
-            ) *
+            parseFloat(balances[allAddresses.indexOf(currentAddress)]) *
               parseFloat(marketcap.price) *
               1000
           ) / 1000}
         </Text>
         <HStack w={"full"} justifyContent={"center"} space={4}>
-          <TransferButton icon={faShare} title="SEND"></TransferButton>
+          <TransferButton
+            icon={faShare}
+            title="SEND"
+            onPress={toggleModal}
+          ></TransferButton>
           <TransferButton icon={faPlus} title="BUY"></TransferButton>
           <TransferButton icon={faMinus} title="SELL"></TransferButton>
         </HStack>
       </VStack>
       <Tokenlist />
+      <TransferModal
+        modalVisible={isShowTokenTranModal}
+        toggleModal={toggleModal}
+        onPress={handleTransfer}
+      />
     </VStack>
   );
 };

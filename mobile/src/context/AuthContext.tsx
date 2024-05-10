@@ -88,12 +88,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
     eventEmitter.on("S2C/basic-info", (res) => {
       if (res.data) {
-        console.log(res.data)
-        let tmp: string[] = [...balances];
-        res.data.balances.map((itm: [number, string]) => {
-          if (itm[0] >= 0 && itm[0] < balances.length) tmp[itm[0]] = itm[1];
-        });
-        setBalances(tmp);
         dispatch(setTokens(res.data.tokens));
         dispatch(setRichlist(res.data.richlist));
         dispatch(setMarketcap(res.data.marketcap));

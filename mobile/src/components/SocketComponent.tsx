@@ -9,7 +9,6 @@ export const SocketCom: React.FC = () => {
   const { balances, setBalances } = useAuth();
   useEffect(() => {
     eventEmitter.on("S2C/live", (res) => {
-      // console.log(res.data);
       if (res.data.command == "CurrentTickInfo") {
         dispatch(setTick(res.data.tick));
       } else if (res.data.command == "EntityInfo") {
@@ -17,7 +16,7 @@ export const SocketCom: React.FC = () => {
       } else if (res.data.balances) {
         let tmp: string[] = [...balances];
         res.data.balances.map((itm: [number, string]) => {
-          if (itm[0] >= 0 && itm[0] < balances.length) tmp[itm[0]] = itm[1];
+          tmp[itm[0]] = itm[1];
         });
         setBalances(tmp);
       } else if (res.data.richlist) {

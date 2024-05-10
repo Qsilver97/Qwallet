@@ -8,18 +8,18 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 interface Iprops extends TouchableOpacityProps {
   icon: IconProp;
   title: string;
-  onPress?: () => void;
+  toggleModal?: () => void;
 }
 
 const TransferButton: React.FC<Iprops> = ({
   icon,
   title,
-  onPress,
+  toggleModal,
   ...props
 }) => {
   const { main, textColor } = useColors();
   return (
-    <TouchableOpacity onPress={onPress} {...props}>
+    <TouchableOpacity onPress={toggleModal} {...props}>
       <VStack p={2} space={2} alignItems={"center"}>
         <VStack
           bgColor={main.celestialBlue}

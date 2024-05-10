@@ -18,6 +18,7 @@ import LogoutButton from "./LogoutButton";
 import { useAuth } from "@app/context/AuthContext";
 import { addAccount } from "@app/api/api";
 import eventEmitter from "@app/api/eventEmitter";
+import ConfirmModal from "./ConfirmModal";
 
 const Header: React.FC = () => {
   const { bgColor, textColor, main, gray } = useColors();
@@ -26,7 +27,7 @@ const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [addingStatus, setAddingStatus] = useState(false);
-
+  const toggleModal = () => setModalVisible(!modalVisible);
   const handleAddAdress = () => {
     if (addingStatus) return;
     setAddingStatus(true);
@@ -120,7 +121,7 @@ const Header: React.FC = () => {
                   </Button>
                   <Button
                     onPress={() => {
-                      setModalVisible(!modalVisible);
+                      toggleModal();
                       setIsOpen(false);
                     }}
                     w={"1/2"}
@@ -139,70 +140,20 @@ const Header: React.FC = () => {
           <LogoutButton />
         </VStack>
       </HStack>
-      <Modal
-        isOpen={modalVisible}
-        onClose={() => setModalVisible(false)}
-        avoidKeyboard
-        size="lg"
-        _backdrop={{
-          _dark: {
-            bg: "coolGray.600",
-          },
-          _light: {
-            bg: "warmGray.50",
-          },
-          opacity: 0.8,
-        }}
+      <ConfirmModal
+        modalVisible={modalVisible}
+        toggleModal={toggleModal}
+        onPress={handleAddAdress}
       >
-        <Modal.Content>
-          <Modal.CloseButton />
-          <Modal.Body bgColor={bgColor}>
-            <VStack justifyContent={"center"} py={6}>
-              <View
-                bgColor={main.celestialBlue}
-                rounded={"full"}
-                mx={"auto"}
-                p={3}
-              >
-                <FontAwesomeIcon
-                  icon={faCheck}
-                  size={42}
-                  color={textColor}
-                ></FontAwesomeIcon>
-              </View>
-              <Text fontSize={"2xl"} textAlign={"center"}>
-                Create New Address
-              </Text>
-              <Text textAlign={"center"}>
-                An Account can't have more than 10 addresses
-              </Text>
-            </VStack>
-            <HStack justifyContent={"center"} space={3}>
-              <Button
-                onPress={() => {
-                  setModalVisible(false);
-                }}
-                w={"1/2"}
-                rounded={"md"}
-                _pressed={{ opacity: 0.6 }}
-                bgColor={"red.500"}
-              >
-                Cancel
-              </Button>
-              <Button
-                onPress={handleAddAdress}
-                w={"1/2"}
-                rounded={"md"}
-                _pressed={{ opacity: 0.6 }}
-                bgColor={main.celestialBlue}
-                isDisabled={addingStatus}
-              >
-                Confirm
-              </Button>
-            </HStack>
-          </Modal.Body>
-        </Modal.Content>
-      </Modal>
+        <>
+          <Text fontSize={"2xl"} textAlign={"center"}>
+            Create New Address
+          </Text>
+          <Text textAlign={"center"}>
+            An Account can't have more than 10 addresses
+          </Text>
+        </>
+      </ConfirmModal>
     </>
   );
 };
