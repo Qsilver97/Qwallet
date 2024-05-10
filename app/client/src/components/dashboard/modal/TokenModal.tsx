@@ -13,7 +13,7 @@ type TokenModalProps = {
 };
 
 const TokenModal: React.FC<TokenModalProps> = ({ onClose, token }) => {
-    const { currentAddress, accountInfo, tick, balances } = useAuth();
+    const { currentAddress, accountInfo, tick, tokenBalances } = useAuth();
     const [amount, setAmount] = useState("");
     const [toAddress, setToAddress] = useState("");
     const [sendingStatus, setSendingStatus] = useState<'init' | 'confirm' | 'open' | 'pending' | 'success' | 'rejected'>('init');
@@ -38,7 +38,7 @@ const TokenModal: React.FC<TokenModalProps> = ({ onClose, token }) => {
     const transfer = async () => {
         setSendingStatus('open');
 
-        if (toAddress == '' || amount == '' || parseFloat(amount) > balances[currentAddress]) {
+        if (toAddress == '' || amount == '' || parseFloat(amount) > tokenBalances[selectedToken.name][currentAddress]) {
             toast.error('Invaild address or amount');
             return
         }

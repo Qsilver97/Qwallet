@@ -251,7 +251,12 @@ exports.restoreAccount = async (req, res) => {
 
 exports.transfer = async (req, res) => {
     const { toAddress, fromIdx, amount, tick, tokenName } = req.body;
-    const command = `send ${stateManager.getUserState().password},${fromIdx},${tick},${toAddress},${amount}`;
+    let command;
+    if (tokenName == 'QU') {
+        command = `send ${stateManager.getUserState().password},${fromIdx},${tick},${toAddress},${amount}`;
+    } else {
+        command = `tokensend ${stateManager.getUserState().password},${fromIdx},${tick},${toAddress},${amount},${tokenName}`;
+    }
     const sendResult = await wasmManager.ccall({ command, flag: 'transfer' });
     const v1requestResult = await wasmManager.ccall({ command: 'v1request', flag: 'v1request' });
     if (v1requestResult.value.result == 0 && v1requestResult.value.display) {

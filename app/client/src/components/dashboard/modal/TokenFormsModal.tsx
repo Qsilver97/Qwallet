@@ -24,7 +24,7 @@ const TokenFormsModal = ({
     expectedTick,
     sendingStatus,
 }: TokenFormsModalProps) => {
-    const { balances, currentAddress } = useAuth();
+    const { tokenBalances, currentAddress, tick } = useAuth();
     return (
         <div className="py-5 px-6 space-y-6 border-white/60 border rounded-2xl">
             {sendingStatus === 'init' && (
@@ -64,7 +64,7 @@ const TokenFormsModal = ({
                                 Available
                             </label>
                             <span className="font-Inter font-light text-xs">
-                                {balances[currentAddress]} {tokenName}
+                                {tokenBalances[tokenName][currentAddress]} {tokenName}
                             </span>
                         </div>
                     </div>
@@ -82,6 +82,7 @@ const TokenFormsModal = ({
                     Sending...
                     <br />
                     transactionId: {transactionId}<br />
+                    currentTick: {tick}<br />
                     expectedTick: {expectedTick}
                 </div>
             }
