@@ -53,6 +53,7 @@ exports.login = async (req, res) => {
         stateManager.setLocalSubshash(localSubshash);
 
         const addresses = listResult.value.display.addresses;
+        stateManager.updateUserState({ currentAddress: addresses[0] });
         const addressesResp = await socketSync(addresses[0]);
         if (!addressesResp) {
             return 'Socket server error';
@@ -120,6 +121,7 @@ exports.fetchUser = async (req, res) => {
         res.status(401).send('Socket server error.');
         return
     }
+    await socketSync(userState.currentAddress);
     const balances = await socketSync('balances');
     const marketcap = await socketSync('marketcap');
     const tokens = await socketSync('tokenlist');
@@ -134,8 +136,17 @@ exports.fetchUser = async (req, res) => {
     // } catch (error) {
 
     // }
+    const updatedUserState = { ...userState, ...{ balances: balances.balances, marketcap, tokens: tokens.tokens } };
+    stateManager.setUserState(updatedUserState);
+    res.send(updatedUserState);
+}
 
-    res.send({ ...userState, ...{ balances: balances.balances, marketcap, tokens: tokens.tokens } });
+exports.updatedUserState = async (req, res) => {
+    stateManager.updateUserState(req.body);
+    if (req.body.currentAddress) {
+        await socketSync(req.body.currentAddress);
+    }
+    res.status(200).send('success');
 }
 
 exports.deleteAccount = async (req, res) => {
@@ -240,7 +251,12 @@ exports.restoreAccount = async (req, res) => {
 
 exports.transfer = async (req, res) => {
     const { toAddress, fromIdx, amount, tick, tokenName } = req.body;
-    const command = `send ${stateManager.getUserState().password},${fromIdx},${tick},${toAddress},${amount}`;
+    let command;
+    if (tokenName == 'QU') {
+        command = `send ${stateManager.getUserState().password},${fromIdx},${tick},${toAddress},${amount}`;
+    } else {
+        command = `tokensend ${stateManager.getUserState().password},${fromIdx},${tick},${toAddress},${amount},${tokenName}`;
+    }
     const sendResult = await wasmManager.ccall({ command, flag: 'transfer' });
     const v1requestResult = await wasmManager.ccall({ command: 'v1request', flag: 'v1request' });
     if (v1requestResult.value.result == 0 && v1requestResult.value.display) {
