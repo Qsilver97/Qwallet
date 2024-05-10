@@ -19,13 +19,14 @@ module.exports = {
         userState = {
             isAuthenticated: false,
             password: '',
+            currentAddress: "",
             accountInfo: {
                 addresses: [],
                 numaddrs: 0,
                 subshash: ""
             }
-        },
-            remoteSubshas = "";
+        }
+        remoteSubshas = "";
         localSubshash = "";
         return userState;
     },
@@ -38,6 +39,9 @@ module.exports = {
     setUserState: (userDetail) => {
         userState = { ...userDetail };
         return userState;
+    },
+    updateUserState: (data) => {
+        userState = { ...userState, ...data };
     },
     setRemoteSubshash: (subshash) => {
         remoteSubshas = subshash;
