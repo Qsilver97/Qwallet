@@ -56,6 +56,7 @@ interface AuthContextType {
     setSeeds: Dispatch<SetStateAction<string | string[]>>;
     setCurrentAddress: Dispatch<SetStateAction<string>>;
     login: (password: string) => void;
+    updateUserState: (data: any) => void;
     logout: () => void;
     create: () => void;
     restoreAccount: () => void;
@@ -88,10 +89,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [activeTabIdx, setActiveTabIdx] = useState(0);
     const [accountInfo, setAccountInfo] = useState<AccountInfoInterface>();
-    const [totalBalance, _] = useState<string>('0');
+    const [totalBalance, setTotalBalance] = useState<string>('0');
     // const [totalBalance, setTotalBalance] = useState<string>('0');
 
-    const [tick, setTick] = useState("");
+    const [tick, setTick] = useState("0");
     const [balances, setBalances] = useState<Balances>({});
     const [tokenBalances, setTokenBalances] = useState<{
         [name: string]: Balances;
@@ -248,6 +249,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             })
     }
 
+    const updateUserState = (data: any) => {
+        axios.post(`${SERVER_URL}/api/update-userstate`, data)
+    }
+
     const fetchInfo = async () => {
         let resp;
         try {
@@ -348,7 +353,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                             [data.address]: parseFloat(data.balance),
                         };
                     });
+                if (data.tokens) {
+                    data.tokens.map((item: [string, string]) => {
+                        setTokenBalances((prev) => { return { ...prev, [item[0]]: { [data.address]: parseInt(item[1]) } } })
+                    })
+                }
             } else if (data.balances) {
+                setTotalBalance(data.total);
                 data.balances.map((item: [number, string]) => {
                     if (data[0])
                         setBalances((prev) => {
@@ -395,6 +406,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         if (isAuthenticated)
             init();
     }, [isAuthenticated]);
+
+    useEffect(() => {
+        updateUserState({ currentAddress })
+    }, [currentAddress])
 
     useEffect(() => {
         async function checkAuthenticated() {
@@ -456,6 +471,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 create,
                 restoreAccount,
                 setCurrentAddress,
+                updateUserState,
             }}
         >
             {loading ? <Loading /> : children}
