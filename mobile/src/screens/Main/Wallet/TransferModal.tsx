@@ -12,14 +12,14 @@ import { RootState } from "@app/redux/store";
 import { useSelector } from "react-redux";
 
 interface IProps {
-  modalVisible: boolean;
-  toggleModal: () => void;
+  isOpen: boolean;
+  onToggle: () => void;
   onPress: () => void;
 }
 
 const TransferModal: React.FC<IProps> = ({
-  modalVisible,
-  toggleModal,
+  isOpen,
+  onToggle,
   onPress,
 }) => {
   const { currentAddress, allAddresses } = useAuth();
@@ -51,8 +51,8 @@ const TransferModal: React.FC<IProps> = ({
 
   return (
     <Modal
-      isOpen={modalVisible}
-      onClose={toggleModal}
+      isOpen={isOpen}
+      onClose={onToggle}
       avoidKeyboard
       size="lg"
       _backdrop={{
@@ -87,7 +87,7 @@ const TransferModal: React.FC<IProps> = ({
           </VStack>
           <HStack justifyContent={"center"} space={3}>
             <Button
-              onPress={toggleModal}
+              onPress={onToggle}
               w={"1/2"}
               rounded={"md"}
               _pressed={{ opacity: 0.6 }}

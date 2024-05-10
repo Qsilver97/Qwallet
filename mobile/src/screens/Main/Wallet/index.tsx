@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { HStack, Text, VStack } from "native-base";
+import React from "react";
+import { HStack, Text, VStack, useDisclose } from "native-base";
 import { useColors } from "@app/context/ColorContex";
 import Tokenlist from "./components/Tokenlist";
 import { faMinus, faPlus, faShare } from "@fortawesome/free-solid-svg-icons";
@@ -10,11 +10,10 @@ import { RootState } from "@app/redux/store";
 import TransferModal from "./TransferModal";
 
 const Wallet: React.FC = () => {
-  const { login, user, balances, allAddresses, currentAddress } = useAuth();
+  const { balances, allAddresses, currentAddress } = useAuth();
   const { marketcap } = useSelector((store: RootState) => store.app);
   const { bgColor, textColor, gray } = useColors();
-  const [isShowTokenTranModal, setIsShowTokenTransModal] = useState(false);
-  const toggleModal = () => setIsShowTokenTransModal(!isShowTokenTranModal);
+  const { isOpen, onToggle } = useDisclose();
   const handleTransfer = () => {};
 
   return (
@@ -46,7 +45,7 @@ const Wallet: React.FC = () => {
           <TransferButton
             icon={faShare}
             title="SEND"
-            onPress={toggleModal}
+            onPress={onToggle}
           ></TransferButton>
           <TransferButton icon={faPlus} title="BUY"></TransferButton>
           <TransferButton icon={faMinus} title="SELL"></TransferButton>
@@ -54,8 +53,8 @@ const Wallet: React.FC = () => {
       </VStack>
       <Tokenlist />
       <TransferModal
-        modalVisible={isShowTokenTranModal}
-        toggleModal={toggleModal}
+        isOpen={isOpen}
+        onToggle={onToggle}
         onPress={handleTransfer}
       />
     </VStack>

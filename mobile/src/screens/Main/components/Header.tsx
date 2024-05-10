@@ -8,6 +8,7 @@ import {
   Text,
   VStack,
   View,
+  useDisclose,
 } from "native-base";
 import Toast from "react-native-toast-message";
 import { TouchableOpacity } from "react-native";
@@ -141,8 +142,8 @@ const Header: React.FC = () => {
         </VStack>
       </HStack>
       <ConfirmModal
-        modalVisible={modalVisible}
-        toggleModal={toggleModal}
+        isOpen={modalVisible}
+        onToggle={toggleModal}
         onPress={handleAddAdress}
       >
         <>

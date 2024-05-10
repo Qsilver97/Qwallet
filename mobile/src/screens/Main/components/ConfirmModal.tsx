@@ -5,23 +5,23 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 interface IProps extends IModalProps {
-  modalVisible: boolean;
-  toggleModal: () => void;
+  isOpen: boolean;
+  onToggle: () => void;
   onPress: () => void;
   children: ReactNode;
 }
 
 const ConfirmModal: React.FC<IProps> = ({
-  modalVisible,
-  toggleModal,
+  isOpen,
+  onToggle,
   onPress,
   children,
 }) => {
   const { bgColor, textColor, main } = useColors();
   return (
     <Modal
-      isOpen={modalVisible}
-      onClose={toggleModal}
+      isOpen={isOpen}
+      onClose={onToggle}
       avoidKeyboard
       size="lg"
       _backdrop={{
@@ -54,7 +54,7 @@ const ConfirmModal: React.FC<IProps> = ({
           </VStack>
           <HStack justifyContent={"center"} space={3}>
             <Button
-              onPress={toggleModal}
+              onPress={onToggle}
               w={"1/2"}
               rounded={"md"}
               _pressed={{ opacity: 0.6 }}
