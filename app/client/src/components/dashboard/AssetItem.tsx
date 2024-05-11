@@ -1,13 +1,14 @@
 import React from 'react';
-import { AssetItemProps } from '../../utils/interfaces';
+import { assetsItems } from '../../utils/constants';
 
-const AssetItem: React.FC<{ item: AssetItemProps }> = ({ item }) => {
+const AssetItem: React.FC<{ token: string }> = ({ token }) => {
+    const item = assetsItems.find((k) => k.name == token) || assetsItems[0]
     return (
         <div className="flex flex-col items-center justify-between pb-3 text-white">
             <div className="flex items-center justify-between w-full">
                 <div className='flex items-center gap-3'>
-                    <img src={item.icon} alt={`${item.name} logo`} className="w-8 h-8" />
-                    <div className="font-semibold">{item.name}</div>
+                    <img src={item.icon} alt={`${token} logo`} className="w-8 h-8" />
+                    <div className="font-semibold">{token}</div>
                 </div>
                 <div>{item.amount}</div>
             </div>

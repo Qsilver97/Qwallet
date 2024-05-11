@@ -1,12 +1,15 @@
 import React from "react";
-import { assetsItems } from "../../utils/constants";
 import AssetItem from "./AssetItem";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Assets: React.FC = () => {
+
+    const { tokens } = useAuth();
+
     return (
         <div className="rounded-lg bg-dark px-6 py-8 flex flex-col text-center">
-            {assetsItems.map((item, idx) => {
-                return <AssetItem item={item} key={idx} />;
+            {tokens.map((token, idx) => {
+                return <AssetItem token={token} key={idx} />;
             })}
         </div>
     );
