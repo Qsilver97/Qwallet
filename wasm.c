@@ -1,7 +1,4 @@
-
-
-
-//#define TESTNET
+    
 
 
 #include <stdio.h>
@@ -36,9 +33,9 @@
 
 struct pendingtx
 {
-    char address[64],dest[64],txid[64],password[512];
     int64_t amount,beforeinputs,beforeoutputs,afterinputs,afteroutputs;
-    int32_t pendingtick,pendingid,gottx,pwindex,beforetick,aftertick;
+    int32_t pendingtick,pendingid,gottx,pwindex,beforetick,aftertick,txtype,pad0;
+    char address[64],dest[64],txid[64],password[512],extrastr[MAX_INPUT_SIZE*2+1];
 } PENDINGTX;
 
 char PENDINGRESULT[4096],PENDINGSTATUS[4096];
@@ -163,7 +160,8 @@ char *_sendfunc(char **argv,int32_t argc,int32_t txtype)
         {
             datalen = strlen(argv[5]) / 2;
             hexToByte(argv[5],extradata,datalen);
-        }
+            strncpy(PENDINGTX.extrastr,argv[5],sizeof(PENDINGTX.extrastr)-1);
+        } else PENDINGTX.extrastr[0] = 0;
         if ( txtick == 0 )
             txtick = LATEST_TICK + TICKOFFSET;
         create_rawtxhex(rawhex,txid,txdigest,subseed,txtype,publickey,destpub,amount,extradata,datalen,txtick);
@@ -185,6 +183,7 @@ char *_sendfunc(char **argv,int32_t argc,int32_t txtype)
                 strcpy(PENDINGTX.address,addr);
                 strcpy(PENDINGTX.dest,dest);
                 PENDINGTX.amount = amount;
+                PENDINGTX.txtype = txtype;
                 PENDINGTX.pendingtick = txtick;
                 PENDINGTX.gottx = 0;
                 // check for valid balance and error if not enough funds
@@ -237,13 +236,13 @@ char *qxordertx(char **argv,int32_t argc,int32_t type)
     I.numberOfShares = atoll(argv[4]);
     if ( type == QX_ADD_BID_ORDER_FN )
         sprintf(numstr,"%s",amountstr(I.price * I.numberOfShares));
-    else sprintf(numstr,"%d",1);
+    else sprintf(numstr,"%d",0);
     byteToHex((uint8_t *)&I,extrastr,sizeof(I));
     argv[3] = QX_ADDRESS;
     argv[4] = numstr;
     argv[5] = extrastr;
     argc = 6;
-    return(_sendfunc(argv,argc,QX_ADD_BID_ORDER_FN));
+    return(_sendfunc(argv,argc,type));
 }
 
 char *buyfunc(char **argv,int32_t argc) { return(qxordertx(argv,argc,QX_ADD_BID_ORDER_FN)); }
@@ -691,7 +690,7 @@ int32_t wssupdate(char *jsonstr)
 {
     const char *command,*addr,*spectrum,*txid;
     int64_t input,output,sent;
-    int32_t tick,index,f;
+    int32_t tick,index,f,argc = 5;
     uint8_t digest[32];
     result(json_element) element_result = json_parse(jsonstr);
     if ( result_is_err(json_element)(&element_result) )
@@ -742,7 +741,7 @@ int32_t wssupdate(char *jsonstr)
                         memset(&PENDINGTX,0,sizeof(PENDINGTX));
                     }
                 }
-                else
+                else if ( PENDINGTX.txtype == 0 )
                 {
                     strcpy(PENDINGSTATUS,"pending send failed, resending");
                     printf("PENDINGTX failed, resend\n");
@@ -755,10 +754,20 @@ int32_t wssupdate(char *jsonstr)
                     argv[2] = numstr2;
                     argv[3] = PENDINGTX.dest;
                     argv[4] = amountstr(PENDINGTX.amount);
+                    if ( PENDINGTX.extrastr[0] != 0 )
+                    {
+                        argv[5] = PENDINGTX.extrastr;
+                        argc = 6;
+                    } else argc = 5;
                     PENDINGTX.gottx = PENDINGTX.pendingtick = PENDINGTX.pendingid = 0;
                     PENDINGTX.beforetick = PENDINGTX.aftertick = 0;
                     PENDINGTX.beforeinputs = PENDINGTX.beforeoutputs = PENDINGTX.afterinputs = PENDINGTX.afteroutputs = 0;
-                    printf("resend %s\n",sendfunc(argv,5));
+                    printf("resend %s\n",_sendfunc(argv,argc,PENDINGTX.txtype));
+                }
+                else
+                {
+                    printf("PENDINGTX failed, resend\n");
+                    memset(PENDINGTX.txid,0,sizeof(PENDINGTX.txid));
                 }
                 printf("%s\n%s\n",PENDINGSTATUS,PENDINGRESULT);
             }
@@ -883,8 +892,7 @@ int main()
         FS.syncfs(true, function (err) {
             assert(!err, 'Error setting up filesystem: ' + err);
         });
-    });
-    //pthread_t mainloop_thread;
+    });    //pthread_t mainloop_thread;
     //pthread_create(&mainloop_thread,NULL,&mainloop,0);
     start_timer();
     while ( 1 )
@@ -913,3 +921,5 @@ int main()
 // tokensend
 // buy + sell
 // cancel order
+
+    

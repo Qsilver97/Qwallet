@@ -44,6 +44,10 @@ interface AuthContextType {
     currentToken: TokenOption;
     orders: OrderInterface | undefined;
     tradingPageLoading: boolean;
+    txStatus: string;
+    txId: string;
+    expectedTick: number;
+    setTxStatus: Dispatch<SetStateAction<string>>;
     setCurrentToken: Dispatch<SetStateAction<TokenOption>>;
     fetchTradingInfoPage: () => Promise<void>;
     setRecoverStatus: Dispatch<SetStateAction<boolean>>;
@@ -52,6 +56,7 @@ interface AuthContextType {
     setSeeds: Dispatch<SetStateAction<string | string[]>>;
     setCurrentAddress: Dispatch<SetStateAction<string>>;
     login: (password: string) => void;
+    updateUserState: (data: any) => void;
     logout: () => void;
     create: () => void;
     restoreAccount: () => void;
@@ -84,10 +89,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [activeTabIdx, setActiveTabIdx] = useState(0);
     const [accountInfo, setAccountInfo] = useState<AccountInfoInterface>();
-    const [totalBalance, _] = useState<string>('0');
+    const [totalBalance, setTotalBalance] = useState<string>('0');
     // const [totalBalance, setTotalBalance] = useState<string>('0');
 
-    const [tick, setTick] = useState("");
+    const [tick, setTick] = useState("0");
     const [balances, setBalances] = useState<Balances>({});
     const [tokenBalances, setTokenBalances] = useState<{
         [name: string]: Balances;
@@ -101,6 +106,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     // trading page
     const [orders, setOrders] = useState<OrderInterface>();
     const [tradingPageLoading, setTradingPageLoading] = useState<boolean>(false);
+    const [txStatus, setTxStatus] = useState<string>("");
+    const [txInterval, setTxInterval] = useState<any>();
+    const [txId, setTxId] = useState<string>("");
+    const [expectedTick, setExpectedTick] = useState<number>(0);
 
     const tokenOptions: TokenOption[] = assetsItems.map((item) => ({
         label: item.icon,
@@ -240,6 +249,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             })
     }
 
+    const updateUserState = (data: any) => {
+        axios.post(`${SERVER_URL}/api/update-userstate`, data)
+    }
+
     const fetchInfo = async () => {
         let resp;
         try {
@@ -286,21 +299,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     }
 
     const handleBuyCell = async (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell', amount: string, price: string): Promise<any> => {
-        try {
-            const resp = await axios.post(`${SERVER_URL}/api/buy-cell`, {
-                flag,
-                password,
-                index: accountInfo?.addresses.indexOf(currentAddress),
-                tick: parseInt(tick) + 10,
-                currentToken: currentToken.value,
-                amount,
-                price,
-            })
-            console.log(resp.data);
-        } catch (error) {
+        await axios.post(`${SERVER_URL}/api/buy-cell`, {
+            flag,
+            password,
+            index: accountInfo?.addresses.indexOf(currentAddress),
+            tick: parseInt(tick) + 10,
+            currentToken: currentToken.value,
+            amount,
+            price,
+        }).then(() => {
+            const _statusInterval = setInterval(() => {
+                axios.post(
+                    `${SERVER_URL}/api/tx-status`
+                ).then((resp) => {
+                    console.log(resp.data);
+                    if (resp.data.value.result == '0') {
+                    } else if (resp.data.value.result == '1') {
+                        setTxStatus(resp.data.value.display);
+                    } else {
+                    }
+                }).catch(() => {
+                })
+            }, 2000)
+            setTxInterval(_statusInterval);
+        }).catch(() => {
 
-        }
+        })
     }
+
+    useEffect(() => {
+        if (txStatus.includes('broadcast for tick')) {
+            const sendingResultSplit = txStatus.split(' ');
+            setTxId(sendingResultSplit[1]);
+            setExpectedTick(parseInt(sendingResultSplit[sendingResultSplit.length - 1]));
+        } else if (txStatus.includes('no command pending')) {
+            clearInterval(txInterval);
+        }
+    }, [txStatus])
 
     useEffect(() => {
         const newSocket = io(wsUrl);
@@ -318,7 +353,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                             [data.address]: parseFloat(data.balance),
                         };
                     });
+                if (data.tokens) {
+                    data.tokens.map((item: [string, string]) => {
+                        setTokenBalances((prev) => { return { ...prev, [item[0]]: { [data.address]: parseInt(item[1]) } } })
+                    })
+                }
             } else if (data.balances) {
+                setTotalBalance(data.total);
                 data.balances.map((item: [number, string]) => {
                     if (data[0])
                         setBalances((prev) => {
@@ -367,6 +408,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     }, [isAuthenticated]);
 
     useEffect(() => {
+        updateUserState({ currentAddress })
+    }, [currentAddress])
+
+    useEffect(() => {
         async function checkAuthenticated() {
             setLoading(true);
             try {
@@ -407,6 +452,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 tokenOptions,
                 orders,
                 tradingPageLoading,
+                txStatus,
+                txId,
+                expectedTick,
+                setTxStatus,
                 fetchTradingInfoPage,
                 setCurrentToken,
                 setRecoverStatus,
@@ -422,6 +471,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 create,
                 restoreAccount,
                 setCurrentAddress,
+                updateUserState,
             }}
         >
             {loading ? <Loading /> : children}

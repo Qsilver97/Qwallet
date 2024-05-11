@@ -1,0 +1,620 @@
+{
+  "en": {
+    "Title": {
+      "CreatePassword": "Create Password",
+      "Reminder": "Secure Alert",
+      "Confirm": "Confrim Seeds Phrase",
+      "SeedType": "Select Seed Type",
+      "WalletSetup": "Setup Wallet",
+      "Dashboard": "Dashboard",
+      "Login": "Login",
+      "Create": "Create",
+      "Backup": "Backup Wallet"
+    },
+    "Splash": {
+      "GetStarted": "Get Started",
+      "Text1": "Property Diversity",
+      "Text2": "Safe Security",
+      "Text3": "Convenient Transaction"
+    },
+    "WalletSetup": {
+      "button_ImportUsingSeedPhrase": "Import Using Seed Phrase",
+      "HaveAlreadyYourOwnWallet": "Have Already Your Own Wallet?",
+      "WalletSetup": "Wallet Setup",
+      "button_CreateNewWallet": "Create New Wallet"
+    },
+    "Create": {
+      "Create": {},
+      "Confirm": {
+        "WriteDownSeedPhrase": "Write Down Your Seed Phrase",
+        "Caption1": "This is your seed phrase. Write it down on a paper and keep it in a safe place. You'll be asked to re-enter this phrase (in order) on the next step.",
+        "ConfirmSeedPhrase": "Confirm Seed Phrase",
+        "Caption2": "Select each word in the order it was presented to you.",
+        "Caption3": "This is your seed chars. Write it down on a paper and keep it in a safe place. You'll be asked to re-enter this phrase (in order) on the next step.",
+        "EnterSeedChar": "Enter your Seed Chars",
+        "Caption4": "Please enter the seed chars you have saved.",
+        "button_Next": "Next"
+      },
+      "CreatePassword": {
+        "Create": "Create Password",
+        "Caption": "This password will unlock your Metamask wallet only on this service",
+        "AtLeast8Char": "Must be at least 8 characters",
+        "PasswordStrength": "Password Strength",
+        "NotMatch": "Password does not match.",
+        "Understand": "I understand that DeGe cannot recover this password for me.",
+        "LearnMore": "Learn more",
+        "placeholder_NewPassword": "New Password",
+        "placeholder_ConfirmPassword": "Confirm Password",
+        "button_CreatePassword": "Create Password"
+      },
+      "Reminder": {
+        "Secure": "Secure Your Wallet",
+        "Caption1": "Don't risk losing your funds. protect your wallet by saving your Seed phrase in a place you trust. It's the only way to recover your wallet if you get locked out of the app or get a new device.",
+        "Caption2": "Secure your wallet's seeds phrase",
+        "Manual": "Manual",
+        "Caption3": "Write down your seed phrase on a piece of paper and store in a safe place.",
+        "SecurityLevel": "Security level",
+        "Risks": "Risks are",
+        "Risk1": "You lose it",
+        "Risk2": "You forget where you put it",
+        "Risk3": "Someone else finds it",
+        "OtherOption": "Other options: Doesn't have to be paper!",
+        "Tips": "Tips",
+        "Tip1": "Store in bank vault",
+        "Tip2": "Store in a safe",
+        "Tip3": "Store in multiple secret places",
+        "RemiderLater": "Remider Later",
+        "button_Next": "Next",
+        "button_Start": "Start"
+      },
+      "SeedType": {
+        "ChooseSeedType": "Choose Seed Type",
+        "TwoWays": "There are two ways to secure your wallet",
+        "_55chars": "55 Chars",
+        "_24words": "24 Words",
+        "CreatePassword": "Create Password",
+        "toast_SuccessCreate": "Create Wallet Successly!"
+      }
+    },
+    "Restore": {
+      "placeholder_SeedPhrase": "Seed Phrase",
+      "placeholder_NewPassword": "New Password",
+      "placeholder_ConfirmPassword": "Confirm Password",
+      "AtLeast8characters": "Must be at least 8 characters",
+      "NotMatch": "Password does not match.",
+      "ByProceeding": "By proceeding, you agree to these",
+      "TermCondition": "Term and Conditions",
+      "ImportButtonTitle": "Imort"
+    },
+    "Login": {
+      "Login": "Login",
+      "NotExist": "Password does not exist.",
+      "placeholder_Password": "Password",
+      "button_ImportUsingSeedPhrase": "Restore your wallet from your  seed ",
+      "button_CreateNewWallet": "Create",
+      "button_Login": "Login"
+    },
+    "Main": {
+      "Header": {
+        "ReallyLogout": "Do you really want to logout?",
+        "button_Confirm": "Yes",
+        "buttom_Cancel": "Cancel"
+      }
+    }
+  },
+  "zh": {
+    "Title": {
+      "CreatePassword": "创建密码",
+      "Reminder": "安全提醒",
+      "Confirm": "确认种子短语",
+      "SeedType": "选择种子类型",
+      "WalletSetup": "钱包设置",
+      "Dashboard": "仪表板",
+      "Login": "登录",
+      "Create": "创建",
+      "Backup": "备份钱包"
+    },
+    "Splash": {
+      "GetStarted": "开始",
+      "Text1": "财产多样性",
+      "Text2": "安全保障",
+      "Text3": "便捷交易"
+    },
+    "WalletSetup": {
+      "button_ImportUsingSeedPhrase": "使用种子短语导入",
+      "HaveAlreadyYourOwnWallet": "已经有自己的钱包了吗？",
+      "WalletSetup": "钱包设置",
+      "button_CreateNewWallet": "创建新钱包"
+    },
+    "Create": {
+      "Create": {},
+      "Confirm": {
+        "WriteDownSeedPhrase": "记录下您的种子短语",
+        "Caption1": "这是您的种子短语。请将其记录在纸上并保存在安全的地方。下一步将要求您按顺序重新输入此短语。",
+        "ConfirmSeedPhrase": "确认种子短语",
+        "Caption2": "请按照呈现给您的顺序选择每个单词。",
+        "Caption3": "这是您的种子字符。请将其记录在纸上并保存在安全的地方。下一步将要求您按顺序重新输入此短语。",
+        "EnterSeedChar": "输入您的种子字符",
+        "Caption4": "请输入您保存的种子字符。",
+        "button_Next": "下一步"
+      },
+      "CreatePassword": {
+        "Create": "创建密码",
+        "Caption": "此密码仅用于在此服务上解锁您的Metamask钱包",
+        "AtLeast8Char": "至少8个字符",
+        "PasswordStrength": "密码强度",
+        "NotMatch": "密码不匹配。",
+        "Understand": "我明白DeGe无法为我恢复此密码。",
+        "LearnMore": "了解更多",
+        "placeholder_NewPassword": "新密码",
+        "placeholder_ConfirmPassword": "确认密码",
+        "button_CreatePassword": "创建密码"
+      },
+      "Reminder": {
+        "Secure": "保护您的钱包",
+        "Caption1": "不要冒失去资金的风险。通过在您信任的地方保存种子短语来保护您的钱包。这是恢复钱包的唯一方式，如果您被锁定在应用外或获得新设备。",
+        "Caption2": "保护您的钱包种子短语",
+        "Manual": "手动",
+        "Caption3": "将您的种子短语写在一张纸上并储存在安全的地方。",
+        "SecurityLevel": "安全级别",
+        "Risks": "风险是",
+        "Risk1": "您将其丢失",
+        "Risk2": "您忘记放在哪里",
+        "Risk3": "别人找到了它",
+        "OtherOption": "其他选项：不必是纸！",
+        "Tips": "提示",
+        "Tip1": "存放在银行保险柜",
+        "Tip2": "存放在保险箱",
+        "Tip3": "存放在多个秘密地点",
+        "RemiderLater": "稍后提醒",
+        "button_Next": "下一步",
+        "button_Start": "开始"
+      },
+      "SeedType": {
+        "ChooseSeedType": "选择种子类型",
+        "TwoWays": "有两种方式保护您的钱包",
+        "_55chars": "55字符",
+        "_24words": "24个词",
+        "CreatePassword": "创建密码",
+        "toast_SuccessCreate": "成功创建钱包！"
+      }
+    },
+    "Restore": {
+      "placeholder_SeedPhrase": "种子短语",
+      "placeholder_NewPassword": "新密码",
+      "placeholder_ConfirmPassword": "确认密码",
+      "AtLeast8characters": "至少8个字符",
+      "NotMatch": "密码不匹配。",
+      "ByProceeding": "继续操作即表示您同意这些",
+      "TermCondition": "条款和条件",
+      "ImportButtonTitle": "导入"
+    },
+    "Login": {
+      "Login": "登录",
+      "NotExist": "密码不存在。",
+      "placeholder_Password": "密码",
+      "button_ImportUsingSeedPhrase": "从您的种子短语中恢复您的钱包",
+      "button_CreateNewWallet": "创建",
+      "button_Login": "登录"
+    },
+    "Main": {
+      "Header": {
+        "ReallyLogout": "您真的要登出吗？",
+        "button_Confirm": "是的",
+        "buttom_Cancel": "取消"
+      }
+    }
+  },
+  "es": {
+    "Title": {
+      "CreatePassword": "Crear contraseña",
+      "Reminder": "Alerta de seguridad",
+      "Confirm": "Confirmar frase semilla",
+      "SeedType": "Seleccionar tipo de semilla",
+      "WalletSetup": "Configuración de la cartera",
+      "Dashboard": "Panel de control",
+      "Login": "Iniciar sesión",
+      "Create": "Crear",
+      "Backup": "Respaldar cartera"
+    },
+    "Splash": {
+      "GetStarted": "Comenzar",
+      "Text1": "Diversidad de propiedades",
+      "Text2": "Seguridad garantizada",
+      "Text3": "Transacción conveniente"
+    },
+    "WalletSetup": {
+      "button_ImportUsingSeedPhrase": "Importar usando frase semilla",
+      "HaveAlreadyYourOwnWallet": "¿Ya tienes tu propia cartera?",
+      "WalletSetup": "Configuración de la cartera",
+      "button_CreateNewWallet": "Crear nueva cartera"
+    },
+    "Create": {
+      "Create": {},
+      "Confirm": {
+        "WriteDownSeedPhrase": "Escribe tu frase semilla",
+        "Caption1": "Esta es tu frase semilla. Escríbela en un papel y guárdala en un lugar seguro. Se te pedirá que la reintroduzcas en el siguiente paso.",
+        "ConfirmSeedPhrase": "Confirmar frase semilla",
+        "Caption2": "Selecciona cada palabra en el orden en que se te presentó.",
+        "Caption3": "Estos son tus caracteres de semilla. Escríbelos en un papel y guárdalos en un lugar seguro. Se te pedirá que los reintroduzcas en el siguiente paso.",
+        "EnterSeedChar": "Introduce tus caracteres de semilla",
+        "Caption4": "Por favor, introduce los caracteres de semilla que has guardado.",
+        "button_Next": "Siguiente"
+      },
+      "CreatePassword": {
+        "Create": "Crear contraseña",
+        "Caption": "Esta contraseña solo desbloqueará tu cartera Metamask en este servicio",
+        "AtLeast8Char": "Debe tener al menos 8 caracteres",
+        "PasswordStrength": "Fortaleza de la contraseña",
+        "NotMatch": "La contraseña no coincide.",
+        "Understand": "Entiendo que DeGe no puede recuperar esta contraseña para mí.",
+        "LearnMore": "Aprender más",
+        "placeholder_NewPassword": "Nueva contraseña",
+        "placeholder_ConfirmPassword": "Confirmar contraseña",
+        "button_CreatePassword": "Crear contraseña"
+      },
+      "Reminder": {
+        "Secure": "Asegura tu cartera",
+        "Caption1": "No arriesgues perder tus fondos. Protege tu cartera guardando tu frase semilla en un lugar en el que confíes. Es la única manera de recuperar tu cartera si te bloqueas fuera de la aplicación o consigues un nuevo dispositivo.",
+        "Caption2": "Asegura la frase semilla de tu cartera",
+        "Manual": "Manual",
+        "Caption3": "Escribe tu frase semilla en un papel y almacénala en un lugar seguro.",
+        "SecurityLevel": "Nivel de seguridad",
+        "Risks": "Los riesgos son",
+        "Risk1": "Perderla",
+        "Risk2": "Olvidar dónde la pusiste",
+        "Risk3": "Que alguien más la encuentre",
+        "OtherOption": "Otras opciones: ¡No tiene que ser en papel!",
+        "Tips": "Consejos",
+        "Tip1": "Guardar en una caja fuerte de banco",
+        "Tip2": "Guardar en una caja fuerte",
+        "Tip3": "Guardar en múltiples lugares secretos",
+        "RemiderLater": "Recordar más tarde",
+        "button_Next": "Siguiente",
+        "button_Start": "Comenzar"
+      },
+      "SeedType": {
+        "ChooseSeedType": "Elegir tipo de semilla",
+        "TwoWays": "Hay dos maneras de asegurar tu cartera",
+        "_55chars": "55 caracteres",
+        "_24words": "24 palabras",
+        "CreatePassword": "Crear contraseña",
+        "toast_SuccessCreate": "¡Cartera creada exitosamente!"
+      }
+    },
+    "Restore": {
+      "placeholder_SeedPhrase": "Frase semilla",
+      "placeholder_NewPassword": "Nueva contraseña",
+      "placeholder_ConfirmPassword": "Confirmar contraseña",
+      "AtLeast8characters": "Debe tener al menos 8 caracteres",
+      "NotMatch": "La contraseña no coincide.",
+      "ByProceeding": "Al proceder, aceptas estas",
+      "TermCondition": "Términos y condiciones",
+      "ImportButtonTitle": "Importar"
+    },
+    "Login": {
+      "Login": "Iniciar sesión",
+      "NotExist": "La contraseña no existe.",
+      "placeholder_Password": "Contraseña",
+      "button_ImportUsingSeedPhrase": "Restaura tu billetera desde tu frase semilla",
+      "button_CreateNewWallet": "Crear",
+      "button_Login": "Iniciar sesión"
+    },
+    "Main": {
+      "Header": {
+        "ReallyLogout": "¿Realmente desea cerrar sesión?",
+        "button_Confirm": "Sí",
+        "buttom_Cancel": "Cancelar"
+      }
+    }
+  },
+  "fr": {
+    "Title": {
+      "CreatePassword": "Créer un mot de passe",
+      "Reminder": "Alerte de sécurité",
+      "Confirm": "Confirmer la phrase de récupération",
+      "SeedType": "Sélectionner le type de graine",
+      "WalletSetup": "Configuration du portefeuille",
+      "Dashboard": "Tableau de bord",
+      "Login": "Connexion",
+      "Create": "Créer",
+      "Backup": "Sauvegarder le portefeuille"
+    },
+    "Splash": {
+      "GetStarted": "Commencer",
+      "Text1": "Diversité de propriété",
+      "Text2": "Sécurité assurée",
+      "Text3": "Transaction pratique"
+    },
+    "WalletSetup": {
+      "button_ImportUsingSeedPhrase": "Importer en utilisant une phrase de récupération",
+      "HaveAlreadyYourOwnWallet": "Vous avez déjà votre propre portefeuille ?",
+      "WalletSetup": "Configuration du portefeuille",
+      "button_CreateNewWallet": "Créer un nouveau portefeuille"
+    },
+    "Create": {
+      "Create": {},
+      "Confirm": {
+        "WriteDownSeedPhrase": "Notez votre phrase de récupération",
+        "Caption1": "Ceci est votre phrase de récupération. Notez-la sur un papier et gardez-la dans un lieu sûr. Vous serez invité à la saisir à nouveau (dans l'ordre) à l'étape suivante.",
+        "ConfirmSeedPhrase": "Confirmer la phrase de récupération",
+        "Caption2": "Sélectionnez chaque mot dans l'ordre dans lequel il vous a été présenté.",
+        "Caption3": "Ceci sont vos caractères de graine. Notez-les sur un papier et gardez-les dans un lieu sûr. Vous serez invité à les saisir à nouveau (dans l'ordre) à l'étape suivante.",
+        "EnterSeedChar": "Entrez vos caractères de graine",
+        "Caption4": "Veuillez entrer les caractères de graine que vous avez sauvegardés.",
+        "button_Next": "Suivant"
+      },
+      "CreatePassword": {
+        "Create": "Créer un mot de passe",
+        "Caption": "Ce mot de passe déverrouillera uniquement votre portefeuille Metamask sur ce service",
+        "AtLeast8Char": "Doit contenir au moins 8 caractères",
+        "PasswordStrength": "Force du mot de passe",
+        "NotMatch": "Le mot de passe ne correspond pas.",
+        "Understand": "Je comprends que DeGe ne peut pas récupérer ce mot de passe pour moi.",
+        "LearnMore": "En savoir plus",
+        "placeholder_NewPassword": "Nouveau mot de passe",
+        "placeholder_ConfirmPassword": "Confirmer le mot de passe",
+        "button_CreatePassword": "Créer le mot de passe"
+      },
+      "Reminder": {
+        "Secure": "Sécurisez votre portefeuille",
+        "Caption1": "Ne risquez pas de perdre vos fonds. Protégez votre portefeuille en sauvegardant votre phrase de récupération dans un endroit de confiance. C'est le seul moyen de récupérer votre portefeuille si vous êtes bloqué hors de l'application ou obtenez un nouvel appareil.",
+        "Caption2": "Sécurisez la phrase de récupération de votre portefeuille",
+        "Manual": "Manuel",
+        "Caption3": "Écrivez votre phrase de récupération sur un morceau de papier et stockez-le dans un endroit sûr.",
+        "SecurityLevel": "Niveau de sécurité",
+        "Risks": "Les risques sont",
+        "Risk1": "Vous la perdez",
+        "Risk2": "Vous oubliez où vous l'avez mise",
+        "Risk3": "Quelqu'un d'autre la trouve",
+        "OtherOption": "Autres options : ça n'a pas besoin d'être sur du papier !",
+        "Tips": "Astuces",
+        "Tip1": "Stockez dans un coffre-fort de banque",
+        "Tip2": "Stockez dans un coffre-fort",
+        "Tip3": "Stockez dans plusieurs endroits secrets",
+        "RemiderLater": "Rappeler plus tard",
+        "button_Next": "Suivant",
+        "button_Start": "Commencer"
+      },
+      "SeedType": {
+        "ChooseSeedType": "Choisir le type de graine",
+        "TwoWays": "Il y a deux façons de sécuriser votre portefeuille",
+        "_55chars": "55 caractères",
+        "_24words": "24 mots",
+        "CreatePassword": "Créer un mot de passe",
+        "toast_SuccessCreate": "Portefeuille créé avec succès !"
+      }
+    },
+    "Restore": {
+      "placeholder_SeedPhrase": "Phrase de récupération",
+      "placeholder_NewPassword": "Nouveau mot de passe",
+      "placeholder_ConfirmPassword": "Confirmer le mot de passe",
+      "AtLeast8characters": "Doit contenir au moins 8 caractères",
+      "NotMatch": "Le mot de passe ne correspond pas.",
+      "ByProceeding": "En procédant, vous acceptez ces",
+      "TermCondition": "Termes et conditions",
+      "ImportButtonTitle": "Importer"
+    },
+    "Login": {
+      "Login": "Connexion",
+      "NotExist": "Le mot de passe n'existe pas.",
+      "placeholder_Password": "Mot de passe",
+      "button_ImportUsingSeedPhrase": "Restaurez votre portefeuille à partir de votre phrase de récupération",
+      "button_CreateNewWallet": "Créer",
+      "button_Login": "Connexion"
+    },
+    "Main": {
+      "Header": {
+        "ReallyLogout": "本当にログアウトしますか？",
+        "button_Confirm": "はい",
+        "buttom_Cancel": "キャンセル"
+      }
+    }
+  },
+  "ru": {
+    "Title": {
+      "CreatePassword": "Создать пароль",
+      "Reminder": "Оповещение о безопасности",
+      "Confirm": "Подтвердите фразу-семя",
+      "SeedType": "Выберите тип семени",
+      "WalletSetup": "Настройка кошелька",
+      "Dashboard": "Панель управления",
+      "Login": "Вход",
+      "Create": "Создать",
+      "Backup": "Резервное копирование кошелька"
+    },
+    "Splash": {
+      "GetStarted": "Начать",
+      "Text1": "Разнообразие собственности",
+      "Text2": "Надежная безопасность",
+      "Text3": "Удобные транзакции"
+    },
+    "WalletSetup": {
+      "button_ImportUsingSeedPhrase": "Импорт с использованием фразы-семени",
+      "HaveAlreadyYourOwnWallet": "У вас уже есть свой кошелек?",
+      "WalletSetup": "Настройка кошелька",
+      "button_CreateNewWallet": "Создать новый кошелек"
+    },
+    "Create": {
+      "Create": {},
+      "Confirm": {
+        "WriteDownSeedPhrase": "Запишите вашу фразу-семя",
+        "Caption1": "Это ваша фраза-семя. Запишите ее на бумаге и храните в безопасном месте. Вам будет предложено ввести ее снова (в порядке) на следующем шаге.",
+        "ConfirmSeedPhrase": "Подтвердите фразу-семя",
+        "Caption2": "Выберите каждое слово в том порядке, в котором оно было представлено.",
+        "Caption3": "Это ваши семенные символы. Запишите их на бумаге и храните в безопасном месте. Вам будет предложено ввести их снова (в порядке) на следующем шаге.",
+        "EnterSeedChar": "Введите ваши семенные символы",
+        "Caption4": "Пожалуйста, введите семенные символы, которые вы сохранили.",
+        "button_Next": "Далее"
+      },
+      "CreatePassword": {
+        "Create": "Создать пароль",
+        "Caption": "Этот пароль будет использоваться только для разблокировки вашего кошелька Metamask в этом сервисе",
+        "AtLeast8Char": "Должен содержать не менее 8 символов",
+        "PasswordStrength": "Надежность пароля",
+        "NotMatch": "Пароли не совпадают.",
+        "Understand": "Я понимаю, что DeGe не сможет восстановить этот пароль для меня.",
+        "LearnMore": "Узнать больше",
+        "placeholder_NewPassword": "Новый пароль",
+        "placeholder_ConfirmPassword": "Подтвердить пароль",
+        "button_CreatePassword": "Создать пароль"
+      },
+      "Reminder": {
+        "Secure": "Защитите ваш кошелек",
+        "Caption1": "Не рискуйте потерять свои средства. Защитите ваш кошелек, сохраняя вашу фразу-семя в надежном месте. Это единственный способ восстановить ваш кошелек, если вы заблокированы в приложении или получите новое устройство.",
+        "Caption2": "Защитите фразу-семя вашего кошелька",
+        "Manual": "Вручную",
+        "Caption3": "Запишите вашу фразу-семя на бумаге и храните в безопасном месте.",
+        "SecurityLevel": "Уровень безопасности",
+        "Risks": "Риски следующие",
+        "Risk1": "Вы потеряете ее",
+        "Risk2": "Вы забудете, где вы ее положили",
+        "Risk3": "Ее найдет кто-то другой",
+        "OtherOption": "Другие варианты: не обязательно на бумаге!",
+        "Tips": "Советы",
+        "Tip1": "Хранить в банковском сейфе",
+        "Tip2": "Хранить в сейфе",
+        "Tip3": "Хранить в нескольких секретных местах",
+        "RemiderLater": "Напомнить позже",
+        "button_Next": "Далее",
+        "button_Start": "Начать"
+      },
+      "SeedType": {
+        "ChooseSeedType": "Выберите тип семени",
+        "TwoWays": "Существует два способа защитить ваш кошелек",
+        "_55chars": "55 символов",
+        "_24words": "24 слова",
+        "CreatePassword": "Создать пароль",
+        "toast_SuccessCreate": "Кошелек успешно создан!"
+      }
+    },
+    "Restore": {
+      "placeholder_SeedPhrase": "Фраза-семя",
+      "placeholder_NewPassword": "Новый пароль",
+      "placeholder_ConfirmPassword": "Подтвердить пароль",
+      "AtLeast8characters": "Должно быть не менее 8 символов",
+      "NotMatch": "Пароли не совпадают.",
+      "ByProceeding": "Продолжая, вы соглашаетесь с этими",
+      "TermCondition": "Условиями и положениями",
+      "ImportButtonTitle": "Импортировать"
+    },
+    "Login": {
+      "Login": "Вход",
+      "NotExist": "Пароль не существует.",
+      "placeholder_Password": "Пароль",
+      "button_ImportUsingSeedPhrase": "Восстановить ваш кошелек из вашей сид-фразы",
+      "button_CreateNewWallet": "Создать",
+      "button_Login": "Войти"
+    },
+    "Main": {
+      "Header": {
+        "ReallyLogout": "Вы действительно хотите выйти?",
+        "button_Confirm": "Да",
+        "buttom_Cancel": "Отмена"
+      }
+    }
+  },
+  "ja": {
+    "Title": {
+      "CreatePassword": "パスワードの作成",
+      "Reminder": "セキュリティアラート",
+      "Confirm": "シードフレーズの確認",
+      "SeedType": "シードタイプの選択",
+      "WalletSetup": "ウォレットの設定",
+      "Dashboard": "ダッシュボード",
+      "Login": "ログイン",
+      "Create": "作成",
+      "Backup": "ウォレットのバックアップ"
+    },
+    "Splash": {
+      "GetStarted": "始める",
+      "Text1": "プロパティの多様性",
+      "Text2": "安全保障",
+      "Text3": "便利な取引"
+    },
+    "WalletSetup": {
+      "button_ImportUsingSeedPhrase": "シードフレーズを使用してインポート",
+      "HaveAlreadyYourOwnWallet": "すでに自分のウォレットを持っていますか？",
+      "WalletSetup": "ウォレットの設定",
+      "button_CreateNewWallet": "新しいウォレットの作成"
+    },
+    "Create": {
+      "Create": {},
+      "Confirm": {
+        "WriteDownSeedPhrase": "シードフレーズを書き留める",
+        "Caption1": "これがあなたのシードフレーズです。紙に書き留めて、安全な場所に保管してください。次のステップでこのフレーズを順番に入力するよう求められます。",
+        "ConfirmSeedPhrase": "シードフレーズの確認",
+        "Caption2": "提示された順序で各単語を選択してください。",
+        "Caption3": "これがあなたのシード文字です。紙に書き留めて、安全な場所に保管してください。次のステップでこの文字列を順番に入力するよう求められます。",
+        "EnterSeedChar": "シード文字を入力する",
+        "Caption4": "保存したシード文字を入力してください。",
+        "button_Next": "次へ"
+      },
+      "CreatePassword": {
+        "Create": "パスワードの作成",
+        "Caption": "このパスワードは、このサービス上でのみあなたのメタマスクウォレットを解除するために使用されます",
+        "AtLeast8Char": "少なくとも8文字必要です",
+        "PasswordStrength": "パスワードの強度",
+        "NotMatch": "パスワードが一致しません。",
+        "Understand": "DeGeはこのパスワードを回復できないことを理解しています。",
+        "LearnMore": "詳しくはこちら",
+        "placeholder_NewPassword": "新しいパスワード",
+        "placeholder_ConfirmPassword": "パスワードの確認",
+        "button_CreatePassword": "パスワードの作成"
+      },
+      "Reminder": {
+        "Secure": "ウォレットの保護",
+        "Caption1": "資金を失うリスクを冒さないでください。信頼できる場所にシードフレーズを保存することでウォレットを保護してください。これは、アプリからロックアウトされたり新しいデバイスを取得したりした場合にウォレットを回復する唯一の方法です。",
+        "Caption2": "ウォレットのシードフレーズを保護する",
+        "Manual": "マニュアル",
+        "Caption3": "シードフレーズを紙に書き、安全な場所に保管してください。",
+        "SecurityLevel": "セキュリティレベル",
+        "Risks": "リスク",
+        "Risk1": "紛失する",
+        "Risk2": "置き場所を忘れる",
+        "Risk3": "他人に見つかる",
+        "OtherOption": "その他の選択肢: 紙でなくても大丈夫です！",
+        "Tips": "ヒント",
+        "Tip1": "銀行の金庫に保管する",
+        "Tip2": "安全な金庫に保管する",
+        "Tip3": "複数の秘密の場所に保管する",
+        "RemiderLater": "後でリマインド",
+        "button_Next": "次へ",
+        "button_Start": "開始"
+      },
+      "SeedType": {
+        "ChooseSeedType": "シードタイプの選択",
+        "TwoWays": "ウォレットを保護する2つの方法",
+        "_55chars": "55文字",
+        "_24words": "24語",
+        "CreatePassword": "パスワードの作成",
+        "toast_SuccessCreate": "ウォレットの作成に成功しました！"
+      }
+    },
+    "Restore": {
+      "placeholder_SeedPhrase": "シードフレーズ",
+      "placeholder_NewPassword": "新しいパスワード",
+      "placeholder_ConfirmPassword": "パスワードの確認",
+      "AtLeast8characters": "8文字以上である必要があります",
+      "NotMatch": "パスワードが一致しません。",
+      "ByProceeding": "進むことで、これらの",
+      "TermCondition": "規約と条件に同意したことになります",
+      "ImportButtonTitle": "インポート"
+    },
+    "Login": {
+      "Login": "ログイン",
+      "NotExist": "パスワードが存在しません。",
+      "placeholder_Password": "パスワード",
+      "button_ImportUsingSeedPhrase": "シードフレーズからウォレットを復元",
+      "button_CreateNewWallet": "作成",
+      "button_Login": "ログイン"
+    },
+    "Main": {
+      "Header": {
+        "ReallyLogout": "本当にログアウトしますか？",
+        "button_Confirm": "はい",
+        "buttom_Cancel": "キャンセル"
+      }
+    }
+  }
+}

@@ -23,3 +23,18 @@ export const checkPasswordStrength = (password: string) => {
 
   return strength;
 };
+
+export const getPasswordStrengthProps = (strength: number) => {
+  switch (strength) {
+    case 4:
+      return { label: "Perfect!", color: "green.600" };
+    case 3:
+      return { label: "Good", color: "green.400" };
+    case 2:
+      return { label: "Normal", color: "yellow.500" };
+    case 1:
+      return { label: "Bad", color: "red.500" };
+    default:
+      return { label: "Not Available", color: "gray.500" };
+  }
+};

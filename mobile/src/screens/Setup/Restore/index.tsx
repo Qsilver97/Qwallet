@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Box, Link, Text, TextArea, VStack } from "native-base";
-import Input from "../../../components/UI/Input";
-import { useColors } from "../../../context/ColorContex";
-import ButtonBox from "../../../components/UI/ButtonBox";
-import Button from "../../../components/UI/Button";
-import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { passwordAvail, restore } from "../../../api/api";
-import { setPassword, setSeedType } from "../../../redux/appSlice";
-import eventEmitter from "../../../api/eventEmitter";
+import { useNavigation } from "@react-navigation/native";
+import { useColors } from "@app/context/ColorContex";
+import { RootState } from "@app/redux/store";
+import { setPassword, setSeedType } from "@app/redux/appSlice";
+import { passwordAvail, restore } from "@app/api/api";
+import eventEmitter from "@app/api/eventEmitter";
+import Input from "@app/components/UI/Input";
+import ButtonBox from "@app/components/UI/ButtonBox";
+import PageButton from "@app/components/UI/PageButton";
+import local from "@app/utils/locales";
+
 
 const Restore: React.FC = () => {
   const navigation = useNavigation();
@@ -107,7 +109,7 @@ const Restore: React.FC = () => {
             borderColor={gray.gray80}
             rounded={"md"}
             placeholderTextColor={gray.gray40}
-            placeholder="Seed Phrase"
+            placeholder={local.Restore.placeholder_SeedPhrase}
             onChangeText={handleRestoreSeeds}
           />
         </Box>
@@ -116,10 +118,10 @@ const Restore: React.FC = () => {
             onChangeText={handlePassword}
             w={"full"}
             type="password"
-            placeholder="New Password"
+            placeholder={local.Restore.placeholder_NewPassword}
           ></Input>
           <Text px={6} color={lengthError ? "red.500" : gray.gray40}>
-            Must be at least 8 characters
+            {local.Restore.AtLeast8characters}
           </Text>
         </Box>
         <Box textAlign={"center"} px={10}>
@@ -127,31 +129,31 @@ const Restore: React.FC = () => {
             onChangeText={handleConfirmPassword}
             w={"full"}
             type="password"
-            placeholder="Confirm Password"
+            placeholder={local.Restore.placeholder_ConfirmPassword}
           ></Input>
           {password !== confirmPassword && (
             <Text px={6} color={"red.400"}>
-              Password does not match.
+              {local.Restore.NotMatch}
             </Text>
           )}
         </Box>
         <Box textAlign={"center"} px={16}>
           <Text>
-            By proceeding, you agree to these
+            {local.Restore.ByProceeding}
             <Link
               href="https://qubic.org/Terms-of-service"
               _text={{ color: main.celestialBlue, marginTop: 2 }}
               display={"inline"}
             >
-              Term and Conditions
+              {local.Restore.TermCondition}
             </Link>
             .
           </Text>
         </Box>
       </VStack>
       <ButtonBox>
-        <Button
-          title="Import"
+        <PageButton
+          title={local.Restore.ImportButtonTitle}
           type="primary"
           isDisabled={
             !passwordStatus ||
@@ -160,7 +162,7 @@ const Restore: React.FC = () => {
             lengthError
           }
           onPress={handleNext}
-        ></Button>
+        ></PageButton>
       </ButtonBox>
     </VStack>
   );

@@ -7,7 +7,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import MetricsChart from "./chart/MetricsChart";
 
 const Summary: React.FC = () => {
-    const { tick, balances, marketcap } = useAuth();
+    const { tick, totalBalance, marketcap } = useAuth();
 
     const options = assetsItems.map((item) => ({
         label: item.icon,
@@ -21,13 +21,13 @@ const Summary: React.FC = () => {
                     <SummaryItem
                         label="Total assets"
                         icon="/assets/images/dashboard/totalAssets.svg"
-                        amount={`$${(Object.keys(balances).reduce((sum, key) => sum + balances[key], 0) * parseFloat(marketcap?.price)).toFixed(3)}`}
+                        amount={`$${(parseInt(totalBalance) * parseFloat(marketcap?.price)).toFixed(3)}`}
                     />
                 }
                 <SummaryItem
-                    label="Total deposits"
+                    label="Total QU"
                     icon="/assets/images/dashboard/totalDeposit.svg"
-                    amount={`QU ${0}`}
+                    amount={`QU ${totalBalance}`}
                 />
                 <SummaryItem
                     label="Tick"

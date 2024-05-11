@@ -53,6 +53,7 @@ exports.login = async (req, res) => {
         stateManager.setLocalSubshash(localSubshash);
 
         const addresses = listResult.value.display.addresses;
+        stateManager.updateUserState({ currentAddress: addresses[0] });
         const addressesResp = await socketSync(addresses[0]);
         if (!addressesResp) {
             return 'Socket server error';
@@ -120,22 +121,32 @@ exports.fetchUser = async (req, res) => {
         res.status(401).send('Socket server error.');
         return
     }
+    await socketSync(userState.currentAddress);
     const balances = await socketSync('balances');
     const marketcap = await socketSync('marketcap');
     const tokens = await socketSync('tokenlist');
-    const richlist = {};
-    const qurichlist = await socketSync('richlist');
-    richlist[qurichlist.name] = qurichlist.richlist;
-    try {
-        for (let idx = 0; idx < tokens.tokens.length; idx++) {
-            const richlistResult = await socketSync(`richlist.${tokens.tokens[idx]}`)
-            richlist[richlistResult.name] = richlistResult.richlist;
-        }
-    } catch (error) {
+    // const richlist = {};
+    // const qurichlist = await socketSync('richlist');
+    // richlist[qurichlist.name] = qurichlist.richlist;
+    // try {
+    //     for (let idx = 0; idx < tokens.tokens.length; idx++) {
+    //         const richlistResult = await socketSync(`richlist.${tokens.tokens[idx]}`)
+    //         richlist[richlistResult.name] = richlistResult.richlist;
+    //     }
+    // } catch (error) {
 
+    // }
+    const updatedUserState = { ...userState, ...{ balances: balances.balances, marketcap, tokens: tokens.tokens } };
+    stateManager.setUserState(updatedUserState);
+    res.send(updatedUserState);
+}
+
+exports.updatedUserState = async (req, res) => {
+    stateManager.updateUserState(req.body);
+    if (req.body.currentAddress) {
+        await socketSync(req.body.currentAddress);
     }
-
-    res.send({ ...userState, ...{ balances: balances.balances, marketcap, tokens: tokens.tokens, richlist } });
+    res.status(200).send('success');
 }
 
 exports.deleteAccount = async (req, res) => {
@@ -240,7 +251,12 @@ exports.restoreAccount = async (req, res) => {
 
 exports.transfer = async (req, res) => {
     const { toAddress, fromIdx, amount, tick, tokenName } = req.body;
-    const command = `send ${stateManager.getUserState().password},${fromIdx},${tick},${toAddress},${amount}`;
+    let command;
+    if (tokenName == 'QU') {
+        command = `send ${stateManager.getUserState().password},${fromIdx},${tick},${toAddress},${amount}`;
+    } else {
+        command = `tokensend ${stateManager.getUserState().password},${fromIdx},${tick},${toAddress},${amount},${tokenName}`;
+    }
     const sendResult = await wasmManager.ccall({ command, flag: 'transfer' });
     const v1requestResult = await wasmManager.ccall({ command: 'v1request', flag: 'v1request' });
     if (v1requestResult.value.result == 0 && v1requestResult.value.display) {
@@ -284,7 +300,7 @@ exports.balances = async (req, res) => {
     res.send(balanceResult);
 }
 
-exports.transferStatus = async (req, res) => {
+exports.txStatus = async (req, res) => {
     const result = await wasmManager.ccall({ command: 'status 1', flag: 'transferStatus' })
     setTimeout(() => {
         wasmManager.ccall({ command: 'v1request', flag: 'transferStatus' });
@@ -316,15 +332,15 @@ exports.basicInfo = async (req, res) => {
     const balances = await socketSync('balances');
     const marketcap = await socketSync('marketcap');
     const tokens = await socketSync('tokenlist');
-    const richlist = {};
-    const qurichlist = await socketSync('richlist');
-    richlist[qurichlist.name] = qurichlist.richlist;
-    for (let idx = 0; idx < tokens.tokens.length; idx++) {
-        const richlistResult = await socketSync(`richlist.${tokens.tokens[idx]}`)
-        richlist[richlistResult.name] = richlistResult.richlist;
-    }
+    // const richlist = {};
+    // const qurichlist = await socketSync('richlist');
+    // richlist[qurichlist.name] = qurichlist.richlist;
+    // for (let idx = 0; idx < tokens.tokens.length; idx++) {
+    //     const richlistResult = await socketSync(`richlist.${tokens.tokens[idx]}`)
+    //     richlist[richlistResult.name] = richlistResult.richlist;
+    // }
 
-    res.send({ balances: balances.balances, marketcap, tokens: tokens.tokens, richlist });
+    res.send({ balances: balances.balances, marketcap, tokens: tokens.tokens });
 }
 
 exports.checkAuthenticated = async (req, res) => {
@@ -350,6 +366,7 @@ exports.fetchTradingPageInfo = async (req, res) => {
 
 exports.buySell = async (req, res) => {
     const { flag, password, index, tick, currentToken, amount, price } = req.body;
+    console.log({ command: `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`, flag });
     await wasmManager.ccallV1request({ command: `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`, flag });
     res.status(200).send(flag);
 }
