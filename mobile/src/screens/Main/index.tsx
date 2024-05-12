@@ -14,6 +14,7 @@ import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useColors } from "@app/context/ColorContex";
 import Header from "./components/Header";
+import Transaction from "./Transaction";
 
 const Tab = createBottomTabNavigator();
 
@@ -52,7 +53,7 @@ function MyTabs() {
       />
       <Tab.Screen
         name="Transaction"
-        component={Swap}
+        component={Transaction}
         options={tabBarOptions(faClockRotateLeft)}
       />
       <Tab.Screen

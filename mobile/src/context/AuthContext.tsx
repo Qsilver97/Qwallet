@@ -38,7 +38,7 @@ interface AuthContextType {
   setCurrentAddress: (value: React.SetStateAction<string>) => void;
 }
 
-type TransactionItem = [number, string, string, string];
+type TransactionItem = [string, string, string, string, string, string];
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -53,8 +53,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = (userDetails: UserDetailType | null) => {
     setUser(userDetails);
+    if (userDetails !== null)
+      setCurrentAddress(userDetails?.accountInfo?.addresses[0]);
     basicInfo();
-    console.log(userDetails?.accountInfo.subshash);
   };
   const logout = () => {
     // axios
@@ -72,8 +73,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     eventEmitter.on("S2C/history", (res) => {
-      if (res.data) {
-        setHistories(res.data.changes[1].txids);
+      if (res.data.history) {
+        setHistories(res.data.history);
       } else {
         Toast.show({ type: "error", text1: res.data.value.display });
         setHistories([]);

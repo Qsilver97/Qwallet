@@ -1,11 +1,10 @@
-import { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { faSignOut } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
 import { useNavigation } from "@react-navigation/native";
-import { Text } from "native-base";
+import { Text, useDisclose } from "native-base";
 import local from "@app/utils/locales";
 import ConfirmModal from "./ConfirmModal";
 
@@ -13,7 +12,7 @@ const LogoutButton: React.FC = () => {
   const { textColor, main } = useColors();
   const { logout } = useAuth();
   const navigation = useNavigation();
-  const [modalVisible, setModalVisible] = useState(false);
+  const { isOpen, onToggle } = useDisclose();
 
   const handleLogout = () => {
     logout();
@@ -21,7 +20,7 @@ const LogoutButton: React.FC = () => {
   };
   return (
     <>
-      <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
+      <TouchableOpacity onPress={onToggle}>
         <FontAwesomeIcon
           icon={faSignOut}
           color={textColor}
@@ -29,8 +28,8 @@ const LogoutButton: React.FC = () => {
         ></FontAwesomeIcon>
       </TouchableOpacity>
       <ConfirmModal
-        modalVisible={modalVisible}
-        toggleModal={() => setModalVisible(!modalVisible)}
+        isOpen={isOpen}
+        onToggle={onToggle}
         onPress={handleLogout}
         _backdrop={{
           _dark: {

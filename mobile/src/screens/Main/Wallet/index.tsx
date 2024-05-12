@@ -26,7 +26,7 @@ const Wallet: React.FC = () => {
       color={textColor}
     >
       <VStack flex={1} pt={14}>
-        <Text fontSize="2xl" textAlign="center" color={gray.gray40}>
+        <Text fontSize="2xl" textAlign="center">
           Balance
         </Text>
         <Text fontSize="3xl" textAlign="center">
@@ -34,12 +34,14 @@ const Wallet: React.FC = () => {
             (acc, currentValue) => acc + Number(currentValue),
             0
           )} */}
-          {balances[allAddresses.indexOf(currentAddress)]}| $
+          ${" "}
           {Math.floor(
             parseFloat(balances[allAddresses.indexOf(currentAddress)]) *
               parseFloat(marketcap.price) *
               1000
           ) / 1000}
+          {"\n"}
+          {balances[allAddresses.indexOf(currentAddress)]} QU
         </Text>
         <HStack w={"full"} justifyContent={"center"} space={4}>
           <TransferButton
