@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { VStack, Text, Icon, Image, IconButton } from "native-base";
-import { MaterialIcons } from "@expo/vector-icons";
-import tw from "tailwind-react-native-classnames";
+import { VStack, Text, Image } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import {

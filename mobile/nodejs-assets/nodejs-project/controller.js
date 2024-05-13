@@ -473,6 +473,7 @@ exports.basicInfo = async () => {
   const balances = await socketSync("balances");
   const marketcap = await socketSync("marketcap");
   const tokens = await socketSync("tokenlist");
+  const tokenprices = await socketSync("tokenprices");
   const richlist = {};
   const qurichlist = await socketSync("richlist");
   richlist[qurichlist.name] = qurichlist.richlist;
@@ -487,7 +488,8 @@ exports.basicInfo = async () => {
         balances: balances.balances,
         marketcap,
         tokens: tokens.tokens,
-        richlist,
+        tokenprices,
+        // richlist,
       },
     })
   );

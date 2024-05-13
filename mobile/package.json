@@ -10,7 +10,7 @@
     "clean": "cd android && gradlew clean && cd ..",
     "build": "expo build:android -t app-bundle",
     "serverlog": "adb logcat | grep NODEJS-MOBILE",
-    "node": "nodemon",
+    "dev": "nodemon",
     "release": "cd android && gradlew assembleRelease"
   },
   "dependencies": {
@@ -18,6 +18,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-native-fontawesome": "^0.3.0",
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setTick, updateRichlist } from "@app/redux/appSlice";
+import { setMarketcap, setTick, updateRichlist } from "@app/redux/appSlice";
 import eventEmitter from "@app/api/eventEmitter";
 import { useAuth } from "@app/context/AuthContext";
 
@@ -22,6 +22,9 @@ export const SocketCom: React.FC = () => {
       } else if (res.data.richlist) {
         dispatch(updateRichlist(res.data));
       } else if (res.data.marketcap) {
+        dispatch(setMarketcap(res.data.marketcap))
+      } else if (res.data.tokenprices) {
+        dispatch(setMarketcap(res.data.tokenprices))
       }
     });
   }, []);

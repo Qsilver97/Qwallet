@@ -10,7 +10,12 @@ import { RootState } from "@app/redux/store";
 import { basicInfo, getHistory, getToken, transferStatus } from "@app/api/api";
 import Toast from "react-native-toast-message";
 import eventEmitter from "@app/api/eventEmitter";
-import { setMarketcap, setRichlist, setTokens } from "@app/redux/appSlice";
+import {
+  setMarketcap,
+  setRichlist,
+  setTokenprices,
+  setTokens,
+} from "@app/redux/appSlice";
 
 export interface AccountDetailType {
   addresses: string[];
@@ -92,6 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         dispatch(setTokens(res.data.tokens));
         dispatch(setRichlist(res.data.richlist));
         dispatch(setMarketcap(res.data.marketcap));
+        dispatch(setTokenprices(res.data.tokenprices));
       } else {
         Toast.show({ type: "error", text1: res.data.value.display });
       }

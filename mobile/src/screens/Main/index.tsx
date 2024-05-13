@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Settings from "./Settings";
 import Swap from "./Swap";
@@ -15,11 +15,22 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useColors } from "@app/context/ColorContex";
 import Header from "./components/Header";
 import Transaction from "./Transaction";
+import { basicInfo } from "@app/api/api";
 
 const Tab = createBottomTabNavigator();
 
-function MyTabs() {
+const Main = () => {
   const { bgColor, main, gray } = useColors();
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     basicInfo();
+  //   }, 2000);
+
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, []);
 
   const tabBarOptions = useCallback(
     (icon: IconProp): BottomTabNavigationOptions => ({
@@ -65,4 +76,4 @@ function MyTabs() {
   );
 }
 
-export default MyTabs;
+export default Main;
