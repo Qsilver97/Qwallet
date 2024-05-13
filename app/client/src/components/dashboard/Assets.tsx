@@ -3,7 +3,6 @@ import AssetItem from "./AssetItem";
 import { useAuth } from "../../contexts/AuthContext";
 
 const Assets: React.FC = () => {
-
     const { tokens } = useAuth();
 
     return (
