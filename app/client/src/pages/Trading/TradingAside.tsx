@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import TxModal from "../../components/dashboard/modal/TxModal";
 
 const TradingAside = () => {
-    const { handleBuyCell, txStatus } = useAuth();
+    const { handleBuyCell, txStatus, tokens } = useAuth();
 
     const [quantity, setQuantity] = useState<string>();
     const [price, setPrice] = useState<string>();
@@ -30,10 +30,13 @@ const TradingAside = () => {
         handleBuyCell(flag, quantity, price)
     }
 
-    const options = assetsItems.map((item) => ({
-        label: item.icon,
-        value: item.name,
-    }));
+    const options = tokens.map((token) => {
+        const item = assetsItems.find((k) => k.name == token) || assetsItems[0]
+        return ({
+            label: item.icon,
+            value: token,
+        })
+    });
 
     return (
         <Section>
