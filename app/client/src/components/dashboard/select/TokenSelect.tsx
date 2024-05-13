@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-import { assetsItems } from "../../../utils/constants";
 import { TokenOption } from "../../commons/Select";
 import { useAuth } from "../../../contexts/AuthContext";
 
@@ -31,8 +30,8 @@ const TokenSelect: React.FC<TokenSelectProps> = ({
         setIsOpen(false);
     };
 
-    const selectedToken = assetsItems.find((item) => {
-        return currentToken.value === item.name;
+    const selectedToken = options.find((item) => {
+        return currentToken.value === item.value;
     });
 
     const style = showSelectDescription
@@ -76,7 +75,7 @@ const TokenSelect: React.FC<TokenSelectProps> = ({
 
                 {!hideTokenValue && (
                     <span className="font-Inter font-bold text-2xl">
-                        ${selectedToken?.name}
+                        ${selectedToken?.value}
                     </span>
                 )}
             </div>
