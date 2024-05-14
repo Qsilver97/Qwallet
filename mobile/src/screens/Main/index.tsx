@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Settings from "./Settings";
-import Swap from "./Swap";
+import Orderbook from "./Orderbook";
 import Wallet from "./Wallet";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
+  faBookOpen,
   faClockRotateLeft,
   faGear,
   faRightLeft,
@@ -58,9 +59,9 @@ const Main = () => {
         options={tabBarOptions(faWallet)}
       />
       <Tab.Screen
-        name="Swap"
-        component={Swap}
-        options={tabBarOptions(faRightLeft)}
+        name="Orderbook"
+        component={Orderbook}
+        options={tabBarOptions(faBookOpen)}
       />
       <Tab.Screen
         name="Transaction"

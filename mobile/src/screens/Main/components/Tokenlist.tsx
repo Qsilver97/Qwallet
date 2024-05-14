@@ -14,7 +14,7 @@ const tokenlist = [
 const colorOrder = ["#CC50FD", "#60FF9B", "#F0447A", "#CA55FD", "#50D9A6"];
 const Tokenlist: React.FC = () => {
   return (
-    <ScrollView pt={20}>
+    <ScrollView mt={20}>
       {tokenlist.map((token, key) => {
         return (
           <HStack key={key} px={10} space={4}>

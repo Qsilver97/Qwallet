@@ -459,6 +459,7 @@ exports.tokens = async () => {
     })
   );
 };
+
 exports.basicInfo = async () => {
   let liveSocket = socketManager.getLiveSocket();
   if (!liveSocket) {
@@ -493,4 +494,67 @@ exports.basicInfo = async () => {
       },
     })
   );
+};
+
+exports.fetchOrders = async (token) => {
+  try {
+    const orders = await socketSync(`orders ${token}`);
+    rn_bridge.channel.send(
+      JSON.stringify({
+        action: "S2C/fetch-orders",
+        data: orders,
+      })
+    );
+  } catch (error) {
+    rn_bridge.channel.send(
+      JSON.stringify({
+        action: "S2C/error",
+        data: error,
+      })
+    );
+  }
+};
+
+exports.buySell = async ({
+  flag,
+  password,
+  index,
+  tick,
+  currentToken,
+  amount,
+  price,
+}) => {
+  console.log({
+    command: `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`,
+    flag,
+  });
+  const res = await wasmManager.ccallV1request({
+    command: `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`,
+    flag,
+  });
+  rn_bridge.channel.send(
+    JSON.stringify({
+      action: "S2C/buy-sell",
+      data: res,
+    })
+  );
+};
+
+exports.myOrders = async () => {
+  try {
+    const myOrders = await socketSync(`myorders`);
+    rn_bridge.channel.send(
+      JSON.stringify({
+        action: "S2C/my-orders",
+        data: myOrders,
+      })
+    );
+  } catch (error) {
+    rn_bridge.channel.send(
+      JSON.stringify({
+        action: "S2C/error",
+        data: error,
+      })
+    );
+  }
 };

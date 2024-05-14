@@ -31,15 +31,6 @@ const LogoutButton: React.FC = () => {
         isOpen={isOpen}
         onToggle={onToggle}
         onPress={handleLogout}
-        _backdrop={{
-          _dark: {
-            bg: "coolGray.600",
-          },
-          _light: {
-            bg: "warmGray.50",
-          },
-          opacity: 0.8,
-        }}
       >
         <Text fontSize={"xl"} textAlign={"center"}>
           {local.Main.Header.ReallyLogout}

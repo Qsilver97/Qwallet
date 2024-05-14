@@ -104,3 +104,38 @@ export const transferStatus = () => {
     })
   );
 };
+
+export const buySell = (
+  flag: "buy" | "sell" | "cancelbuy" | "cancelsell",
+  amount: string,
+  price: string,
+  password: string,
+  index: number,
+  tick: string,
+  currentToken: string
+) => {
+  nodejs.channel.send(
+    JSON.stringify({
+      action: "C2S/buy-sell",
+      data: {
+        flag,
+        password,
+        index,
+        tick,
+        currentToken,
+        amount,
+        price,
+      },
+    })
+  );
+};
+
+export const myOrders = () => {
+  console.log("SENDING MYORDERS")
+  nodejs.channel.send(
+    JSON.stringify({
+      action: "C2S/my-orders",
+      data: {},
+    })
+  );
+};

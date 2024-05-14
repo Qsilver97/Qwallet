@@ -108,7 +108,7 @@ const Login: React.FC = () => {
         <PageButton
           title={local.Login.button_Login}
           type="primary"
-          isDisabled={loginWaiting}
+          isLoading={loginWaiting}
           onPress={handleLogin}
         ></PageButton>
         <PageButton

@@ -70,11 +70,6 @@ const Restore: React.FC = () => {
   }, [password, confirmPassword]);
 
   useEffect(() => {
-    dispatch(setPassword(""));
-    setConfirmPassword("");
-  }, []);
-
-  useEffect(() => {
     eventEmitter.on("S2C/passwordAvail", (res) => {
       setPasswordStatus(res);
     });

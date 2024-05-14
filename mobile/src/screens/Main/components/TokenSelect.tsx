@@ -1,37 +1,55 @@
-import React from "react";
-import { HStack, Select, Text } from "native-base";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCoins } from "@fortawesome/free-solid-svg-icons";
+import React, { useEffect, useMemo } from "react";
+import { Box, HStack, Image, ScrollView, Text } from "native-base";
 import { useColors } from "@app/context/ColorContex";
+import { TouchableOpacity } from "react-native";
+import { useSelector } from "react-redux";
+import { RootState } from "@app/redux/store";
+// import tokenIcons from "@app/utils/tokens";
+// import { SvgFromUri } from "react-native-svg";
 
 interface TokenSelectProps {
-  onChnage: (value: string) => void;
+  selectedToken: string;
+  onChange: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const TokenSelect: React.FC<TokenSelectProps> = ({ onChnage }) => {
-  const { textColor } = useColors();
+const TokenSelect: React.FC<TokenSelectProps> = ({
+  selectedToken,
+  onChange,
+}) => {
+  const { textColor, main } = useColors();
+  const { tokens } = useSelector((store: RootState) => store.app);
+  useEffect(() => {
+    console.log(tokens);
+  }, [tokens]);
+  const TokenList = useMemo(() => {
+    return (
+      <HStack space={3} px="4" w="full">
+        {tokens.map((token, key) => {
+          // const icon = tokenIcons.find((t) => t.symbol === token)?.icon;
+          return (
+            <TouchableOpacity key={key} onPress={() => onChange(token)}>
+              <HStack
+                px="4"
+                py="1"
+                rounded="3xl"
+                bgColor={
+                  token == selectedToken ? main.celestialBlue : main.crystalBlue
+                }
+              >
+                {/* <SvgFromUri uri={icon}></SvgFromUri> */}
+                <Text color={textColor}>{token}</Text>
+              </HStack>
+            </TouchableOpacity>
+          );
+        })}
+      </HStack>
+    );
+  }, [tokens, selectedToken]);
+
   return (
-    <Select
-      minWidth="200"
-      accessibilityLabel="Choose Service"
-      placeholder="Choose Service"
-      mt={1}
-      onValueChange={onChnage}
-    >
-      <Select.Item
-        label={
-          <HStack>
-            <FontAwesomeIcon icon={faCoins} size={20} color={textColor} />
-            <Text>{" UX Research"}</Text>
-          </HStack>
-        }
-        value="ux"
-      />
-      <Select.Item label="Web Development" value="web" />
-      <Select.Item label="Cross Platform Development" value="cross" />
-      <Select.Item label="UI Designing" value="ui" />
-      <Select.Item label="Backend Development" value="backend" />
-    </Select>
+    <ScrollView horizontal={true} p="2">
+      {TokenList}
+    </ScrollView>
   );
 };
 

@@ -12,6 +12,8 @@ const {
   switchNetwork,
   tokens,
   basicInfo,
+  buySell,
+  myOrders,
 } = require("./controller");
 const wasmManager = require("./managers/wasmManager");
 const stateManager = require("./managers/stateManager");
@@ -124,6 +126,14 @@ rn_bridge.channel.on("message", async (msg) => {
       }
       case "C2S/basic-info": {
         basicInfo();
+        break;
+      }
+      case "C2S/buy-sell": {
+        buySell(message.data);
+        break;
+      }
+      case "C2S/my-orders": {
+        myOrders();
         break;
       }
       // Socket
