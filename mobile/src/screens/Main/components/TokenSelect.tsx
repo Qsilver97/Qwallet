@@ -4,8 +4,7 @@ import { useColors } from "@app/context/ColorContex";
 import { TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { RootState } from "@app/redux/store";
-// import tokenIcons from "@app/utils/tokens";
-// import { SvgFromUri } from "react-native-svg";
+import tokenIcons from "@app/utils/tokens";
 
 interface TokenSelectProps {
   selectedToken: string;
@@ -25,18 +24,21 @@ const TokenSelect: React.FC<TokenSelectProps> = ({
     return (
       <HStack space={3} px="4" w="full">
         {tokens.map((token, key) => {
-          // const icon = tokenIcons.find((t) => t.symbol === token)?.icon;
+          const Icon = tokenIcons.find((t) => t.symbol === token)?.icon;
+          console.log(tokens);
           return (
             <TouchableOpacity key={key} onPress={() => onChange(token)}>
               <HStack
-                px="4"
+                px="3"
                 py="1"
                 rounded="3xl"
                 bgColor={
-                  token == selectedToken ? main.celestialBlue : main.crystalBlue
+                  token == selectedToken ? main.celestialBlue : main.jeansBlue
                 }
+                space="2"
+                alignItems="center"
               >
-                {/* <SvgFromUri uri={icon}></SvgFromUri> */}
+                {Icon && <Icon width={24} height={24} />}
                 <Text color={textColor}>{token}</Text>
               </HStack>
             </TouchableOpacity>
