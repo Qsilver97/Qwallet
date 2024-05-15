@@ -13,7 +13,7 @@ import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
 import local from "@app/utils/locales";
 import { UserDetailType, useAuth } from "@app/context/AuthContext";
-import { login } from "@app/api/api";
+import { login, passwordAvail } from "@app/api/api";
 import { useColors } from "@app/context/ColorContex";
 import {
   resetState,
@@ -34,6 +34,7 @@ const Login: React.FC = () => {
   const auth = useAuth();
 
   const handlePasswordChange = (value: string) => {
+    passwordAvail(value);
     dispatch(setPassword(value));
   };
 
@@ -59,6 +60,7 @@ const Login: React.FC = () => {
     //   Toast.show({ type: "error", text1: "Login failed. Please try again." });
     // }, 5000);
   };
+
   useEffect(() => {
     eventEmitter.on("S2C/login", (res) => {
       if (res.success) {
@@ -74,6 +76,9 @@ const Login: React.FC = () => {
         Toast.show({ type: "error", text1: res.error });
       }
       setLoginWaiting(false);
+    });
+    eventEmitter.on("S2C/passwordAvail", (res) => {
+      setPasswordStatus(res.data);
     });
   }, []);
 
@@ -101,8 +106,8 @@ const Login: React.FC = () => {
           onKeyPress={handleKeyDown}
           placeholder={local.Login.placeholder_Password}
           type="password"
+          error={passwordStatus ? local.Login.NotExist : ""}
         />
-        {passwordStatus && <Text color="red.600">{local.Login.NotExist}</Text>}
       </VStack>
       <ButtonBox>
         <PageButton

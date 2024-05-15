@@ -36,7 +36,10 @@ const Input: React.FC<InputProps> = ({
   const [show, setShow] = React.useState(type == "text");
 
   return (
-    <FormControl {...parentProps}>
+    <FormControl
+      {...parentProps}
+      isInvalid={error !== "" && error !== undefined}
+    >
       <FormControl.Label>{label}</FormControl.Label>
       <NInput
         w={{

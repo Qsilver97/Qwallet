@@ -1,7 +1,6 @@
 import tw from "tailwind-react-native-classnames";
 import {
   Button,
-  Checkbox,
   Image,
   ScrollView,
   Text,
