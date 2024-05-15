@@ -14,6 +14,7 @@ const {
   basicInfo,
   buySell,
   myOrders,
+  tokenPrices,
 } = require("./controller");
 const wasmManager = require("./managers/wasmManager");
 const stateManager = require("./managers/stateManager");
@@ -113,7 +114,7 @@ rn_bridge.channel.on("message", async (msg) => {
         break;
       }
       case "C2S/transfer-status": {
-        transferStatus()
+        transferStatus();
         break;
       }
       case "C2S/switch-network": {
@@ -136,6 +137,11 @@ rn_bridge.channel.on("message", async (msg) => {
         myOrders();
         break;
       }
+      case "C2S/token-prices": {
+        tokenPrices();
+        break;
+      }
+
       // Socket
       case "C2S/add-account": {
         console.log(message.data);

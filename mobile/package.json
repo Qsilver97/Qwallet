@@ -7,6 +7,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
+    "setadb":"set ANDROID_ADB_SERVER_PORT=5554",
     "clean": "cd android && gradlew clean && cd ..",
     "build": "expo build:android -t app-bundle",
     "serverlog": "adb logcat | grep NODEJS-MOBILE | sed 's/.*NODEJS-MOBILE://'",
