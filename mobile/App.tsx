@@ -13,6 +13,7 @@ import { SocketCom } from "@app/components/SocketComponent";
 import { ColorProvider } from "@app/context/ColorContex";
 import theme from "@app/utils/ThemeConfig";
 import local from "@app/utils/locales";
+import toastConfig from "@app/utils/ToastConfig";
 
 local.setLanguage("en");
 
@@ -28,7 +29,7 @@ export default function App() {
           <NativeBaseProvider theme={theme}>
             <ColorProvider>
               <RootNavigation />
-              <Toast />
+              <Toast config={toastConfig} />
             </ColorProvider>
           </NativeBaseProvider>
         </NetworkProvider>
