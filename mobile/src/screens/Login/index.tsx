@@ -48,7 +48,7 @@ const Login: React.FC = () => {
 
   const handleLogin = () => {
     if (password === "") {
-      Toast.show({ type: "error", text1: "Input password" });
+      Toast.show({ type: "error", text1: "E03: Input password!" });
       return;
     }
 
@@ -57,7 +57,7 @@ const Login: React.FC = () => {
     // setTimeout(() => {
     //   setLoginWaiting(false);
     //   setPasswordStatus(true);
-    //   Toast.show({ type: "error", text1: "Login failed. Please try again." });
+    //   Toast.show({ type: "error", text1: "E04: Login failed. Please try again." });
     // }, 5000);
   };
 
@@ -73,7 +73,7 @@ const Login: React.FC = () => {
       } else {
         setPasswordStatus(true);
         dispatch(setIsAuthenticated(false));
-        Toast.show({ type: "error", text1: res.error });
+        Toast.show({ type: "error", text1: "E06: " + res.error });
       }
       setLoginWaiting(false);
     });

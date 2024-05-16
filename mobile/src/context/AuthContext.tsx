@@ -100,19 +100,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    eventEmitter.on("S2C/history", (res) => {
-      if (res.data.history) {
+    if (currentAddress != "") {
+      getHistory(currentAddress);
+      getToken();
+    }
+  }, [currentAddress]);
+
+  useEffect(() => {
+    if (user?.accountInfo) {
+      setCurrentAddress(user?.accountInfo.addresses[0]);
+      setAllAddresses(user?.accountInfo.addresses);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    eventEmitter.on("S2C/histories", (res) => {
+      if (res.data == false) setHistories([]);
+      else if (res.data.history) {
         setHistories(res.data.history);
       } else {
-        Toast.show({ type: "error", text1: res.data.value.display });
-        setHistories([]);
+        // setHistories([]);
       }
     });
     eventEmitter.on("S2C/tokens", (res) => {
-      if (res.data.tokens) {
-        dispatch(setTokens(res.data.tokens));
+      console.log("S2C/tokens", res);
+      if (res.data) {
+        if (res.data.tokens) dispatch(setTokens(res.data.tokens));
       } else {
-        Toast.show({ type: "error", text1: "Error ocurred!" });
+        Toast.show({ type: "error", text1: "E21: Error ocurred!" });
       }
     });
     // eventEmitter.on("S2C/basic-info", (res) => {
@@ -133,23 +148,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     //     Toast.show({ type: "error", text1: res.data.value.display });
     //   }
     // });
-  }, []);
-
-  useEffect(() => {
-    if (currentAddress != "") {
-      getHistory(currentAddress);
-      getToken();
-    }
-  }, [currentAddress]);
-
-  useEffect(() => {
-    if (user?.accountInfo) {
-      setCurrentAddress(user?.accountInfo.addresses[0]);
-      setAllAddresses(user?.accountInfo.addresses);
-    }
-  }, [user]);
-
-  useEffect(() => {
     eventEmitter.on("S2C/transfer", (res) => {
       if (res.data) {
         const _statusInterval = setInterval(() => {
@@ -157,16 +155,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }, 2000);
         setStatusInterval(_statusInterval);
       } else {
-        Toast.show({ type: "error", text1: "Error Occured" });
+        Toast.show({ type: "error", text1: "E24: Error occured!" });
         setTxStatus("Rejected");
       }
     });
     eventEmitter.on("S2C/transfer-status", (res) => {
-      console.log("S2C/transfer-status", res)
+      console.log("S2C/transfer-status", res);
       if (res.data) {
         if (res.data == "failed") {
           setTxStatus("Rejected");
-          Toast.show({ type: "error", text1: "Transfer Failed!" });
+          Toast.show({ type: "error", text1: "E25: Transfer Failed!" });
         } else if (res.data.value.result == 0) {
           setTxStatus("Pending");
         } else if (res.data.value.result == 1) {
@@ -175,7 +173,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setTxStatus("Rejected");
         }
       } else {
-        Toast.show({ type: "error", text1: "Error Occured" });
+        Toast.show({ type: "error", text1: "E26: Error occured!" });
         setTxStatus("Rejected");
         clearInterval(statusInterval);
       }

@@ -49,74 +49,78 @@ const Orderbook: React.FC = () => {
   };
 
   return (
-    <VStack
-      flex={1}
-      justifyContent="around"
-      py="10"
-      space={5}
-      bgColor={bgColor}
-      color={textColor}
-    >
-      <Text fontSize="3xl" color={textColor} textAlign="center">
-        Orderbook
-      </Text>
-      <VStack px="5">
-        <TokenSelect
-          selectedToken={currentToken}
-          onChange={setCurrentToken}
-        ></TokenSelect>
-        <HStack py="2">
-          <VStack w="3/4" textAlign="center">
-            <Input
-              type="text"
-              onChangeText={(text) => {
-                setAmount(text);
-              }}
-              placeholder="Input Amount"
-              label={`Amount of ${currentToken}`}
-              w="full"
-              parentProps={{ w: "full" }}
-            ></Input>
-            <Input
-              type="text"
-              onChangeText={(text) => {
-                setPrice(text);
-              }}
-              placeholder="Input Price"
-              label={`Price of ${currentToken}`}
-              w="full"
-              parentProps={{ w: "full" }}
-            ></Input>
-          </VStack>
-          <VStack w={"1/4"} justifyContent={"center"} space={4}>
-            <TransferButton
-              icon={faPlus}
-              title="BUY"
-              onPress={() => {
-                setBuySellFlag("buy");
-                modal1.onToggle();
-              }}
-            ></TransferButton>
-            <TransferButton
-              icon={faMinus}
-              title="SELL"
-              onPress={() => {
-                setBuySellFlag("sell");
-                modal1.onToggle();
-              }}
-            ></TransferButton>
-          </VStack>
-        </HStack>
-
-        <HStack w="full">
-          <Text textAlign="center" fontSize="md">
-            Currently the highest bid price of {currentToken} is{" "}
-            {tokenprices?.[currentToken]?.[0] || "0"} QU, lowest ask price is{" "}
-            {tokenprices?.[currentToken]?.[1] || "0"} QU.
+    <>
+      <VStack
+        flex={1}
+        justifyContent="around"
+        py="5"
+        space={5}
+        bgColor={bgColor}
+        color={textColor}
+      >
+        <VStack px="5">
+          <Text fontSize="3xl" color={textColor} textAlign="center">
+            Orderbook
           </Text>
-        </HStack>
+          <TokenSelect
+            selectedToken={currentToken}
+            onChange={setCurrentToken}
+          ></TokenSelect>
+          <HStack py="2">
+            <VStack w="3/4" textAlign="center">
+              <Input
+                type="text"
+                onChangeText={(text) => {
+                  setAmount(text);
+                }}
+                placeholder="Input Amount"
+                label={`Amount of ${currentToken}`}
+                w="full"
+                parentProps={{ w: "full" }}
+              ></Input>
+              <Input
+                type="text"
+                onChangeText={(text) => {
+                  setPrice(text);
+                }}
+                placeholder="Input Price"
+                label={`Price of ${currentToken}`}
+                w="full"
+                parentProps={{ w: "full" }}
+              ></Input>
+            </VStack>
+            <VStack w={"1/4"} justifyContent={"center"} space={4}>
+              <TransferButton
+                icon={faPlus}
+                title="BUY"
+                onPress={() => {
+                  setBuySellFlag("buy");
+                  modal1.onToggle();
+                }}
+              ></TransferButton>
+              <TransferButton
+                icon={faMinus}
+                title="SELL"
+                onPress={() => {
+                  setBuySellFlag("sell");
+                  modal1.onToggle();
+                }}
+              ></TransferButton>
+            </VStack>
+          </HStack>
+
+          <HStack w="full">
+            <Text textAlign="center" fontSize="md">
+              Currently the highest bid price of {currentToken} is{" "}
+              {tokenprices?.[currentToken]?.[0] || "0"} QU, lowest ask price is{" "}
+              {tokenprices?.[currentToken]?.[1] || "0"} QU.
+            </Text>
+          </HStack>
+        </VStack>
+        <VStack flex={1}>
+          <Orderlist />
+        </VStack>
       </VStack>
-      <Orderlist />
       <ConfirmModal
         icon={faCheck}
         isOpen={modal1.isOpen}
@@ -136,9 +140,9 @@ const Orderbook: React.FC = () => {
         icon={txStatus == "Success" ? faCheck : faShare}
         isOpen={modal2.isOpen}
         onToggle={modal2.onToggle}
-        onPress={()=>{
-          modal1.onToggle()
-          modal2.onToggle()
+        onPress={() => {
+          modal1.onToggle();
+          modal2.onToggle();
         }}
       >
         <VStack fontSize={"xl"} textAlign={"center"} px={2}>
@@ -160,7 +164,7 @@ const Orderbook: React.FC = () => {
           </FormControl>
         </VStack>
       </ConfirmModal>
-    </VStack>
+    </>
   );
 };
 

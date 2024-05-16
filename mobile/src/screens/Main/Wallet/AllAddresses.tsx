@@ -1,20 +1,12 @@
 import React from "react";
 import { useAuth } from "@app/context/AuthContext";
-import {
-  HStack,
-  Icon,
-  Pressable,
-  Text,
-  VStack,
-  useDisclose,
-} from "native-base";
+import { HStack, Pressable, Text, VStack, useDisclose } from "native-base";
 import { useColors } from "@app/context/ColorContex";
-import { FontAwesome6 } from "@expo/vector-icons";
 import ConfirmModal from "../components/ConfirmModal";
 import { faWarning } from "@fortawesome/free-solid-svg-icons";
 
 const AllAddresses: React.FC = () => {
-  const { allAddresses, balances, tokenBalances } = useAuth();
+  const { allAddresses, balances } = useAuth();
   const { bgColor, textColor } = useColors();
   const { isOpen, onToggle } = useDisclose();
   return (
@@ -45,7 +37,7 @@ const AllAddresses: React.FC = () => {
                     {address}
                   </Text>
                   <Text w="28%" textAlign="center" numberOfLines={1}>
-                    {balances[address]} QU
+                    {balances[address] || 0} QU
                   </Text>
                 </HStack>
               </Pressable>

@@ -37,8 +37,10 @@ const TransactionItem: React.FC<IProps> = ({ transaction }) => {
         <VStack>
           <Text>{Math.abs(parseInt(transaction[3]))} QU</Text>
           <Text>
-            $
-            {Math.abs(parseFloat(transaction[3]) * parseFloat(marketcap.price))}
+            ${" "}
+            {Math.abs(
+              parseFloat(transaction[3]) * parseFloat(marketcap.price)
+            ).toFixed(5)}
           </Text>
         </VStack>
       </HStack>

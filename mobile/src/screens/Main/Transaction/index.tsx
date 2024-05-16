@@ -6,14 +6,10 @@ import TransactionItem from "./TransactionItem";
 import TransactionDetailModal from "./TranslationDetailModal";
 
 const Transaction: React.FC = () => {
-  const { histories } = useAuth();
+  const { histories, currentAddress } = useAuth();
   const { textColor, bgColor, main } = useColors();
   const { isOpen, onToggle } = useDisclose();
   const [currentTx, setCurrentTx] = useState<any>([]);
-
-  useEffect(() => {
-    console.log(histories);
-  });
   
   return (
     <>

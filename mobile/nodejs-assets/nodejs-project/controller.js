@@ -154,12 +154,7 @@ exports.addAccout = async ({ password, index }) => {
     flag: "addaccount",
   });
   if (addResult.value.result != 0) {
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/add-account",
-        data: addResult.value.display,
-      })
-    );
+    bridge_send("S2C/add-account", addResult.value.display);
     return;
   }
   const result = await wasmManager.ccall({
@@ -212,7 +207,7 @@ exports.fetchUser = async () => {
 
 exports.history = async (address) => {
   const result = await socketSync(`history ${address}`);
-  bridge_send("S2C/history", result);
+  bridge_send("S2C/histories", result);
 };
 
 exports.deleteAccount = async (password, index, address) => {
@@ -236,7 +231,7 @@ exports.deleteAccount = async (password, index, address) => {
     flag: "delete",
   });
   if (deleteResult.value.result != 0) {
-    bridge_send("S2C/history", deleteResult);
+    // bridge_send("S2C/histories", deleteResult);
     return;
   }
   const result = await wasmManager.ccall({
@@ -356,17 +351,21 @@ exports.switchNetwork = async () => {
   bridge_send("S2C/switchnetwork", {});
 };
 
-exports.tokens = base_controller("tokenlist", "S2C/tokens");
+exports.tokens = async () => {
+  try {
+    preAction();
+    const result = await socketSync("tokenlist");
+    afterAction();
+    bridge_send("S2C/tokens", result);
+  } catch (error) {
+    bridge_send("S2C/error", error);
+  }
+};
 
 exports.basicInfo = async () => {
   let liveSocket = socketManager.getLiveSocket();
   if (!liveSocket) {
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/error",
-        data: "Socket Server Error",
-      })
-    );
+    bridge_send("S2C/error", "Socket Server Error");
     return;
   }
   const balances = await socketSync("balances");
@@ -418,6 +417,20 @@ exports.buySell = async ({
   bridge_send("S2C/buy-sell", res);
 };
 
-exports.myOrders = base_controller("myorders", "S2C/my-orders");
+exports.myOrders = async () => {
+  try {
+    const result = await socketSync("myorders");
+    bridge_send("S2C/my-orders", result);
+  } catch (error) {
+    bridge_send("S2C/error", error);
+  }
+};
 
-exports.tokenPrices = base_controller("tokenprices", "S2C/token-prices");
+exports.tokenPrices = async () => {
+  try {
+    const result = await socketSync("tokenprices");
+    bridge_send("S2C/token-prices", result);
+  } catch (error) {
+    bridge_send("S2C/error", error);
+  }
+};

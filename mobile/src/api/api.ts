@@ -70,7 +70,7 @@ export const deleteAccount = (
 
 export const getHistory = (address: string) => {
   nodejs.channel.send(
-    JSON.stringify({ action: "C2S/history", data: { address } })
+    JSON.stringify({ action: "C2S/histories", data: { address } })
   );
 };
 
@@ -131,7 +131,6 @@ export const buySell = (
 };
 
 export const myOrders = () => {
-  console.log("SENDING MYORDERS")
   nodejs.channel.send(
     JSON.stringify({
       action: "C2S/my-orders",

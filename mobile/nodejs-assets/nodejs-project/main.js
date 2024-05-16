@@ -81,7 +81,7 @@ rn_bridge.channel.on("message", async (msg) => {
         break;
       }
 
-      case "C2S/history": {
+      case "C2S/histories": {
         history(message.data.address);
         break;
       }

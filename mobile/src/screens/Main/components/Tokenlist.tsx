@@ -16,33 +16,33 @@ import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { AntDesign } from "@expo/vector-icons";
 
-const tokenBalances = {
-  QX: {
-    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-  },
-  QWALLET: {
-    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-  },
-  QFT: {
-    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-  },
-  QTRY: {
-    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-  },
-  CFB: {
-    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-  },
-  RANDOM: {
-    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-  },
-  QUTIL: {
-    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-  },
-};
+// const tokenBalances = {
+//   QX: {
+//     TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
+//   },
+//   QWALLET: {
+//     TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
+//   },
+//   QFT: {
+//     TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
+//   },
+//   QTRY: {
+//     TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
+//   },
+//   CFB: {
+//     TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
+//   },
+//   RANDOM: {
+//     TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
+//   },
+//   QUTIL: {
+//     TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
+//   },
+// };
 
 const Tokenlist: React.FC = () => {
   const { textColor } = useColors();
-  const { currentAddress } = useAuth();
+  const { currentAddress, tokenBalances } = useAuth();
   const { tokens, tokenprices, marketcap } = useSelector(
     (store: RootState) => store.app
   );
@@ -85,11 +85,11 @@ const Tokenlist: React.FC = () => {
       }
       return null; // Avoid empty elements
     });
-  }, [tokenBalances, currentAddress, tokens, tokenprices, marketcap]);
+  }, [tokenBalances, tokenprices, marketcap]);
 
   return (
     <>
-      {!tokenBalances || Object.keys(tokenBalances).length === 0 ? (
+      {Object.keys(tokenBalances).length === 0 ? (
         <VStack flex={1} alignItems="center" justifyContent="center">
           <VStack>
             <Center>

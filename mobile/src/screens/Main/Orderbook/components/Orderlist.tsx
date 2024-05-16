@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { HStack, ScrollView, Text, VStack } from "native-base";
+import { Center, HStack, Icon, ScrollView, Text, VStack } from "native-base";
 import { useColors } from "@app/context/ColorContex";
 import { useAuth } from "@app/context/AuthContext";
 import { myOrders } from "@app/api/api";
 import eventEmitter from "@app/api/eventEmitter";
+import { AntDesign } from "@expo/vector-icons";
 
 type IOrder = [string, string, string, string]; // token, amount, price, type
 type IOrderUnit = [number, string, string, string]; // index, address, amount, price
@@ -39,10 +40,11 @@ const Orderlist: React.FC = () => {
 
   useEffect(() => {
     myOrders();
+    setShowData([]);
     eventEmitter.on("S2C/my-orders", (res) => {
       setOrderData(res.data);
     });
-  }, []);
+  }, [currentAddress]);
 
   return (
     <VStack
@@ -82,8 +84,15 @@ const Orderlist: React.FC = () => {
             );
           })
         ) : (
-          <VStack>
-            <Text>You dont have got any orders now!</Text>
+          <VStack flex={1} alignItems="center" justifyContent="center">
+            <VStack>
+              <Center>
+                <Icon as={AntDesign} name="questioncircle" size={20}></Icon>
+                <Text color={textColor} fontSize="md" mt="4" textAlign="center">
+                  You haven't got any buy/sell orders in this address!
+                </Text>
+              </Center>
+            </VStack>
           </VStack>
         )}
       </ScrollView>
