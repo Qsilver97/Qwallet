@@ -1,9 +1,20 @@
 import { useAuth } from "@app/context/AuthContext";
+import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
 import tokenIcons from "@app/utils/tokens";
-import { Box, HStack, Pressable, ScrollView, Text, VStack } from "native-base";
+import {
+  Box,
+  Center,
+  HStack,
+  Icon,
+  Pressable,
+  ScrollView,
+  Text,
+  VStack,
+} from "native-base";
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
+import { AntDesign } from "@expo/vector-icons";
 
 const tokenBalances = {
   QX: {
@@ -30,16 +41,13 @@ const tokenBalances = {
 };
 
 const Tokenlist: React.FC = () => {
+  const { textColor } = useColors();
   const { currentAddress } = useAuth();
   const { tokens, tokenprices, marketcap } = useSelector(
     (store: RootState) => store.app
   );
 
   const formattedItems = useMemo(() => {
-    if (!tokenBalances || Object.keys(tokenBalances).length === 0) {
-      return <Text>You haven't got any assets!</Text>;
-    }
-
     return tokens.map((token, key) => {
       const Icon = tokenIcons.find((t) => t.symbol == token)?.icon;
       const balance = tokenBalances?.[token]?.[currentAddress] || 0;
@@ -80,9 +88,24 @@ const Tokenlist: React.FC = () => {
   }, [tokenBalances, currentAddress, tokens, tokenprices, marketcap]);
 
   return (
-    <ScrollView px="5" py="2">
-      <Box>{formattedItems}</Box>
-    </ScrollView>
+    <>
+      {!tokenBalances || Object.keys(tokenBalances).length === 0 ? (
+        <VStack flex={1} alignItems="center" justifyContent="center">
+          <VStack>
+            <Center>
+              <Icon as={AntDesign} name="questioncircle" size={20}></Icon>
+              <Text color={textColor} fontSize="md" mt="4">
+                You haven't got any assets!
+              </Text>
+            </Center>
+          </VStack>
+        </VStack>
+      ) : (
+        <ScrollView px="5" py="2">
+          <Box>{formattedItems}</Box>
+        </ScrollView>
+      )}
+    </>
   );
 };
 

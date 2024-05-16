@@ -13,11 +13,7 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import ConfirmModal from "../components/ConfirmModal";
 import { faWarning } from "@fortawesome/free-solid-svg-icons";
 
-interface IProps {
-  swip: (index: number) => void;
-}
-
-const AllAddresses: React.FC<IProps> = ({ swip }) => {
+const AllAddresses: React.FC = () => {
   const { allAddresses, balances, tokenBalances } = useAuth();
   const { bgColor, textColor } = useColors();
   const { isOpen, onToggle } = useDisclose();
@@ -38,8 +34,12 @@ const AllAddresses: React.FC<IProps> = ({ swip }) => {
         {allAddresses.map((address, key) => {
           if (address !== "")
             return (
-              <Pressable _pressed={{ opacity: 0.6 }} onLongPress={onToggle}>
-                <HStack key={key} p="3" space="2" bgColor="blueGray.600">
+              <Pressable
+                key={key}
+                _pressed={{ opacity: 0.6 }}
+                onLongPress={onToggle}
+              >
+                <HStack p="3" space="2" bgColor="blueGray.600">
                   <Text w="5%">{key + 1}</Text>
                   <Text flex={1} ellipsizeMode="middle" numberOfLines={1}>
                     {address}
@@ -50,7 +50,6 @@ const AllAddresses: React.FC<IProps> = ({ swip }) => {
                 </HStack>
               </Pressable>
             );
-          else return <></>;
         })}
       </VStack>
       <ConfirmModal

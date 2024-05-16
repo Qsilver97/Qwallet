@@ -1,28 +1,16 @@
-import React, { useEffect, useState } from "react";
-import {
-  FormControl,
-  HStack,
-  ScrollView,
-  Text,
-  VStack,
-  useDisclose,
-} from "native-base";
+import React, { useState } from "react";
+import { HStack, Text, VStack, useDisclose } from "native-base";
 import { useColors } from "@app/context/ColorContex";
 import TokenSelect from "../components/TokenSelect";
 import TransferButton from "../components/TransferButton";
-import {
-  faCheck,
-  faMinus,
-  faPlus,
-  faShare,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import Input from "@app/components/UI/Input";
-import { buySell, myOrders } from "@app/api/api";
+import { buySell } from "@app/api/api";
 import { useSelector } from "react-redux";
-import { RootState, store } from "@app/redux/store";
+import { RootState } from "@app/redux/store";
 import { useAuth } from "@app/context/AuthContext";
-import eventEmitter from "@app/api/eventEmitter";
 import ConfirmModal from "../components/ConfirmModal";
+import Orderlist from "./components/Orderlist";
 
 const Orderbook: React.FC = () => {
   const { bgColor, textColor } = useColors();
@@ -31,21 +19,10 @@ const Orderbook: React.FC = () => {
   const [currentToken, setCurrentToken] = useState<string>("QWALLET");
   const [amount, setAmount] = useState<string>("0");
   const [price, setPrice] = useState<string>("0");
-  const [orderBookTab, setOrderBookTab] = useState<"Bid" | "Ask">("Bid");
-  const [orderData, setOrderData] = useState({});
   const [buySellFlag, setBuySellFlag] = useState<
     "buy" | "sell" | "cancelbuy" | "cancelsell"
   >("buy");
   const { isOpen, onToggle } = useDisclose();
-
-  useEffect(() => {
-    myOrders();
-
-    eventEmitter.on("S2C/my-orders", (res) => {
-      console.log(res.data?.QWALLET);
-      setOrderData(res.data);
-    });
-  }, []);
 
   const handleBuySell = async (
     flag: "buy" | "sell" | "cancelbuy" | "cancelsell",
@@ -81,101 +58,58 @@ const Orderbook: React.FC = () => {
           selectedToken={currentToken}
           onChange={setCurrentToken}
         ></TokenSelect>
-        <HStack w="full" textAlign="center" space="2">
-          <Input
-            type="text"
-            onChangeText={(text) => {
-              setAmount(text);
-            }}
-            placeholder="Input Amount"
-            label={`Amount of ${currentToken}`}
-            w="full"
-            parentProps={{ w: "1/2" }}
-          ></Input>
-          <Input
-            type="text"
-            onChangeText={(text) => {
-              setPrice(text);
-            }}
-            placeholder="Input Price"
-            label={`Price of ${currentToken}`}
-            w="full"
-            parentProps={{ w: "1/2" }}
-          ></Input>
+        <HStack py="2">
+          <VStack w="3/4" textAlign="center">
+            <Input
+              type="text"
+              onChangeText={(text) => {
+                setAmount(text);
+              }}
+              placeholder="Input Amount"
+              label={`Amount of ${currentToken}`}
+              w="full"
+              parentProps={{ w: "full" }}
+            ></Input>
+            <Input
+              type="text"
+              onChangeText={(text) => {
+                setPrice(text);
+              }}
+              placeholder="Input Price"
+              label={`Price of ${currentToken}`}
+              w="full"
+              parentProps={{ w: "full" }}
+            ></Input>
+          </VStack>
+          <VStack w={"1/4"} justifyContent={"center"} space={4}>
+            <TransferButton
+              icon={faPlus}
+              title="BUY"
+              onPress={() => {
+                setBuySellFlag("buy");
+                onToggle();
+              }}
+            ></TransferButton>
+            <TransferButton
+              icon={faMinus}
+              title="SELL"
+              onPress={() => {
+                setBuySellFlag("sell");
+                onToggle();
+              }}
+            ></TransferButton>
+          </VStack>
         </HStack>
+
         <HStack w="full">
           <Text textAlign="center" fontSize="md">
             Currently the highest bid price of {currentToken} is{" "}
-            {tokenprices?.[currentToken]?.[0]} QU, lowest ask price is{" "}
-            {tokenprices?.[currentToken]?.[1]} QU.
+            {tokenprices?.[currentToken]?.[0] || "0"} QU, lowest ask price is{" "}
+            {tokenprices?.[currentToken]?.[1] || "0"} QU.
           </Text>
         </HStack>
-        <HStack w={"full"} justifyContent={"center"} space={4}>
-          <TransferButton
-            icon={faPlus}
-            title="BUY"
-            onPress={() => {
-              setBuySellFlag("buy");
-              onToggle();
-            }}
-          ></TransferButton>
-          <TransferButton
-            icon={faMinus}
-            title="SELL"
-            onPress={() => {
-              setBuySellFlag("sell");
-              onToggle();
-            }}
-          ></TransferButton>
-        </HStack>
       </VStack>
-      <VStack
-        flex={1}
-        justifyItems="center"
-        justifyContent="end"
-        space={5}
-        bgColor={bgColor}
-        color={textColor}
-      >
-        <Text fontSize="2xl" textAlign="center">
-          My Order List
-        </Text>
-        <ScrollView w="full" textAlign="center">
-          {Object.keys(orderData).map((token) => {
-            let showData;
-            if (orderBookTab == "Bid") showData = orderData[token].bids;
-            else showData = orderData[token].asks;
-            if (showData.length)
-              return (
-                <HStack
-                  key={token}
-                  space={2}
-                  textAlign="center"
-                  rounded="xl"
-                  bgColor="blueGray.600"
-                  p="3"
-                  m="2"
-                >
-                  {showData.map(
-                    (dt: any, key: number) =>
-                      currentAddress == dt[1] && (
-                        <HStack key={key}>
-                          <VStack></VStack>
-                          <VStack></VStack>
-                          <Text w="1/3">{token}</Text>
-                          <Text w="1/3">
-                            {dt[2]} {token}
-                          </Text>
-                          <Text w="1/3">{dt[3]} QU</Text>
-                        </HStack>
-                      )
-                  )}
-                </HStack>
-              );
-          })}
-        </ScrollView>
-      </VStack>
-
+      <Orderlist />
       <ConfirmModal
         icon={faCheck}
         isOpen={isOpen}

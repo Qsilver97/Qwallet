@@ -1,19 +1,13 @@
 import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
-import {
-  faList,
-  faMinus,
-  faPlus,
-  faShare,
-} from "@fortawesome/free-solid-svg-icons";
+import { faShare } from "@fortawesome/free-solid-svg-icons";
 import { HStack, Text, VStack, useDisclose } from "native-base";
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import Tokenlist from "../components/Tokenlist";
 import TransferButton from "../components/TransferButton";
 import TransferModal from "../components/TransferModal";
-import AllAddresses from "./AllAddresses";
 
 const Home: React.FC = () => {
   const { balances, currentAddress } = useAuth();

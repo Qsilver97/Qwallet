@@ -1,5 +1,13 @@
 import React, { ReactNode } from "react";
-import { Button, HStack, IModalProps, Modal, VStack, View } from "native-base";
+import {
+  Button,
+  Center,
+  HStack,
+  IModalProps,
+  Modal,
+  VStack,
+  View,
+} from "native-base";
 import { useColors } from "@app/context/ColorContex";
 import { IconDefinition, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -42,22 +50,24 @@ const ConfirmModal: React.FC<IProps> = ({
         <Modal.CloseButton />
         <Modal.Body bgColor={bgColor}>
           <VStack justifyContent={"center"} py={6}>
-            {icon && (
-              <View
-                bgColor={main.celestialBlue}
-                rounded={"full"}
-                mx={"auto"}
-                p={3}
-                my={6}
-              >
-                <FontAwesomeIcon
-                  icon={icon as IconDefinition}
-                  size={72}
-                  color={textColor}
-                ></FontAwesomeIcon>
-              </View>
-            )}
-            {children}
+            <Center>
+              {icon && (
+                <View
+                  bgColor={main.celestialBlue}
+                  rounded={"full"}
+                  mx={"auto"}
+                  p={3}
+                  my={6}
+                >
+                  <FontAwesomeIcon
+                    icon={icon as IconDefinition}
+                    size={72}
+                    color={textColor}
+                  ></FontAwesomeIcon>
+                </View>
+              )}
+              {children}
+            </Center>
           </VStack>
           {buttons == null && (
             <HStack justifyContent={"center"} space={3}>
