@@ -1,3 +1,13 @@
+import { transfer } from "@app/api/api";
+import Input from "@app/components/UI/Input";
+import { useAuth } from "@app/context/AuthContext";
+import { useColors } from "@app/context/ColorContex";
+import { RootState } from "@app/redux/store";
+import {
+  faCheck,
+  faQuestion,
+  faShare,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   Button,
   FormControl,
@@ -7,20 +17,10 @@ import {
   VStack,
   useDisclose,
 } from "native-base";
-import { useColors } from "@app/context/ColorContex";
-import Input from "@app/components/UI/Input";
 import { useState } from "react";
 import Toast from "react-native-toast-message";
-import { useAuth } from "@app/context/AuthContext";
-import { transfer } from "@app/api/api";
-import { RootState } from "@app/redux/store";
 import { useSelector } from "react-redux";
 import ConfirmModal from "./ConfirmModal";
-import {
-  faCheck,
-  faQuestion,
-  faShare,
-} from "@fortawesome/free-solid-svg-icons";
 
 interface IProps {
   isOpen: boolean;
@@ -100,7 +100,7 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
                 type="text"
                 w={"full"}
               ></Input>
-              <Text>{balances[allAddresses.indexOf(currentAddress)]}</Text>
+              <Text>{balances[currentAddress]}</Text>
             </VStack>
             <HStack justifyContent={"center"} space={3}>
               <Button

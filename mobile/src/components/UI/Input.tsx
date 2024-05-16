@@ -6,6 +6,7 @@ import {
   FormControl,
   WarningOutlineIcon,
   IFormControlProps,
+  Text,
 } from "native-base";
 import { useColors } from "../../context/ColorContex";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -40,7 +41,9 @@ const Input: React.FC<InputProps> = ({
       {...parentProps}
       isInvalid={error !== "" && error !== undefined}
     >
-      <FormControl.Label>{label}</FormControl.Label>
+      <FormControl.Label>
+        <Text color={textColor}>{label}</Text>
+      </FormControl.Label>
       <NInput
         w={{
           base: "75%",
@@ -73,7 +76,9 @@ const Input: React.FC<InputProps> = ({
         }
         {...props}
       />
-      <FormControl.HelperText>{helper}</FormControl.HelperText>
+      <FormControl.HelperText>
+        <Text color={textColor}>{helper}</Text>
+      </FormControl.HelperText>
       <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
         {error}
       </FormControl.ErrorMessage>

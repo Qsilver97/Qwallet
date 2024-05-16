@@ -11,6 +11,10 @@ const Transaction: React.FC = () => {
   const { isOpen, onToggle } = useDisclose();
   const [currentTx, setCurrentTx] = useState<any>([]);
 
+  useEffect(() => {
+    console.log(histories);
+  });
+  
   return (
     <>
       <VStack

@@ -7,6 +7,7 @@ interface UpdateMarketcapPayload {
   marketcap: string;
 }
 
+type TokenPrices = { [name: string]: [string, string] };
 type RichlistItemArray = [number, string, string];
 
 interface RichlistInterface {
@@ -21,7 +22,7 @@ interface AppState {
   theme: "light" | "dark";
   tick: string;
   tokens: string[];
-  tokenprices: string[];
+  tokenprices: TokenPrices;
   richlist: RichlistInterface;
   marketcap: UpdateMarketcapPayload;
 }
@@ -40,7 +41,7 @@ const initialState: AppState = {
   theme: "light",
   tick: "",
   tokens: [],
-  tokenprices: [],
+  tokenprices: {},
   richlist: {},
   marketcap: {
     supply: "0",
@@ -71,7 +72,7 @@ export const appSlice = createSlice({
     setTokens: (state, action: PayloadAction<string[]>) => {
       state.tokens = action.payload;
     },
-    setTokenprices: (state, action: PayloadAction<string[]>) => {
+    setTokenprices: (state, action: PayloadAction<TokenPrices>) => {
       state.tokenprices = action.payload;
     },
     toggleTheme: (state) => {
@@ -87,7 +88,7 @@ export const appSlice = createSlice({
       state.richlist = { ...action.payload };
     },
     setMarketcap: (state, action: PayloadAction<UpdateMarketcapPayload>) => {
-      state.marketcap = { ...action.payload };
+      state.marketcap = action.payload;
     },
     resetState: (state) => {
       Object.assign(state, initialState);

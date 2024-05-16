@@ -25,7 +25,6 @@ const TokenSelect: React.FC<TokenSelectProps> = ({
       <HStack space={3} px="4" w="full">
         {tokens.map((token, key) => {
           const Icon = tokenIcons.find((t) => t.symbol === token)?.icon;
-          console.log(tokens);
           return (
             <TouchableOpacity key={key} onPress={() => onChange(token)}>
               <HStack

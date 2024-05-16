@@ -35,12 +35,13 @@ module.exports = function (liveSocket) {
                 stateManager.updateSocketState(flag.slice(1), data);
             }
             // socket.emit('live', data);
-            rn_bridge.channel.send(
-                JSON.stringify({
-                  action: "S2C/live",
-                  data
-                })
-              );
+            if(!data.allentities)
+                rn_bridge.channel.send(
+                    JSON.stringify({
+                    action: "S2C/live",
+                    data
+                    })
+                );
         } catch (error) {
 
         }

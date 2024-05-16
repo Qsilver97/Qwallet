@@ -1,27 +1,15 @@
+import { basicInfo, getHistory, getToken, transferStatus } from "@app/api/api";
+import eventEmitter from "@app/api/eventEmitter";
+import { setMarketcap, setTokenprices, setTokens } from "@app/redux/appSlice";
 import {
+  ReactNode,
   createContext,
   useContext,
-  ReactNode,
-  useState,
   useEffect,
+  useState,
 } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@app/redux/store";
-import {
-  basicInfo,
-  buySell,
-  getHistory,
-  getToken,
-  transferStatus,
-} from "@app/api/api";
 import Toast from "react-native-toast-message";
-import eventEmitter from "@app/api/eventEmitter";
-import {
-  setMarketcap,
-  setRichlist,
-  setTokenprices,
-  setTokens,
-} from "@app/redux/appSlice";
+import { useDispatch } from "react-redux";
 
 export interface AccountDetailType {
   addresses: string[];
@@ -34,10 +22,12 @@ export interface UserDetailType {
   password: string;
   accountInfo: AccountDetailType;
 }
-
+interface Balances {
+  [address: string]: number;
+}
 interface AuthContextType {
   user: UserDetailType | null;
-  balances: string[];
+  balances: Balances;
   tempPassword: string;
   currentAddress: string;
   allAddresses: string[];
@@ -52,7 +42,7 @@ interface AuthContextType {
   login: (userDetails: UserDetailType) => void;
   logout: () => void;
   setTempPassword: React.Dispatch<React.SetStateAction<string>>;
-  setBalances: React.Dispatch<React.SetStateAction<string[]>>;
+  setBalances: React.Dispatch<React.SetStateAction<Balances>>;
   setCurrentAddress: (value: React.SetStateAction<string>) => void;
   setTxStatus: React.Dispatch<
     React.SetStateAction<"Open" | "Closed" | "Rejected" | "Pending" | "Success">
@@ -64,9 +54,6 @@ interface AuthContextType {
     }>
   >;
 }
-interface Balances {
-  [address: string]: number;
-}
 
 type TransactionItem = [string, string, string, string, string, string];
 
@@ -76,7 +63,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const dispatch = useDispatch();
   const [user, setUser] = useState<UserDetailType | null>(null);
   const [tempPassword, setTempPassword] = useState("");
-  const [balances, setBalances] = useState<string[]>([]);
+  const [balances, setBalances] = useState<Balances>({});
   const [currentAddress, setCurrentAddress] = useState<string>("");
   const [allAddresses, setAllAddresses] = useState<string[]>([]);
   const [histories, setHistories] = useState<TransactionItem[]>([]);
@@ -129,12 +116,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     });
     eventEmitter.on("S2C/basic-info", (res) => {
+      console.log("BASIC_INFO: ", res.data);
       if (res.data) {
+        setBalances((prev) => {
+          return {
+            ...prev,
+            [allAddresses[res.data.balances[0]]]: res.data.balances[1],
+          };
+        });
         dispatch(setTokens(res.data.tokens));
-        dispatch(setRichlist(res.data.richlist));
         dispatch(setMarketcap(res.data.marketcap));
         dispatch(setTokenprices(res.data.tokenprices));
-        dispatch(setTokens(res.data.tokens));
       } else {
         Toast.show({ type: "error", text1: res.data.value.display });
       }
@@ -164,25 +156,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setStatusInterval(_statusInterval);
       } else {
         Toast.show({ type: "error", text1: "Error Occured" });
-        setTxStatus("rejected");
+        setTxStatus("Rejected");
       }
     });
     eventEmitter.on("S2C/transfer-status", (res) => {
       if (res.data) {
-        console.log(res.data);
         if (res.data == "failed") {
-          setTxStatus("rejected");
+          setTxStatus("Rejected");
           Toast.show({ type: "error", text1: "Transfer Failed!" });
         } else if (res.data.value.result == "0") {
-          setTxStatus("pending");
+          setTxStatus("Pending");
         } else if (res.data.value.result == "1") {
           setTxResult(res.data.value.display);
         } else {
-          setTxStatus("rejected");
+          setTxStatus("Rejected");
         }
       } else {
         Toast.show({ type: "error", text1: "Error Occured" });
-        setTxStatus("rejected");
+        setTxStatus("Rejected");
         clearInterval(statusInterval);
       }
     });
@@ -200,10 +191,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setTxId(txResultSplit[1]);
       setExpectedTick(parseInt(txResultSplit[txResultSplit.length - 1]));
     } else if (txResult.includes("no command pending")) {
-      setTxStatus("success");
+      setTxStatus("Success");
       clearInterval(statusInterval);
     }
   }, [txResult]);
+
+  // useEffect(() => {
+  //   setTokenBalances((prev) => {
+  //     return { ...prev, QU: balances };
+  //   });
+  // }, [balances]);
 
   return (
     <AuthContext.Provider

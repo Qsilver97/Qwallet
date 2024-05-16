@@ -26,7 +26,7 @@ import ConfirmModal from "../components/ConfirmModal";
 
 const Orderbook: React.FC = () => {
   const { bgColor, textColor } = useColors();
-  const { password, tick } = useSelector((store: RootState) => store.app);
+  const { tokenprices, tick } = useSelector((store: RootState) => store.app);
   const { user, currentAddress } = useAuth();
   const [currentToken, setCurrentToken] = useState<string>("QWALLET");
   const [amount, setAmount] = useState<string>("0");
@@ -103,6 +103,13 @@ const Orderbook: React.FC = () => {
             parentProps={{ w: "1/2" }}
           ></Input>
         </HStack>
+        <HStack w="full">
+          <Text textAlign="center" fontSize="md">
+            Currently the highest bid price of {currentToken} is{" "}
+            {tokenprices?.[currentToken]?.[0]} QU, lowest ask price is{" "}
+            {tokenprices?.[currentToken]?.[1]} QU.
+          </Text>
+        </HStack>
         <HStack w={"full"} justifyContent={"center"} space={4}>
           <TransferButton
             icon={faPlus}
@@ -156,7 +163,9 @@ const Orderbook: React.FC = () => {
                           <VStack></VStack>
                           <VStack></VStack>
                           <Text w="1/3">{token}</Text>
-                          <Text w="1/3">{dt[2]} {token}</Text>
+                          <Text w="1/3">
+                            {dt[2]} {token}
+                          </Text>
                           <Text w="1/3">{dt[3]} QU</Text>
                         </HStack>
                       )
