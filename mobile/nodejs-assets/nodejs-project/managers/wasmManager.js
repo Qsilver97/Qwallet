@@ -1,4 +1,5 @@
 const createModule = require("../utils/a.out.js");
+const { socketSync } = require("../utils/helpers.js");
 // const socketManager = require("../managers/socketManager");
 
 let wasm;

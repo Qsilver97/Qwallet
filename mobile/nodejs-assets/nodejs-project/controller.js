@@ -373,13 +373,13 @@ exports.basicInfo = async () => {
   const marketcap = await socketSync("marketcap");
   const tokens = await socketSync("tokenlist");
   const tokenprices = await socketSync("tokenprices");
-  const richlist = {};
-  const qurichlist = await socketSync("richlist");
-  richlist[qurichlist.name] = qurichlist.richlist;
-  for (let idx = 0; idx < tokens.tokens.length; idx++) {
-    const richlistResult = await socketSync(`richlist.${tokens.tokens[idx]}`);
-    richlist[richlistResult.name] = richlistResult.richlist;
-  }
+  // const richlist = {};
+  // const qurichlist = await socketSync("richlist");
+  // richlist[qurichlist.name] = qurichlist.richlist;
+  // for (let idx = 0; idx < tokens.tokens.length; idx++) {
+  //   const richlistResult = await socketSync(`richlist.${tokens.tokens[idx]}`);
+  //   richlist[richlistResult.name] = richlistResult.richlist;
+  // }
   bridge_send("S2C/basic-info", {
     balances: balances.balances,
     marketcap,

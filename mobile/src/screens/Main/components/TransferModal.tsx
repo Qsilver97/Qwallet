@@ -53,7 +53,7 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
       Toast.show({ type: "error", text1: "Invalid address or amount!" });
       return;
     }
-    setTxStatus("open");
+    setTxStatus("Open");
     const expectedTick = parseInt(tick) + 5;
     setExpectedTick(expectedTick);
     transfer(

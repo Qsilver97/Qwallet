@@ -50,24 +50,22 @@ const ConfirmModal: React.FC<IProps> = ({
         <Modal.CloseButton />
         <Modal.Body bgColor={bgColor}>
           <VStack justifyContent={"center"} py={6}>
-            <Center>
-              {icon && (
-                <View
-                  bgColor={main.celestialBlue}
-                  rounded={"full"}
-                  mx={"auto"}
-                  p={3}
-                  my={6}
-                >
-                  <FontAwesomeIcon
-                    icon={icon as IconDefinition}
-                    size={72}
-                    color={textColor}
-                  ></FontAwesomeIcon>
-                </View>
-              )}
-              {children}
-            </Center>
+            {icon && (
+              <View
+                bgColor={main.celestialBlue}
+                rounded={"full"}
+                mx={"auto"}
+                p={3}
+                my={6}
+              >
+                <FontAwesomeIcon
+                  icon={icon as IconDefinition}
+                  size={72}
+                  color={textColor}
+                ></FontAwesomeIcon>
+              </View>
+            )}
+            {children}
           </VStack>
           {buttons == null && (
             <HStack justifyContent={"center"} space={3}>

@@ -111,7 +111,7 @@ export const buySell = (
   price: string,
   password: string,
   index: number,
-  tick: string,
+  tick: number,
   currentToken: string
 ) => {
   nodejs.channel.send(

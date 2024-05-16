@@ -14,8 +14,6 @@ export const SocketCom: React.FC = () => {
   const { setBalances, setTokenBalances, allAddresses, balances } = useAuth();
   useEffect(() => {
     eventEmitter.on("S2C/live", (res) => {
-      if (res.data.command !== "CurrentTickInfo")
-        console.log("S2C/live Received: ", res.data);
       if (res.data.command == "CurrentTickInfo") {
         dispatch(setTick(res.data.tick));
       } else if (res.data.command == "EntityInfo") {
@@ -50,7 +48,6 @@ export const SocketCom: React.FC = () => {
                 [allAddresses[balance[0]]]: parseFloat(balance[1]),
               };
             });
-          console.log("Check this: ", balances);
         });
       } else if (res.data.richlist) {
         // dispatch(updateRichlist(res.data));

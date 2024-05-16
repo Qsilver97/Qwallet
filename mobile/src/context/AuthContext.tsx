@@ -162,13 +162,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     });
     eventEmitter.on("S2C/transfer-status", (res) => {
+      console.log("S2C/transfer-status", res)
       if (res.data) {
         if (res.data == "failed") {
           setTxStatus("Rejected");
           Toast.show({ type: "error", text1: "Transfer Failed!" });
-        } else if (res.data.value.result == "0") {
+        } else if (res.data.value.result == 0) {
           setTxStatus("Pending");
-        } else if (res.data.value.result == "1") {
+        } else if (res.data.value.result == 1) {
           setTxResult(res.data.value.display);
         } else {
           setTxStatus("Rejected");
@@ -179,9 +180,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         clearInterval(statusInterval);
       }
     });
-    eventEmitter.on("S2C/S2C/buy-sell", (res) => {
+    eventEmitter.on("S2C/buy-sell", (res) => {
       if (res.data) {
-        console.log("Client Data:", res.data);
+        const _statusInterval = setInterval(() => {
+          transferStatus();
+        }, 2000);
+        setStatusInterval(_statusInterval);
+        if (res.data.value.result == 0) {
+        } else if (res.data.value.result < 0) {
+          Toast.show({ type: "error", text1: res.data.value.display });
+        } else if (res.data.value.result == 1) {
+          setTxStatus(res.data.value.display);
+        }
       } else {
       }
     });
@@ -194,6 +204,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setExpectedTick(parseInt(txResultSplit[txResultSplit.length - 1]));
     } else if (txResult.includes("no command pending")) {
       setTxStatus("Success");
+      Toast.show({
+        type: "success",
+        text1: "Transaction Completed Successfully!",
+      });
       clearInterval(statusInterval);
     }
   }, [txResult]);
