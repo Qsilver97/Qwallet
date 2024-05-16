@@ -12,26 +12,32 @@ const data = [
   {
     title: "English (United States)",
     language: "en",
+    symbol: "En",
   },
   {
     title: "Chinese (China)",
     language: "zh",
+    symbol: "中",
   },
   {
     title: "Spanish (Spain)",
     language: "es",
+    symbol: "Es",
   },
   {
     title: "French (France)",
     language: "fr",
+    symbol: "Fr",
   },
   {
     title: "Russian (Russia)",
     language: "ru",
+    symbol: "Ру",
   },
   {
     title: "Japanese (Japan)",
     language: "jp",
+    symbol: "日",
   },
 ];
 
@@ -67,7 +73,12 @@ const LanguageSelector: React.FC = () => {
                 }
                 p="3"
                 color={textColor}
+                alignItems="center"
+                space="3"
               >
+                <Text fontSize="xl" fontWeight="bold">
+                  {dt.symbol}
+                </Text>
                 <Text fontSize="md">{dt.title}</Text>
               </HStack>
             </TouchableOpacity>
