@@ -115,22 +115,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         Toast.show({ type: "error", text1: "Error ocurred!" });
       }
     });
-    eventEmitter.on("S2C/basic-info", (res) => {
-      console.log("BASIC_INFO: ", res.data);
-      if (res.data) {
-        setBalances((prev) => {
-          return {
-            ...prev,
-            [allAddresses[res.data.balances[0]]]: res.data.balances[1],
-          };
-        });
-        dispatch(setTokens(res.data.tokens));
-        dispatch(setMarketcap(res.data.marketcap));
-        dispatch(setTokenprices(res.data.tokenprices));
-      } else {
-        Toast.show({ type: "error", text1: res.data.value.display });
-      }
-    });
+    // eventEmitter.on("S2C/basic-info", (res) => {
+    //   console.log("BASIC_INFO: ", res.data);
+    //   if (res.data) {
+    //     res.data.balances.map((balance: [number, string]) => {
+    //       setBalances((prev) => {
+    //         return {
+    //           ...prev,
+    //           [allAddresses[balance[0]]]: parseFloat(balance[1]),
+    //         };
+    //       });
+    //     });
+    //     dispatch(setTokens(res.data.tokens));
+    //     dispatch(setMarketcap(res.data.marketcap));
+    //     dispatch(setTokenprices(res.data.tokenprices));
+    //   } else {
+    //     Toast.show({ type: "error", text1: res.data.value.display });
+    //   }
+    // });
   }, []);
 
   useEffect(() => {

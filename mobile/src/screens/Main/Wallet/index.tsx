@@ -3,18 +3,36 @@ import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
 import { faMinus, faPlus, faShare } from "@fortawesome/free-solid-svg-icons";
 import { HStack, Text, VStack, useDisclose } from "native-base";
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import Tokenlist from "../components/Tokenlist";
 import TransferButton from "../components/TransferButton";
 import TransferModal from "../components/TransferModal";
 
 const Wallet: React.FC = () => {
-  const { balances, allAddresses, currentAddress, tokenBalances } = useAuth();
+  const { balances, currentAddress } = useAuth();
   const { marketcap } = useSelector((store: RootState) => store.app);
-  const { bgColor, textColor, gray } = useColors();
+  const { bgColor, textColor } = useColors();
   const { isOpen, onToggle } = useDisclose();
   const handleTransfer = () => {};
+
+  const BalanceItem = useMemo(() => {
+    return (
+      <VStack>
+        <Text fontSize="2xl" textAlign="center">
+          Balance
+        </Text>
+        <Text fontSize="3xl" textAlign="center">
+          ${" "}
+          {(
+            balances[currentAddress] * parseFloat(marketcap.price) || 0
+          ).toFixed(3)}
+          {"\n"}
+          {balances[currentAddress] || 0} QU
+        </Text>
+      </VStack>
+    );
+  }, [balances, currentAddress, marketcap.price]);
 
   return (
     <>
@@ -26,30 +44,7 @@ const Wallet: React.FC = () => {
         color={textColor}
       >
         <VStack>
-          <VStack>
-            <Text fontSize="2xl" textAlign="center">
-              Balance
-            </Text>
-            <Text fontSize="3xl" textAlign="center">
-              {/* {balances.reduce(
-            (acc, currentValue) => acc + Number(currentValue),
-            0
-          )} */}
-              ${" "}
-              {balances.length > 0 &&
-              allAddresses.includes(currentAddress) &&
-              !isNaN(balances[currentAddress]) &&
-              !isNaN(parseFloat(marketcap.price))
-                ? Math.floor(
-                    balances[currentAddress] *
-                      parseFloat(marketcap.price) *
-                      1000
-                  ) / 1000
-                : "0"}
-              {"\n"}
-              {balances[currentAddress]} QU
-            </Text>
-          </VStack>
+          {BalanceItem}
           <HStack w="full" justifyContent="center" space={4}>
             <TransferButton
               icon={faShare}
