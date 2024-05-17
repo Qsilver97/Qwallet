@@ -1,19 +1,21 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { myOrders } from "@app/api/api";
+import eventEmitter from "@app/api/eventEmitter";
+import { useAuth } from "@app/context/AuthContext";
+import { useColors } from "@app/context/ColorContex";
+import tokenIcons from "@app/utils/tokens";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import {
   Box,
   Center,
   HStack,
   Icon,
+  Pressable,
   ScrollView,
   Text,
   VStack,
 } from "native-base";
-import { useColors } from "@app/context/ColorContex";
-import { useAuth } from "@app/context/AuthContext";
-import { myOrders } from "@app/api/api";
-import eventEmitter from "@app/api/eventEmitter";
-import { AntDesign } from "@expo/vector-icons";
-import { ActivityIndicator, ActivityIndicatorBase } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { ActivityIndicator } from "react-native";
 
 type IOrder = [string, string, string, string]; // token, amount, price, type
 type IOrderUnit = [number, string, string, string]; // index, address, amount, price
@@ -53,26 +55,26 @@ const Orderlist: React.FC = () => {
     return (
       <>
         {showData?.map((dt, key) => {
+          const Icon = tokenIcons.find((t) => t.symbol == dt[0])?.icon;
           return (
-            <HStack
-              key={key}
-              space={2}
-              textAlign="center"
-              rounded="xl"
-              bgColor="blueGray.600"
-              p="3"
-              m="2"
-            >
-              <HStack>
-                <VStack></VStack>
-                <VStack></VStack>
-                <Text w="1/3">{dt[0]}</Text>
-                <Text w="1/3">
-                  {dt[1]} {dt[0]}
-                </Text>
-                <Text w="1/3">{dt[2]} QU</Text>
+            <Pressable key={key} _pressed={{ opacity: 0.7 }}>
+              <HStack
+                space={2}
+                textAlign="center"
+                rounded="md"
+                bgColor="blueGray.600"
+                p="2"
+                m="1"
+              >
+                <HStack alignItems="center" space="2">
+                  <Box w="1/4">{Icon && <Icon width={32} height={32} />}</Box>
+                  <Text w="1/3">
+                    {dt[1]} {dt[0]}
+                  </Text>
+                  <Text w="1/3">{dt[2]} QU</Text>
+                </HStack>
               </HStack>
-            </HStack>
+            </Pressable>
           );
         })}
       </>
@@ -100,9 +102,13 @@ const Orderlist: React.FC = () => {
       bgColor={bgColor}
       color={textColor}
     >
-      <Text fontSize="2xl" textAlign="center">
-        My Order List
-      </Text>
+      <HStack justifyContent="center" space="2">
+        <Icon as={FontAwesome} name="list" size="2xl" color={textColor} />
+        <Text fontSize="2xl" textAlign="center">
+          My Order List
+        </Text>
+      </HStack>
+
       <ScrollView w="full" textAlign="center">
         {isLoading && Item ? (
           <VStack flex={1} alignItems="center" justifyContent="center">

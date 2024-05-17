@@ -1,8 +1,9 @@
 import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { faShare } from "@fortawesome/free-solid-svg-icons";
-import { HStack, Text, VStack, useDisclose } from "native-base";
+import { HStack, Icon, Text, VStack, useDisclose } from "native-base";
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import Tokenlist from "../components/Tokenlist";
@@ -19,9 +20,10 @@ const Home: React.FC = () => {
   const BalanceItem = useMemo(() => {
     return (
       <VStack>
-        <Text fontSize="2xl" textAlign="center">
-          Balance
-        </Text>
+        <HStack justifyContent="center" alignItems="center" space="3" p="2">
+          <Icon as={FontAwesome5} name="wallet" size="3xl" color={textColor} />
+          <Text fontSize="4xl">My Wallet</Text>
+        </HStack>
         <Text fontSize="3xl" textAlign="center">
           ${" "}
           {(
@@ -38,14 +40,13 @@ const Home: React.FC = () => {
     <>
       <VStack
         flex={1}
-        justifyItems="center"
-        space={5}
+        space={2}
         bgColor={bgColor}
         color={textColor}
       >
         <VStack>
           {BalanceItem}
-          <HStack w="full" justifyContent="center" space={4}>
+          <HStack w="full" justifyContent="center" space={2}>
             <TransferButton
               icon={faShare}
               title="SEND"
@@ -54,12 +55,11 @@ const Home: React.FC = () => {
           </HStack>
         </VStack>
         <VStack w="full" flex={1} py="2">
-          <VStack>
-            <Text fontSize="xl" textAlign="center">
-              My All Assets
-            </Text>
-          </VStack>
-          <VStack flex={1}>
+          <HStack justifyContent="center" alignItems="center" space="3" p="2">
+            <Icon as={FontAwesome5} name="coins" size="2xl" color={textColor} />
+            <Text fontSize="2xl">My All Assets</Text>
+          </HStack>
+          <VStack flex={1} mt="2">
             <Tokenlist />
           </VStack>
         </VStack>

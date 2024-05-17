@@ -1,9 +1,17 @@
-import React from "react";
 import { useAuth } from "@app/context/AuthContext";
-import { HStack, Pressable, Text, VStack, useDisclose } from "native-base";
 import { useColors } from "@app/context/ColorContex";
-import ConfirmModal from "../components/ConfirmModal";
+import { MaterialIcons } from "@expo/vector-icons";
 import { faWarning } from "@fortawesome/free-solid-svg-icons";
+import {
+  HStack,
+  Icon,
+  Pressable,
+  Text,
+  VStack,
+  useDisclose,
+} from "native-base";
+import React from "react";
+import ConfirmModal from "../components/ConfirmModal";
 
 const AllAddresses: React.FC = () => {
   const { allAddresses, balances } = useAuth();
@@ -17,11 +25,15 @@ const AllAddresses: React.FC = () => {
       bgColor={bgColor}
       color={textColor}
     >
-      <VStack>
-        <Text fontSize="2xl" textAlign="center">
-          All Addresses
-        </Text>
-      </VStack>
+      <HStack justifyContent="center" alignItems="center" space="3" p="2">
+        <Icon
+          as={MaterialIcons}
+          name="library-books"
+          size="3xl"
+          color={textColor}
+        />
+        <Text fontSize="4xl">All Addresses</Text>
+      </HStack>
       <VStack mx={2} space="2">
         {allAddresses.map((address, key) => {
           if (address !== "")

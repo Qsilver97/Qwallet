@@ -41,7 +41,7 @@ const data = [
   },
 ];
 
-const LanguageSelector: React.FC = () => {
+const LanguageSetting: React.FC = () => {
   const { textColor } = useColors();
   const [currrentLanguage, setCurrentLanguage] = useState<string>("en");
   const { isOpen, onToggle } = useDisclose();
@@ -49,12 +49,15 @@ const LanguageSelector: React.FC = () => {
   return (
     <>
       <CollapsibleView
-        title="Select Language"
+        title="Language Setting"
         icon={
           <Icon as={FontAwesome} name="language" size="xl" color={textColor} />
         }
       >
-        {data.map((dt, key) => {
+        <Text fontSize="xl" mx="auto">
+          Please wait Next Version.
+        </Text>
+        {/* {data.map((dt, key) => {
           return (
             <TouchableOpacity
               key={key}
@@ -83,7 +86,7 @@ const LanguageSelector: React.FC = () => {
               </HStack>
             </TouchableOpacity>
           );
-        })}
+        })} */}
       </CollapsibleView>
       <ConfirmModal
         icon={faCheck}
@@ -103,4 +106,4 @@ const LanguageSelector: React.FC = () => {
   );
 };
 
-export default LanguageSelector;
+export default LanguageSetting;

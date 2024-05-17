@@ -32,7 +32,7 @@ const TokenSelect: React.FC<TokenSelectProps> = ({
                 py="1"
                 rounded="3xl"
                 bgColor={
-                  token == selectedToken ? main.celestialBlue : main.jeansBlue
+                  token == selectedToken ? main.celestialBlue : "blueGray.500"
                 }
                 space="2"
                 alignItems="center"

@@ -2,6 +2,7 @@ import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
 import tokenIcons from "@app/utils/tokens";
+import { AntDesign } from "@expo/vector-icons";
 import {
   Box,
   Center,
@@ -13,9 +14,8 @@ import {
   VStack,
 } from "native-base";
 import React, { useMemo } from "react";
-import { useSelector } from "react-redux";
-import { AntDesign } from "@expo/vector-icons";
 import { ActivityIndicator } from "react-native";
+import { useSelector } from "react-redux";
 interface Balances {
   [address: string]: number;
 }
@@ -53,7 +53,6 @@ const Tokenlist: React.FC = () => {
   );
 
   const formattedItems = useMemo(() => {
-    console.log(tokens, tokenBalances, tokenprices, marketcap);
     return (
       <>
         {tokens?.map((token, key) => {
@@ -67,8 +66,8 @@ const Tokenlist: React.FC = () => {
           return (
             <Pressable
               key={key}
-              m="2"
-              p="2"
+              m="1"
+              p="1"
               px="4"
               rounded="md"
               bgColor="blueGray.600"
@@ -112,7 +111,7 @@ const Tokenlist: React.FC = () => {
           </VStack>
         </VStack>
       ) : (
-        <ScrollView px="5" py="2">
+        <ScrollView px="1" py="2">
           <Box>{formattedItems}</Box>
         </ScrollView>
       )}

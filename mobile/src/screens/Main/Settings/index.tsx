@@ -1,8 +1,11 @@
-import React from "react";
-import { Text, VStack } from "native-base";
 import { useColors } from "@app/context/ColorContex";
-import LanguageSelector from "./LanguageSelecter";
-import ColorModeSelecter from "./ColorModeSelecter";
+import { Feather } from "@expo/vector-icons";
+import { HStack, Icon, Text, VStack } from "native-base";
+import React from "react";
+import ColorModeSetting from "./ColorModeSetting";
+import LanguageSetting from "./LanguageSetting";
+import NetworkSetting from "./NetworkSetting";
+import SecuritySetting from "./SecuritySetting";
 
 const Settings: React.FC = () => {
   const { bgColor, textColor } = useColors();
@@ -10,19 +13,21 @@ const Settings: React.FC = () => {
     <VStack
       flex={1}
       justifyItems="center"
-      justifyContent="end"
       space={5}
       bgColor={bgColor}
       color={textColor}
     >
       <VStack>
-        <Text fontSize="3xl" w="full" textAlign="center">
-          Settings
-        </Text>
+        <HStack justifyContent="center" alignItems="center" space="3" p="2">
+          <Icon as={Feather} name="settings" size="3xl" color={textColor} />
+          <Text fontSize="4xl">Settings</Text>
+        </HStack>
       </VStack>
       <VStack>
-        <LanguageSelector />
-        <ColorModeSelecter />
+        <LanguageSetting />
+        <ColorModeSetting />
+        <SecuritySetting />
+        <NetworkSetting />
       </VStack>
     </VStack>
   );

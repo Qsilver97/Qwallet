@@ -3,13 +3,21 @@ import Input from "@app/components/UI/Input";
 import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
+import { FontAwesome5 } from "@expo/vector-icons";
 import {
   faCheck,
   faMinus,
   faPlus,
   faShare,
 } from "@fortawesome/free-solid-svg-icons";
-import { FormControl, HStack, Text, VStack, useDisclose } from "native-base";
+import {
+  FormControl,
+  HStack,
+  Icon,
+  Text,
+  VStack,
+  useDisclose,
+} from "native-base";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import ConfirmModal from "../components/ConfirmModal";
@@ -59,9 +67,15 @@ const Orderbook: React.FC = () => {
         color={textColor}
       >
         <VStack px="5">
-          <Text fontSize="3xl" color={textColor} textAlign="center">
-            Orderbook
-          </Text>
+          <HStack justifyContent="center" alignItems="center" space="3" p="2">
+            <Icon
+              as={FontAwesome5}
+              name="book-open"
+              size="3xl"
+              color={textColor}
+            />
+            <Text fontSize="4xl">Orderbook</Text>
+          </HStack>
           <TokenSelect
             selectedToken={currentToken}
             onChange={setCurrentToken}

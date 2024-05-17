@@ -1,10 +1,9 @@
+import { HStack, Icon, Text, VStack } from "native-base";
 import React from "react";
 import { useSelector } from "react-redux";
-import { HStack, Text, VStack } from "native-base";
 
 import { RootState } from "@app/redux/store";
-import { faReply, faShare } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 type TransactionItemType = [string, string, string, string, string, string];
 
@@ -19,8 +18,8 @@ const TransactionItem: React.FC<IProps> = ({ transaction }) => {
   return (
     <HStack
       mx="4"
-      my="2"
-      rounded="xl"
+      my="1"
+      rounded="md"
       py="2"
       px="4"
       space="2"
@@ -29,11 +28,12 @@ const TransactionItem: React.FC<IProps> = ({ transaction }) => {
       justifyContent="space-between"
     >
       <HStack alignItems="center" space={4}>
-        <FontAwesomeIcon
-          icon={isSend ? faShare : faReply}
-          color={isSend ? "red" : "green"}
-          size={28}
-        />
+        <Icon
+          as={FontAwesome5}
+          name={isSend ? "share" : "reply"}
+          color={isSend ? "red.600" : "green.600"}
+          size="xl"
+        ></Icon>
         <VStack>
           <Text>{Math.abs(parseInt(transaction[3]))} QU</Text>
           <Text>
@@ -45,7 +45,13 @@ const TransactionItem: React.FC<IProps> = ({ transaction }) => {
         </VStack>
       </HStack>
       <VStack>
-        <Text>{transaction[4] !== "" ? transaction[4] : "Unknown"}</Text>
+        <Text>
+          {transaction[4] !== ""
+            ? transaction[4] == "confirmed"
+              ? "Confirmed"
+              : "Failed"
+            : "Finished"}
+        </Text>
         <Text>
           {d.getMonth()}/{d.getDate()}, {d.getFullYear()}
         </Text>

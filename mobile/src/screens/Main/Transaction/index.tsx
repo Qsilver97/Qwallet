@@ -1,10 +1,19 @@
-import React, { useMemo, useState } from "react";
 import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
-import { Pressable, ScrollView, Text, VStack, useDisclose } from "native-base";
+import { FontAwesome5 } from "@expo/vector-icons";
+import {
+  HStack,
+  Icon,
+  Pressable,
+  ScrollView,
+  Text,
+  VStack,
+  useDisclose,
+} from "native-base";
+import React, { useMemo, useState } from "react";
+import { ActivityIndicator } from "react-native";
 import TransactionItem from "./TransactionItem";
 import TransactionDetailModal from "./TranslationDetailModal";
-import { ActivityIndicator } from "react-native";
 
 const Transaction: React.FC = () => {
   const { histories, isLoading } = useAuth();
@@ -35,16 +44,20 @@ const Transaction: React.FC = () => {
     <>
       <VStack
         flex={1}
-        justifyContent="around"
-        py="10"
         space={5}
         bgColor={bgColor}
         color={textColor}
       >
         <VStack flex={1}>
-          <Text fontSize="3xl" textAlign="center">
-            Transactions
-          </Text>
+          <HStack justifyContent="center" alignItems="center" space="3" p="2">
+            <Icon
+              as={FontAwesome5}
+              name="history"
+              size="3xl"
+              color={textColor}
+            />
+            <Text fontSize="4xl">Transactions</Text>
+          </HStack>
           {isLoading && Item ? (
             <VStack flex={1} alignItems="center" justifyContent="center">
               <ActivityIndicator size="large" color={main.celestialBlue} />

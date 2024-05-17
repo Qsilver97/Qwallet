@@ -2,15 +2,19 @@ import CollapsibleView from "@app/components/UI/CollapsibleView";
 import { useColors } from "@app/context/ColorContex";
 import { HStack, Icon, Text, useColorMode } from "native-base";
 import React from "react";
-import { MaterialCommunityIcons, MaterialIcons, Ionicons } from "@expo/vector-icons";
+import {
+  MaterialCommunityIcons,
+  MaterialIcons,
+  Ionicons,
+} from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 
-const ColorModeSelecter: React.FC = () => {
+const ColorModeSetting: React.FC = () => {
   const { textColor } = useColors();
   const { setColorMode } = useColorMode();
   return (
     <CollapsibleView
-      title="Select Color Mode"
+      title="Color Mode Setting"
       icon={
         <Icon
           as={MaterialCommunityIcons}
@@ -20,8 +24,9 @@ const ColorModeSelecter: React.FC = () => {
         />
       }
     >
-      <HStack w="full" p={2}>
-        <TouchableOpacity
+      <HStack w="full" p={2} justifyContent="center">
+        <Text fontSize="xl">Please wait Next Version.</Text>
+        {/* <TouchableOpacity
           style={{ width: "50%" }}
           onPress={() => setColorMode("light")}
         >
@@ -42,10 +47,10 @@ const ColorModeSelecter: React.FC = () => {
               Dark Mode
             </Text>
           </HStack>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </HStack>
     </CollapsibleView>
   );
 };
 
-export default ColorModeSelecter;
+export default ColorModeSetting;
