@@ -20,6 +20,7 @@ import { useAuth } from "@app/context/AuthContext";
 import { addAccount } from "@app/api/api";
 import eventEmitter from "@app/api/eventEmitter";
 import ConfirmModal from "./ConfirmModal";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Header: React.FC = () => {
   const { bgColor, textColor, main, gray } = useColors();
@@ -38,8 +39,8 @@ const Header: React.FC = () => {
     );
   };
 
-  useEffect(() => {
-    eventEmitter.on("S2C/add-account", (res) => {
+  useFocusEffect(() => {
+    const handleAddAddressEvent = (res: any) => {
       if (res.data) {
         login(res.data);
       } else {
@@ -47,8 +48,12 @@ const Header: React.FC = () => {
       }
       setModalVisible(false);
       setAddingStatus(false);
-    });
-  }, []);
+    };
+    eventEmitter.on("S2C/add-account", handleAddAddressEvent);
+    return () => {
+      eventEmitter.off("S2C/add-account", handleAddAddressEvent);
+    };
+  });
 
   return (
     <>

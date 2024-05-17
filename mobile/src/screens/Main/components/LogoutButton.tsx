@@ -7,15 +7,17 @@ import { useNavigation } from "@react-navigation/native";
 import { Text, useDisclose } from "native-base";
 import local from "@app/utils/locales";
 import ConfirmModal from "./ConfirmModal";
+import { logout } from "@app/api/api";
 
 const LogoutButton: React.FC = () => {
   const { textColor, main } = useColors();
-  const { logout } = useAuth();
+  const auth = useAuth();
   const navigation = useNavigation();
   const { isOpen, onToggle } = useDisclose();
 
   const handleLogout = () => {
     logout();
+    auth.logout();
     navigation.navigate("Login");
   };
   return (
@@ -27,11 +29,7 @@ const LogoutButton: React.FC = () => {
           size={24}
         ></FontAwesomeIcon>
       </TouchableOpacity>
-      <ConfirmModal
-        isOpen={isOpen}
-        onToggle={onToggle}
-        onPress={handleLogout}
-      >
+      <ConfirmModal isOpen={isOpen} onToggle={onToggle} onPress={handleLogout}>
         <Text fontSize={"xl"} textAlign={"center"}>
           {local.Main.Header.ReallyLogout}
         </Text>

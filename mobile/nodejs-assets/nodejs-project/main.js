@@ -15,6 +15,7 @@ const {
   buySell,
   myOrders,
   tokenPrices,
+  logout,
 } = require("./controller");
 const wasmManager = require("./managers/wasmManager");
 const stateManager = require("./managers/stateManager");
@@ -66,6 +67,10 @@ rn_bridge.channel.on("message", async (msg) => {
             })
           );
         }
+        break;
+      }
+      case "C2S/logout": {
+        logout();
         break;
       }
       case "C2S/create": {

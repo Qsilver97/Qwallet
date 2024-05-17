@@ -1,6 +1,12 @@
 import { basicInfo, getHistory, getToken, transferStatus } from "@app/api/api";
 import eventEmitter from "@app/api/eventEmitter";
-import { setMarketcap, setTokenprices, setTokens } from "@app/redux/appSlice";
+import {
+  setIsAuthenticated,
+  setMarketcap,
+  setPassword,
+  setTokenprices,
+  setTokens,
+} from "@app/redux/appSlice";
 import {
   ReactNode,
   createContext,
@@ -39,6 +45,8 @@ interface AuthContextType {
   txStatus: "Open" | "Closed" | "Rejected" | "Pending" | "Success";
   expectedTick: number;
   txResult: string;
+  isLoading: boolean;
+
   login: (userDetails: UserDetailType) => void;
   logout: () => void;
   setTempPassword: React.Dispatch<React.SetStateAction<string>>;
@@ -53,6 +61,7 @@ interface AuthContextType {
       [name: string]: Balances;
     }>
   >;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 type TransactionItem = [string, string, string, string, string, string];
@@ -77,6 +86,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     [name: string]: Balances;
   }>({});
   const [statusInterval, setStatusInterval] = useState<any>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const login = (userDetails: UserDetailType | null) => {
     setUser(userDetails);
@@ -86,21 +96,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    // axios
-    //   .post(`${}/api/logout`)
-    //   .then((resp) => {
-    //     console.log(resp.data);
-    //     dispatch(setIsAuthenticated(true));
-    //     login(null);
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   })
-    //   .finally(() => {});
+    dispatch(setIsAuthenticated(false));
+    dispatch(setPassword(""));
+    setUser(null);
   };
 
   useEffect(() => {
     if (currentAddress != "") {
+      setIsLoading(true);
       getHistory(currentAddress);
       getToken();
     }
@@ -114,41 +117,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [user]);
 
   useEffect(() => {
-    eventEmitter.on("S2C/histories", (res) => {
-      if (res.data == false) setHistories([]);
-      else if (res.data.history) {
+    const handleHistoryEvent = (res: any) => {
+      console.log("S2C/histories: ", res);
+      if (res.data === false) {
+        setHistories([]);
+      } else if (res.data.history) {
         setHistories(res.data.history);
       } else {
         // setHistories([]);
       }
-    });
-    eventEmitter.on("S2C/tokens", (res) => {
+      setIsLoading(false);
+    };
+    const handleTokenEvent = (res: any) => {
       console.log("S2C/tokens", res);
       if (res.data) {
         if (res.data.tokens) dispatch(setTokens(res.data.tokens));
       } else {
         Toast.show({ type: "error", text1: "E21: Error ocurred!" });
       }
-    });
-    // eventEmitter.on("S2C/basic-info", (res) => {
-    //   console.log("BASIC_INFO: ", res.data);
-    //   if (res.data) {
-    //     res.data.balances.map((balance: [number, string]) => {
-    //       setBalances((prev) => {
-    //         return {
-    //           ...prev,
-    //           [allAddresses[balance[0]]]: parseFloat(balance[1]),
-    //         };
-    //       });
-    //     });
-    //     dispatch(setTokens(res.data.tokens));
-    //     dispatch(setMarketcap(res.data.marketcap));
-    //     dispatch(setTokenprices(res.data.tokenprices));
-    //   } else {
-    //     Toast.show({ type: "error", text1: res.data.value.display });
-    //   }
-    // });
-    eventEmitter.on("S2C/transfer", (res) => {
+    };
+    const handleTransferEvent = (res: any) => {
       if (res.data) {
         const _statusInterval = setInterval(() => {
           transferStatus();
@@ -158,8 +146,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         Toast.show({ type: "error", text1: "E24: Error occured!" });
         setTxStatus("Rejected");
       }
-    });
-    eventEmitter.on("S2C/transfer-status", (res) => {
+    };
+    const handleTransferStatusEvent = (res: any) => {
       console.log("S2C/transfer-status", res);
       if (res.data) {
         if (res.data == "failed") {
@@ -177,8 +165,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setTxStatus("Rejected");
         clearInterval(statusInterval);
       }
-    });
-    eventEmitter.on("S2C/buy-sell", (res) => {
+    };
+    const handleBuySellEvent = (res: any) => {
       if (res.data) {
         const _statusInterval = setInterval(() => {
           transferStatus();
@@ -192,7 +180,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       } else {
       }
-    });
+    };
+    eventEmitter.on("S2C/histories", handleHistoryEvent);
+    eventEmitter.on("S2C/tokens", handleTokenEvent);
+    eventEmitter.on("S2C/transfer", handleTransferEvent);
+    eventEmitter.on("S2C/transfer-status", handleTransferStatusEvent);
+    eventEmitter.on("S2C/buy-sell", handleBuySellEvent);
+
+    // Cleanup function to remove the event listener
+    return () => {
+      eventEmitter.off("S2C/histories", handleHistoryEvent);
+      eventEmitter.off("S2C/tokens", handleTokenEvent);
+      eventEmitter.off("S2C/transfer", handleTransferEvent);
+      eventEmitter.off("S2C/transfer-status", handleTransferStatusEvent);
+      eventEmitter.off("S2C/buy-sell", handleBuySellEvent);
+    };
   }, []);
 
   useEffect(() => {
@@ -230,6 +232,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         expectedTick,
         txResult,
         tokenBalances,
+        isLoading,
         login,
         logout,
         setTempPassword,
@@ -238,6 +241,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setTxStatus,
         setExpectedTick,
         setTokenBalances,
+        setIsLoading,
       }}
     >
       {children}

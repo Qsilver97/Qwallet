@@ -11,7 +11,8 @@ import { useAuth } from "@app/context/AuthContext";
 
 export const SocketCom: React.FC = () => {
   const dispatch = useDispatch();
-  const { setBalances, setTokenBalances, allAddresses, balances } = useAuth();
+  const { setBalances, setTokenBalances, allAddresses, setIsLoading } =
+    useAuth();
   useEffect(() => {
     eventEmitter.on("S2C/live", (res) => {
       if (res.data.command == "CurrentTickInfo") {

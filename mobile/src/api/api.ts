@@ -27,6 +27,10 @@ export const login = (password: string) => {
   );
 };
 
+export const logout = () => {
+  nodejs.channel.send(JSON.stringify({ action: "C2S/logout", data: {} }));
+};
+
 export const create = (command: string) => {
   nodejs.channel.send(
     JSON.stringify({ action: "C2S/create", data: { command } })

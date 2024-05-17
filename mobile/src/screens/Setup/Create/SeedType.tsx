@@ -28,7 +28,7 @@ const SeedType = () => {
   };
 
   useEffect(() => {
-    eventEmitter.on("S2C/create", (res) => {
+    const handleCreateEvent = (res: any) => {
       if (res.data?.value) {
         if (res.data.value.result >= 0) {
           Toast.show({
@@ -48,7 +48,11 @@ const SeedType = () => {
       } else {
         Toast.show({ type: "error", text1: res.error });
       }
-    });
+    };
+    eventEmitter.on("S2C/create", handleCreateEvent);
+    return () => {
+      eventEmitter.off("S2C/create", handleCreateEvent);
+    };
   }, []);
   return (
     <VStack

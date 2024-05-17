@@ -12,7 +12,6 @@ import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
 import local from "@app/utils/locales";
 
-
 const Restore: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -70,14 +69,22 @@ const Restore: React.FC = () => {
   }, [password, confirmPassword]);
 
   useEffect(() => {
-    eventEmitter.on("S2C/passwordAvail", (res) => {
+    const handlePasswordAvailEvent = (res) => {
       setPasswordStatus(res);
-    });
-    eventEmitter.on("S2C/restore", (res) => {
+    };
+    const handleRestoreEvent = (res) => {
       navigation.navigate("Login");
       setRecovering(false);
-    });
+    };
+    eventEmitter.on("S2C/passwordAvail", handlePasswordAvailEvent);
+    eventEmitter.on("S2C/restore", handleRestoreEvent);
+
+    return () => {
+      eventEmitter.off("S2C/passwordAvail", handlePasswordAvailEvent);
+      eventEmitter.off("S2C/restore", handleRestoreEvent);
+    };
   }, []);
+
   return (
     <VStack
       flex={1}

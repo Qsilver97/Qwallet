@@ -15,40 +15,45 @@ import {
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { AntDesign } from "@expo/vector-icons";
-
-// const tokenBalances = {
-//   QX: {
-//     TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-//   },
-//   QWALLET: {
-//     TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-//   },
-//   QFT: {
-//     TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-//   },
-//   QTRY: {
-//     TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-//   },
-//   CFB: {
-//     TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-//   },
-//   RANDOM: {
-//     TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-//   },
-//   QUTIL: {
-//     TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-//   },
-// };
+import { ActivityIndicator } from "react-native";
+interface Balances {
+  [address: string]: number;
+}
+const tokenBalances: {
+  [name: string]: Balances;
+} = {
+  QX: {
+    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
+  },
+  QWALLET: {
+    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
+  },
+  QFT: {
+    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
+  },
+  QTRY: {
+    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
+  },
+  CFB: {
+    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
+  },
+  RANDOM: {
+    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
+  },
+  QUTIL: {
+    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
+  },
+};
 
 const Tokenlist: React.FC = () => {
-  const { textColor } = useColors();
-  const { currentAddress, tokenBalances } = useAuth();
+  const { textColor, main } = useColors();
+  const { currentAddress, isLoading } = useAuth();
   const { tokens, tokenprices, marketcap } = useSelector(
     (store: RootState) => store.app
   );
 
   const formattedItems = useMemo(() => {
-    return tokens.map((token, key) => {
+    return tokens?.map((token, key) => {
       const Icon = tokenIcons.find((t) => t.symbol == token)?.icon;
       const balance = tokenBalances?.[token]?.[currentAddress] || 0;
       const price = parseFloat(tokenprices?.[token]?.[0] || "0"); // Handle missing price
@@ -89,7 +94,11 @@ const Tokenlist: React.FC = () => {
 
   return (
     <>
-      {Object.keys(tokenBalances).length === 0 ? (
+      {isLoading && formattedItems ? (
+        <VStack flex={1} alignItems="center" justifyContent="center">
+          <ActivityIndicator size="large" color={main.celestialBlue} />
+        </VStack>
+      ) : Object.keys(tokenBalances).length === 0 ? (
         <VStack flex={1} alignItems="center" justifyContent="center">
           <VStack>
             <Center>

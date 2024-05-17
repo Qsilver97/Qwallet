@@ -1,10 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { Center, HStack, Icon, ScrollView, Text, VStack } from "native-base";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  Box,
+  Center,
+  HStack,
+  Icon,
+  ScrollView,
+  Text,
+  VStack,
+} from "native-base";
 import { useColors } from "@app/context/ColorContex";
 import { useAuth } from "@app/context/AuthContext";
 import { myOrders } from "@app/api/api";
 import eventEmitter from "@app/api/eventEmitter";
 import { AntDesign } from "@expo/vector-icons";
+import { ActivityIndicator, ActivityIndicatorBase } from "react-native";
 
 type IOrder = [string, string, string, string]; // token, amount, price, type
 type IOrderUnit = [number, string, string, string]; // index, address, amount, price
@@ -16,12 +25,13 @@ interface IOrderData {
 }
 
 const Orderlist: React.FC = () => {
-  const { textColor, bgColor } = useColors();
-  const { currentAddress, allAddresses } = useAuth();
+  const { textColor, bgColor, main } = useColors();
+  const { currentAddress, allAddresses, isLoading, setIsLoading } = useAuth();
   const [orderData, setOrderData] = useState<IOrderData>({});
   const [showData, setShowData] = useState<IOrder[]>([]);
 
   useEffect(() => {
+    setIsLoading(true);
     Object.keys(orderData).map((token) => {
       orderData[token].bids.map((bid) => {
         if (allAddresses[bid[0]] == currentAddress)
@@ -36,14 +46,49 @@ const Orderlist: React.FC = () => {
           });
       });
     });
+    setIsLoading(false);
   }, [orderData, currentAddress]);
+
+  const Item = useMemo(() => {
+    return (
+      <>
+        {showData?.map((dt, key) => {
+          return (
+            <HStack
+              key={key}
+              space={2}
+              textAlign="center"
+              rounded="xl"
+              bgColor="blueGray.600"
+              p="3"
+              m="2"
+            >
+              <HStack>
+                <VStack></VStack>
+                <VStack></VStack>
+                <Text w="1/3">{dt[0]}</Text>
+                <Text w="1/3">
+                  {dt[1]} {dt[0]}
+                </Text>
+                <Text w="1/3">{dt[2]} QU</Text>
+              </HStack>
+            </HStack>
+          );
+        })}
+      </>
+    );
+  }, [showData]);
 
   useEffect(() => {
     myOrders();
     setShowData([]);
-    eventEmitter.on("S2C/my-orders", (res) => {
+    const handleMyOrdersEvent = (res: any) => {
       setOrderData(res.data);
-    });
+    };
+    eventEmitter.on("S2C/my-orders", handleMyOrdersEvent);
+    return () => {
+      eventEmitter.off("S2C/my-orders", handleMyOrdersEvent);
+    };
   }, [currentAddress]);
 
   return (
@@ -59,30 +104,12 @@ const Orderlist: React.FC = () => {
         My Order List
       </Text>
       <ScrollView w="full" textAlign="center">
-        {showData.length ? (
-          showData.map((dt, key) => {
-            return (
-              <HStack
-                key={key}
-                space={2}
-                textAlign="center"
-                rounded="xl"
-                bgColor="blueGray.600"
-                p="3"
-                m="2"
-              >
-                <HStack>
-                  <VStack></VStack>
-                  <VStack></VStack>
-                  <Text w="1/3">{dt[0]}</Text>
-                  <Text w="1/3">
-                    {dt[1]} {dt[0]}
-                  </Text>
-                  <Text w="1/3">{dt[2]} QU</Text>
-                </HStack>
-              </HStack>
-            );
-          })
+        {isLoading && Item ? (
+          <VStack flex={1} alignItems="center" justifyContent="center">
+            <ActivityIndicator size="large" color={main.celestialBlue} />
+          </VStack>
+        ) : showData.length ? (
+          Item
         ) : (
           <VStack flex={1} alignItems="center" justifyContent="center">
             <VStack>

@@ -57,12 +57,15 @@ const Login: React.FC = () => {
     // setTimeout(() => {
     //   setLoginWaiting(false);
     //   setPasswordStatus(true);
-    //   Toast.show({ type: "error", text1: "E04: Login failed. Please try again." });
+    //   Toast.show({
+    //     type: "error",
+    //     text1: "E04: Login failed. Please try again.",
+    //   });
     // }, 5000);
   };
 
   useEffect(() => {
-    eventEmitter.on("S2C/login", (res) => {
+    const handleLoginEvent = (res: any) => {
       if (res.success) {
         Toast.show({ type: "success", text1: "Login Success!" });
         const userInfo: UserDetailType = res.data;
@@ -76,10 +79,16 @@ const Login: React.FC = () => {
         Toast.show({ type: "error", text1: "E06: " + res.error });
       }
       setLoginWaiting(false);
-    });
-    eventEmitter.on("S2C/passwordAvail", (res) => {
+    };
+    const handlePasswordAvailEvent = (res: any) => {
       setPasswordStatus(res.data);
-    });
+    };
+    eventEmitter.on("S2C/login", handleLoginEvent);
+    eventEmitter.on("S2C/passwordAvail", handlePasswordAvailEvent);
+    return () => {
+      eventEmitter.off("S2C/login", handleLoginEvent);
+      eventEmitter.off("S2C/passwordAvail", handlePasswordAvailEvent);
+    };
   }, []);
 
   return (
