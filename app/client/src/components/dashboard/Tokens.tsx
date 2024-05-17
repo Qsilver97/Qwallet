@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import TokenComponent from "./TokenComponent";
 import { AssetItemProps } from "../../utils/interfaces";
-import { assetsItems } from "../../utils/constants";
 import TokenModal from "./modal/TokenModal";
 
 const Tokens: React.FC = () => {
@@ -17,7 +16,7 @@ const Tokens: React.FC = () => {
                 <h2 className="font-Inter font-semibold text-2xl pb-5">
                     Tokens
                 </h2>
-                <TokenComponent tokens={assetsItems} onSend={handleSend} />
+                <TokenComponent onSend={handleSend} />
             </div>
         </>
     );

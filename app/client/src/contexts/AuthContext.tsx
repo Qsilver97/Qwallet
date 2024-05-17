@@ -116,7 +116,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         value: item.name,
     }));
 
-    const [currentToken, setCurrentToken] = useState<TokenOption>(tokenOptions[5]);
+    const [currentToken, setCurrentToken] = useState<TokenOption>(tokenOptions[1]);
 
     const [password, setPassword] = useState<string>("");
 
