@@ -11,11 +11,15 @@ import { TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import local from "@app/utils/locales";
 
-
 const ColorModeSetting: React.FC = () => {
   const { textColor } = useColors();
   const { setColorMode } = useColorMode();
   const lang = local.Main.Settings;
+
+  const handleClick = (color: string) => {
+    setColorMode(color);
+    AsyncStorage.setItem("color", color);
+  };
 
   return (
     <CollapsibleView
@@ -33,10 +37,7 @@ const ColorModeSetting: React.FC = () => {
         {/* <Text fontSize="xl">Please wait Next Version.</Text> */}
         <TouchableOpacity
           style={{ width: "50%" }}
-          onPress={() => {
-            setColorMode("light");
-            AsyncStorage.setItem("color", "light");
-          }}
+          onPress={() => handleClick("light")}
         >
           <HStack textAlign="center" alignItems="center" space={2}>
             <Icon
@@ -52,10 +53,7 @@ const ColorModeSetting: React.FC = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={{ width: "50%" }}
-          onPress={() => {
-            setColorMode("dark");
-            AsyncStorage.setItem("color", "dark");
-          }}
+          onPress={() => handleClick("dark")}
         >
           <HStack textAlign={"center"} space={2}>
             <Icon

@@ -18,9 +18,8 @@ import { ActivityIndicator } from "react-native";
 import { useSelector } from "react-redux";
 import local from "@app/utils/locales";
 
-
 const Tokenlist: React.FC = () => {
-  const { textColor, main } = useColors();
+  const { textColor, main, panelBgColor } = useColors();
   const { currentAddress, isLoading, tokenBalances } = useAuth();
   const { tokens, tokenprices, marketcap } = useSelector(
     (store: RootState) => store.app
@@ -45,7 +44,7 @@ const Tokenlist: React.FC = () => {
               p="1"
               px="4"
               rounded="md"
-              bgColor="blueGray.600"
+              bgColor={panelBgColor}
               _pressed={{ opacity: 0.6 }}
             >
               <HStack alignItems="center" justifyContent="space-between">

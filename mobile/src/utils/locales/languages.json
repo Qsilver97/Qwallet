@@ -162,14 +162,15 @@
         "LightMode": "Light Mode",
         "DarkMode": "Dark Mode",
         "LanguageSetting": "Language Setting",
-        "ConfirmLanguageChange": "Are you really want to change language to {language}?",
+        "ConfirmLanguageChange": "Do you really want to change language to {language}?",
         "Languages": {
           "en": "English (United States)",
           "zh": "Chinese (China)",
           "es": "Spanish (Spain)",
           "fr": "French (France)",
           "ru": "Russian (Russia)",
-          "ja": "Japanese (Japan)"
+          "ja": "Japanese (Japan)",
+          "de": "German (Germany)"
         },
         "NetworkSetting": "Network Settings",
         "PleaseWaitNextVersion": "Please wait Next Version.",
@@ -316,7 +317,7 @@
       "Wallet": {
         "Home": {
           "MyWallet": "我的钱包",
-          "CurrentTick": "当前滴答",
+          "CurrentTick": "当前Tick",
           "AllAssets": "我的所有资产"
         },
         "AllAddress": {
@@ -336,8 +337,8 @@
         "ConfirmBuy": "您确定要以 {price} QU 的价格购买 {amount} {currentToken} 吗?",
         "Status": "状态",
         "TransactionID": "交易ID",
-        "CurrentTick": "当前滴答",
-        "ExpectedTick": "预期滴答",
+        "CurrentTick": "当前Tick",
+        "ExpectedTick": "预期Tick",
         "MyOrderList": "我的订单列表",
         "NoOrders": "您在这个地址没有任何买入/卖出订单!"
       },
@@ -393,8 +394,8 @@
         "Token": "代币",
         "Status": "状态",
         "TransactionID": "交易ID",
-        "CurrentTick": "当前滴答",
-        "ExpectedTick": "预期滴答",
+        "CurrentTick": "当前Tick",
+        "ExpectedTick": "预期Tick",
         "InvalidAddressOrAmount": "无效的地址或金额!"
       }
     },
@@ -1136,7 +1137,7 @@
       "Wallet": {
         "Home": {
           "MyWallet": "Мой кошелек",
-          "CurrentTick": "Текущий тик",
+          "CurrentTick": "Текущий Tick",
           "AllAssets": "Все мои активы"
         },
         "AllAddress": {
@@ -1156,8 +1157,8 @@
         "ConfirmBuy": "Вы действительно хотите купить {amount} {currentToken} по цене {price} QU?",
         "Status": "Статус",
         "TransactionID": "ID транзакции",
-        "CurrentTick": "Текущий тик",
-        "ExpectedTick": "Ожидаемый тик",
+        "CurrentTick": "Текущий Tick",
+        "ExpectedTick": "Ожидаемый Tick",
         "MyOrderList": "Мой список ордеров",
         "NoOrders": "У вас нет ордеров на покупку/продажу по этому адресу!"
       },
@@ -1213,8 +1214,8 @@
         "Token": "Токен",
         "Status": "Статус",
         "TransactionID": "ID транзакции",
-        "CurrentTick": "Текущий тик",
-        "ExpectedTick": "Ожидаемый тик",
+        "CurrentTick": "Текущий Tick",
+        "ExpectedTick": "Ожидаемый Tick",
         "InvalidAddressOrAmount": "Недействительный адрес или сумма!"
       }
     },
@@ -1341,7 +1342,7 @@
       "Wallet": {
         "Home": {
           "MyWallet": "私のウォレット",
-          "CurrentTick": "現在のティック",
+          "CurrentTick": "現在のTick",
           "AllAssets": "私のすべての資産"
         },
         "AllAddress": {
@@ -1361,8 +1362,8 @@
         "ConfirmBuy": "{amount} {currentToken}を{price} QUで本当に購入しますか？",
         "Status": "ステータス",
         "TransactionID": "トランザクションID",
-        "CurrentTick": "現在のティック",
-        "ExpectedTick": "期待されるティック",
+        "CurrentTick": "現在のTick",
+        "ExpectedTick": "期待されるTick",
         "MyOrderList": "私のオーダーリスト",
         "NoOrders": "このアドレスには購入/販売オーダーがありません！"
       },
@@ -1418,8 +1419,8 @@
         "Token": "トークン",
         "Status": "ステータス",
         "TransactionID": "トランザクションID",
-        "CurrentTick": "現在のティック",
-        "ExpectedTick": "期待されるティック",
+        "CurrentTick": "現在のTick",
+        "ExpectedTick": "期待されるTick",
         "InvalidAddressOrAmount": "無効なアドレスまたは金額！"
       }
     },

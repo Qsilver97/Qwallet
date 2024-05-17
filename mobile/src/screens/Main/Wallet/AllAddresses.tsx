@@ -14,10 +14,9 @@ import React from "react";
 import ConfirmModal from "../components/ConfirmModal";
 import local from "@app/utils/locales";
 
-
 const AllAddresses: React.FC = () => {
   const { allAddresses, balances } = useAuth();
-  const { bgColor, textColor } = useColors();
+  const { bgColor, textColor, panelBgColor } = useColors();
   const { isOpen, onToggle } = useDisclose();
   const lang = local.Main.Wallet.AllAddress;
 
@@ -47,7 +46,7 @@ const AllAddresses: React.FC = () => {
                 _pressed={{ opacity: 0.6 }}
                 onLongPress={onToggle}
               >
-                <HStack p="3" space="2" bgColor="blueGray.600">
+                <HStack p="3" space="2" bgColor={panelBgColor}>
                   <Text w="5%">{key + 1}</Text>
                   <Text flex={1} ellipsizeMode="middle" numberOfLines={1}>
                     {address}

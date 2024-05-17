@@ -58,13 +58,13 @@ const ConfirmModal: React.FC<IProps> = ({
                 bgColor={main.celestialBlue}
                 rounded={"full"}
                 mx={"auto"}
-                p={3}
+                p={5}
                 my={6}
               >
                 <FontAwesomeIcon
                   icon={icon as IconDefinition}
                   size={72}
-                  color={textColor}
+                  color="white"
                 ></FontAwesomeIcon>
               </View>
             )}

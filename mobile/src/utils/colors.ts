@@ -21,11 +21,15 @@ const colors = {
     bgColor: "#192B3B",
     textColor: "#FFFFFF",
     btnBgColor: "#3695DE",
+    panelBgColor: "#475569",
+    selectedPanelBgColor: "#1E293B"
   },
   light: {
-    bgColor: "#FFFFFF",
-    textColor: "#333333",
+    bgColor: "#C5D6F1",
+    textColor: "#222222",
     btnBgColor: "#3695DE",
+    panelBgColor: "#EDF1F9",
+    selectedPanelBgColor: "#99B9EE"
   },
 };
 

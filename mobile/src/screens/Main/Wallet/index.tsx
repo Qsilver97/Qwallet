@@ -34,14 +34,9 @@ const Wallet: React.FC = () => {
         renderInPortal={false}
         shadow={2}
         size="sm"
-        color={main.celestialBlue}
+        bgColor={main.celestialBlue}
         icon={
-          <Icon
-            as={FontAwesome5}
-            color={textColor}
-            name="share"
-            size="xl"
-          ></Icon>
+          <Icon as={FontAwesome5} color="white" name="share" size="xl"></Icon>
         }
         onPress={onToggle}
       />

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { VStack, Text, Image } from "native-base";
+import React, { useEffect, useMemo, useState } from "react";
+import { VStack, Text, useColorMode } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  Image,
   NativeSyntheticEvent,
   TextInputKeyPressEventData,
   TouchableOpacity,
@@ -33,6 +34,13 @@ const Login: React.FC = () => {
   const [loginWaiting, setLoginWaiting] = useState<boolean>(false);
   const auth = useAuth();
   const lang = local.Login;
+  const { colorMode } = useColorMode();
+
+  const logoSource = useMemo(() => {
+    return colorMode === "dark"
+      ? require("@assets/icon.png")
+      : require("@assets/favicon.png");
+  }, [colorMode]);
 
   const handlePasswordChange = (value: string) => {
     passwordAvail(value);
@@ -108,7 +116,11 @@ const Login: React.FC = () => {
         justifyContent="center"
         justifyItems="center"
       >
-        <Image source={require("@assets/icon.png")} alt="Logo" size="xl" />
+        <Image
+          source={logoSource}
+          alt="Logo"
+          style={{ width: 160, height: 160 }}
+        />
         <Text fontSize="5xl">{lang.Login}</Text>
         <Input
           value={password}

@@ -15,7 +15,7 @@ const TokenSelect: React.FC<TokenSelectProps> = ({
   selectedToken,
   onChange,
 }) => {
-  const { textColor, main } = useColors();
+  const { textColor, main, panelBgColor } = useColors();
   const { tokens } = useSelector((store: RootState) => store.app);
 
   const TokenList = useMemo(() => {
@@ -30,7 +30,7 @@ const TokenSelect: React.FC<TokenSelectProps> = ({
                 py="1"
                 rounded="3xl"
                 bgColor={
-                  token == selectedToken ? main.celestialBlue : "blueGray.500"
+                  token == selectedToken ? main.celestialBlue : panelBgColor
                 }
                 space="2"
                 alignItems="center"

@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@app/redux/store";
 import { FontAwesome5 } from "@expo/vector-icons";
 import local from "@app/utils/locales"; // Importing the localization setup
+import { useColors } from "@app/context/ColorContex";
 
 type TransactionItemType = [string, string, string, string, string, string];
 
@@ -14,6 +15,7 @@ interface IProps {
 
 const TransactionItem: React.FC<IProps> = ({ transaction }) => {
   const { marketcap } = useSelector((store: RootState) => store.app);
+  const { panelBgColor } = useColors();
   const isSend = parseFloat(transaction[3]) < 0;
   var d = new Date(parseInt(`${transaction[5]}000`));
   const lang = local.Main.Transaction.Status;
@@ -26,7 +28,7 @@ const TransactionItem: React.FC<IProps> = ({ transaction }) => {
       py="2"
       px="4"
       space="2"
-      backgroundColor="blueGray.600"
+      backgroundColor={panelBgColor}
       alignItems="center"
       justifyContent="space-between"
     >

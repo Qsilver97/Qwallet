@@ -25,6 +25,8 @@ import TokenSelect from "../components/TokenSelect";
 import TransferButton from "../components/TransferButton";
 import Orderlist from "./components/Orderlist";
 import local from "@app/utils/locales";
+import FormLabel from "@app/components/UI/FormLabel";
+import Toast from "react-native-toast-message";
 
 const Orderbook: React.FC = () => {
   const { bgColor, textColor } = useColors();
@@ -47,6 +49,14 @@ const Orderbook: React.FC = () => {
     price: string,
     currentToken: string
   ) => {
+    modal1.onToggle();
+    if (amount == "" || amount == "0" || price == "" || price == "0") {
+      Toast.show({
+        type: "error",
+        text1: local.Main.Components.InvalidAddressOrAmount,
+      });
+      return;
+    }
     buySell(
       flag,
       amount,
@@ -56,6 +66,7 @@ const Orderbook: React.FC = () => {
       parseInt(tick) + 10,
       currentToken
     );
+    modal2.onToggle();
   };
 
   return (
@@ -90,7 +101,10 @@ const Orderbook: React.FC = () => {
                   setAmount(text);
                 }}
                 placeholder={lang.InputAmount}
-                label={lang.AmountOfToken.replace("{currentToken}", currentToken)}
+                label={lang.AmountOfToken.replace(
+                  "{currentToken}",
+                  currentToken
+                )}
                 w="full"
                 parentProps={{ w: "full" }}
               ></Input>
@@ -100,12 +114,15 @@ const Orderbook: React.FC = () => {
                   setPrice(text);
                 }}
                 placeholder={lang.InputPrice}
-                label={lang.PriceOfToken.replace("{currentToken}", currentToken)}
+                label={lang.PriceOfToken.replace(
+                  "{currentToken}",
+                  currentToken
+                )}
                 w="full"
                 parentProps={{ w: "full" }}
               ></Input>
             </VStack>
-            <VStack w={"1/4"} justifyContent={"center"} space={4}>
+            <VStack w={"1/4"} justifyContent="flex-end" space={2}>
               <TransferButton
                 icon={faPlus}
                 title={lang.Buy}
@@ -143,7 +160,6 @@ const Orderbook: React.FC = () => {
         onToggle={modal1.onToggle}
         onPress={() => {
           handleBuySell(buySellFlag, amount, price, currentToken);
-          modal2.onToggle();
         }}
       >
         <VStack fontSize={"xl"} textAlign={"center"} px={2}>
@@ -164,22 +180,13 @@ const Orderbook: React.FC = () => {
         }}
       >
         <VStack fontSize={"xl"} textAlign={"center"} px={2}>
-          <FormControl>
-            <FormControl.Label>{lang.Status}</FormControl.Label>
-            <Text ml={3}>{txStatus}</Text>
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>{lang.TransactionID}</FormControl.Label>
-            <Text ml={3}>{txId}</Text>
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>{lang.CurrentTick}</FormControl.Label>
-            <Text ml={3}>{tick}</Text>
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>{lang.ExpectedTick}</FormControl.Label>
-            <Text ml={3}>{expectedTick}</Text>
-          </FormControl>
+          <FormLabel label={lang.Status} value={txStatus}></FormLabel>
+          <FormLabel label={lang.TransactionID} value={txId}></FormLabel>
+          <FormLabel label={lang.CurrentTick} value={tick}></FormLabel>
+          <FormLabel
+            label={lang.CurrentTick}
+            value={`${expectedTick}`}
+          ></FormLabel>
         </VStack>
       </ConfirmModal>
     </>

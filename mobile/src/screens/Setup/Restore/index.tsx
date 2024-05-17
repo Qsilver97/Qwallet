@@ -22,7 +22,7 @@ const Restore: React.FC = () => {
   const [restoreSeeds, setRestoreSeeds] = useState<string | string[]>([]);
   const [recovering, setRecovering] = useState<boolean>(false);
   const [lengthError, setLengthError] = useState(false);
-  const lang = local.WalletSetup;
+  const lang = local.Restore;
 
   const handleNext = () => {
     setRecovering(true);
@@ -70,10 +70,10 @@ const Restore: React.FC = () => {
   }, [password, confirmPassword]);
 
   useEffect(() => {
-    const handlePasswordAvailEvent = (res) => {
+    const handlePasswordAvailEvent = (res: any) => {
       setPasswordStatus(res);
     };
-    const handleRestoreEvent = (res) => {
+    const handleRestoreEvent = (res: any) => {
       navigation.navigate("Login");
       setRecovering(false);
     };
@@ -111,7 +111,7 @@ const Restore: React.FC = () => {
             color={textColor}
             borderColor={gray.gray80}
             rounded={"md"}
-            placeholderTextColor={gray.gray40}
+            placeholderTextColor={textColor}
             placeholder={lang.placeholder_SeedPhrase}
             onChangeText={handleRestoreSeeds}
           />

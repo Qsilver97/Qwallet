@@ -11,7 +11,9 @@ const FormLabel: React.FC<IProps> = ({ label, value, ...props }) => {
   const { textColor } = useColors();
   return (
     <FormControl {...props}>
-      <FormControl.Label color={textColor}>{label}</FormControl.Label>
+      <FormControl.Label _text={{ color: textColor }}>
+        {label}
+      </FormControl.Label>
       <Text ml={3}>{value}</Text>
     </FormControl>
   );

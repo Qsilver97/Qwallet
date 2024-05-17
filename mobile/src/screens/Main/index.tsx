@@ -23,32 +23,23 @@ import local from "@app/utils/locales";
 const Tab = createBottomTabNavigator();
 
 const Main = () => {
-  const { bgColor, main, gray } = useColors();
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     basicInfo();
-  //   }, 2000);
-
-  //   return () => {
-  //     clearInterval(interval);
-  //   };
-  // }, []);
+  const { bgColor, main, gray, textColor, panelBgColor } = useColors();
 
   useEffect(() => {
     AsyncStorage.setItem("init", "false");
-  });
+  }, []);
 
   const tabBarOptions = useCallback(
     (icon: IconProp): BottomTabNavigationOptions => ({
       tabBarIcon: ({ color, size }) => (
-        <FontAwesomeIcon icon={icon} color={gray.gray40} size={size} />
+        <FontAwesomeIcon icon={icon} color={textColor} size={size} />
       ),
-      tabBarActiveBackgroundColor: main.hakesBlue,
-      tabBarActiveTintColor: main.darkGunmetal,
+      tabBarActiveBackgroundColor: panelBgColor,
+      tabBarActiveTintColor: panelBgColor,
       tabBarInactiveBackgroundColor: bgColor,
+      tabBarLabelStyle: { color: textColor },
     }),
-    [bgColor, gray]
+    [bgColor, gray, panelBgColor]
   );
 
   return (

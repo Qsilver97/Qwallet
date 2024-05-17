@@ -51,7 +51,7 @@ const Input: React.FC<InputProps> = ({
         }}
         type={show ? "text" : "password"}
         placeholder={placeholder}
-        placeholderTextColor={gray.gray20}
+        placeholderTextColor={textColor}
         value={value}
         onChangeText={onChangeText}
         editable={editable}

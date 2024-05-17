@@ -10,7 +10,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {
   Button,
-  FormControl,
   HStack,
   Icon,
   Modal,
@@ -31,7 +30,6 @@ interface IProps {
   onToggle: () => void;
   onPress: () => void;
 }
-
 
 const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
   const {
@@ -55,6 +53,7 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
   const modal2 = useDisclose();
 
   const handleTransfer = () => {
+    modal1.onToggle();
     if (toAddress == "" || amount == "" || amount == "0") {
       Toast.show({
         type: "error",
@@ -71,6 +70,7 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
       amount,
       expectedTick
     );
+    modal2.onToggle();
   };
 
   return (
@@ -103,7 +103,7 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
               <Icon
                 as={FontAwesome5}
                 name="hand-holding-usd"
-                color={textColor}
+                color="white"
                 size={"6xl"}
               ></Icon>
             </HStack>
@@ -160,8 +160,6 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
         onToggle={modal1.onToggle}
         onPress={() => {
           handleTransfer();
-          modal1.onToggle();
-          modal2.onToggle();
         }}
       >
         <VStack fontSize={"xl"} textAlign={"center"} px={2}>

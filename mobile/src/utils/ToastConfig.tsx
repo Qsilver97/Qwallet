@@ -33,7 +33,12 @@ const toastConfig: ToastConfig = {
           fontWeight: "normal",
         }}
         renderLeadingIcon={() => (
-          <Icon as={AntDesign} name="check" size="3xl" color="green.500"></Icon>
+          <Icon
+            as={AntDesign}
+            name="checkcircle"
+            size="3xl"
+            color="green.500"
+          ></Icon>
         )}
       ></BaseToast>
     );

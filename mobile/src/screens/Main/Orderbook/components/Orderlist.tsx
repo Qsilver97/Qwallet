@@ -33,6 +33,7 @@ const Orderlist: React.FC = () => {
   const [orderData, setOrderData] = useState<IOrderData>({});
   const [showData, setShowData] = useState<IOrder[]>([]);
   const lang = local.Main.Orderbook;
+  const { panelBgColor } = useColors();
 
   useEffect(() => {
     setIsLoading(true);
@@ -64,7 +65,7 @@ const Orderlist: React.FC = () => {
                 space={2}
                 textAlign="center"
                 rounded="md"
-                bgColor="blueGray.600"
+                bgColor={panelBgColor}
                 p="2"
                 m="1"
               >
@@ -83,7 +84,7 @@ const Orderlist: React.FC = () => {
         })}
       </>
     );
-  }, [showData]);
+  }, [showData, panelBgColor]);
 
   useEffect(() => {
     myOrders();

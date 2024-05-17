@@ -10,6 +10,7 @@ import {
 } from "native-base";
 import { AntDesign } from "@expo/vector-icons";
 import { InterfaceIconProps } from "native-base/lib/typescript/components/primitives/Icon/types";
+import { useColors } from "@app/context/ColorContex";
 
 interface CollapsibleViewProps {
   title: string;
@@ -23,12 +24,12 @@ const CollapsibleView: React.FC<CollapsibleViewProps> = ({
   icon,
 }) => {
   const { isOpen, onToggle } = useDisclose();
-
+  const { panelBgColor } = useColors();
   return (
     <Box mb="2" mx="2">
       <Pressable
         onPress={onToggle}
-        bgColor="blueGray.600"
+        bgColor={panelBgColor}
         _pressed={{ opacity: 0.6 }}
         rounded="md"
       >

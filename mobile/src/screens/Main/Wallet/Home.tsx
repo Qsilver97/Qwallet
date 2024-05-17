@@ -12,7 +12,7 @@ const Home: React.FC = () => {
   const { balances, currentAddress } = useAuth();
   const { tick, marketcap } = useSelector((store: RootState) => store.app);
   const { bgColor, textColor, main } = useColors();
-  const lang = local.Main.Wallet.Home;
+const lang = local.Main.Wallet.Home;
 
   const BalanceItem = useMemo(() => {
     return (

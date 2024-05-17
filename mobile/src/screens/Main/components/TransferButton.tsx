@@ -30,11 +30,11 @@ const TransferButton: React.FC<Iprops> = ({
         >
           <FontAwesomeIcon
             icon={icon}
-            color={textColor}
+            color="white"
             size={24}
           ></FontAwesomeIcon>
         </VStack>
-        <Text color={textColor}>{title}</Text>
+        {/* <Text color={textColor}>{title}</Text> */}
       </VStack>
     </TouchableOpacity>
   );

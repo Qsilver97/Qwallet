@@ -39,9 +39,12 @@ const data = [
     symbol: "日",
   },
 ];
+interface IProps {
+  setLanguage: React.Dispatch<React.SetStateAction<string>>;
+}
 
-const LanguageSetting: React.FC = () => {
-  const { textColor } = useColors();
+const LanguageSetting: React.FC<IProps> = ({ setLanguage }) => {
+  const { textColor, panelBgColor, selectedPanelBgColor } = useColors();
   const [currentLanguage, setCurrentLanguage] = useState<string>(
     local.getLanguage()
   );
@@ -70,8 +73,8 @@ const LanguageSetting: React.FC = () => {
                 rounded="md"
                 bgColor={
                   local.getLanguage() == dt.language
-                    ? "blueGray.800"
-                    : "blueGray.600"
+                    ? selectedPanelBgColor
+                    : panelBgColor
                 }
                 p="3"
                 color={textColor}
@@ -93,6 +96,10 @@ const LanguageSetting: React.FC = () => {
         onToggle={onToggle}
         onPress={() => {
           onToggle();
+          // setSettings((prev) => {
+          //   return { ...prev, lang: currentLanguage };
+          // });
+          setLanguage(currentLanguage);
           local.setLanguage(currentLanguage);
           AsyncStorage.setItem(
             "lang",

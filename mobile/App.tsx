@@ -29,7 +29,7 @@ export default function App() {
   const [settings, setSettings] = useState<ISettings>({
     init: "true",
     color: "dark",
-    lang: "zh",
+    lang: "en",
     network: "mainnet",
   });
 
@@ -73,18 +73,18 @@ export default function App() {
   local.setLanguage(settings.lang);
 
   return (
-    <Provider store={store}>
-      <AuthProvider>
-        <SocketCom />
-        <NetworkProvider defaultNetwork={settings.network}>
-          <NativeBaseProvider theme={theme}>
-            <ColorProvider>
-              <RootNavigation init={settings.init} />
-              <Toast config={toastConfig} />
-            </ColorProvider>
-          </NativeBaseProvider>
-        </NetworkProvider>
-      </AuthProvider>
-    </Provider>
+      <Provider store={store}>
+        <AuthProvider>
+          <SocketCom />
+          <NetworkProvider defaultNetwork={settings.network}>
+            <NativeBaseProvider theme={theme}>
+              <ColorProvider>
+                <RootNavigation init={settings.init} />
+                <Toast config={toastConfig} />
+              </ColorProvider>
+            </NativeBaseProvider>
+          </NetworkProvider>
+        </AuthProvider>
+      </Provider>
   );
 }
