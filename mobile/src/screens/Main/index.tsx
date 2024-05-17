@@ -17,6 +17,7 @@ import { useColors } from "@app/context/ColorContex";
 import Header from "./components/Header";
 import Transaction from "./Transaction";
 import { basicInfo } from "@app/api/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Tab = createBottomTabNavigator();
 
@@ -32,6 +33,10 @@ const Main = () => {
   //     clearInterval(interval);
   //   };
   // }, []);
+
+  useEffect(() => {
+    AsyncStorage.setItem("init", "false");
+  });
 
   const tabBarOptions = useCallback(
     (icon: IconProp): BottomTabNavigationOptions => ({
@@ -75,6 +80,6 @@ const Main = () => {
       />
     </Tab.Navigator>
   );
-}
+};
 
 export default Main;

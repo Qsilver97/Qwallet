@@ -7,6 +7,7 @@ import ConfirmModal from "../components/ConfirmModal";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import local from "@app/utils/locales";
 import { FontAwesome } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const data = [
   {
@@ -36,14 +37,16 @@ const data = [
   },
   {
     title: "Japanese (Japan)",
-    language: "jp",
+    language: "ja",
     symbol: "日",
   },
 ];
 
 const LanguageSetting: React.FC = () => {
   const { textColor } = useColors();
-  const [currrentLanguage, setCurrentLanguage] = useState<string>("en");
+  const [currrentLanguage, setCurrentLanguage] = useState<string>(
+    local.getLanguage()
+  );
   const { isOpen, onToggle } = useDisclose();
 
   return (
@@ -54,10 +57,7 @@ const LanguageSetting: React.FC = () => {
           <Icon as={FontAwesome} name="language" size="xl" color={textColor} />
         }
       >
-        <Text fontSize="xl" mx="auto">
-          Please wait Next Version.
-        </Text>
-        {/* {data.map((dt, key) => {
+        {data.map((dt, key) => {
           return (
             <TouchableOpacity
               key={key}
@@ -70,7 +70,7 @@ const LanguageSetting: React.FC = () => {
                 w="full"
                 rounded="md"
                 bgColor={
-                  currrentLanguage == dt.language
+                  local.getLanguage() == dt.language
                     ? "blueGray.800"
                     : "blueGray.600"
                 }
@@ -86,7 +86,7 @@ const LanguageSetting: React.FC = () => {
               </HStack>
             </TouchableOpacity>
           );
-        })} */}
+        })}
       </CollapsibleView>
       <ConfirmModal
         icon={faCheck}
@@ -95,6 +95,10 @@ const LanguageSetting: React.FC = () => {
         onPress={() => {
           onToggle();
           local.setLanguage(currrentLanguage);
+          AsyncStorage.setItem(
+            "lang",
+            data.find((d) => d.language == currrentLanguage)?.language as string
+          );
         }}
       >
         <Text textAlign="center" fontSize="md">

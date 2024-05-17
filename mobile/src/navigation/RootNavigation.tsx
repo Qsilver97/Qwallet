@@ -25,7 +25,7 @@ type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 interface RootNavigationProps {
-  init: boolean;
+  init: string;
 }
 
 const RootNavigation: React.FC<RootNavigationProps> = ({ init }) => {
@@ -34,7 +34,7 @@ const RootNavigation: React.FC<RootNavigationProps> = ({ init }) => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={init ? "Splash" : "Login"}
+        initialRouteName={init == "true" ? "Splash" : "Login"}
         screenOptions={{
           headerStyle: {
             backgroundColor: bgColor,

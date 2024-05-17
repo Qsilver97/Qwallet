@@ -8,6 +8,7 @@ import {
   Ionicons,
 } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ColorModeSetting: React.FC = () => {
   const { textColor } = useColors();
@@ -24,14 +25,22 @@ const ColorModeSetting: React.FC = () => {
         />
       }
     >
-      <HStack w="full" p={2} justifyContent="center">
-        <Text fontSize="xl">Please wait Next Version.</Text>
-        {/* <TouchableOpacity
+      <HStack w="full" p={2}>
+        {/* <Text fontSize="xl">Please wait Next Version.</Text> */}
+        <TouchableOpacity
           style={{ width: "50%" }}
-          onPress={() => setColorMode("light")}
+          onPress={() => {
+            setColorMode("light");
+            AsyncStorage.setItem("color", "light");
+          }}
         >
           <HStack textAlign="center" alignItems="center" space={2}>
-            <Icon as={MaterialIcons} name="light-mode" size="2xl" />
+            <Icon
+              as={MaterialIcons}
+              name="light-mode"
+              size="2xl"
+              color={textColor}
+            />
             <Text fontSize="xl" color={textColor}>
               Light Mode
             </Text>
@@ -39,15 +48,23 @@ const ColorModeSetting: React.FC = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={{ width: "50%" }}
-          onPress={() => setColorMode("dark")}
+          onPress={() => {
+            setColorMode("dark");
+            AsyncStorage.setItem("color", "dark");
+          }}
         >
           <HStack textAlign={"center"} space={2}>
-            <Icon as={Ionicons} name="moon-sharp" size="2xl" />
+            <Icon
+              as={Ionicons}
+              name="moon-sharp"
+              size="2xl"
+              color={textColor}
+            />
             <Text fontSize="xl" color={textColor}>
               Dark Mode
             </Text>
           </HStack>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
       </HStack>
     </CollapsibleView>
   );

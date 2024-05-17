@@ -18,7 +18,7 @@ import local from "@app/utils/locales";
 import toastConfig from "@app/utils/ToastConfig";
 
 interface ISettings {
-  init: boolean;
+  init: string;
   color: string;
   lang: string;
   network: "mainnet" | "testnet";
@@ -27,7 +27,7 @@ interface ISettings {
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [settings, setSettings] = useState<ISettings>({
-    init: true,
+    init: "true",
     color: "dark",
     lang: "zh",
     network: "mainnet",
@@ -39,7 +39,7 @@ export default function App() {
         await SplashScreen.preventAutoHideAsync();
 
         // Load settings from AsyncStorage
-        const lang = await AsyncStorage.getItem("language");
+        const lang = await AsyncStorage.getItem("lang");
         const color = await AsyncStorage.getItem("color");
         const network = await AsyncStorage.getItem("network");
         const init = await AsyncStorage.getItem("init");
@@ -53,7 +53,7 @@ export default function App() {
         }));
 
         channelInit(RNFS.DocumentDirectoryPath);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (e) {
         console.warn(e);
       } finally {
