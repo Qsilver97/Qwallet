@@ -53,48 +53,50 @@ const Tokenlist: React.FC = () => {
   );
 
   const formattedItems = useMemo(() => {
-    return tokens?.map((token, key) => {
-      const Icon = tokenIcons.find((t) => t.symbol == token)?.icon;
-      const balance = tokenBalances?.[token]?.[currentAddress] || 0;
-      const price = parseFloat(tokenprices?.[token]?.[0] || "0"); // Handle missing price
+    console.log(tokens, tokenBalances, tokenprices, marketcap);
+    return (
+      <>
+        {tokens?.map((token, key) => {
+          const Icon = tokenIcons.find((t) => t.symbol == token)?.icon;
+          const balance = tokenBalances?.[token]?.[currentAddress] || 0;
+          const price = parseInt(tokenprices?.[token]?.[0] || "0"); // Handle missing price
 
-      if (balance) {
-        const valueInQU = balance * price;
-        const usdValue = valueInQU * parseFloat(marketcap.price);
+          const valueInQU = balance * price;
+          const usdValue = valueInQU * parseFloat(marketcap.price);
 
-        return (
-          <Pressable
-            key={key}
-            m="2"
-            p="2"
-            px="4"
-            rounded="md"
-            bgColor="blueGray.600"
-            _pressed={{ opacity: 0.6 }}
-          >
-            <HStack alignItems="center" justifyContent="space-between">
-              <HStack space={4} alignItems="center" flex={1}>
-                {Icon && <Icon width={32} height={32} />}
-                <VStack flex={1}>
-                  <Text>{token}</Text>
-                  <Text>{balance.toLocaleString()}</Text>
+          return (
+            <Pressable
+              key={key}
+              m="2"
+              p="2"
+              px="4"
+              rounded="md"
+              bgColor="blueGray.600"
+              _pressed={{ opacity: 0.6 }}
+            >
+              <HStack alignItems="center" justifyContent="space-between">
+                <HStack space={4} alignItems="center" flex={1}>
+                  {Icon && <Icon width={32} height={32} />}
+                  <VStack flex={1}>
+                    <Text>{token}</Text>
+                    <Text>{balance.toLocaleString()}</Text>
+                  </VStack>
+                </HStack>
+                <VStack>
+                  <Text>{valueInQU} QU</Text>
+                  <Text>$ {usdValue.toFixed(2)}</Text>
                 </VStack>
               </HStack>
-              <VStack>
-                <Text>{valueInQU} QU</Text>
-                <Text>$ {usdValue.toFixed(2)}</Text>
-              </VStack>
-            </HStack>
-          </Pressable>
-        );
-      }
-      return null; // Avoid empty elements
-    });
-  }, [tokenBalances, tokenprices, marketcap]);
+            </Pressable>
+          );
+        })}
+      </>
+    );
+  }, [tokenBalances, tokenprices, marketcap, tokens]);
 
   return (
     <>
-      {isLoading && formattedItems ? (
+      {isLoading ? (
         <VStack flex={1} alignItems="center" justifyContent="center">
           <ActivityIndicator size="large" color={main.celestialBlue} />
         </VStack>

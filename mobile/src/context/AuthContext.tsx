@@ -129,7 +129,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(false);
     };
     const handleTokenEvent = (res: any) => {
-      console.log("S2C/tokens", res);
       if (res.data) {
         if (res.data.tokens) dispatch(setTokens(res.data.tokens));
       } else {

@@ -353,9 +353,7 @@ exports.switchNetwork = async () => {
 
 exports.tokens = async () => {
   try {
-    preAction();
     const result = await socketSync("tokenlist");
-    afterAction();
     bridge_send("S2C/tokens", result);
   } catch (error) {
     bridge_send("S2C/error", error);

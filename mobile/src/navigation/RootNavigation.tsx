@@ -13,6 +13,7 @@ import Main from "@app/screens/Main";
 type RootStackParamList = {
   Dashboard: undefined;
   Login: undefined;
+  Create: undefined;
   Restore: undefined;
   Cli: undefined;
   CliSocket: undefined;
@@ -51,6 +52,11 @@ const RootNavigation: React.FC = () => {
           name="Login"
           component={Login}
           options={{ title: local.Title.Login }}
+        />
+        <Stack.Screen
+          name="Create"
+          component={Create}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Restore"
