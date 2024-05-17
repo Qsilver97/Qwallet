@@ -13,7 +13,7 @@ const Activity = () => {
                     <Title text="Activity" iconUrl="/assets/images/sidebar/activity.svg" />
                     <InnerContainer gapVariant="sm">
                         <ActivityTable />
-                        <Pagination count={10}/>
+                        <Pagination count={10} />
                     </InnerContainer>
                 </MainContent>
             </Layout>

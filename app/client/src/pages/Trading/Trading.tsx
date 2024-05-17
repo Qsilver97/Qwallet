@@ -17,14 +17,17 @@ import TradingAside from "./TradingAside";
 const tabs = ['Bids', 'Asks']
 
 const Trading = () => {
-    const { fetchTradingInfoPage, tradingPageLoading, orders } = useAuth();
+    const { fetchTradingInfoPage, tradingPageLoading, orders, tokens } = useAuth();
 
     const [activeTab, setActiveTab] = useState<string>('Bids');
 
-    const options = assetsItems.map((item) => ({
-        label: item.icon,
-        value: item.name,
-    }));
+    const options = tokens.map((token) => {
+        const item = assetsItems.find((k) => k.name == token) || assetsItems[0]
+        return ({
+            label: item.icon,
+            value: token,
+        })
+    });
     // const dateOptions = [
     //     "04 Dec 23",
     //     "05 Dec 23",

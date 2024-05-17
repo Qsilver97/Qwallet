@@ -370,3 +370,21 @@ exports.buySell = async (req, res) => {
     await wasmManager.ccallV1request({ command: `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`, flag });
     res.status(200).send(flag);
 }
+
+exports.getPrice = async (req, res) => {
+    const { token } = req.body;
+    try {
+        let command = 'prices';
+        if (token != 'QU') {
+            command = `${command}.${token}`
+        }
+        console.log(command, '11111111111111111111111111')
+        const prices = await socketSync(command)
+        res.status(200).send(prices);
+        return;
+    } catch (error) {
+        res.status(400).send(error);
+        return
+    }
+
+}
