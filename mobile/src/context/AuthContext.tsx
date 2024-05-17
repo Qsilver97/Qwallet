@@ -132,7 +132,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (res.data) {
         if (res.data.tokens) dispatch(setTokens(res.data.tokens));
       } else {
-        Toast.show({ type: "error", text1: "E21: Error ocurred!" });
+        Toast.show({
+          type: "error",
+          text1: "E21: " + "Error ocurredin getting tokens!",
+        });
       }
     };
     const handleTransferEvent = (res: any) => {
@@ -142,7 +145,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }, 2000);
         setStatusInterval(_statusInterval);
       } else {
-        Toast.show({ type: "error", text1: "E24: Error occured!" });
+        Toast.show({
+          type: "error",
+          text1: "E22: " + "Error occured in transfer!",
+        });
         setTxStatus("Rejected");
       }
     };
@@ -151,7 +157,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (res.data) {
         if (res.data == "failed") {
           setTxStatus("Rejected");
-          Toast.show({ type: "error", text1: "E25: Transfer Failed!" });
+          Toast.show({ type: "error", text1: "E23: " + "Transfer Failed!" });
         } else if (res.data.value.result == 0) {
           setTxStatus("Pending");
         } else if (res.data.value.result == 1) {
@@ -160,7 +166,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setTxStatus("Rejected");
         }
       } else {
-        Toast.show({ type: "error", text1: "E26: Error occured!" });
+        Toast.show({ type: "error", text1: "E24: Transfer Failed!" });
         setTxStatus("Rejected");
         clearInterval(statusInterval);
       }
@@ -173,7 +179,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setStatusInterval(_statusInterval);
         if (res.data.value.result == 0) {
         } else if (res.data.value.result < 0) {
-          Toast.show({ type: "error", text1: res.data.value.display });
+          Toast.show({
+            type: "error",
+            text1: "E25: " + res.data.value.display,
+          });
         } else if (res.data.value.result == 1) {
           setTxStatus(res.data.value.display);
         }

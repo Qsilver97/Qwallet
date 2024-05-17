@@ -44,7 +44,7 @@ const Header: React.FC = () => {
       if (res.data) {
         login(res.data);
       } else {
-        Toast.show({ type: "error", text1: res.data.value.display });
+        Toast.show({ type: "error", text1: "E01: " + res.data.value.display });
       }
       setModalVisible(false);
       setAddingStatus(false);

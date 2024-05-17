@@ -50,7 +50,10 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
 
   const handleTransfer = () => {
     if (toAddress == "" || amount == "" || amount == "0") {
-      Toast.show({ type: "error", text1: "Invalid address or amount!" });
+      Toast.show({
+        type: "error",
+        text1: "E02: " + "Invalid address or amount!",
+      });
       return;
     }
     setTxStatus("Open");

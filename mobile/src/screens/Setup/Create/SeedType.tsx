@@ -43,10 +43,13 @@ const SeedType = () => {
           }
           navigation.navigate("Confirm");
         } else {
-          Toast.show({ type: "error", text1: res.data.value.display });
+          Toast.show({
+            type: "error",
+            text1: "E21: " + res.data.value.display,
+          });
         }
       } else {
-        Toast.show({ type: "error", text1: res.error });
+        Toast.show({ type: "error", text1: "E22: " + res.error });
       }
     };
     eventEmitter.on("S2C/create", handleCreateEvent);
