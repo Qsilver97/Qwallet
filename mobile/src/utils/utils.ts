@@ -1,3 +1,5 @@
+import local from "./locales";
+
 export const checkPasswordStrength = (password: string) => {
   let strength = 0;
 
@@ -24,17 +26,19 @@ export const checkPasswordStrength = (password: string) => {
   return strength;
 };
 
+const lang = local.util.PasswordStrength;
+
 export const getPasswordStrengthProps = (strength: number) => {
   switch (strength) {
     case 4:
-      return { label: "Perfect!", color: "green.600" };
+      return { label: lang.Perfect, color: "green.600" };
     case 3:
-      return { label: "Good", color: "green.400" };
+      return { label: lang.Good, color: "green.400" };
     case 2:
-      return { label: "Normal", color: "yellow.500" };
+      return { label: lang.Normal, color: "yellow.500" };
     case 1:
-      return { label: "Bad", color: "red.500" };
+      return { label: lang.Bad, color: "red.500" };
     default:
-      return { label: "Not Available", color: "gray.500" };
+      return { label: lang.NotAvailable, color: "gray.500" };
   }
 };

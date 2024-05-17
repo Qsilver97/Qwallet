@@ -32,6 +32,7 @@ const CreatePassword: React.FC = () => {
     color: string;
   }>(getPasswordStrengthProps(0));
   const { setTempPassword } = useAuth();
+  const lang = local.Create.CreatePassword;
 
   const handlePassword = (text: string) => {
     setPassword(text);
@@ -50,10 +51,10 @@ const CreatePassword: React.FC = () => {
       <ScrollView>
         <VStack space={5} pt={10}>
           <Text fontSize={"2xl"} color={main.jeansBlue} textAlign={"center"}>
-            {local.Create.CreatePassword.Create}
+            {lang.Create}
           </Text>
           <Text textAlign={"center"} px={16}>
-            {local.Create.CreatePassword.Caption}
+            {lang.Caption}
           </Text>
         </VStack>
         <VStack flex={1} pt={28} justifyItems="center" py={40} space={5}>
@@ -62,15 +63,14 @@ const CreatePassword: React.FC = () => {
               onChangeText={handlePassword}
               w={"full"}
               type="password"
-              placeholder={local.Create.CreatePassword.placeholder_NewPassword}
+              placeholder={lang.placeholder_NewPassword}
             ></Input>
             <Box p={3}>
               <Text px={2} color={lengthError ? "red.500" : gray.gray40}>
-                {local.Create.CreatePassword.AtLeast8Char}
+                {lang.AtLeast8Char}
               </Text>
               <Text px={2} color={passwordStrength.color}>
-                {local.Create.CreatePassword.PasswordStrength} :{" "}
-                {passwordStrength.label}
+                {lang.PasswordStrength} : {passwordStrength.label}
               </Text>
             </Box>
           </Box>
@@ -79,11 +79,11 @@ const CreatePassword: React.FC = () => {
               onChangeText={(text) => setConfirmPassword(text)}
               w={"full"}
               type="password"
-              placeholder={local.Create.CreatePassword.placeholder_ConfirmPassword}
+              placeholder={lang.placeholder_ConfirmPassword}
             ></Input>
             {password !== confirmPassword && (
               <Text px={6} color={"red.400"}>
-                {local.Create.CreatePassword.NotMatch}
+                {lang.NotMatch}
               </Text>
             )}
           </Box>
@@ -96,7 +96,7 @@ const CreatePassword: React.FC = () => {
               color={textColor}
             >
               <Text>
-                {local.Create.CreatePassword.Understand}
+                {lang.Understand}
                 <Link
                   href="#"
                   _text={{
@@ -106,7 +106,7 @@ const CreatePassword: React.FC = () => {
                   display={"inline"}
                   colorScheme={"blue"}
                 >
-                  {local.Create.CreatePassword.LearnMore}
+                  {lang.LearnMore}
                 </Link>
               </Text>
             </Checkbox>
@@ -115,7 +115,7 @@ const CreatePassword: React.FC = () => {
       </ScrollView>
       <ButtonBox>
         <PageButton
-          title={local.Create.CreatePassword.button_CreatePassword}
+          title={lang.button_CreatePassword}
           type="primary"
           isDisabled={
             password == "" ||
@@ -126,7 +126,7 @@ const CreatePassword: React.FC = () => {
           }
           onPress={() => {
             setTempPassword(password);
-            navigation.navigate("SeedType");
+            navigation.navigate("Reminder");
           }}
         ></PageButton>
       </ButtonBox>

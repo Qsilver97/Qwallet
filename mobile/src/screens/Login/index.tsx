@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { VStack, Text, Icon, Image, IconButton } from "native-base";
-import { MaterialIcons } from "@expo/vector-icons";
-import tw from "tailwind-react-native-classnames";
+import React, { useEffect, useMemo, useState } from "react";
+import { VStack, Text, useColorMode } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  Image,
   NativeSyntheticEvent,
   TextInputKeyPressEventData,
   TouchableOpacity,
@@ -15,7 +14,7 @@ import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
 import local from "@app/utils/locales";
 import { UserDetailType, useAuth } from "@app/context/AuthContext";
-import { login } from "@app/api/api";
+import { login, passwordAvail } from "@app/api/api";
 import { useColors } from "@app/context/ColorContex";
 import {
   resetState,
@@ -34,8 +33,17 @@ const Login: React.FC = () => {
   const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
   const [loginWaiting, setLoginWaiting] = useState<boolean>(false);
   const auth = useAuth();
+  const lang = local.Login;
+  const { colorMode } = useColorMode();
+
+  const logoSource = useMemo(() => {
+    return colorMode === "dark"
+      ? require("@assets/icon.png")
+      : require("@assets/favicon.png");
+  }, [colorMode]);
 
   const handlePasswordChange = (value: string) => {
+    passwordAvail(value);
     dispatch(setPassword(value));
   };
 
@@ -49,7 +57,7 @@ const Login: React.FC = () => {
 
   const handleLogin = () => {
     if (password === "") {
-      Toast.show({ type: "error", text1: "Input password" });
+      Toast.show({ type: "error", text1: "E11: " + "Input password!" });
       return;
     }
 
@@ -58,11 +66,15 @@ const Login: React.FC = () => {
     // setTimeout(() => {
     //   setLoginWaiting(false);
     //   setPasswordStatus(true);
-    //   Toast.show({ type: "error", text1: "Login failed. Please try again." });
+    //   Toast.show({
+    //     type: "error",
+    //     text1: "E12: Login failed. Please try again.",
+    //   });
     // }, 5000);
   };
+
   useEffect(() => {
-    eventEmitter.on("S2C/login", (res) => {
+    const handleLoginEvent = (res: any) => {
       if (res.success) {
         Toast.show({ type: "success", text1: "Login Success!" });
         const userInfo: UserDetailType = res.data;
@@ -73,10 +85,19 @@ const Login: React.FC = () => {
       } else {
         setPasswordStatus(true);
         dispatch(setIsAuthenticated(false));
-        Toast.show({ type: "error", text1: res.error });
+        Toast.show({ type: "error", text1: "E13: " + res.error });
       }
       setLoginWaiting(false);
-    });
+    };
+    const handlePasswordAvailEvent = (res: any) => {
+      setPasswordStatus(res.data);
+    };
+    eventEmitter.on("S2C/login", handleLoginEvent);
+    eventEmitter.on("S2C/passwordAvail", handlePasswordAvailEvent);
+    return () => {
+      eventEmitter.off("S2C/login", handleLoginEvent);
+      eventEmitter.off("S2C/passwordAvail", handlePasswordAvailEvent);
+    };
   }, []);
 
   return (
@@ -95,26 +116,30 @@ const Login: React.FC = () => {
         justifyContent="center"
         justifyItems="center"
       >
-        <Image source={require("@assets/icon.png")} alt="Logo" size="xl" />
-        <Text fontSize="5xl">{local.Login.Login}</Text>
+        <Image
+          source={logoSource}
+          alt="Logo"
+          style={{ width: 160, height: 160 }}
+        />
+        <Text fontSize="5xl">{lang.Login}</Text>
         <Input
           value={password}
           onChangeText={handlePasswordChange}
           onKeyPress={handleKeyDown}
-          placeholder={local.Login.placeholder_Password}
+          placeholder={lang.placeholder_Password}
           type="password"
+          error={passwordStatus ? lang.NotExist : ""}
         />
-        {passwordStatus && <Text color="red.600">{local.Login.NotExist}</Text>}
       </VStack>
       <ButtonBox>
         <PageButton
-          title={local.Login.button_Login}
+          title={lang.button_Login}
           type="primary"
-          isDisabled={loginWaiting}
+          isLoading={loginWaiting}
           onPress={handleLogin}
         ></PageButton>
         <PageButton
-          title={local.Login.button_CreateNewWallet}
+          title={lang.button_CreateNewWallet}
           type="disabled"
           onPress={() => navigation.navigate("Create")}
         ></PageButton>
@@ -123,9 +148,7 @@ const Login: React.FC = () => {
             navigation.navigate("Restore");
           }}
         >
-          <Text textAlign={"center"}>
-            {local.Login.button_ImportUsingSeedPhrase}
-          </Text>
+          <Text textAlign={"center"}>{lang.button_ImportUsingSeedPhrase}</Text>
         </TouchableOpacity>
       </ButtonBox>
     </VStack>

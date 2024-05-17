@@ -18,7 +18,7 @@ const Stack = createNativeStackNavigator<CreateStackParamList>();
 
 const Create: React.FC = () => {
   const { bgColor, textColor } = useColors();
-
+  const lang = local.Title;
   return (
     <Stack.Navigator
       initialRouteName="CreatePassword"
@@ -32,22 +32,22 @@ const Create: React.FC = () => {
       <Stack.Screen
         name="CreatePassword"
         component={CreatePassword}
-        options={{ title: local.Title.CreatePassword }}
+        options={{ title: lang.CreatePassword }}
       />
       <Stack.Screen
         name="Reminder"
         component={Reminder}
-        options={{ title: local.Title.Reminder }}
+        options={{ title: lang.Reminder }}
       />
       <Stack.Screen
         name="Confirm"
         component={Confirm}
-        options={{ title: local.Title.Confirm }}
+        options={{ title: lang.Confirm }}
       />
       <Stack.Screen
         name="SeedType"
         component={SeedType}
-        options={{ title: local.Title.SeedType }}
+        options={{ title: lang.SeedType }}
       />
     </Stack.Navigator>
   );

@@ -19,6 +19,7 @@ const SeedType = () => {
   const [value, setValue] = useState<"24words" | "55chars">("24words");
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const lang = local.Create.SeedType;
 
   const handleCreate = () => {
     dispatch(setSeedType(value));
@@ -28,12 +29,12 @@ const SeedType = () => {
   };
 
   useEffect(() => {
-    eventEmitter.on("S2C/create", (res) => {
+    const handleCreateEvent = (res: any) => {
       if (res.data?.value) {
         if (res.data.value.result >= 0) {
           Toast.show({
             type: "success",
-            text1: local.Create.SeedType.toast_SuccessCreate,
+            text1: lang.toast_SuccessCreate,
           });
           const seeds = res.data.value.display.split(" ");
           if (seeds.length == 1) {
@@ -43,12 +44,19 @@ const SeedType = () => {
           }
           navigation.navigate("Confirm");
         } else {
-          Toast.show({ type: "error", text1: res.data.value.display });
+          Toast.show({
+            type: "error",
+            text1: "E21: " + res.data.value.display,
+          });
         }
       } else {
-        Toast.show({ type: "error", text1: res.error });
+        Toast.show({ type: "error", text1: "E22: " + res.error });
       }
-    });
+    };
+    eventEmitter.on("S2C/create", handleCreateEvent);
+    return () => {
+      eventEmitter.off("S2C/create", handleCreateEvent);
+    };
   }, []);
   return (
     <VStack
@@ -72,8 +80,8 @@ const SeedType = () => {
           resizeMode="contain"
           alt="Splash Image"
         />
-        <Text fontSize={"3xl"}>{local.Create.SeedType.ChooseSeedType}</Text>
-        <Text>{local.Create.SeedType.TwoWays}</Text>
+        <Text fontSize={"3xl"}>{lang.ChooseSeedType}</Text>
+        <Text>{lang.TwoWays}</Text>
 
         <Radio.Group
           name="RadioGroup"
@@ -81,16 +89,16 @@ const SeedType = () => {
           onChange={(val) => setValue(val)}
         >
           <Radio value="24words" my="2">
-            {local.Create.SeedType._24words}
+            {lang._24words}
           </Radio>
           <Radio value="55chars" my="2">
-            {local.Create.SeedType._55chars}
+            {lang._55chars}
           </Radio>
         </Radio.Group>
       </VStack>
       <ButtonBox>
         <PageButton
-          title={local.Create.SeedType.CreatePassword}
+          title={lang.CreatePassword}
           type="primary"
           onPress={handleCreate}
         />

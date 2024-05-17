@@ -1,28 +1,49 @@
 import React from "react";
-import { Input as NInput, IInputProps, Pressable, Icon } from "native-base";
-import tw from "tailwind-react-native-classnames";
+import {
+  Input as NInput,
+  IInputProps,
+  Icon,
+  FormControl,
+  WarningOutlineIcon,
+  IFormControlProps,
+  Text,
+} from "native-base";
 import { useColors } from "../../context/ColorContex";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 
 interface InputProps extends IInputProps {
+  label?: string;
   placeholder: string;
   onChangeText: (value: string) => void;
+  error?: string;
+  helper?: string;
+  parentProps?: IFormControlProps;
 }
 
 const Input: React.FC<InputProps> = ({
+  label,
   editable,
   value,
   placeholder,
   onChangeText,
   type,
+  error,
+  helper,
+  parentProps,
   ...props
 }) => {
   const { textColor, gray } = useColors();
   const [show, setShow] = React.useState(type == "text");
 
   return (
-    <>
+    <FormControl
+      {...parentProps}
+      isInvalid={error !== "" && error !== undefined}
+    >
+      <FormControl.Label>
+        <Text color={textColor}>{label}</Text>
+      </FormControl.Label>
       <NInput
         w={{
           base: "75%",
@@ -30,7 +51,7 @@ const Input: React.FC<InputProps> = ({
         }}
         type={show ? "text" : "password"}
         placeholder={placeholder}
-        placeholderTextColor={gray.gray20}
+        placeholderTextColor={textColor}
         value={value}
         onChangeText={onChangeText}
         editable={editable}
@@ -55,7 +76,17 @@ const Input: React.FC<InputProps> = ({
         }
         {...props}
       />
-    </>
+      {helper && (
+        <FormControl.HelperText>
+          <Text color={textColor}>{helper}</Text>
+        </FormControl.HelperText>
+      )}
+      {error && (
+        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          {error}
+        </FormControl.ErrorMessage>
+      )}
+    </FormControl>
   );
 };
 

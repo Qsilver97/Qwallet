@@ -1,17 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   HStack,
-  Image,
-  Modal,
   Popover,
   Text,
   VStack,
-  View,
-  useDisclose,
+  useColorMode,
 } from "native-base";
 import Toast from "react-native-toast-message";
-import { TouchableOpacity } from "react-native";
+import { Image, TouchableOpacity } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faAngleDown, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { useColors } from "@app/context/ColorContex";
@@ -20,6 +17,7 @@ import { useAuth } from "@app/context/AuthContext";
 import { addAccount } from "@app/api/api";
 import eventEmitter from "@app/api/eventEmitter";
 import ConfirmModal from "./ConfirmModal";
+import local from "@app/utils/locales";
 
 const Header: React.FC = () => {
   const { bgColor, textColor, main, gray } = useColors();
@@ -28,6 +26,14 @@ const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [addingStatus, setAddingStatus] = useState(false);
+  const { colorMode } = useColorMode();
+
+  const logoSource = useMemo(() => {
+    return colorMode === "dark"
+      ? require("@assets/icon.png")
+      : require("@assets/favicon.png");
+  }, [colorMode]);
+
   const toggleModal = () => setModalVisible(!modalVisible);
   const handleAddAdress = () => {
     if (addingStatus) return;
@@ -39,15 +45,19 @@ const Header: React.FC = () => {
   };
 
   useEffect(() => {
-    eventEmitter.on("S2C/add-account", (res) => {
+    const handleAddAddressEvent = (res: any) => {
       if (res.data) {
         login(res.data);
       } else {
-        Toast.show({ type: "error", text1: res.data.value.display });
+        Toast.show({ type: "error", text1: "E01: " + res.data.value.display });
       }
       setModalVisible(false);
       setAddingStatus(false);
-    });
+    };
+    eventEmitter.on("S2C/add-account", handleAddAddressEvent);
+    return () => {
+      eventEmitter.off("S2C/add-account", handleAddAddressEvent);
+    };
   }, []);
 
   return (
@@ -55,10 +65,9 @@ const Header: React.FC = () => {
       <HStack bgColor={bgColor} p={3} alignItems="center">
         <VStack justifyContent={"center"}>
           <Image
-            source={require("@assets/icon.png")}
-            w={12}
-            h={12}
-            alt="Image"
+            source={logoSource}
+            alt="Logo"
+            style={{ width: 42, height: 42 }}
           />
         </VStack>
         <HStack flex={1} justifyContent={"center"} px={10}>
@@ -118,7 +127,7 @@ const Header: React.FC = () => {
                     _pressed={{ opacity: 0.6 }}
                     bgColor={gray.gray50}
                   >
-                    Cancel
+                    {local.Main.Header.button_Cancel}
                   </Button>
                   <Button
                     onPress={() => {
@@ -130,7 +139,7 @@ const Header: React.FC = () => {
                     _pressed={{ opacity: 0.6 }}
                     bgColor={main.celestialBlue}
                   >
-                    Add Address
+                    {local.Main.Header.button_AllAddress}
                   </Button>
                 </HStack>
               </Popover.Body>
@@ -148,11 +157,9 @@ const Header: React.FC = () => {
       >
         <>
           <Text fontSize={"2xl"} textAlign={"center"}>
-            Create New Address
+            {local.Main.Header.Create}
           </Text>
-          <Text textAlign={"center"}>
-            An Account can't have more than 10 addresses
-          </Text>
+          <Text textAlign={"center"}>{local.Main.Header.CreateInfo}</Text>
         </>
       </ConfirmModal>
     </>

@@ -1,10 +1,11 @@
 import { extendTheme } from "native-base";
 
-const theme = extendTheme({
-  config: {
-    initialColorMode: "dark",
-  },
-});
+const getTheme = (colorMode:string) => {
+  return extendTheme({
+    config: {
+      initialColorMode: colorMode,
+    },
+  });
+};
 
-export type ThemeType = typeof theme;
-export default theme;
+export default getTheme;

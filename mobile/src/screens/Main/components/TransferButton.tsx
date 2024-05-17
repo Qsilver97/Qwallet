@@ -1,6 +1,6 @@
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import React from "react";
-import { Box, Text, VStack } from "native-base";
+import { Box, Button, Pressable, Text, VStack } from "native-base";
 import { useColors } from "@app/context/ColorContex";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -30,11 +30,11 @@ const TransferButton: React.FC<Iprops> = ({
         >
           <FontAwesomeIcon
             icon={icon}
-            color={textColor}
+            color="white"
             size={24}
           ></FontAwesomeIcon>
         </VStack>
-        <Text color={textColor}>{title}</Text>
+        {/* <Text color={textColor}>{title}</Text> */}
       </VStack>
     </TouchableOpacity>
   );

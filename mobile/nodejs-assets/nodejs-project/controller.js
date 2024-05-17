@@ -4,6 +4,32 @@ const rn_bridge = require("rn-bridge");
 const socketManager = require("./managers/socketManager");
 const { delay, socketSync } = require("./utils/helpers");
 const liveSocketController = require("./liveSocketController");
+const bridge_send = (responseType, result) => {
+  rn_bridge.channel.send(
+    JSON.stringify({
+      action: responseType,
+      data: result,
+    })
+  );
+};
+
+const base_controller = (
+  socketCommand,
+  responseType,
+  preAction = () => {},
+  afterAction = () => {}
+) => {
+  return async () => {
+    try {
+      preAction();
+      const result = await socketSync(socketCommand);
+      afterAction();
+      bridge_send(responseType, result);
+    } catch (error) {
+      bridge_send("S2C/error", error);
+    }
+  };
+};
 
 exports.login = async ({ password }) => {
   try {
@@ -104,7 +130,7 @@ exports.login = async ({ password }) => {
         });
         return userState;
       } else {
-        return "not synced";
+        return "Socket Not Synced!";
       }
     }
   } catch (err) {
@@ -128,12 +154,7 @@ exports.addAccout = async ({ password, index }) => {
     flag: "addaccount",
   });
   if (addResult.value.result != 0) {
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/add-account",
-        data: addResult.value.display,
-      })
-    );
+    bridge_send("S2C/add-account", addResult.value.display);
     return;
   }
   const result = await wasmManager.ccall({
@@ -149,23 +170,13 @@ exports.addAccout = async ({ password, index }) => {
   });
   const hexSocketResult = await socketSync(hexResult.value.display);
   if (!hexSocketResult) {
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/add-account",
-        data: "Socket server error",
-      })
-    );
+    bridge_send("S2C/add-account", "S2C/add-account");
     return;
   }
 
   const plusResult = await socketSync(`+${index} ${addResult.value.display}`);
   if (!plusResult) {
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/err",
-        data: "Socket server error",
-      })
-    );
+    bridge_send("S2C/add-account", "S2C/add-account");
     return;
   }
   const remoteSubshas = stateManager.getRemoteSubshash();
@@ -178,50 +189,25 @@ exports.addAccout = async ({ password, index }) => {
       accountInfo: result.value.display,
       isAuthenticated: true,
     });
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/add-account",
-        data: userState,
-      })
-    );
+    bridge_send("S2C/add-account", userState);
   } else {
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/add-account",
-        data: "not-synced",
-      })
-    );
+    bridge_send("S2C/add-account", "not-synced");
   }
 };
 
 exports.logout = async () => {
   stateManager.init();
-  rn_bridge.channel.send(
-    JSON.stringify({
-      action: "S2C/logout",
-      data: "success",
-    })
-  );
+  bridge_send("S2C/logout", {});
 };
 
 exports.fetchUser = async () => {
   const userState = stateManager.getUserState();
-  rn_bridge.channel.send(
-    JSON.stringify({
-      action: "S2C/fetchuser",
-      data: userState,
-    })
-  );
+  bridge_send("S2C/fetchuser", userState);
 };
 
 exports.history = async (address) => {
   const result = await socketSync(`history ${address}`);
-  rn_bridge.channel.send(
-    JSON.stringify({
-      action: "S2C/history",
-      data: result,
-    })
-  );
+  bridge_send("S2C/histories", result);
 };
 
 exports.deleteAccount = async (password, index, address) => {
@@ -233,21 +219,11 @@ exports.deleteAccount = async (password, index, address) => {
     });
     const minusResult = await socketSync(`-${index} ${address}`);
     if (!minusResult) {
-      rn_bridge.channel.send(
-        JSON.stringify({
-          action: "S2C/error",
-          data: "Socket Server Error",
-        })
-      );
+      bridge_send("S2C/error", "Socket Server Error");
       return;
     }
     stateManager.init();
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/delete-account",
-        data: result,
-      })
-    );
+    bridge_send("S2C/delete-account", result);
     return;
   }
   const deleteResult = await wasmManager.ccall({
@@ -255,12 +231,7 @@ exports.deleteAccount = async (password, index, address) => {
     flag: "delete",
   });
   if (deleteResult.value.result != 0) {
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/history",
-        data: deleteResult.value.display,
-      })
-    );
+    // bridge_send("S2C/histories", deleteResult);
     return;
   }
   const result = await wasmManager.ccall({
@@ -275,22 +246,12 @@ exports.deleteAccount = async (password, index, address) => {
   });
   const hexSocketResult = await socketSync(hexResult.value.display);
   if (!hexSocketResult) {
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/error",
-        data: "Socket server error",
-      })
-    );
+    bridge_send("S2C/error", "Socket server error");
     return;
   }
   const minusResult = await socketSync(`-${index} ${address}`);
   if (!minusResult) {
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/error",
-        data: "Socket server error",
-      })
-    );
+    bridge_send("S2C/error", "Socket server error");
     return;
   }
 
@@ -305,19 +266,9 @@ exports.deleteAccount = async (password, index, address) => {
       accountInfo: result.value.display,
       isAuthenticated: true,
     });
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/delete-account",
-        data: userState,
-      })
-    );
+    bridge_send("S2C/delete-account", userState);
   } else {
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/error",
-        data: "not synced",
-      })
-    );
+    bridge_send("S2C/error", "Socket Not Synced!");
   }
 };
 
@@ -329,21 +280,11 @@ exports.restoreAccount = async (password, seeds, seedType) => {
     command = `addseed ${password},${seeds}`;
   }
   if (command == null) {
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/restore",
-        data: "error",
-      })
-    );
+    bridge_send("S2C/restore", "Error occured in restoring Account!");
     return;
   }
   const recoverResult = await wasmManager.ccall({ command, flag: "recover" });
-  rn_bridge.channel.send(
-    JSON.stringify({
-      action: "S2C/restore",
-      data: recoverResult,
-    })
-  );
+  bridge_send("S2C/restore", recoverResult);
 };
 
 exports.transfer = async (toAddress, fromIdx, amount, tick) => {
@@ -358,28 +299,13 @@ exports.transfer = async (toAddress, fromIdx, amount, tick) => {
   if (v1requestResult.value.result == 0 && v1requestResult.value.display) {
     const sendResult = await socketSync(v1requestResult.value.display);
     if (!sendResult) {
-      rn_bridge.channel.send(
-        JSON.stringify({
-          action: "S2C/transfer",
-          data: "failed",
-        })
-      );
+      bridge_send("S2C/transfer", "Transfer Failed!");
       return;
     }
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/transfer",
-        data: "pending",
-      })
-    );
+    bridge_send("S2C/transfer", "Pending...");
     return;
   } else {
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/transfer",
-        data: "failed",
-      })
-    );
+    bridge_send("S2C/transfer", "Transfer Failed by something...");
     return;
   }
 };
@@ -393,36 +319,21 @@ exports.socket = async (command, socketUrl) => {
   }
   console.log(`Socket sent: ${command}`);
   liveSocket.send(command);
-  rn_bridge.channel.send(
-    JSON.stringify({
-      action: "S2C/socket",
-      data: "success",
-    })
-  );
+  bridge_send("S2C/socket", {});
 };
 
 exports.balances = async () => {
   let liveSocket = socketManager.getLiveSocket();
   if (!liveSocket) {
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/balances",
-        data: "Socket server error.",
-      })
-    );
+    bridge_send("S2C/balances", "Socket server error!");
     return;
   }
   const balanceResult = await socketSync("balances");
   if (!balanceResult) {
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/balances",
-        data: "failed",
-      })
-    );
+    bridge_send("S2C/balances", "Failed!");
     return;
   }
-  res.send(balanceResult);
+  bridge_send("S2C/balances", balanceResult);
 };
 
 exports.transferStatus = async () => {
@@ -433,62 +344,91 @@ exports.transferStatus = async () => {
   setTimeout(() => {
     wasmManager.ccall({ command: "v1request", flag: "transferStatus" });
   }, 1000);
-  rn_bridge.channel.send(
-    JSON.stringify({
-      action: "S2C/transfer-status",
-      data: result,
-    })
-  );
+  bridge_send("S2C/transfer-status", result);
 };
 
 exports.switchNetwork = async () => {
-  rn_bridge.channel.send(
-    JSON.stringify({
-      action: "S2C/switchnetwork",
-      data: "success",
-    })
-  );
+  bridge_send("S2C/switchnetwork", {});
 };
 
 exports.tokens = async () => {
-  const result = await socketSync("tokenlist");
-  rn_bridge.channel.send(
-    JSON.stringify({
-      action: "S2C/tokens",
-      data: result,
-    })
-  );
+  try {
+    const result = await socketSync("tokenlist");
+    bridge_send("S2C/tokens", result);
+  } catch (error) {
+    bridge_send("S2C/error", error);
+  }
 };
+
 exports.basicInfo = async () => {
   let liveSocket = socketManager.getLiveSocket();
   if (!liveSocket) {
-    rn_bridge.channel.send(
-      JSON.stringify({
-        action: "S2C/error",
-        data: "Socket Server Error",
-      })
-    );
+    bridge_send("S2C/error", "Socket Server Error");
     return;
   }
   const balances = await socketSync("balances");
   const marketcap = await socketSync("marketcap");
   const tokens = await socketSync("tokenlist");
-  const richlist = {};
-  const qurichlist = await socketSync("richlist");
-  richlist[qurichlist.name] = qurichlist.richlist;
-  for (let idx = 0; idx < tokens.tokens.length; idx++) {
-    const richlistResult = await socketSync(`richlist.${tokens.tokens[idx]}`);
-    richlist[richlistResult.name] = richlistResult.richlist;
+  const tokenprices = await socketSync("tokenprices");
+  // const richlist = {};
+  // const qurichlist = await socketSync("richlist");
+  // richlist[qurichlist.name] = qurichlist.richlist;
+  // for (let idx = 0; idx < tokens.tokens.length; idx++) {
+  //   const richlistResult = await socketSync(`richlist.${tokens.tokens[idx]}`);
+  //   richlist[richlistResult.name] = richlistResult.richlist;
+  // }
+  bridge_send("S2C/basic-info", {
+    balances: balances.balances,
+    marketcap,
+    tokens: tokens.tokens,
+    tokenprices,
+    // richlist,
+  });
+};
+
+exports.fetchOrders = async (token) => {
+  try {
+    const orders = await socketSync(`orders ${token}`);
+    bridge_send("S2C/fetch-orders", orders);
+  } catch (error) {
+    bridge_send("S2C/error", error);
   }
-  rn_bridge.channel.send(
-    JSON.stringify({
-      action: "S2C/basic-info",
-      data: {
-        balances: balances.balances,
-        marketcap,
-        tokens: tokens.tokens,
-        richlist,
-      },
-    })
-  );
+};
+
+exports.buySell = async ({
+  flag,
+  password,
+  index,
+  tick,
+  currentToken,
+  amount,
+  price,
+}) => {
+  console.log({
+    command: `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`,
+    flag,
+  });
+  const res = await wasmManager.ccallV1request({
+    command: `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`,
+    flag,
+  });
+  bridge_send("S2C/buy-sell", res);
+};
+
+exports.myOrders = async () => {
+  try {
+    const result = await socketSync("myorders");
+    bridge_send("S2C/my-orders", result);
+  } catch (error) {
+    bridge_send("S2C/error", error);
+  }
+};
+
+exports.tokenPrices = async () => {
+  try {
+    const result = await socketSync("tokenprices");
+    bridge_send("S2C/token-prices", result);
+  } catch (error) {
+    bridge_send("S2C/error", error);
+  }
 };
