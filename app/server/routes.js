@@ -25,5 +25,6 @@ router.post('/trading-page-info', mainController.fetchTradingPageInfo);
 router.post('/ccall-v1request', mainController.ccallV1request);
 router.post('/buy-cell', mainController.buySell);
 router.post('/update-userstate', mainController.updatedUserState);
+router.post('/prices', mainController.getPrice);
 
 module.exports = router;

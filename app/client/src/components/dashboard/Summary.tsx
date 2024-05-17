@@ -7,12 +7,15 @@ import { useAuth } from "../../contexts/AuthContext";
 import MetricsChart from "./chart/MetricsChart";
 
 const Summary: React.FC = () => {
-    const { tick, totalBalance, marketcap } = useAuth();
+    const { tick, totalBalance, marketcap, tokens } = useAuth();
 
-    const options = assetsItems.map((item) => ({
-        label: item.icon,
-        value: item.name,
-    }));
+    const options = tokens.map((token) => {
+        const item = assetsItems.find((k) => k.name == token) || assetsItems[0]
+        return ({
+            label: item.icon,
+            value: token,
+        })
+    });
 
     return (
         <div className="bg-dark rounded-lg p-5">
