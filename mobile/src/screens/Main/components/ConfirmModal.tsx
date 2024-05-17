@@ -1,13 +1,24 @@
 import React, { ReactNode } from "react";
-import { Button, HStack, IModalProps, Modal, VStack, View } from "native-base";
+import {
+  Button,
+  Center,
+  HStack,
+  IModalProps,
+  Modal,
+  VStack,
+  View,
+} from "native-base";
 import { useColors } from "@app/context/ColorContex";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { IconDefinition, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import local from "@app/utils/locales";
 
 interface IProps extends IModalProps {
   isOpen: boolean;
   onToggle: () => void;
-  onPress: () => void;
+  onPress?: () => void;
+  icon?: ReactNode | IconDefinition;
+  buttons?: ReactNode;
   children: ReactNode;
 }
 
@@ -15,9 +26,13 @@ const ConfirmModal: React.FC<IProps> = ({
   isOpen,
   onToggle,
   onPress,
+  icon,
+  buttons,
   children,
 }) => {
+  const lang = local.Main.Components;
   const { bgColor, textColor, main } = useColors();
+
   return (
     <Modal
       isOpen={isOpen}
@@ -38,41 +53,46 @@ const ConfirmModal: React.FC<IProps> = ({
         <Modal.CloseButton />
         <Modal.Body bgColor={bgColor}>
           <VStack justifyContent={"center"} py={6}>
-            <View
-              bgColor={main.celestialBlue}
-              rounded={"full"}
-              mx={"auto"}
-              p={3}
-            >
-              <FontAwesomeIcon
-                icon={faCheck}
-                size={42}
-                color={textColor}
-              ></FontAwesomeIcon>
-            </View>
+            {icon && (
+              <View
+                bgColor={main.celestialBlue}
+                rounded={"full"}
+                mx={"auto"}
+                p={5}
+                my={6}
+              >
+                <FontAwesomeIcon
+                  icon={icon as IconDefinition}
+                  size={72}
+                  color="white"
+                ></FontAwesomeIcon>
+              </View>
+            )}
             {children}
           </VStack>
-          <HStack justifyContent={"center"} space={3}>
-            <Button
-              onPress={onToggle}
-              w={"1/2"}
-              rounded={"md"}
-              _pressed={{ opacity: 0.6 }}
-              bgColor={"red.500"}
-            >
-              Cancel
-            </Button>
-            <Button
-              onPress={onPress}
-              w={"1/2"}
-              rounded={"md"}
-              _pressed={{ opacity: 0.6 }}
-              bgColor={main.celestialBlue}
-              //   isDisabled={addingStatus}
-            >
-              Confirm
-            </Button>
-          </HStack>
+          {buttons == null && (
+            <HStack justifyContent={"center"} space={3}>
+              <Button
+                onPress={onToggle}
+                w={"1/2"}
+                rounded={"md"}
+                _pressed={{ opacity: 0.6 }}
+                bgColor={"red.500"}
+              >
+                {lang.Cancel}
+              </Button>
+              <Button
+                onPress={onPress}
+                w={"1/2"}
+                rounded={"md"}
+                _pressed={{ opacity: 0.6 }}
+                bgColor={main.celestialBlue}
+                //   isDisabled={addingStatus}
+              >
+                {lang.Confirm}
+              </Button>
+            </HStack>
+          )}
         </Modal.Body>
       </Modal.Content>
     </Modal>

@@ -6,6 +6,12 @@ interface ColorContextState {
   bgColor: string;
   textColor: string;
   btnBgColor: string;
+  panelBgColor: string;
+  selectedPanelBgColor: string;
+  toast: {
+    textColor: string;
+    bgColor: string;
+  };
   main: {
     darkGunmetal: string;
     babyBlue: string;
@@ -40,12 +46,27 @@ export const ColorProvider: React.FC<ColorProviderProps> = ({ children }) => {
     colors.light.btnBgColor,
     colors.dark.btnBgColor
   );
+  const toast = useColorModeValue(
+    { textColor: colors.dark.textColor, bgColor: "#20304C" },
+    { textColor: colors.light.textColor, bgColor: "#EDF1F9" }
+  );
+  const panelBgColor = useColorModeValue(
+    colors.light.panelBgColor,
+    colors.dark.panelBgColor
+  );
+  const selectedPanelBgColor = useColorModeValue(
+    colors.light.selectedPanelBgColor,
+    colors.dark.selectedPanelBgColor
+  );
   return (
     <ColorContext.Provider
       value={{
         bgColor,
         textColor,
         btnBgColor,
+        panelBgColor,
+        selectedPanelBgColor,
+        toast,
         main: colors.main,
         gray: colors.gray,
       }}

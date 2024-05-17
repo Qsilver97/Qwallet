@@ -12,19 +12,20 @@ const Splash: React.FC = () => {
   const [index, setIndex] = useState(0);
   const swiperRef = useRef(null);
   const navigation = useNavigation();
+  const lang = local.Splash;
 
   const slides = [
     {
       image: require("@assets/images/01/01.png"),
-      text: local.Splash.Text1,
+      text: lang.Text1,
     },
     {
       image: require("@assets/images/01/02.png"),
-      text: local.Splash.Text2,
+      text: lang.Text2,
     },
     {
       image: require("@assets/images/01/03.png"),
-      text: local.Splash.Text3,
+      text: lang.Text3,
     },
   ];
 
@@ -74,7 +75,7 @@ const Splash: React.FC = () => {
       </Swiper>
       <ButtonBox>
         <PageButton
-          title={local.Splash.GetStarted}
+          title={lang.GetStarted}
           onPress={handlePress}
           type="primary"
         ></PageButton>

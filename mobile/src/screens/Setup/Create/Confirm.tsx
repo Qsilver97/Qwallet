@@ -19,6 +19,8 @@ const Confirm: React.FC = () => {
   const [seedValue, setSeedValue] = useState("");
   const [step, setStep] = useState(1);
   const navigation = useNavigation();
+  const lang = local.Create.Confirm;
+
   const handleSeedTyping = (txt: string) => {
     setSeedValue(txt);
     if (txt == seeds) setIsCorrectSeed(true);
@@ -104,10 +106,10 @@ const Confirm: React.FC = () => {
         <VStack flex={1}>
           <VStack space={5} pt={10}>
             <Text fontSize="2xl" color={main.jeansBlue} textAlign="center">
-              {local.Create.Confirm.WriteDownSeedPhrase}
+              {lang.WriteDownSeedPhrase}
             </Text>
             <Text textAlign="center" px={16}>
-              {local.Create.Confirm.Caption1}
+              {lang.Caption1}
             </Text>
           </VStack>
           <Box textAlign="center" p={8}>
@@ -152,10 +154,10 @@ const Confirm: React.FC = () => {
         <VStack flex={1}>
           <VStack space={5} pt={10}>
             <Text fontSize="2xl" color={main.jeansBlue} textAlign="center">
-              {local.Create.Confirm.ConfirmSeedPhrase}
+              {lang.ConfirmSeedPhrase}
             </Text>
             <Text textAlign="center" px={16}>
-              {local.Create.Confirm.Caption2}
+              {lang.Caption2}
             </Text>
           </VStack>
           <VStack textAlign="center" p={8} flex={1}>
@@ -200,10 +202,10 @@ const Confirm: React.FC = () => {
         <VStack flex={1} py={16}>
           <VStack space={5} pt={10}>
             <Text fontSize="2xl" color={main.jeansBlue} textAlign="center">
-              {local.Create.Confirm.WriteDownSeedPhrase}
+              {lang.WriteDownSeedPhrase}
             </Text>
             <Text textAlign="justify" px={10}>
-              {local.Create.Confirm.Caption3}
+              {lang.Caption3}
             </Text>
           </VStack>
           <Box textAlign="center" py={20} px={8}>
@@ -223,10 +225,10 @@ const Confirm: React.FC = () => {
         <VStack flex={1} py={16}>
           <VStack space={5} pt={10}>
             <Text fontSize="2xl" color={main.jeansBlue} textAlign="center">
-              {local.Create.Confirm.EnterSeedChar}
+              {lang.EnterSeedChar}
             </Text>
             <Text textAlign="justify" px={10}>
-              {local.Create.Confirm.Caption4}
+              {lang.Caption4}
             </Text>
           </VStack>
           <Box textAlign="center" py={20} px={8}>
@@ -253,7 +255,7 @@ const Confirm: React.FC = () => {
       )}
       <ButtonBox>
         <PageButton
-          title={local.Create.Confirm.button_Next}
+          title={lang.button_Next}
           type="primary"
           onPress={handleNext}
           isDisabled={

@@ -12,6 +12,10 @@ const {
   switchNetwork,
   tokens,
   basicInfo,
+  buySell,
+  myOrders,
+  tokenPrices,
+  logout,
 } = require("./controller");
 const wasmManager = require("./managers/wasmManager");
 const stateManager = require("./managers/stateManager");
@@ -44,14 +48,14 @@ rn_bridge.channel.on("message", async (msg) => {
       }
       case "C2S/login": {
         console.log(message.data);
-        const success = await login({ password: message.data?.password });
-        console.log(success);
-        if (typeof success != "string") {
+        const result = await login({ password: message.data?.password });
+        console.log("LOGIN RESULT: ", result);
+        if (typeof result != "string") {
           rn_bridge.channel.send(
             JSON.stringify({
               action: "S2C/login",
               success: true,
-              data: success,
+              data: result,
             })
           );
         } else {
@@ -59,10 +63,14 @@ rn_bridge.channel.on("message", async (msg) => {
             JSON.stringify({
               action: "S2C/login",
               success: false,
-              error: "Invalid password",
+              error: result,
             })
           );
         }
+        break;
+      }
+      case "C2S/logout": {
+        logout();
         break;
       }
       case "C2S/create": {
@@ -78,7 +86,7 @@ rn_bridge.channel.on("message", async (msg) => {
         break;
       }
 
-      case "C2S/history": {
+      case "C2S/histories": {
         history(message.data.address);
         break;
       }
@@ -111,7 +119,7 @@ rn_bridge.channel.on("message", async (msg) => {
         break;
       }
       case "C2S/transfer-status": {
-        transferStatus()
+        transferStatus();
         break;
       }
       case "C2S/switch-network": {
@@ -126,6 +134,19 @@ rn_bridge.channel.on("message", async (msg) => {
         basicInfo();
         break;
       }
+      case "C2S/buy-sell": {
+        buySell(message.data);
+        break;
+      }
+      case "C2S/my-orders": {
+        myOrders();
+        break;
+      }
+      case "C2S/token-prices": {
+        tokenPrices();
+        break;
+      }
+
       // Socket
       case "C2S/add-account": {
         console.log(message.data);
