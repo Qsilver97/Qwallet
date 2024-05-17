@@ -7,12 +7,12 @@ import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
 import local from "@app/utils/locales";
 
-
 interface IProps {}
 
 const WalletSetup: React.FC<IProps> = () => {
   const navigation = useNavigation();
   const { bgColor, textColor } = useColors();
+  const lang = local.WalletSetup;
 
   return (
     <VStack
@@ -37,24 +37,24 @@ const WalletSetup: React.FC<IProps> = () => {
           alt="Splash Image"
         />
         <Text color={textColor} fontSize={40} textAlign={"center"} px={10}>
-          {local.WalletSetup.WalletSetup}
+          {lang.WalletSetup}
         </Text>
       </VStack>
       <ButtonBox>
         <PageButton
-          title={local.WalletSetup.button_ImportUsingSeedPhrase}
+          title={lang.button_ImportUsingSeedPhrase}
           type="disabled"
           onPress={() => {
             navigation.navigate("Restore");
           }}
         ></PageButton>
         <PageButton
-          title={local.WalletSetup.button_CreateNewWallet}
+          title={lang.button_CreateNewWallet}
           type="primary"
           onPress={() => navigation.navigate("Create")}
         ></PageButton>
         <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text textAlign={"center"}>{local.WalletSetup.HaveAlreadyYourOwnWallet}</Text>
+          <Text textAlign={"center"}>{lang.HaveAlreadyYourOwnWallet}</Text>
         </TouchableOpacity>
       </ButtonBox>
     </VStack>

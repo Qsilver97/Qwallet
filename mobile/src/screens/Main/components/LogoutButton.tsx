@@ -14,6 +14,7 @@ const LogoutButton: React.FC = () => {
   const auth = useAuth();
   const navigation = useNavigation();
   const { isOpen, onToggle } = useDisclose();
+  const lang = local.Main.Components;
 
   const handleLogout = () => {
     logout();
@@ -31,7 +32,7 @@ const LogoutButton: React.FC = () => {
       </TouchableOpacity>
       <ConfirmModal isOpen={isOpen} onToggle={onToggle} onPress={handleLogout}>
         <Text fontSize={"xl"} textAlign={"center"}>
-          {local.Main.Header.ReallyLogout}
+          {lang.ReallyLogout}
         </Text>
       </ConfirmModal>
     </>

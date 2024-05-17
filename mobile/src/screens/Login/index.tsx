@@ -32,6 +32,7 @@ const Login: React.FC = () => {
   const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
   const [loginWaiting, setLoginWaiting] = useState<boolean>(false);
   const auth = useAuth();
+  const lang = local.Login;
 
   const handlePasswordChange = (value: string) => {
     passwordAvail(value);
@@ -108,25 +109,25 @@ const Login: React.FC = () => {
         justifyItems="center"
       >
         <Image source={require("@assets/icon.png")} alt="Logo" size="xl" />
-        <Text fontSize="5xl">{local.Login.Login}</Text>
+        <Text fontSize="5xl">{lang.Login}</Text>
         <Input
           value={password}
           onChangeText={handlePasswordChange}
           onKeyPress={handleKeyDown}
-          placeholder={local.Login.placeholder_Password}
+          placeholder={lang.placeholder_Password}
           type="password"
-          error={passwordStatus ? local.Login.NotExist : ""}
+          error={passwordStatus ? lang.NotExist : ""}
         />
       </VStack>
       <ButtonBox>
         <PageButton
-          title={local.Login.button_Login}
+          title={lang.button_Login}
           type="primary"
           isLoading={loginWaiting}
           onPress={handleLogin}
         ></PageButton>
         <PageButton
-          title={local.Login.button_CreateNewWallet}
+          title={lang.button_CreateNewWallet}
           type="disabled"
           onPress={() => navigation.navigate("Create")}
         ></PageButton>
@@ -135,9 +136,7 @@ const Login: React.FC = () => {
             navigation.navigate("Restore");
           }}
         >
-          <Text textAlign={"center"}>
-            {local.Login.button_ImportUsingSeedPhrase}
-          </Text>
+          <Text textAlign={"center"}>{lang.button_ImportUsingSeedPhrase}</Text>
         </TouchableOpacity>
       </ButtonBox>
     </VStack>

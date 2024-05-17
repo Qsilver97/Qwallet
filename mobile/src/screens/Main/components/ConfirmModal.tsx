@@ -11,6 +11,7 @@ import {
 import { useColors } from "@app/context/ColorContex";
 import { IconDefinition, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import local from "@app/utils/locales";
 
 interface IProps extends IModalProps {
   isOpen: boolean;
@@ -29,7 +30,9 @@ const ConfirmModal: React.FC<IProps> = ({
   buttons,
   children,
 }) => {
+  const lang = local.Main.Components;
   const { bgColor, textColor, main } = useColors();
+
   return (
     <Modal
       isOpen={isOpen}
@@ -76,7 +79,7 @@ const ConfirmModal: React.FC<IProps> = ({
                 _pressed={{ opacity: 0.6 }}
                 bgColor={"red.500"}
               >
-                Cancel
+                {lang.Cancel}
               </Button>
               <Button
                 onPress={onPress}
@@ -86,7 +89,7 @@ const ConfirmModal: React.FC<IProps> = ({
                 bgColor={main.celestialBlue}
                 //   isDisabled={addingStatus}
               >
-                Confirm
+                {lang.Confirm}
               </Button>
             </HStack>
           )}

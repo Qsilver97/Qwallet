@@ -16,34 +16,8 @@ import {
 import React, { useMemo } from "react";
 import { ActivityIndicator } from "react-native";
 import { useSelector } from "react-redux";
-interface Balances {
-  [address: string]: number;
-}
-const tokenBalances: {
-  [name: string]: Balances;
-} = {
-  QX: {
-    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-  },
-  QWALLET: {
-    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-  },
-  QFT: {
-    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-  },
-  QTRY: {
-    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-  },
-  CFB: {
-    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-  },
-  RANDOM: {
-    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-  },
-  QUTIL: {
-    TLEIBEQEXQKJLBQXENQJZLKEZIGAKLVXYSTVDHYEAHRPFJPLFWROUWGBJNIB: 24,
-  },
-};
+import local from "@app/utils/locales";
+
 
 const Tokenlist: React.FC = () => {
   const { textColor, main } = useColors();
@@ -51,12 +25,13 @@ const Tokenlist: React.FC = () => {
   const { tokens, tokenprices, marketcap } = useSelector(
     (store: RootState) => store.app
   );
+  const lang = local.Main.Components;
 
   const formattedItems = useMemo(() => {
     return (
       <>
         {tokens?.map((token, key) => {
-          const Icon = tokenIcons.find((t) => t.symbol == token)?.icon;
+          const TokenIcon = tokenIcons.find((t) => t.symbol == token)?.icon;
           const balance = tokenBalances?.[token]?.[currentAddress] || 0;
           const price = parseInt(tokenprices?.[token]?.[0] || "0"); // Handle missing price
 
@@ -75,7 +50,7 @@ const Tokenlist: React.FC = () => {
             >
               <HStack alignItems="center" justifyContent="space-between">
                 <HStack space={4} alignItems="center" flex={1}>
-                  {Icon && <Icon width={32} height={32} />}
+                  {TokenIcon && <TokenIcon width={32} height={32} />}
                   <VStack flex={1}>
                     <Text>{token}</Text>
                     <Text>{balance.toLocaleString()}</Text>
@@ -105,7 +80,7 @@ const Tokenlist: React.FC = () => {
             <Center>
               <Icon as={AntDesign} name="questioncircle" size={20}></Icon>
               <Text color={textColor} fontSize="md" mt="4">
-                You haven't got any assets!
+                {lang.NoAssets}
               </Text>
             </Center>
           </VStack>

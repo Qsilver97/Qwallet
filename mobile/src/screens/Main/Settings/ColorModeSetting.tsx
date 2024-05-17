@@ -9,13 +9,17 @@ import {
 } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import local from "@app/utils/locales";
+
 
 const ColorModeSetting: React.FC = () => {
   const { textColor } = useColors();
   const { setColorMode } = useColorMode();
+  const lang = local.Main.Settings;
+
   return (
     <CollapsibleView
-      title="Color Mode Setting"
+      title={lang.ColorModeSetting}
       icon={
         <Icon
           as={MaterialCommunityIcons}
@@ -42,7 +46,7 @@ const ColorModeSetting: React.FC = () => {
               color={textColor}
             />
             <Text fontSize="xl" color={textColor}>
-              Light Mode
+              {lang.LightMode}
             </Text>
           </HStack>
         </TouchableOpacity>
@@ -61,7 +65,7 @@ const ColorModeSetting: React.FC = () => {
               color={textColor}
             />
             <Text fontSize="xl" color={textColor}>
-              Dark Mode
+              {lang.DarkMode}
             </Text>
           </HStack>
         </TouchableOpacity>

@@ -30,7 +30,7 @@ interface RootNavigationProps {
 
 const RootNavigation: React.FC<RootNavigationProps> = ({ init }) => {
   const { bgColor, textColor } = useColors();
-
+  const lang = local.Title
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -50,12 +50,12 @@ const RootNavigation: React.FC<RootNavigationProps> = ({ init }) => {
         <Stack.Screen
           name="WalletSetup"
           component={WalletSetup}
-          options={{ title: local.Title.WalletSetup }}
+          options={{ title: lang.WalletSetup }}
         />
         <Stack.Screen
           name="Login"
           component={Login}
-          options={{ title: local.Title.Login }}
+          options={{ title: lang.Login }}
         />
         <Stack.Screen
           name="Create"
@@ -65,7 +65,7 @@ const RootNavigation: React.FC<RootNavigationProps> = ({ init }) => {
         <Stack.Screen
           name="Restore"
           component={Restore}
-          options={{ title: local.Title.Backup }}
+          options={{ title: lang.Backup }}
         />
         <Stack.Screen
           name="Main"

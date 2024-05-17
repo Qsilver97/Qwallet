@@ -3,21 +3,26 @@ import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Image, VStack, Text, Box } from "native-base";
 import { useColors } from "@app/context/ColorContex";
-import { getPasswordStrengthProps } from "@app/utils/utils";
+import {
+  checkPasswordStrength,
+  getPasswordStrengthProps,
+} from "@app/utils/utils";
 import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
 import ReminderBar from "./Components/ReminderBar";
 import local from "@app/utils/locales";
+import { useAuth } from "@app/context/AuthContext";
 
 interface IProps {}
 
 const Reminder: React.FC<IProps> = () => {
   const navigation = useNavigation();
+  const { tempPassword } = useAuth();
   const { bgColor, textColor, main, gray } = useColors();
   const [step, setStep] = useState<1 | 2>(1);
   const handleNext = () => {
     if (step == 1) setStep(2);
-    else navigation.navigate("SelectSeedType");
+    else navigation.navigate("SeedType");
   };
 
   return (
@@ -75,9 +80,12 @@ const Reminder: React.FC<IProps> = () => {
               <Text>{local.Create.Reminder.Caption3}</Text>
               <Text>
                 {local.Create.Reminder.SecurityLevel}:{" "}
-                {getPasswordStrengthProps(1).label}
+                {
+                  getPasswordStrengthProps(checkPasswordStrength(tempPassword))
+                    .label
+                }
               </Text>
-              <ReminderBar strength={1} />
+              <ReminderBar strength={checkPasswordStrength(tempPassword)} />
 
               <VStack space={"2"}>
                 <Text fontWeight={"bold"} ml={-3}>
@@ -101,7 +109,7 @@ const Reminder: React.FC<IProps> = () => {
         </VStack>
       )}
       <ButtonBox>
-        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+        {/* <TouchableOpacity onPress={() => navigation.navigate("Login")}>
           <Text
             textAlign={"center"}
             fontWeight={"bold"}
@@ -109,7 +117,7 @@ const Reminder: React.FC<IProps> = () => {
           >
             {local.Create.Reminder.RemiderLater}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <PageButton
           title={
             step == 1

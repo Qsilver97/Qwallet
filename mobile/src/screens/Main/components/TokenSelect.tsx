@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { Box, HStack, Image, ScrollView, Text } from "native-base";
+import { Box, HStack, ScrollView, Text } from "native-base";
 import { useColors } from "@app/context/ColorContex";
 import { TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
@@ -17,9 +17,7 @@ const TokenSelect: React.FC<TokenSelectProps> = ({
 }) => {
   const { textColor, main } = useColors();
   const { tokens } = useSelector((store: RootState) => store.app);
-  useEffect(() => {
-    console.log(tokens);
-  }, [tokens]);
+
   const TokenList = useMemo(() => {
     return (
       <HStack space={3} px="4" w="full">
@@ -45,7 +43,7 @@ const TokenSelect: React.FC<TokenSelectProps> = ({
         })}
       </HStack>
     );
-  }, [tokens, selectedToken]);
+  }, [tokens, selectedToken, textColor, main]);
 
   return (
     <ScrollView horizontal={true} p="2">

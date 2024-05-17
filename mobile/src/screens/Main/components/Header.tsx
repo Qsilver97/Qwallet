@@ -21,6 +21,7 @@ import { addAccount } from "@app/api/api";
 import eventEmitter from "@app/api/eventEmitter";
 import ConfirmModal from "./ConfirmModal";
 import { useFocusEffect } from "@react-navigation/native";
+import local from "@app/utils/locales";
 
 const Header: React.FC = () => {
   const { bgColor, textColor, main, gray } = useColors();
@@ -123,7 +124,7 @@ const Header: React.FC = () => {
                     _pressed={{ opacity: 0.6 }}
                     bgColor={gray.gray50}
                   >
-                    Cancel
+                    {local.Main.Header.button_Cancel}
                   </Button>
                   <Button
                     onPress={() => {
@@ -135,7 +136,7 @@ const Header: React.FC = () => {
                     _pressed={{ opacity: 0.6 }}
                     bgColor={main.celestialBlue}
                   >
-                    Add Address
+                    {local.Main.Header.button_AllAddress}
                   </Button>
                 </HStack>
               </Popover.Body>
@@ -153,10 +154,10 @@ const Header: React.FC = () => {
       >
         <>
           <Text fontSize={"2xl"} textAlign={"center"}>
-            Create New Address
+            {local.Main.Header.Create}
           </Text>
           <Text textAlign={"center"}>
-            An Account can't have more than 10 addresses
+          {local.Main.Header.CreateInfo}
           </Text>
         </>
       </ConfirmModal>

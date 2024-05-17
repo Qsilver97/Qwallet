@@ -1,6 +1,6 @@
 import CollapsibleView from "@app/components/UI/CollapsibleView";
 import { useColors } from "@app/context/ColorContex";
-import { HStack, Icon, Text, VStack, useDisclose } from "native-base";
+import { HStack, Icon, Text, useDisclose } from "native-base";
 import React, { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import ConfirmModal from "../components/ConfirmModal";
@@ -11,32 +11,30 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const data = [
   {
-    title: "English (United States)",
     language: "en",
     symbol: "En",
   },
   {
-    title: "Chinese (China)",
     language: "zh",
     symbol: "中",
   },
   {
-    title: "Spanish (Spain)",
     language: "es",
     symbol: "Es",
   },
   {
-    title: "French (France)",
     language: "fr",
     symbol: "Fr",
   },
   {
-    title: "Russian (Russia)",
+    language: "de",
+    symbol: "De",
+  },
+  {
     language: "ru",
     symbol: "Ру",
   },
   {
-    title: "Japanese (Japan)",
     language: "ja",
     symbol: "日",
   },
@@ -44,15 +42,16 @@ const data = [
 
 const LanguageSetting: React.FC = () => {
   const { textColor } = useColors();
-  const [currrentLanguage, setCurrentLanguage] = useState<string>(
+  const [currentLanguage, setCurrentLanguage] = useState<string>(
     local.getLanguage()
   );
   const { isOpen, onToggle } = useDisclose();
+  const lang = local.Main.Settings;
 
   return (
     <>
       <CollapsibleView
-        title="Language Setting"
+        title={lang.LanguageSetting}
         icon={
           <Icon as={FontAwesome} name="language" size="xl" color={textColor} />
         }
@@ -82,7 +81,7 @@ const LanguageSetting: React.FC = () => {
                 <Text fontSize="xl" fontWeight="bold">
                   {dt.symbol}
                 </Text>
-                <Text fontSize="md">{dt.title}</Text>
+                <Text fontSize="md">{lang.Languages[dt.language]}</Text>
               </HStack>
             </TouchableOpacity>
           );
@@ -94,16 +93,19 @@ const LanguageSetting: React.FC = () => {
         onToggle={onToggle}
         onPress={() => {
           onToggle();
-          local.setLanguage(currrentLanguage);
+          local.setLanguage(currentLanguage);
           AsyncStorage.setItem(
             "lang",
-            data.find((d) => d.language == currrentLanguage)?.language as string
+            data.find((d) => d.language == currentLanguage)?.language as string
           );
         }}
       >
         <Text textAlign="center" fontSize="md">
-          Are you really want to change language to{" "}
-          {data.find((d) => d.language == currrentLanguage)?.title}?
+          {lang.ConfirmLanguageChange.replace(
+            "{language}",
+            //@ts-ignore
+            lang.Languages[currentLanguage]
+          )}
         </Text>
       </ConfirmModal>
     </>

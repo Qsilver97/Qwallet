@@ -98,7 +98,108 @@
       "Header": {
         "ReallyLogout": "Do you really want to logout?",
         "button_Confirm": "Yes",
-        "buttom_Cancel": "Cancel"
+        "button_Cancel": "Cancel",
+        "button_AllAddress": "All Addresses",
+        "Create": "Create New Address",
+        "CreateInfo": "An Account can't have more than 10 addresses"
+      },
+      "BottomTab": {
+        "Wallet": "Wallet",
+        "Orderbook": "Orderbook",
+        "Transaction": "Transaction",
+        "Settings": "Settings"
+      },
+      "Wallet": {
+        "Home": {
+          "MyWallet": "My Wallet",
+          "CurrentTick": "Current Tick",
+          "AllAssets": "My All Assets"
+        },
+        "AllAddress": {
+          "AllAddresses": "All Addresses",
+          "DeleteAddressPrompt": "Do you really want to delete this address?"
+        }
+      },
+      "Orderbook": {
+        "Orderbook": "Orderbook",
+        "InputAmount": "Input Amount",
+        "AmountOfToken": "Amount of {currentToken}",
+        "InputPrice": "Input Price",
+        "PriceOfToken": "Price of {currentToken}",
+        "Buy": "BUY",
+        "Sell": "SELL",
+        "HighestBidPrice": "Currently the highest bid price of {currentToken} is {price} QU, lowest ask price is {price} QU.",
+        "ConfirmBuy": "Are you really want to buy {amount} {currentToken} as {price} QU",
+        "Status": "Status",
+        "TransactionID": "Transaction ID",
+        "CurrentTick": "Current Tick",
+        "ExpectedTick": "Expected Tick",
+        "MyOrderList": "My Order List",
+        "NoOrders": "You haven't got any buy/sell orders in this address!"
+      },
+      "Transaction": {
+        "Transactions": "Transactions",
+        "Status": {
+          "Confirmed": "Confirmed",
+          "Failed": "Failed",
+          "OldEpoch": "Old Epoch"
+        },
+        "Details": {
+          "Date": "Date",
+          "Time": "Time",
+          "TotalAmount": "Total Amount",
+          "TotalAmountUSD": "Total Amount($)",
+          "TransactionID": "Transaction ID",
+          "Status": "Status",
+          "From": "From",
+          "To": "To",
+          "Back": "Back"
+        }
+      },
+      "Settings": {
+        "Settings": "Settings",
+        "ColorModeSetting": "Color Mode Setting",
+        "LightMode": "Light Mode",
+        "DarkMode": "Dark Mode",
+        "LanguageSetting": "Language Setting",
+        "ConfirmLanguageChange": "Are you really want to change language to {language}?",
+        "Languages": {
+          "en": "English (United States)",
+          "zh": "Chinese (China)",
+          "es": "Spanish (Spain)",
+          "fr": "French (France)",
+          "ru": "Russian (Russia)",
+          "ja": "Japanese (Japan)"
+        },
+        "NetworkSetting": "Network Settings",
+        "PleaseWaitNextVersion": "Please wait Next Version.",
+        "SecuritySetting": "Security Settings"
+      },
+      "Components": {
+        "Cancel": "Cancel",
+        "Confirm": "Confirm",
+        "ReallyLogout": "Do you really want to logout?",
+        "NoAssets": "You haven't got any assets!",
+        "SendAddress": "Send Address",
+        "SendToAddress": "Send to address",
+        "Amount": "Amount",
+        "Send": "Send",
+        "ToAddress": "To Address",
+        "Token": "Token",
+        "Status": "Status",
+        "TransactionID": "Transaction ID",
+        "CurrentTick": "Current Tick",
+        "ExpectedTick": "Expected Tick",
+        "InvalidAddressOrAmount": "Invalid address or amount!"
+      }
+    },
+    "util": {
+      "PasswordStrength": {
+        "Perfect": "Perfect!",
+        "Good": "Good",
+        "Normal": "Normal",
+        "Bad": "Bad",
+        "NotAvailable": "Not Available"
       }
     }
   },
@@ -108,43 +209,43 @@
       "Reminder": "安全提醒",
       "Confirm": "确认种子短语",
       "SeedType": "选择种子类型",
-      "WalletSetup": "钱包设置",
-      "Dashboard": "仪表板",
+      "WalletSetup": "设置钱包",
+      "Dashboard": "仪表盘",
       "Login": "登录",
       "Create": "创建",
       "Backup": "备份钱包"
     },
     "Splash": {
-      "GetStarted": "开始",
-      "Text1": "财产多样性",
+      "GetStarted": "开始使用",
+      "Text1": "多样化资产",
       "Text2": "安全保障",
       "Text3": "便捷交易"
     },
     "WalletSetup": {
       "button_ImportUsingSeedPhrase": "使用种子短语导入",
-      "HaveAlreadyYourOwnWallet": "已经有自己的钱包了吗？",
+      "HaveAlreadyYourOwnWallet": "已有自己的钱包?",
       "WalletSetup": "钱包设置",
       "button_CreateNewWallet": "创建新钱包"
     },
     "Create": {
       "Create": {},
       "Confirm": {
-        "WriteDownSeedPhrase": "记录下您的种子短语",
-        "Caption1": "这是您的种子短语。请将其记录在纸上并保存在安全的地方。下一步将要求您按顺序重新输入此短语。",
+        "WriteDownSeedPhrase": "写下您的种子短语",
+        "Caption1": "这是您的种子短语。请将其写在纸上并保存在安全的地方。您将在下一步被要求重新输入这个短语（按顺序）。",
         "ConfirmSeedPhrase": "确认种子短语",
-        "Caption2": "请按照呈现给您的顺序选择每个单词。",
-        "Caption3": "这是您的种子字符。请将其记录在纸上并保存在安全的地方。下一步将要求您按顺序重新输入此短语。",
+        "Caption2": "按顺序选择每个单词。",
+        "Caption3": "这是您的种子字符。请将其写在纸上并保存在安全的地方。您将在下一步被要求重新输入这个字符（按顺序）。",
         "EnterSeedChar": "输入您的种子字符",
         "Caption4": "请输入您保存的种子字符。",
         "button_Next": "下一步"
       },
       "CreatePassword": {
         "Create": "创建密码",
-        "Caption": "此密码仅用于在此服务上解锁您的Metamask钱包",
-        "AtLeast8Char": "至少8个字符",
+        "Caption": "此密码将只在此服务上解锁您的Metamask钱包",
+        "AtLeast8Char": "必须至少8个字符",
         "PasswordStrength": "密码强度",
         "NotMatch": "密码不匹配。",
-        "Understand": "我明白DeGe无法为我恢复此密码。",
+        "Understand": "我知道DeGe无法为我找回这个密码。",
         "LearnMore": "了解更多",
         "placeholder_NewPassword": "新密码",
         "placeholder_ConfirmPassword": "确认密码",
@@ -152,20 +253,20 @@
       },
       "Reminder": {
         "Secure": "保护您的钱包",
-        "Caption1": "不要冒失去资金的风险。通过在您信任的地方保存种子短语来保护您的钱包。这是恢复钱包的唯一方式，如果您被锁定在应用外或获得新设备。",
-        "Caption2": "保护您的钱包种子短语",
+        "Caption1": "不要冒险丢失您的资金。通过将种子短语保存在可信的地方来保护您的钱包。这是您在无法访问应用程序或更换设备时唯一的恢复钱包的方法。",
+        "Caption2": "保护您的钱包的种子短语",
         "Manual": "手动",
-        "Caption3": "将您的种子短语写在一张纸上并储存在安全的地方。",
+        "Caption3": "将您的种子短语写在纸上并保存在安全的地方。",
         "SecurityLevel": "安全级别",
-        "Risks": "风险是",
-        "Risk1": "您将其丢失",
-        "Risk2": "您忘记放在哪里",
-        "Risk3": "别人找到了它",
-        "OtherOption": "其他选项：不必是纸！",
+        "Risks": "风险包括",
+        "Risk1": "您丢失它",
+        "Risk2": "您忘记把它放在哪里",
+        "Risk3": "别人找到它",
+        "OtherOption": "其他选项：不一定要是纸!",
         "Tips": "提示",
-        "Tip1": "存放在银行保险柜",
+        "Tip1": "存放在银行保险箱",
         "Tip2": "存放在保险箱",
-        "Tip3": "存放在多个秘密地点",
+        "Tip3": "存放在多个秘密地方",
         "RemiderLater": "稍后提醒",
         "button_Next": "下一步",
         "button_Start": "开始"
@@ -174,18 +275,18 @@
         "ChooseSeedType": "选择种子类型",
         "TwoWays": "有两种方式保护您的钱包",
         "_55chars": "55字符",
-        "_24words": "24个词",
+        "_24words": "24个单词",
         "CreatePassword": "创建密码",
-        "toast_SuccessCreate": "成功创建钱包！"
+        "toast_SuccessCreate": "钱包创建成功!"
       }
     },
     "Restore": {
       "placeholder_SeedPhrase": "种子短语",
       "placeholder_NewPassword": "新密码",
       "placeholder_ConfirmPassword": "确认密码",
-      "AtLeast8characters": "至少8个字符",
+      "AtLeast8characters": "必须至少8个字符",
       "NotMatch": "密码不匹配。",
-      "ByProceeding": "继续操作即表示您同意这些",
+      "ByProceeding": "继续操作，即表示您同意这些",
       "TermCondition": "条款和条件",
       "ImportButtonTitle": "导入"
     },
@@ -193,118 +294,322 @@
       "Login": "登录",
       "NotExist": "密码不存在。",
       "placeholder_Password": "密码",
-      "button_ImportUsingSeedPhrase": "从您的种子短语中恢复您的钱包",
+      "button_ImportUsingSeedPhrase": "通过种子短语恢复您的钱包",
       "button_CreateNewWallet": "创建",
       "button_Login": "登录"
     },
     "Main": {
       "Header": {
-        "ReallyLogout": "您真的要登出吗？",
-        "button_Confirm": "是的",
-        "buttom_Cancel": "取消"
+        "ReallyLogout": "您确定要注销吗?",
+        "button_Confirm": "是",
+        "button_Cancel": "取消",
+        "button_AllAddress": "所有地址",
+        "Create": "创建新地址",
+        "CreateInfo": "一个账户不能拥有超过10个地址"
+      },
+      "BottomTab": {
+        "Wallet": "钱包",
+        "Orderbook": "订单簿",
+        "Transaction": "交易",
+        "Settings": "设置"
+      },
+      "Wallet": {
+        "Home": {
+          "MyWallet": "我的钱包",
+          "CurrentTick": "当前滴答",
+          "AllAssets": "我的所有资产"
+        },
+        "AllAddress": {
+          "AllAddresses": "所有地址",
+          "DeleteAddressPrompt": "您确定要删除这个地址吗?"
+        }
+      },
+      "Orderbook": {
+        "Orderbook": "订单簿",
+        "InputAmount": "输入金额",
+        "AmountOfToken": "{currentToken} 的数量",
+        "InputPrice": "输入价格",
+        "PriceOfToken": "{currentToken} 的价格",
+        "Buy": "买入",
+        "Sell": "卖出",
+        "HighestBidPrice": "当前 {currentToken} 的最高出价是 {price} QU，最低要价是 {price} QU。",
+        "ConfirmBuy": "您确定要以 {price} QU 的价格购买 {amount} {currentToken} 吗?",
+        "Status": "状态",
+        "TransactionID": "交易ID",
+        "CurrentTick": "当前滴答",
+        "ExpectedTick": "预期滴答",
+        "MyOrderList": "我的订单列表",
+        "NoOrders": "您在这个地址没有任何买入/卖出订单!"
+      },
+      "Transaction": {
+        "Transactions": "交易",
+        "Status": {
+          "Confirmed": "已确认",
+          "Failed": "失败",
+          "OldEpoch": "旧纪元"
+        },
+        "Details": {
+          "Date": "日期",
+          "Time": "时间",
+          "TotalAmount": "总金额",
+          "TotalAmountUSD": "总金额($)",
+          "TransactionID": "交易ID",
+          "Status": "状态",
+          "From": "来自",
+          "To": "到",
+          "Back": "返回"
+        }
+      },
+      "Settings": {
+        "Settings": "设置",
+        "ColorModeSetting": "颜色模式设置",
+        "LightMode": "浅色模式",
+        "DarkMode": "深色模式",
+        "LanguageSetting": "语言设置",
+        "ConfirmLanguageChange": "您确定要将语言更改为 {language} 吗?",
+        "Languages": {
+          "en": "英语（美国）",
+          "zh": "中文（中国）",
+          "es": "西班牙语（西班牙）",
+          "fr": "法语（法国）",
+          "ru": "俄语（俄罗斯）",
+          "ja": "日语（日本）",
+          "de": "德语（德国）"
+        },
+        "NetworkSetting": "网络设置",
+        "PleaseWaitNextVersion": "请等待下一版本。",
+        "SecuritySetting": "安全设置"
+      },
+      "Components": {
+        "Cancel": "取消",
+        "Confirm": "确认",
+        "ReallyLogout": "您确定要注销吗?",
+        "NoAssets": "您没有任何资产!",
+        "SendAddress": "发送地址",
+        "SendToAddress": "发送到地址",
+        "Amount": "金额",
+        "Send": "发送",
+        "ToAddress": "到地址",
+        "Token": "代币",
+        "Status": "状态",
+        "TransactionID": "交易ID",
+        "CurrentTick": "当前滴答",
+        "ExpectedTick": "预期滴答",
+        "InvalidAddressOrAmount": "无效的地址或金额!"
+      }
+    },
+    "util": {
+      "PasswordStrength": {
+        "Perfect": "完美！",
+        "Good": "好",
+        "Normal": "一般",
+        "Bad": "差",
+        "NotAvailable": "不可用"
       }
     }
   },
   "es": {
     "Title": {
-      "CreatePassword": "Crear contraseña",
-      "Reminder": "Alerta de seguridad",
-      "Confirm": "Confirmar frase semilla",
-      "SeedType": "Seleccionar tipo de semilla",
-      "WalletSetup": "Configuración de la cartera",
-      "Dashboard": "Panel de control",
-      "Login": "Iniciar sesión",
+      "CreatePassword": "Crear Contraseña",
+      "Reminder": "Alerta de Seguridad",
+      "Confirm": "Confirmar Frase de Recuperación",
+      "SeedType": "Seleccionar Tipo de Frase de Recuperación",
+      "WalletSetup": "Configurar Cartera",
+      "Dashboard": "Tablero",
+      "Login": "Iniciar Sesión",
       "Create": "Crear",
-      "Backup": "Respaldar cartera"
+      "Backup": "Respaldar Cartera"
     },
     "Splash": {
-      "GetStarted": "Comenzar",
-      "Text1": "Diversidad de propiedades",
-      "Text2": "Seguridad garantizada",
-      "Text3": "Transacción conveniente"
+      "GetStarted": "Empezar",
+      "Text1": "Diversidad de Propiedad",
+      "Text2": "Seguridad Segura",
+      "Text3": "Transacción Conveniente"
     },
     "WalletSetup": {
-      "button_ImportUsingSeedPhrase": "Importar usando frase semilla",
-      "HaveAlreadyYourOwnWallet": "¿Ya tienes tu propia cartera?",
-      "WalletSetup": "Configuración de la cartera",
-      "button_CreateNewWallet": "Crear nueva cartera"
+      "button_ImportUsingSeedPhrase": "Importar Usando Frase de Recuperación",
+      "HaveAlreadyYourOwnWallet": "¿Ya Tienes Tu Propia Cartera?",
+      "WalletSetup": "Configuración de Cartera",
+      "button_CreateNewWallet": "Crear Nueva Cartera"
     },
     "Create": {
       "Create": {},
       "Confirm": {
-        "WriteDownSeedPhrase": "Escribe tu frase semilla",
-        "Caption1": "Esta es tu frase semilla. Escríbela en un papel y guárdala en un lugar seguro. Se te pedirá que la reintroduzcas en el siguiente paso.",
-        "ConfirmSeedPhrase": "Confirmar frase semilla",
+        "WriteDownSeedPhrase": "Escribe Tu Frase de Recuperación",
+        "Caption1": "Esta es tu frase de recuperación. Escríbela en un papel y guárdala en un lugar seguro. Se te pedirá que vuelvas a ingresar esta frase (en orden) en el siguiente paso.",
+        "ConfirmSeedPhrase": "Confirmar Frase de Recuperación",
         "Caption2": "Selecciona cada palabra en el orden en que se te presentó.",
-        "Caption3": "Estos son tus caracteres de semilla. Escríbelos en un papel y guárdalos en un lugar seguro. Se te pedirá que los reintroduzcas en el siguiente paso.",
-        "EnterSeedChar": "Introduce tus caracteres de semilla",
-        "Caption4": "Por favor, introduce los caracteres de semilla que has guardado.",
+        "Caption3": "Estos son tus caracteres de recuperación. Escríbelos en un papel y guárdalos en un lugar seguro. Se te pedirá que vuelvas a ingresar estos caracteres (en orden) en el siguiente paso.",
+        "EnterSeedChar": "Ingresa tus Caracteres de Recuperación",
+        "Caption4": "Por favor, ingresa los caracteres de recuperación que has guardado.",
         "button_Next": "Siguiente"
       },
       "CreatePassword": {
-        "Create": "Crear contraseña",
-        "Caption": "Esta contraseña solo desbloqueará tu cartera Metamask en este servicio",
+        "Create": "Crear Contraseña",
+        "Caption": "Esta contraseña desbloqueará tu cartera Metamask solo en este servicio",
         "AtLeast8Char": "Debe tener al menos 8 caracteres",
-        "PasswordStrength": "Fortaleza de la contraseña",
+        "PasswordStrength": "Fortaleza de la Contraseña",
         "NotMatch": "La contraseña no coincide.",
         "Understand": "Entiendo que DeGe no puede recuperar esta contraseña para mí.",
-        "LearnMore": "Aprender más",
-        "placeholder_NewPassword": "Nueva contraseña",
-        "placeholder_ConfirmPassword": "Confirmar contraseña",
-        "button_CreatePassword": "Crear contraseña"
+        "LearnMore": "Aprende más",
+        "placeholder_NewPassword": "Nueva Contraseña",
+        "placeholder_ConfirmPassword": "Confirmar Contraseña",
+        "button_CreatePassword": "Crear Contraseña"
       },
       "Reminder": {
-        "Secure": "Asegura tu cartera",
-        "Caption1": "No arriesgues perder tus fondos. Protege tu cartera guardando tu frase semilla en un lugar en el que confíes. Es la única manera de recuperar tu cartera si te bloqueas fuera de la aplicación o consigues un nuevo dispositivo.",
-        "Caption2": "Asegura la frase semilla de tu cartera",
+        "Secure": "Protege tu Cartera",
+        "Caption1": "No arriesgues perder tus fondos. Protege tu cartera guardando tu frase de recuperación en un lugar de confianza. Es la única forma de recuperar tu cartera si pierdes el acceso a la aplicación o si obtienes un nuevo dispositivo.",
+        "Caption2": "Protege la frase de recuperación de tu cartera",
         "Manual": "Manual",
-        "Caption3": "Escribe tu frase semilla en un papel y almacénala en un lugar seguro.",
-        "SecurityLevel": "Nivel de seguridad",
+        "Caption3": "Escribe tu frase de recuperación en un papel y guárdala en un lugar seguro.",
+        "SecurityLevel": "Nivel de Seguridad",
         "Risks": "Los riesgos son",
-        "Risk1": "Perderla",
-        "Risk2": "Olvidar dónde la pusiste",
-        "Risk3": "Que alguien más la encuentre",
-        "OtherOption": "Otras opciones: ¡No tiene que ser en papel!",
+        "Risk1": "Lo pierdes",
+        "Risk2": "Olvidas dónde lo pusiste",
+        "Risk3": "Alguien más lo encuentra",
+        "OtherOption": "Otras opciones: ¡No tiene que ser papel!",
         "Tips": "Consejos",
-        "Tip1": "Guardar en una caja fuerte de banco",
+        "Tip1": "Guardar en la caja fuerte del banco",
         "Tip2": "Guardar en una caja fuerte",
-        "Tip3": "Guardar en múltiples lugares secretos",
-        "RemiderLater": "Recordar más tarde",
+        "Tip3": "Guardar en varios lugares secretos",
+        "RemiderLater": "Recordar Más Tarde",
         "button_Next": "Siguiente",
         "button_Start": "Comenzar"
       },
       "SeedType": {
-        "ChooseSeedType": "Elegir tipo de semilla",
-        "TwoWays": "Hay dos maneras de asegurar tu cartera",
-        "_55chars": "55 caracteres",
-        "_24words": "24 palabras",
-        "CreatePassword": "Crear contraseña",
-        "toast_SuccessCreate": "¡Cartera creada exitosamente!"
+        "ChooseSeedType": "Elige el Tipo de Frase de Recuperación",
+        "TwoWays": "Hay dos formas de proteger tu cartera",
+        "_55chars": "55 Caracteres",
+        "_24words": "24 Palabras",
+        "CreatePassword": "Crear Contraseña",
+        "toast_SuccessCreate": "¡Cartera Creada Exitosamente!"
       }
     },
     "Restore": {
-      "placeholder_SeedPhrase": "Frase semilla",
-      "placeholder_NewPassword": "Nueva contraseña",
-      "placeholder_ConfirmPassword": "Confirmar contraseña",
+      "placeholder_SeedPhrase": "Frase de Recuperación",
+      "placeholder_NewPassword": "Nueva Contraseña",
+      "placeholder_ConfirmPassword": "Confirmar Contraseña",
       "AtLeast8characters": "Debe tener al menos 8 caracteres",
       "NotMatch": "La contraseña no coincide.",
-      "ByProceeding": "Al proceder, aceptas estas",
-      "TermCondition": "Términos y condiciones",
+      "ByProceeding": "Al continuar, aceptas estos",
+      "TermCondition": "Términos y Condiciones",
       "ImportButtonTitle": "Importar"
     },
     "Login": {
-      "Login": "Iniciar sesión",
+      "Login": "Iniciar Sesión",
       "NotExist": "La contraseña no existe.",
       "placeholder_Password": "Contraseña",
-      "button_ImportUsingSeedPhrase": "Restaura tu billetera desde tu frase semilla",
+      "button_ImportUsingSeedPhrase": "Restaura tu cartera desde tu frase de recuperación",
       "button_CreateNewWallet": "Crear",
-      "button_Login": "Iniciar sesión"
+      "button_Login": "Iniciar Sesión"
     },
     "Main": {
       "Header": {
-        "ReallyLogout": "¿Realmente desea cerrar sesión?",
+        "ReallyLogout": "¿Realmente quieres cerrar sesión?",
         "button_Confirm": "Sí",
-        "buttom_Cancel": "Cancelar"
+        "button_Cancel": "Cancelar",
+        "button_AllAddress": "Todas las Direcciones",
+        "Create": "Crear Nueva Dirección",
+        "CreateInfo": "Una cuenta no puede tener más de 10 direcciones"
+      },
+      "BottomTab": {
+        "Wallet": "Cartera",
+        "Orderbook": "Libro de Órdenes",
+        "Transaction": "Transacción",
+        "Settings": "Configuraciones"
+      },
+      "Wallet": {
+        "Home": {
+          "MyWallet": "Mi Cartera",
+          "CurrentTick": "Tick Actual",
+          "AllAssets": "Todos Mis Activos"
+        },
+        "AllAddress": {
+          "AllAddresses": "Todas las Direcciones",
+          "DeleteAddressPrompt": "¿Realmente quieres eliminar esta dirección?"
+        }
+      },
+      "Orderbook": {
+        "Orderbook": "Libro de Órdenes",
+        "InputAmount": "Ingresar Cantidad",
+        "AmountOfToken": "Cantidad de {currentToken}",
+        "InputPrice": "Ingresar Precio",
+        "PriceOfToken": "Precio de {currentToken}",
+        "Buy": "COMPRAR",
+        "Sell": "VENDER",
+        "HighestBidPrice": "Actualmente el precio de oferta más alto de {currentToken} es {price} QU, el precio de demanda más bajo es {price} QU.",
+        "ConfirmBuy": "¿Realmente quieres comprar {amount} {currentToken} por {price} QU?",
+        "Status": "Estado",
+        "TransactionID": "ID de la Transacción",
+        "CurrentTick": "Tick Actual",
+        "ExpectedTick": "Tick Esperado",
+        "MyOrderList": "Mi Lista de Órdenes",
+        "NoOrders": "¡No tienes órdenes de compra/venta en esta dirección!"
+      },
+      "Transaction": {
+        "Transactions": "Transacciones",
+        "Status": {
+          "Confirmed": "Confirmado",
+          "Failed": "Fallido",
+          "OldEpoch": "Época Antigua"
+        },
+        "Details": {
+          "Date": "Fecha",
+          "Time": "Hora",
+          "TotalAmount": "Cantidad Total",
+          "TotalAmountUSD": "Cantidad Total($)",
+          "TransactionID": "ID de la Transacción",
+          "Status": "Estado",
+          "From": "De",
+          "To": "A",
+          "Back": "Atrás"
+        }
+      },
+      "Settings": {
+        "Settings": "Configuraciones",
+        "ColorModeSetting": "Configuración de Modo de Color",
+        "LightMode": "Modo Claro",
+        "DarkMode": "Modo Oscuro",
+        "LanguageSetting": "Configuración de Idioma",
+        "ConfirmLanguageChange": "¿Realmente quieres cambiar el idioma a {language}?",
+        "Languages": {
+          "en": "Inglés (Estados Unidos)",
+          "zh": "Chino (China)",
+          "es": "Español (España)",
+          "fr": "Francés (Francia)",
+          "ru": "Ruso (Rusia)",
+          "ja": "Japonés (Japón)",
+          "de": "Alemán (Alemania)"
+        },
+        "NetworkSetting": "Configuración de Red",
+        "PleaseWaitNextVersion": "Por favor, espera a la próxima versión.",
+        "SecuritySetting": "Configuración de Seguridad"
+      },
+      "Components": {
+        "Cancel": "Cancelar",
+        "Confirm": "Confirmar",
+        "ReallyLogout": "¿Realmente quieres cerrar sesión?",
+        "NoAssets": "¡No tienes ningún activo!",
+        "SendAddress": "Dirección de Envío",
+        "SendToAddress": "Enviar a Dirección",
+        "Amount": "Cantidad",
+        "Send": "Enviar",
+        "ToAddress": "A Dirección",
+        "Token": "Token",
+        "Status": "Estado",
+        "TransactionID": "ID de la Transacción",
+        "CurrentTick": "Tick Actual",
+        "ExpectedTick": "Tick Esperado",
+        "InvalidAddressOrAmount": "¡Dirección o cantidad inválida!"
+      }
+    },
+    "util": {
+      "PasswordStrength": {
+        "Perfect": "¡Perfecto!",
+        "Good": "Bueno",
+        "Normal": "Normal",
+        "Bad": "Malo",
+        "NotAvailable": "No Disponible"
       }
     }
   },
@@ -312,9 +617,9 @@
     "Title": {
       "CreatePassword": "Créer un mot de passe",
       "Reminder": "Alerte de sécurité",
-      "Confirm": "Confirmer la phrase de récupération",
-      "SeedType": "Sélectionner le type de graine",
-      "WalletSetup": "Configuration du portefeuille",
+      "Confirm": "Confirmer la phrase secrète",
+      "SeedType": "Sélectionner le type de phrase secrète",
+      "WalletSetup": "Configurer le portefeuille",
       "Dashboard": "Tableau de bord",
       "Login": "Connexion",
       "Create": "Créer",
@@ -322,12 +627,12 @@
     },
     "Splash": {
       "GetStarted": "Commencer",
-      "Text1": "Diversité de propriété",
-      "Text2": "Sécurité assurée",
+      "Text1": "Diversité des propriétés",
+      "Text2": "Sécurité renforcée",
       "Text3": "Transaction pratique"
     },
     "WalletSetup": {
-      "button_ImportUsingSeedPhrase": "Importer en utilisant une phrase de récupération",
+      "button_ImportUsingSeedPhrase": "Importer avec une phrase secrète",
       "HaveAlreadyYourOwnWallet": "Vous avez déjà votre propre portefeuille ?",
       "WalletSetup": "Configuration du portefeuille",
       "button_CreateNewWallet": "Créer un nouveau portefeuille"
@@ -335,88 +640,395 @@
     "Create": {
       "Create": {},
       "Confirm": {
-        "WriteDownSeedPhrase": "Notez votre phrase de récupération",
-        "Caption1": "Ceci est votre phrase de récupération. Notez-la sur un papier et gardez-la dans un lieu sûr. Vous serez invité à la saisir à nouveau (dans l'ordre) à l'étape suivante.",
-        "ConfirmSeedPhrase": "Confirmer la phrase de récupération",
+        "WriteDownSeedPhrase": "Écrivez votre phrase secrète",
+        "Caption1": "Voici votre phrase secrète. Écrivez-la sur un papier et gardez-le en lieu sûr. Vous devrez saisir à nouveau cette phrase (dans l'ordre) à l'étape suivante.",
+        "ConfirmSeedPhrase": "Confirmer la phrase secrète",
         "Caption2": "Sélectionnez chaque mot dans l'ordre dans lequel il vous a été présenté.",
-        "Caption3": "Ceci sont vos caractères de graine. Notez-les sur un papier et gardez-les dans un lieu sûr. Vous serez invité à les saisir à nouveau (dans l'ordre) à l'étape suivante.",
-        "EnterSeedChar": "Entrez vos caractères de graine",
-        "Caption4": "Veuillez entrer les caractères de graine que vous avez sauvegardés.",
+        "Caption3": "Voici vos caractères secrets. Écrivez-les sur un papier et gardez-le en lieu sûr. Vous devrez saisir à nouveau ces caractères (dans l'ordre) à l'étape suivante.",
+        "EnterSeedChar": "Saisissez vos caractères secrets",
+        "Caption4": "Veuillez saisir les caractères secrets que vous avez sauvegardés.",
         "button_Next": "Suivant"
       },
       "CreatePassword": {
         "Create": "Créer un mot de passe",
-        "Caption": "Ce mot de passe déverrouillera uniquement votre portefeuille Metamask sur ce service",
-        "AtLeast8Char": "Doit contenir au moins 8 caractères",
+        "Caption": "Ce mot de passe déverrouillera votre portefeuille Metamask uniquement sur ce service",
+        "AtLeast8Char": "Doit comporter au moins 8 caractères",
         "PasswordStrength": "Force du mot de passe",
         "NotMatch": "Le mot de passe ne correspond pas.",
         "Understand": "Je comprends que DeGe ne peut pas récupérer ce mot de passe pour moi.",
         "LearnMore": "En savoir plus",
         "placeholder_NewPassword": "Nouveau mot de passe",
         "placeholder_ConfirmPassword": "Confirmer le mot de passe",
-        "button_CreatePassword": "Créer le mot de passe"
+        "button_CreatePassword": "Créer un mot de passe"
       },
       "Reminder": {
         "Secure": "Sécurisez votre portefeuille",
-        "Caption1": "Ne risquez pas de perdre vos fonds. Protégez votre portefeuille en sauvegardant votre phrase de récupération dans un endroit de confiance. C'est le seul moyen de récupérer votre portefeuille si vous êtes bloqué hors de l'application ou obtenez un nouvel appareil.",
-        "Caption2": "Sécurisez la phrase de récupération de votre portefeuille",
+        "Caption1": "Ne risquez pas de perdre vos fonds. Protégez votre portefeuille en sauvegardant votre phrase secrète dans un endroit de confiance. C'est le seul moyen de récupérer votre portefeuille si vous perdez l'accès à l'application ou si vous obtenez un nouvel appareil.",
+        "Caption2": "Sécurisez la phrase secrète de votre portefeuille",
         "Manual": "Manuel",
-        "Caption3": "Écrivez votre phrase de récupération sur un morceau de papier et stockez-le dans un endroit sûr.",
+        "Caption3": "Écrivez votre phrase secrète sur un papier et gardez-le en lieu sûr.",
         "SecurityLevel": "Niveau de sécurité",
         "Risks": "Les risques sont",
-        "Risk1": "Vous la perdez",
-        "Risk2": "Vous oubliez où vous l'avez mise",
-        "Risk3": "Quelqu'un d'autre la trouve",
-        "OtherOption": "Autres options : ça n'a pas besoin d'être sur du papier !",
-        "Tips": "Astuces",
-        "Tip1": "Stockez dans un coffre-fort de banque",
-        "Tip2": "Stockez dans un coffre-fort",
-        "Tip3": "Stockez dans plusieurs endroits secrets",
+        "Risk1": "Vous le perdez",
+        "Risk2": "Vous oubliez où vous l'avez mis",
+        "Risk3": "Quelqu'un d'autre le trouve",
+        "OtherOption": "Autres options : Ça ne doit pas forcément être du papier !",
+        "Tips": "Conseils",
+        "Tip1": "Conserver dans un coffre-fort bancaire",
+        "Tip2": "Conserver dans un coffre-fort",
+        "Tip3": "Conserver dans plusieurs endroits secrets",
         "RemiderLater": "Rappeler plus tard",
         "button_Next": "Suivant",
         "button_Start": "Commencer"
       },
       "SeedType": {
-        "ChooseSeedType": "Choisir le type de graine",
+        "ChooseSeedType": "Choisissez le type de phrase secrète",
         "TwoWays": "Il y a deux façons de sécuriser votre portefeuille",
-        "_55chars": "55 caractères",
-        "_24words": "24 mots",
+        "_55chars": "55 Caractères",
+        "_24words": "24 Mots",
         "CreatePassword": "Créer un mot de passe",
         "toast_SuccessCreate": "Portefeuille créé avec succès !"
       }
     },
     "Restore": {
-      "placeholder_SeedPhrase": "Phrase de récupération",
+      "placeholder_SeedPhrase": "Phrase secrète",
       "placeholder_NewPassword": "Nouveau mot de passe",
       "placeholder_ConfirmPassword": "Confirmer le mot de passe",
-      "AtLeast8characters": "Doit contenir au moins 8 caractères",
+      "AtLeast8characters": "Doit comporter au moins 8 caractères",
       "NotMatch": "Le mot de passe ne correspond pas.",
-      "ByProceeding": "En procédant, vous acceptez ces",
-      "TermCondition": "Termes et conditions",
+      "ByProceeding": "En continuant, vous acceptez ces",
+      "TermCondition": "Termes et Conditions",
       "ImportButtonTitle": "Importer"
     },
     "Login": {
       "Login": "Connexion",
       "NotExist": "Le mot de passe n'existe pas.",
       "placeholder_Password": "Mot de passe",
-      "button_ImportUsingSeedPhrase": "Restaurez votre portefeuille à partir de votre phrase de récupération",
+      "button_ImportUsingSeedPhrase": "Restaurer votre portefeuille avec votre phrase secrète",
       "button_CreateNewWallet": "Créer",
       "button_Login": "Connexion"
     },
     "Main": {
       "Header": {
-        "ReallyLogout": "本当にログアウトしますか？",
-        "button_Confirm": "はい",
-        "buttom_Cancel": "キャンセル"
+        "ReallyLogout": "Voulez-vous vraiment vous déconnecter ?",
+        "button_Confirm": "Oui",
+        "button_Cancel": "Annuler",
+        "button_AllAddress": "Toutes les adresses",
+        "Create": "Créer une nouvelle adresse",
+        "CreateInfo": "Un compte ne peut pas avoir plus de 10 adresses"
+      },
+      "BottomTab": {
+        "Wallet": "Portefeuille",
+        "Orderbook": "Carnet d'ordres",
+        "Transaction": "Transaction",
+        "Settings": "Paramètres"
+      },
+      "Wallet": {
+        "Home": {
+          "MyWallet": "Mon portefeuille",
+          "CurrentTick": "Tick actuel",
+          "AllAssets": "Tous mes actifs"
+        },
+        "AllAddress": {
+          "AllAddresses": "Toutes les adresses",
+          "DeleteAddressPrompt": "Voulez-vous vraiment supprimer cette adresse ?"
+        }
+      },
+      "Orderbook": {
+        "Orderbook": "Carnet d'ordres",
+        "InputAmount": "Saisir le montant",
+        "AmountOfToken": "Montant de {currentToken}",
+        "InputPrice": "Saisir le prix",
+        "PriceOfToken": "Prix de {currentToken}",
+        "Buy": "ACHETER",
+        "Sell": "VENDRE",
+        "HighestBidPrice": "Le prix d'offre le plus élevé actuellement de {currentToken} est de {price} QU, le prix de demande le plus bas est de {price} QU.",
+        "ConfirmBuy": "Voulez-vous vraiment acheter {amount} {currentToken} pour {price} QU ?",
+        "Status": "Statut",
+        "TransactionID": "ID de la transaction",
+        "CurrentTick": "Tick actuel",
+        "ExpectedTick": "Tick attendu",
+        "MyOrderList": "Ma liste d'ordres",
+        "NoOrders": "Vous n'avez pas d'ordres d'achat/vente à cette adresse !"
+      },
+      "Transaction": {
+        "Transactions": "Transactions",
+        "Status": {
+          "Confirmed": "Confirmé",
+          "Failed": "Échoué",
+          "OldEpoch": "Ancienne époque"
+        },
+        "Details": {
+          "Date": "Date",
+          "Time": "Heure",
+          "TotalAmount": "Montant total",
+          "TotalAmountUSD": "Montant total ($)",
+          "TransactionID": "ID de la transaction",
+          "Status": "Statut",
+          "From": "De",
+          "To": "À",
+          "Back": "Retour"
+        }
+      },
+      "Settings": {
+        "Settings": "Paramètres",
+        "ColorModeSetting": "Paramètre du mode de couleur",
+        "LightMode": "Mode clair",
+        "DarkMode": "Mode sombre",
+        "LanguageSetting": "Paramètre de langue",
+        "ConfirmLanguageChange": "Voulez-vous vraiment changer la langue en {language} ?",
+        "Languages": {
+          "en": "Anglais (États-Unis)",
+          "zh": "Chinois (Chine)",
+          "es": "Espagnol (Espagne)",
+          "fr": "Français (France)",
+          "ru": "Russe (Russie)",
+          "ja": "Japonais (Japon)",
+          "de": "Allemand (Allemagne)"
+        },
+        "NetworkSetting": "Paramètre du réseau",
+        "PleaseWaitNextVersion": "Veuillez attendre la prochaine version.",
+        "SecuritySetting": "Paramètre de sécurité"
+      },
+      "Components": {
+        "Cancel": "Annuler",
+        "Confirm": "Confirmer",
+        "ReallyLogout": "Voulez-vous vraiment vous déconnecter ?",
+        "NoAssets": "Vous n'avez aucun actif !",
+        "SendAddress": "Adresse de l'envoi",
+        "SendToAddress": "Envoyer à l'adresse",
+        "Amount": "Montant",
+        "Send": "Envoyer",
+        "ToAddress": "À l'adresse",
+        "Token": "Jeton",
+        "Status": "Statut",
+        "TransactionID": "ID de la transaction",
+        "CurrentTick": "Tick actuel",
+        "ExpectedTick": "Tick attendu",
+        "InvalidAddressOrAmount": "Adresse ou montant invalide !"
+      }
+    },
+    "util": {
+      "PasswordStrength": {
+        "Perfect": "Parfait !",
+        "Good": "Bon",
+        "Normal": "Normal",
+        "Bad": "Mauvais",
+        "NotAvailable": "Non Disponible"
+      }
+    }
+  },
+  "de": {
+    "Title": {
+      "CreatePassword": "Passwort erstellen",
+      "Reminder": "Sicherheitswarnung",
+      "Confirm": "Seed-Phrase bestätigen",
+      "SeedType": "Seed-Typ auswählen",
+      "WalletSetup": "Wallet einrichten",
+      "Dashboard": "Dashboard",
+      "Login": "Anmelden",
+      "Create": "Erstellen",
+      "Backup": "Wallet sichern"
+    },
+    "Splash": {
+      "GetStarted": "Loslegen",
+      "Text1": "Eigentumsvielfalt",
+      "Text2": "Sichere Sicherheit",
+      "Text3": "Bequeme Transaktion"
+    },
+    "WalletSetup": {
+      "button_ImportUsingSeedPhrase": "Mit Seed-Phrase importieren",
+      "HaveAlreadyYourOwnWallet": "Haben Sie bereits Ihr eigenes Wallet?",
+      "WalletSetup": "Wallet-Einrichtung",
+      "button_CreateNewWallet": "Neues Wallet erstellen"
+    },
+    "Create": {
+      "Create": {},
+      "Confirm": {
+        "WriteDownSeedPhrase": "Schreiben Sie Ihre Seed-Phrase auf",
+        "Caption1": "Dies ist Ihre Seed-Phrase. Schreiben Sie sie auf ein Blatt Papier und bewahren Sie es an einem sicheren Ort auf. Im nächsten Schritt werden Sie aufgefordert, diese Phrase (in der richtigen Reihenfolge) erneut einzugeben.",
+        "ConfirmSeedPhrase": "Seed-Phrase bestätigen",
+        "Caption2": "Wählen Sie jedes Wort in der Reihenfolge aus, in der es Ihnen präsentiert wurde.",
+        "Caption3": "Dies sind Ihre Seed-Zeichen. Schreiben Sie sie auf ein Blatt Papier und bewahren Sie es an einem sicheren Ort auf. Im nächsten Schritt werden Sie aufgefordert, diese Zeichen (in der richtigen Reihenfolge) erneut einzugeben.",
+        "EnterSeedChar": "Geben Sie Ihre Seed-Zeichen ein",
+        "Caption4": "Bitte geben Sie die gespeicherten Seed-Zeichen ein.",
+        "button_Next": "Weiter"
+      },
+      "CreatePassword": {
+        "Create": "Passwort erstellen",
+        "Caption": "Dieses Passwort entsperrt Ihr Metamask-Wallet nur auf diesem Dienst",
+        "AtLeast8Char": "Muss mindestens 8 Zeichen lang sein",
+        "PasswordStrength": "Passwortstärke",
+        "NotMatch": "Passwort stimmt nicht überein.",
+        "Understand": "Ich verstehe, dass DeGe dieses Passwort für mich nicht wiederherstellen kann.",
+        "LearnMore": "Mehr erfahren",
+        "placeholder_NewPassword": "Neues Passwort",
+        "placeholder_ConfirmPassword": "Passwort bestätigen",
+        "button_CreatePassword": "Passwort erstellen"
+      },
+      "Reminder": {
+        "Secure": "Sichern Sie Ihr Wallet",
+        "Caption1": "Riskieren Sie nicht, Ihre Gelder zu verlieren. Schützen Sie Ihr Wallet, indem Sie Ihre Seed-Phrase an einem vertrauenswürdigen Ort speichern. Es ist die einzige Möglichkeit, Ihr Wallet wiederherzustellen, wenn Sie den Zugriff auf die App verlieren oder ein neues Gerät erhalten.",
+        "Caption2": "Sichern Sie die Seed-Phrase Ihres Wallets",
+        "Manual": "Manuell",
+        "Caption3": "Schreiben Sie Ihre Seed-Phrase auf ein Blatt Papier und bewahren Sie es an einem sicheren Ort auf.",
+        "SecurityLevel": "Sicherheitsniveau",
+        "Risks": "Risiken sind",
+        "Risk1": "Sie verlieren es",
+        "Risk2": "Sie vergessen, wo Sie es abgelegt haben",
+        "Risk3": "Jemand anderes findet es",
+        "OtherOption": "Andere Optionen: Es muss nicht Papier sein!",
+        "Tips": "Tipps",
+        "Tip1": "Im Banktresor aufbewahren",
+        "Tip2": "Im Safe aufbewahren",
+        "Tip3": "An mehreren geheimen Orten aufbewahren",
+        "RemiderLater": "Später erinnern",
+        "button_Next": "Weiter",
+        "button_Start": "Starten"
+      },
+      "SeedType": {
+        "ChooseSeedType": "Seed-Typ wählen",
+        "TwoWays": "Es gibt zwei Möglichkeiten, Ihr Wallet zu sichern",
+        "_55chars": "55 Zeichen",
+        "_24words": "24 Wörter",
+        "CreatePassword": "Passwort erstellen",
+        "toast_SuccessCreate": "Wallet erfolgreich erstellt!"
+      }
+    },
+    "Restore": {
+      "placeholder_SeedPhrase": "Seed-Phrase",
+      "placeholder_NewPassword": "Neues Passwort",
+      "placeholder_ConfirmPassword": "Passwort bestätigen",
+      "AtLeast8characters": "Muss mindestens 8 Zeichen lang sein",
+      "NotMatch": "Passwort stimmt nicht überein.",
+      "ByProceeding": "Indem Sie fortfahren, stimmen Sie diesen",
+      "TermCondition": "Geschäftsbedingungen",
+      "ImportButtonTitle": "Importieren"
+    },
+    "Login": {
+      "Login": "Anmelden",
+      "NotExist": "Passwort existiert nicht.",
+      "placeholder_Password": "Passwort",
+      "button_ImportUsingSeedPhrase": "Stellen Sie Ihr Wallet mit Ihrer Seed-Phrase wieder her",
+      "button_CreateNewWallet": "Erstellen",
+      "button_Login": "Anmelden"
+    },
+    "Main": {
+      "Header": {
+        "ReallyLogout": "Möchten Sie sich wirklich abmelden?",
+        "button_Confirm": "Ja",
+        "button_Cancel": "Abbrechen",
+        "button_AllAddress": "Alle Adressen",
+        "Create": "Neue Adresse erstellen",
+        "CreateInfo": "Ein Konto kann nicht mehr als 10 Adressen haben"
+      },
+      "BottomTab": {
+        "Wallet": "Wallet",
+        "Orderbook": "Orderbuch",
+        "Transaction": "Transaktion",
+        "Settings": "Einstellungen"
+      },
+      "Wallet": {
+        "Home": {
+          "MyWallet": "Mein Wallet",
+          "CurrentTick": "Aktueller Tick",
+          "AllAssets": "Alle meine Assets"
+        },
+        "AllAddress": {
+          "AllAddresses": "Alle Adressen",
+          "DeleteAddressPrompt": "Möchten Sie diese Adresse wirklich löschen?"
+        }
+      },
+      "Orderbook": {
+        "Orderbook": "Orderbuch",
+        "InputAmount": "Menge eingeben",
+        "AmountOfToken": "Menge von {currentToken}",
+        "InputPrice": "Preis eingeben",
+        "PriceOfToken": "Preis von {currentToken}",
+        "Buy": "KAUFEN",
+        "Sell": "VERKAUFEN",
+        "HighestBidPrice": "Derzeit liegt der höchste Gebotspreis von {currentToken} bei {price} QU, der niedrigste Angebotspreis bei {price} QU.",
+        "ConfirmBuy": "Möchten Sie wirklich {amount} {currentToken} für {price} QU kaufen?",
+        "Status": "Status",
+        "TransactionID": "Transaktions-ID",
+        "CurrentTick": "Aktueller Tick",
+        "ExpectedTick": "Erwarteter Tick",
+        "MyOrderList": "Meine Orderliste",
+        "NoOrders": "Sie haben keine Kauf-/Verkaufsaufträge an dieser Adresse!"
+      },
+      "Transaction": {
+        "Transactions": "Transaktionen",
+        "Status": {
+          "Confirmed": "Bestätigt",
+          "Failed": "Fehlgeschlagen",
+          "OldEpoch": "Alte Epoche"
+        },
+        "Details": {
+          "Date": "Datum",
+          "Time": "Uhrzeit",
+          "TotalAmount": "Gesamtbetrag",
+          "TotalAmountUSD": "Gesamtbetrag ($)",
+          "TransactionID": "Transaktions-ID",
+          "Status": "Status",
+          "From": "Von",
+          "To": "An",
+          "Back": "Zurück"
+        }
+      },
+      "Settings": {
+        "Settings": "Einstellungen",
+        "ColorModeSetting": "Farbmodus-Einstellung",
+        "LightMode": "Heller Modus",
+        "DarkMode": "Dunkler Modus",
+        "LanguageSetting": "Spracheinstellung",
+        "ConfirmLanguageChange": "Möchten Sie die Sprache wirklich in {language} ändern?",
+        "Languages": {
+          "en": "Englisch (Vereinigte Staaten)",
+          "zh": "Chinesisch (China)",
+          "es": "Spanisch (Spanien)",
+          "fr": "Französisch (Frankreich)",
+          "ru": "Russisch (Russland)",
+          "ja": "Japanisch (Japan)",
+          "de": "Deutsch (Deutschland)"
+        },
+        "NetworkSetting": "Netzwerkeinstellung",
+        "PleaseWaitNextVersion": "Bitte warten Sie auf die nächste Version.",
+        "SecuritySetting": "Sicherheitseinstellung"
+      },
+      "Components": {
+        "Cancel": "Abbrechen",
+        "Confirm": "Bestätigen",
+        "ReallyLogout": "Möchten Sie sich wirklich abmelden?",
+        "NoAssets": "Sie haben keine Assets!",
+        "SendAddress": "Sendeadresse",
+        "SendToAddress": "An Adresse senden",
+        "Amount": "Menge",
+        "Send": "Senden",
+        "ToAddress": "An Adresse",
+        "Token": "Token",
+        "Status": "Status",
+        "TransactionID": "Transaktions-ID",
+        "CurrentTick": "Aktueller Tick",
+        "ExpectedTick": "Erwarteter Tick",
+        "InvalidAddressOrAmount": "Ungültige Adresse oder Menge!"
+      }
+    },
+    "util": {
+      "PasswordStrength": {
+        "Perfect": "Perfekt!",
+        "Good": "Gut",
+        "Normal": "Normal",
+        "Bad": "Schlecht",
+        "NotAvailable": "Nicht verfügbar"
       }
     }
   },
   "ru": {
     "Title": {
       "CreatePassword": "Создать пароль",
-      "Reminder": "Оповещение о безопасности",
-      "Confirm": "Подтвердите фразу-семя",
-      "SeedType": "Выберите тип семени",
+      "Reminder": "Безопасное уведомление",
+      "Confirm": "Подтвердить секретную фразу",
+      "SeedType": "Выбрать тип секретной фразы",
       "WalletSetup": "Настройка кошелька",
       "Dashboard": "Панель управления",
       "Login": "Вход",
@@ -426,62 +1038,62 @@
     "Splash": {
       "GetStarted": "Начать",
       "Text1": "Разнообразие собственности",
-      "Text2": "Надежная безопасность",
-      "Text3": "Удобные транзакции"
+      "Text2": "Безопасная защита",
+      "Text3": "Удобная транзакция"
     },
     "WalletSetup": {
-      "button_ImportUsingSeedPhrase": "Импорт с использованием фразы-семени",
-      "HaveAlreadyYourOwnWallet": "У вас уже есть свой кошелек?",
+      "button_ImportUsingSeedPhrase": "Импорт с использованием секретной фразы",
+      "HaveAlreadyYourOwnWallet": "У вас уже есть кошелек?",
       "WalletSetup": "Настройка кошелька",
       "button_CreateNewWallet": "Создать новый кошелек"
     },
     "Create": {
       "Create": {},
       "Confirm": {
-        "WriteDownSeedPhrase": "Запишите вашу фразу-семя",
-        "Caption1": "Это ваша фраза-семя. Запишите ее на бумаге и храните в безопасном месте. Вам будет предложено ввести ее снова (в порядке) на следующем шаге.",
-        "ConfirmSeedPhrase": "Подтвердите фразу-семя",
+        "WriteDownSeedPhrase": "Запишите свою секретную фразу",
+        "Caption1": "Это ваша секретная фраза. Запишите ее на бумаге и храните в безопасном месте. На следующем шаге вам будет предложено ввести эту фразу (в указанном порядке).",
+        "ConfirmSeedPhrase": "Подтвердить секретную фразу",
         "Caption2": "Выберите каждое слово в том порядке, в котором оно было представлено.",
-        "Caption3": "Это ваши семенные символы. Запишите их на бумаге и храните в безопасном месте. Вам будет предложено ввести их снова (в порядке) на следующем шаге.",
-        "EnterSeedChar": "Введите ваши семенные символы",
-        "Caption4": "Пожалуйста, введите семенные символы, которые вы сохранили.",
+        "Caption3": "Это ваши секретные символы. Запишите их на бумаге и храните в безопасном месте. На следующем шаге вам будет предложено ввести эти символы (в указанном порядке).",
+        "EnterSeedChar": "Введите ваши секретные символы",
+        "Caption4": "Пожалуйста, введите сохраненные вами секретные символы.",
         "button_Next": "Далее"
       },
       "CreatePassword": {
         "Create": "Создать пароль",
-        "Caption": "Этот пароль будет использоваться только для разблокировки вашего кошелька Metamask в этом сервисе",
+        "Caption": "Этот пароль разблокирует ваш кошелек Metamask только на этом сервисе",
         "AtLeast8Char": "Должен содержать не менее 8 символов",
         "PasswordStrength": "Надежность пароля",
-        "NotMatch": "Пароли не совпадают.",
-        "Understand": "Я понимаю, что DeGe не сможет восстановить этот пароль для меня.",
+        "NotMatch": "Пароль не совпадает.",
+        "Understand": "Я понимаю, что DeGe не может восстановить этот пароль для меня.",
         "LearnMore": "Узнать больше",
         "placeholder_NewPassword": "Новый пароль",
         "placeholder_ConfirmPassword": "Подтвердить пароль",
         "button_CreatePassword": "Создать пароль"
       },
       "Reminder": {
-        "Secure": "Защитите ваш кошелек",
-        "Caption1": "Не рискуйте потерять свои средства. Защитите ваш кошелек, сохраняя вашу фразу-семя в надежном месте. Это единственный способ восстановить ваш кошелек, если вы заблокированы в приложении или получите новое устройство.",
-        "Caption2": "Защитите фразу-семя вашего кошелька",
-        "Manual": "Вручную",
-        "Caption3": "Запишите вашу фразу-семя на бумаге и храните в безопасном месте.",
+        "Secure": "Защитите свой кошелек",
+        "Caption1": "Не рискуйте потерять свои средства. Защитите свой кошелек, сохранив свою секретную фразу в надежном месте. Это единственный способ восстановить ваш кошелек, если вы потеряете доступ к приложению или получите новое устройство.",
+        "Caption2": "Защитите секретную фразу вашего кошелька",
+        "Manual": "Руководство",
+        "Caption3": "Запишите свою секретную фразу на бумаге и храните ее в безопасном месте.",
         "SecurityLevel": "Уровень безопасности",
-        "Risks": "Риски следующие",
-        "Risk1": "Вы потеряете ее",
-        "Risk2": "Вы забудете, где вы ее положили",
-        "Risk3": "Ее найдет кто-то другой",
-        "OtherOption": "Другие варианты: не обязательно на бумаге!",
+        "Risks": "Риски",
+        "Risk1": "Вы теряете ее",
+        "Risk2": "Вы забываете, где ее положили",
+        "Risk3": "Кто-то другой находит ее",
+        "OtherOption": "Другие варианты: Не обязательно бумага!",
         "Tips": "Советы",
-        "Tip1": "Хранить в банковском сейфе",
-        "Tip2": "Хранить в сейфе",
-        "Tip3": "Хранить в нескольких секретных местах",
+        "Tip1": "Храните в банковском сейфе",
+        "Tip2": "Храните в сейфе",
+        "Tip3": "Храните в нескольких секретных местах",
         "RemiderLater": "Напомнить позже",
         "button_Next": "Далее",
         "button_Start": "Начать"
       },
       "SeedType": {
-        "ChooseSeedType": "Выберите тип семени",
-        "TwoWays": "Существует два способа защитить ваш кошелек",
+        "ChooseSeedType": "Выберите тип секретной фразы",
+        "TwoWays": "Есть два способа защитить ваш кошелек",
         "_55chars": "55 символов",
         "_24words": "24 слова",
         "CreatePassword": "Создать пароль",
@@ -489,38 +1101,140 @@
       }
     },
     "Restore": {
-      "placeholder_SeedPhrase": "Фраза-семя",
+      "placeholder_SeedPhrase": "Секретная фраза",
       "placeholder_NewPassword": "Новый пароль",
       "placeholder_ConfirmPassword": "Подтвердить пароль",
-      "AtLeast8characters": "Должно быть не менее 8 символов",
-      "NotMatch": "Пароли не совпадают.",
+      "AtLeast8characters": "Должен содержать не менее 8 символов",
+      "NotMatch": "Пароль не совпадает.",
       "ByProceeding": "Продолжая, вы соглашаетесь с этими",
-      "TermCondition": "Условиями и положениями",
-      "ImportButtonTitle": "Импортировать"
+      "TermCondition": "Условиями использования",
+      "ImportButtonTitle": "Импорт"
     },
     "Login": {
       "Login": "Вход",
       "NotExist": "Пароль не существует.",
       "placeholder_Password": "Пароль",
-      "button_ImportUsingSeedPhrase": "Восстановить ваш кошелек из вашей сид-фразы",
+      "button_ImportUsingSeedPhrase": "Восстановите свой кошелек с помощью секретной фразы",
       "button_CreateNewWallet": "Создать",
-      "button_Login": "Войти"
+      "button_Login": "Вход"
     },
     "Main": {
       "Header": {
         "ReallyLogout": "Вы действительно хотите выйти?",
         "button_Confirm": "Да",
-        "buttom_Cancel": "Отмена"
+        "button_Cancel": "Отмена",
+        "button_AllAddress": "Все адреса",
+        "Create": "Создать новый адрес",
+        "CreateInfo": "Один аккаунт не может иметь более 10 адресов"
+      },
+      "BottomTab": {
+        "Wallet": "Кошелек",
+        "Orderbook": "Книга ордеров",
+        "Transaction": "Транзакция",
+        "Settings": "Настройки"
+      },
+      "Wallet": {
+        "Home": {
+          "MyWallet": "Мой кошелек",
+          "CurrentTick": "Текущий тик",
+          "AllAssets": "Все мои активы"
+        },
+        "AllAddress": {
+          "AllAddresses": "Все адреса",
+          "DeleteAddressPrompt": "Вы действительно хотите удалить этот адрес?"
+        }
+      },
+      "Orderbook": {
+        "Orderbook": "Книга ордеров",
+        "InputAmount": "Введите количество",
+        "AmountOfToken": "Количество {currentToken}",
+        "InputPrice": "Введите цену",
+        "PriceOfToken": "Цена {currentToken}",
+        "Buy": "КУПИТЬ",
+        "Sell": "ПРОДАТЬ",
+        "HighestBidPrice": "В настоящее время самая высокая цена предложения {currentToken} составляет {price} QU, а самая низкая цена спроса составляет {price} QU.",
+        "ConfirmBuy": "Вы действительно хотите купить {amount} {currentToken} по цене {price} QU?",
+        "Status": "Статус",
+        "TransactionID": "ID транзакции",
+        "CurrentTick": "Текущий тик",
+        "ExpectedTick": "Ожидаемый тик",
+        "MyOrderList": "Мой список ордеров",
+        "NoOrders": "У вас нет ордеров на покупку/продажу по этому адресу!"
+      },
+      "Transaction": {
+        "Transactions": "Транзакции",
+        "Status": {
+          "Confirmed": "Подтверждено",
+          "Failed": "Неудачно",
+          "OldEpoch": "Старый период"
+        },
+        "Details": {
+          "Date": "Дата",
+          "Time": "Время",
+          "TotalAmount": "Общая сумма",
+          "TotalAmountUSD": "Общая сумма ($)",
+          "TransactionID": "ID транзакции",
+          "Status": "Статус",
+          "From": "От",
+          "To": "К",
+          "Back": "Назад"
+        }
+      },
+      "Settings": {
+        "Settings": "Настройки",
+        "ColorModeSetting": "Настройка цветового режима",
+        "LightMode": "Светлый режим",
+        "DarkMode": "Темный режим",
+        "LanguageSetting": "Настройка языка",
+        "ConfirmLanguageChange": "Вы действительно хотите изменить язык на {language}?",
+        "Languages": {
+          "en": "Английский (США)",
+          "zh": "Китайский (Китай)",
+          "es": "Испанский (Испания)",
+          "fr": "Французский (Франция)",
+          "ru": "Русский (Россия)",
+          "ja": "Японский (Япония)",
+          "de": "Немецкий (Германия)"
+        },
+        "NetworkSetting": "Настройка сети",
+        "PleaseWaitNextVersion": "Пожалуйста, дождитесь следующей версии.",
+        "SecuritySetting": "Настройка безопасности"
+      },
+      "Components": {
+        "Cancel": "Отмена",
+        "Confirm": "Подтвердить",
+        "ReallyLogout": "Вы действительно хотите выйти?",
+        "NoAssets": "У вас нет активов!",
+        "SendAddress": "Адрес отправки",
+        "SendToAddress": "Отправить на адрес",
+        "Amount": "Сумма",
+        "Send": "Отправить",
+        "ToAddress": "На адрес",
+        "Token": "Токен",
+        "Status": "Статус",
+        "TransactionID": "ID транзакции",
+        "CurrentTick": "Текущий тик",
+        "ExpectedTick": "Ожидаемый тик",
+        "InvalidAddressOrAmount": "Недействительный адрес или сумма!"
+      }
+    },
+    "util": {
+      "PasswordStrength": {
+        "Perfect": "Идеально!",
+        "Good": "Хорошо",
+        "Normal": "Нормально",
+        "Bad": "Плохо",
+        "NotAvailable": "Недоступно"
       }
     }
   },
   "ja": {
     "Title": {
-      "CreatePassword": "パスワードの作成",
-      "Reminder": "セキュリティアラート",
-      "Confirm": "シードフレーズの確認",
-      "SeedType": "シードタイプの選択",
-      "WalletSetup": "ウォレットの設定",
+      "CreatePassword": "パスワードを作成",
+      "Reminder": "安全警告",
+      "Confirm": "シードフレーズを確認",
+      "SeedType": "シードタイプを選択",
+      "WalletSetup": "ウォレットのセットアップ",
       "Dashboard": "ダッシュボード",
       "Login": "ログイン",
       "Create": "作成",
@@ -529,76 +1243,76 @@
     "Splash": {
       "GetStarted": "始める",
       "Text1": "プロパティの多様性",
-      "Text2": "安全保障",
+      "Text2": "安全なセキュリティ",
       "Text3": "便利な取引"
     },
     "WalletSetup": {
       "button_ImportUsingSeedPhrase": "シードフレーズを使用してインポート",
-      "HaveAlreadyYourOwnWallet": "すでに自分のウォレットを持っていますか？",
-      "WalletSetup": "ウォレットの設定",
-      "button_CreateNewWallet": "新しいウォレットの作成"
+      "HaveAlreadyYourOwnWallet": "既に自分のウォレットを持っていますか？",
+      "WalletSetup": "ウォレットのセットアップ",
+      "button_CreateNewWallet": "新しいウォレットを作成"
     },
     "Create": {
       "Create": {},
       "Confirm": {
-        "WriteDownSeedPhrase": "シードフレーズを書き留める",
-        "Caption1": "これがあなたのシードフレーズです。紙に書き留めて、安全な場所に保管してください。次のステップでこのフレーズを順番に入力するよう求められます。",
-        "ConfirmSeedPhrase": "シードフレーズの確認",
-        "Caption2": "提示された順序で各単語を選択してください。",
-        "Caption3": "これがあなたのシード文字です。紙に書き留めて、安全な場所に保管してください。次のステップでこの文字列を順番に入力するよう求められます。",
-        "EnterSeedChar": "シード文字を入力する",
+        "WriteDownSeedPhrase": "シードフレーズを書き留めてください",
+        "Caption1": "これはあなたのシードフレーズです。紙に書き留め、安全な場所に保管してください。次のステップで、このフレーズを（順番に）再入力するよう求められます。",
+        "ConfirmSeedPhrase": "シードフレーズを確認",
+        "Caption2": "提示された順番で各単語を選択してください。",
+        "Caption3": "これはあなたのシード文字です。紙に書き留め、安全な場所に保管してください。次のステップで、この文字を（順番に）再入力するよう求められます。",
+        "EnterSeedChar": "シード文字を入力",
         "Caption4": "保存したシード文字を入力してください。",
         "button_Next": "次へ"
       },
       "CreatePassword": {
-        "Create": "パスワードの作成",
-        "Caption": "このパスワードは、このサービス上でのみあなたのメタマスクウォレットを解除するために使用されます",
-        "AtLeast8Char": "少なくとも8文字必要です",
+        "Create": "パスワードを作成",
+        "Caption": "このパスワードは、このサービスでのみあなたのMetamaskウォレットをアンロックします",
+        "AtLeast8Char": "少なくとも8文字以上でなければなりません",
         "PasswordStrength": "パスワードの強度",
         "NotMatch": "パスワードが一致しません。",
-        "Understand": "DeGeはこのパスワードを回復できないことを理解しています。",
+        "Understand": "私はDeGeがこのパスワードを回復できないことを理解しています。",
         "LearnMore": "詳しくはこちら",
         "placeholder_NewPassword": "新しいパスワード",
-        "placeholder_ConfirmPassword": "パスワードの確認",
-        "button_CreatePassword": "パスワードの作成"
+        "placeholder_ConfirmPassword": "パスワードを確認",
+        "button_CreatePassword": "パスワードを作成"
       },
       "Reminder": {
-        "Secure": "ウォレットの保護",
-        "Caption1": "資金を失うリスクを冒さないでください。信頼できる場所にシードフレーズを保存することでウォレットを保護してください。これは、アプリからロックアウトされたり新しいデバイスを取得したりした場合にウォレットを回復する唯一の方法です。",
+        "Secure": "ウォレットを保護する",
+        "Caption1": "資金を失うリスクを避けてください。信頼できる場所にシードフレーズを保存してウォレットを保護してください。アプリのロックアウトや新しいデバイスの取得時にウォレットを回復する唯一の方法です。",
         "Caption2": "ウォレットのシードフレーズを保護する",
         "Manual": "マニュアル",
-        "Caption3": "シードフレーズを紙に書き、安全な場所に保管してください。",
+        "Caption3": "シードフレーズを紙に書き留め、安全な場所に保管してください。",
         "SecurityLevel": "セキュリティレベル",
-        "Risks": "リスク",
-        "Risk1": "紛失する",
-        "Risk2": "置き場所を忘れる",
-        "Risk3": "他人に見つかる",
-        "OtherOption": "その他の選択肢: 紙でなくても大丈夫です！",
+        "Risks": "リスクは",
+        "Risk1": "それを失う",
+        "Risk2": "どこに置いたかを忘れる",
+        "Risk3": "他の誰かがそれを見つける",
+        "OtherOption": "他のオプション：紙である必要はありません！",
         "Tips": "ヒント",
-        "Tip1": "銀行の金庫に保管する",
-        "Tip2": "安全な金庫に保管する",
-        "Tip3": "複数の秘密の場所に保管する",
+        "Tip1": "銀行の金庫に保管",
+        "Tip2": "金庫に保管",
+        "Tip3": "複数の秘密の場所に保管",
         "RemiderLater": "後でリマインド",
         "button_Next": "次へ",
         "button_Start": "開始"
       },
       "SeedType": {
-        "ChooseSeedType": "シードタイプの選択",
-        "TwoWays": "ウォレットを保護する2つの方法",
+        "ChooseSeedType": "シードタイプを選択",
+        "TwoWays": "ウォレットを保護するには2つの方法があります",
         "_55chars": "55文字",
-        "_24words": "24語",
-        "CreatePassword": "パスワードの作成",
+        "_24words": "24単語",
+        "CreatePassword": "パスワードを作成",
         "toast_SuccessCreate": "ウォレットの作成に成功しました！"
       }
     },
     "Restore": {
       "placeholder_SeedPhrase": "シードフレーズ",
       "placeholder_NewPassword": "新しいパスワード",
-      "placeholder_ConfirmPassword": "パスワードの確認",
-      "AtLeast8characters": "8文字以上である必要があります",
+      "placeholder_ConfirmPassword": "パスワードを確認",
+      "AtLeast8characters": "少なくとも8文字以上でなければなりません",
       "NotMatch": "パスワードが一致しません。",
-      "ByProceeding": "進むことで、これらの",
-      "TermCondition": "規約と条件に同意したことになります",
+      "ByProceeding": "続行することにより、これらに同意したことになります",
+      "TermCondition": "利用規約",
       "ImportButtonTitle": "インポート"
     },
     "Login": {
@@ -613,7 +1327,109 @@
       "Header": {
         "ReallyLogout": "本当にログアウトしますか？",
         "button_Confirm": "はい",
-        "buttom_Cancel": "キャンセル"
+        "button_Cancel": "キャンセル",
+        "button_AllAddress": "すべてのアドレス",
+        "Create": "新しいアドレスを作成",
+        "CreateInfo": "アカウントは10個以上のアドレスを持つことができません"
+      },
+      "BottomTab": {
+        "Wallet": "ウォレット",
+        "Orderbook": "オーダーブック",
+        "Transaction": "トランザクション",
+        "Settings": "設定"
+      },
+      "Wallet": {
+        "Home": {
+          "MyWallet": "私のウォレット",
+          "CurrentTick": "現在のティック",
+          "AllAssets": "私のすべての資産"
+        },
+        "AllAddress": {
+          "AllAddresses": "すべてのアドレス",
+          "DeleteAddressPrompt": "このアドレスを本当に削除しますか？"
+        }
+      },
+      "Orderbook": {
+        "Orderbook": "オーダーブック",
+        "InputAmount": "金額を入力",
+        "AmountOfToken": "{currentToken}の金額",
+        "InputPrice": "価格を入力",
+        "PriceOfToken": "{currentToken}の価格",
+        "Buy": "買う",
+        "Sell": "売る",
+        "HighestBidPrice": "現在の{currentToken}の最高入札価格は{price} QU、最低要求価格は{price} QUです。",
+        "ConfirmBuy": "{amount} {currentToken}を{price} QUで本当に購入しますか？",
+        "Status": "ステータス",
+        "TransactionID": "トランザクションID",
+        "CurrentTick": "現在のティック",
+        "ExpectedTick": "期待されるティック",
+        "MyOrderList": "私のオーダーリスト",
+        "NoOrders": "このアドレスには購入/販売オーダーがありません！"
+      },
+      "Transaction": {
+        "Transactions": "トランザクション",
+        "Status": {
+          "Confirmed": "確認済み",
+          "Failed": "失敗",
+          "OldEpoch": "旧時代"
+        },
+        "Details": {
+          "Date": "日付",
+          "Time": "時間",
+          "TotalAmount": "合計金額",
+          "TotalAmountUSD": "合計金額($)",
+          "TransactionID": "トランザクションID",
+          "Status": "ステータス",
+          "From": "送信元",
+          "To": "送信先",
+          "Back": "戻る"
+        }
+      },
+      "Settings": {
+        "Settings": "設定",
+        "ColorModeSetting": "カラーモード設定",
+        "LightMode": "ライトモード",
+        "DarkMode": "ダークモード",
+        "LanguageSetting": "言語設定",
+        "ConfirmLanguageChange": "本当に言語を{language}に変更しますか？",
+        "Languages": {
+          "en": "英語（アメリカ）",
+          "zh": "中国語（中国）",
+          "es": "スペイン語（スペイン）",
+          "fr": "フランス語（フランス）",
+          "ru": "ロシア語（ロシア）",
+          "ja": "日本語（日本）",
+          "de": "ドイツ語（ドイツ）"
+        },
+        "NetworkSetting": "ネットワーク設定",
+        "PleaseWaitNextVersion": "次のバージョンをお待ちください。",
+        "SecuritySetting": "セキュリティ設定"
+      },
+      "Components": {
+        "Cancel": "キャンセル",
+        "Confirm": "確認",
+        "ReallyLogout": "本当にログアウトしますか？",
+        "NoAssets": "資産がありません！",
+        "SendAddress": "送信先アドレス",
+        "SendToAddress": "送信先のアドレス",
+        "Amount": "金額",
+        "Send": "送信",
+        "ToAddress": "送信先",
+        "Token": "トークン",
+        "Status": "ステータス",
+        "TransactionID": "トランザクションID",
+        "CurrentTick": "現在のティック",
+        "ExpectedTick": "期待されるティック",
+        "InvalidAddressOrAmount": "無効なアドレスまたは金額！"
+      }
+    },
+    "util": {
+      "PasswordStrength": {
+        "Perfect": "完璧！",
+        "Good": "良い",
+        "Normal": "普通",
+        "Bad": "悪い",
+        "NotAvailable": "利用不可"
       }
     }
   }

@@ -18,6 +18,7 @@ import Header from "./components/Header";
 import Transaction from "./Transaction";
 import { basicInfo } from "@app/api/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import local from "@app/utils/locales";
 
 const Tab = createBottomTabNavigator();
 
@@ -52,29 +53,29 @@ const Main = () => {
 
   return (
     <Tab.Navigator
-      initialRouteName="Wallet"
+      initialRouteName={local.Main.BottomTab.Wallet}
       screenOptions={{
         tabBarActiveTintColor: "white",
         header: () => <Header />,
       }}
     >
       <Tab.Screen
-        name="Wallet"
+        name={local.Main.BottomTab.Wallet}
         component={Wallet}
         options={tabBarOptions(faWallet)}
       />
       <Tab.Screen
-        name="Orderbook"
+        name={local.Main.BottomTab.Orderbook}
         component={Orderbook}
         options={tabBarOptions(faBookOpen)}
       />
       <Tab.Screen
-        name="Transaction"
+        name={local.Main.BottomTab.Transaction}
         component={Transaction}
         options={tabBarOptions(faClockRotateLeft)}
       />
       <Tab.Screen
-        name="Settings"
+        name={local.Main.BottomTab.Settings}
         component={Settings}
         options={tabBarOptions(faGear)}
       />

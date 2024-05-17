@@ -22,6 +22,7 @@ const Restore: React.FC = () => {
   const [restoreSeeds, setRestoreSeeds] = useState<string | string[]>([]);
   const [recovering, setRecovering] = useState<boolean>(false);
   const [lengthError, setLengthError] = useState(false);
+  const lang = local.WalletSetup;
 
   const handleNext = () => {
     setRecovering(true);
@@ -111,7 +112,7 @@ const Restore: React.FC = () => {
             borderColor={gray.gray80}
             rounded={"md"}
             placeholderTextColor={gray.gray40}
-            placeholder={local.Restore.placeholder_SeedPhrase}
+            placeholder={lang.placeholder_SeedPhrase}
             onChangeText={handleRestoreSeeds}
           />
         </Box>
@@ -120,10 +121,10 @@ const Restore: React.FC = () => {
             onChangeText={handlePassword}
             w={"full"}
             type="password"
-            placeholder={local.Restore.placeholder_NewPassword}
+            placeholder={lang.placeholder_NewPassword}
           ></Input>
           <Text px={6} color={lengthError ? "red.500" : gray.gray40}>
-            {local.Restore.AtLeast8characters}
+            {lang.AtLeast8characters}
           </Text>
         </Box>
         <Box textAlign={"center"} px={10}>
@@ -131,23 +132,23 @@ const Restore: React.FC = () => {
             onChangeText={handleConfirmPassword}
             w={"full"}
             type="password"
-            placeholder={local.Restore.placeholder_ConfirmPassword}
+            placeholder={lang.placeholder_ConfirmPassword}
           ></Input>
           {password !== confirmPassword && (
             <Text px={6} color={"red.400"}>
-              {local.Restore.NotMatch}
+              {lang.NotMatch}
             </Text>
           )}
         </Box>
         <Box textAlign={"center"} px={16}>
           <Text>
-            {local.Restore.ByProceeding}
+            {lang.ByProceeding}
             <Link
               href="https://qubic.org/Terms-of-service"
               _text={{ color: main.celestialBlue, marginTop: 2 }}
               display={"inline"}
             >
-              {local.Restore.TermCondition}
+              {lang.TermCondition}
             </Link>
             .
           </Text>
@@ -155,7 +156,7 @@ const Restore: React.FC = () => {
       </VStack>
       <ButtonBox>
         <PageButton
-          title={local.Restore.ImportButtonTitle}
+          title={lang.ImportButtonTitle}
           type="primary"
           isDisabled={
             !passwordStatus ||

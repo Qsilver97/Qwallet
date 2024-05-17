@@ -12,11 +12,15 @@ import {
 } from "native-base";
 import React from "react";
 import ConfirmModal from "../components/ConfirmModal";
+import local from "@app/utils/locales";
+
 
 const AllAddresses: React.FC = () => {
   const { allAddresses, balances } = useAuth();
   const { bgColor, textColor } = useColors();
   const { isOpen, onToggle } = useDisclose();
+  const lang = local.Main.Wallet.AllAddress;
+
   return (
     <VStack
       flex={1}
@@ -32,7 +36,7 @@ const AllAddresses: React.FC = () => {
           size="3xl"
           color={textColor}
         />
-        <Text fontSize="4xl">All Addresses</Text>
+        <Text fontSize="4xl">{lang.AllAddresses}</Text>
       </HStack>
       <VStack mx={2} space="2">
         {allAddresses.map((address, key) => {
@@ -63,7 +67,7 @@ const AllAddresses: React.FC = () => {
         onPress={() => {}}
       >
         <VStack fontSize={"xl"} textAlign={"center"} px={2}>
-          <Text>Do you really want to delete this address?</Text>
+          <Text>{lang.DeleteAddressPrompt}</Text>
         </VStack>
       </ConfirmModal>
     </VStack>

@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 
 import { RootState } from "@app/redux/store";
 import { FontAwesome5 } from "@expo/vector-icons";
+import local from "@app/utils/locales"; // Importing the localization setup
 
 type TransactionItemType = [string, string, string, string, string, string];
 
@@ -15,6 +16,8 @@ const TransactionItem: React.FC<IProps> = ({ transaction }) => {
   const { marketcap } = useSelector((store: RootState) => store.app);
   const isSend = parseFloat(transaction[3]) < 0;
   var d = new Date(parseInt(`${transaction[5]}000`));
+  const lang = local.Main.Transaction.Status;
+
   return (
     <HStack
       mx="4"
@@ -48,12 +51,12 @@ const TransactionItem: React.FC<IProps> = ({ transaction }) => {
         <Text>
           {transaction[4] !== ""
             ? transaction[4] == "confirmed"
-              ? "Confirmed"
-              : "Failed"
-            : "Old Epoch"}
+              ? lang.Confirmed
+              : lang.Failed
+            : lang.OldEpoch}
         </Text>
         <Text>
-          {d.getMonth()}/{d.getDate()}, {d.getFullYear()}
+          {d.getMonth() + 1}/{d.getDate()}, {d.getFullYear()}
         </Text>
       </VStack>
     </HStack>

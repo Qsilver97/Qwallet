@@ -24,6 +24,7 @@ import ConfirmModal from "../components/ConfirmModal";
 import TokenSelect from "../components/TokenSelect";
 import TransferButton from "../components/TransferButton";
 import Orderlist from "./components/Orderlist";
+import local from "@app/utils/locales";
 
 const Orderbook: React.FC = () => {
   const { bgColor, textColor } = useColors();
@@ -38,6 +39,7 @@ const Orderbook: React.FC = () => {
   >("buy");
   const modal1 = useDisclose();
   const modal2 = useDisclose();
+  const lang = local.Main.Orderbook;
 
   const handleBuySell = (
     flag: "buy" | "sell" | "cancelbuy" | "cancelsell",
@@ -74,7 +76,7 @@ const Orderbook: React.FC = () => {
               size="3xl"
               color={textColor}
             />
-            <Text fontSize="4xl">Orderbook</Text>
+            <Text fontSize="4xl">{lang.Orderbook}</Text>
           </HStack>
           <TokenSelect
             selectedToken={currentToken}
@@ -87,8 +89,8 @@ const Orderbook: React.FC = () => {
                 onChangeText={(text) => {
                   setAmount(text);
                 }}
-                placeholder="Input Amount"
-                label={`Amount of ${currentToken}`}
+                placeholder={lang.InputAmount}
+                label={lang.AmountOfToken.replace("{currentToken}", currentToken)}
                 w="full"
                 parentProps={{ w: "full" }}
               ></Input>
@@ -97,8 +99,8 @@ const Orderbook: React.FC = () => {
                 onChangeText={(text) => {
                   setPrice(text);
                 }}
-                placeholder="Input Price"
-                label={`Price of ${currentToken}`}
+                placeholder={lang.InputPrice}
+                label={lang.PriceOfToken.replace("{currentToken}", currentToken)}
                 w="full"
                 parentProps={{ w: "full" }}
               ></Input>
@@ -106,7 +108,7 @@ const Orderbook: React.FC = () => {
             <VStack w={"1/4"} justifyContent={"center"} space={4}>
               <TransferButton
                 icon={faPlus}
-                title="BUY"
+                title={lang.Buy}
                 onPress={() => {
                   setBuySellFlag("buy");
                   modal1.onToggle();
@@ -114,7 +116,7 @@ const Orderbook: React.FC = () => {
               ></TransferButton>
               <TransferButton
                 icon={faMinus}
-                title="SELL"
+                title={lang.Sell}
                 onPress={() => {
                   setBuySellFlag("sell");
                   modal1.onToggle();
@@ -125,9 +127,9 @@ const Orderbook: React.FC = () => {
 
           <HStack w="full">
             <Text textAlign="center" fontSize="md">
-              Currently the highest bid price of {currentToken} is{" "}
-              {tokenprices?.[currentToken]?.[0] || "0"} QU, lowest ask price is{" "}
-              {tokenprices?.[currentToken]?.[1] || "0"} QU.
+              {lang.HighestBidPrice.replace("{currentToken}", currentToken)
+                .replace("{price}", tokenprices?.[currentToken]?.[0] || "0")
+                .replace("{price}", tokenprices?.[currentToken]?.[1] || "0")}
             </Text>
           </HStack>
         </VStack>
@@ -146,7 +148,9 @@ const Orderbook: React.FC = () => {
       >
         <VStack fontSize={"xl"} textAlign={"center"} px={2}>
           <Text>
-            Are you really want to buy {amount} {currentToken} as {price} QU
+            {lang.ConfirmBuy.replace("{amount}", amount)
+              .replace("{currentToken}", currentToken)
+              .replace("{price}", price)}
           </Text>
         </VStack>
       </ConfirmModal>
@@ -161,19 +165,19 @@ const Orderbook: React.FC = () => {
       >
         <VStack fontSize={"xl"} textAlign={"center"} px={2}>
           <FormControl>
-            <FormControl.Label>Status</FormControl.Label>
+            <FormControl.Label>{lang.Status}</FormControl.Label>
             <Text ml={3}>{txStatus}</Text>
           </FormControl>
           <FormControl>
-            <FormControl.Label>Transaction ID</FormControl.Label>
+            <FormControl.Label>{lang.TransactionID}</FormControl.Label>
             <Text ml={3}>{txId}</Text>
           </FormControl>
           <FormControl>
-            <FormControl.Label>Current Tick</FormControl.Label>
+            <FormControl.Label>{lang.CurrentTick}</FormControl.Label>
             <Text ml={3}>{tick}</Text>
           </FormControl>
           <FormControl>
-            <FormControl.Label>Expected Tick</FormControl.Label>
+            <FormControl.Label>{lang.ExpectedTick}</FormControl.Label>
             <Text ml={3}>{expectedTick}</Text>
           </FormControl>
         </VStack>

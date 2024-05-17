@@ -24,6 +24,8 @@ import { useSelector } from "react-redux";
 import ConfirmModal from "./ConfirmModal";
 import { FontAwesome5 } from "@expo/vector-icons";
 import FormLabel from "@app/components/UI/FormLabel";
+import local from "@app/utils/locales";
+
 interface IProps {
   isOpen: boolean;
   onToggle: () => void;
@@ -47,6 +49,7 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
   const { tick } = useSelector((state: RootState) => state.app);
   const [toAddress, setToAddress] = useState("");
   const [amount, setAmount] = useState("");
+  const lang = local.Main.Components;
 
   const modal1 = useDisclose();
   const modal2 = useDisclose();
@@ -55,7 +58,7 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
     if (toAddress == "" || amount == "" || amount == "0") {
       Toast.show({
         type: "error",
-        text1: "E02: " + "Invalid address or amount!",
+        text1: "E02: " + lang.InvalidAddressOrAmount,
       });
       return;
     }
@@ -105,19 +108,18 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
               ></Icon>
             </HStack>
             <VStack>
-              {/* <TokenSelect onChnage={() => {}}></TokenSelect> */}
               <VStack>
                 <Input
-                  label="Send Address"
+                  label={lang.SendAddress}
                   onChangeText={setToAddress}
-                  placeholder="Send to address"
+                  placeholder={lang.SendToAddress}
                   type="text"
                   w={"full"}
                 ></Input>
                 <Input
-                  label="Amount"
+                  label={lang.Amount}
                   onChangeText={setAmount}
-                  placeholder="Amount"
+                  placeholder={lang.Amount}
                   type="text"
                   w={"full"}
                 ></Input>
@@ -134,7 +136,7 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
                 _pressed={{ opacity: 0.6 }}
                 bgColor={"red.500"}
               >
-                Cancel
+                {lang.Cancel}
               </Button>
               <Button
                 onPress={() => {
@@ -146,7 +148,7 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
                 _pressed={{ opacity: 0.6 }}
                 bgColor={main.celestialBlue}
               >
-                Send
+                {lang.Send}
               </Button>
             </HStack>
           </Modal.Body>
@@ -163,9 +165,9 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
         }}
       >
         <VStack fontSize={"xl"} textAlign={"center"} px={2}>
-          <FormLabel label="To Address" value={toAddress} />
-          <FormLabel label="Amount" value={amount} />
-          <FormLabel label="Token" value={`${amount} QU`} />
+          <FormLabel label={lang.ToAddress} value={toAddress} />
+          <FormLabel label={lang.Amount} value={amount} />
+          <FormLabel label={lang.Token} value={`${amount} QU`} />
         </VStack>
       </ConfirmModal>
       <ConfirmModal
@@ -175,11 +177,14 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
         onPress={modal2.onToggle}
       >
         <VStack fontSize={"xl"} textAlign={"center"} px={2}>
-          <FormLabel label="Status" value={txStatus} />
-          <FormLabel label="Transaction ID" value={txId} />
-          <FormLabel label="Current Tick" value={tick} />
-          <FormLabel label="Expected Tick" value={expectedTick.toString()} />
-          <FormLabel label="Status" value={txStatus} />
+          <FormLabel label={lang.Status} value={txStatus} />
+          <FormLabel label={lang.TransactionID} value={txId} />
+          <FormLabel label={lang.CurrentTick} value={tick} />
+          <FormLabel
+            label={lang.ExpectedTick}
+            value={expectedTick.toString()}
+          />
+          <FormLabel label={lang.Status} value={txStatus} />
         </VStack>
       </ConfirmModal>
     </>

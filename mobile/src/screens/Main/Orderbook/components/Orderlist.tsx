@@ -16,6 +16,7 @@ import {
 } from "native-base";
 import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator } from "react-native";
+import local from "@app/utils/locales";
 
 type IOrder = [string, string, string, string]; // token, amount, price, type
 type IOrderUnit = [number, string, string, string]; // index, address, amount, price
@@ -31,6 +32,7 @@ const Orderlist: React.FC = () => {
   const { currentAddress, allAddresses, isLoading, setIsLoading } = useAuth();
   const [orderData, setOrderData] = useState<IOrderData>({});
   const [showData, setShowData] = useState<IOrder[]>([]);
+  const lang = local.Main.Orderbook;
 
   useEffect(() => {
     setIsLoading(true);
@@ -55,7 +57,7 @@ const Orderlist: React.FC = () => {
     return (
       <>
         {showData?.map((dt, key) => {
-          const Icon = tokenIcons.find((t) => t.symbol == dt[0])?.icon;
+          const TokenIcon = tokenIcons.find((t) => t.symbol == dt[0])?.icon;
           return (
             <Pressable key={key} _pressed={{ opacity: 0.7 }}>
               <HStack
@@ -67,7 +69,9 @@ const Orderlist: React.FC = () => {
                 m="1"
               >
                 <HStack alignItems="center" space="2">
-                  <Box w="1/4">{Icon && <Icon width={32} height={32} />}</Box>
+                  <Box w="1/4">
+                    {TokenIcon && <TokenIcon width={32} height={32} />}
+                  </Box>
                   <Text w="1/3">
                     {dt[1]} {dt[0]}
                   </Text>
@@ -105,7 +109,7 @@ const Orderlist: React.FC = () => {
       <HStack justifyContent="center" space="2">
         <Icon as={FontAwesome} name="list" size="2xl" color={textColor} />
         <Text fontSize="2xl" textAlign="center">
-          My Order List
+          {lang.MyOrderList}
         </Text>
       </HStack>
 
@@ -122,7 +126,7 @@ const Orderlist: React.FC = () => {
               <Center>
                 <Icon as={AntDesign} name="questioncircle" size={20}></Icon>
                 <Text color={textColor} fontSize="md" mt="4" textAlign="center">
-                  You haven't got any buy/sell orders in this address!
+                  {lang.NoOrders}
                 </Text>
               </Center>
             </VStack>

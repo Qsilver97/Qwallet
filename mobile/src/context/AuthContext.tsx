@@ -134,7 +134,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         Toast.show({
           type: "error",
-          text1: "E21: " + "Error ocurredin getting tokens!",
+          text1: "E21: " + "Error ocurred in getting tokens!",
         });
       }
     };

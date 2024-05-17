@@ -8,6 +8,7 @@ const local = new LocalizedStrings({
   fr: lang.fr,
   ru: lang.ru,
   ja: lang.ja,
+  de: lang.de,
 });
 
 export default local;

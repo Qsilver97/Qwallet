@@ -14,12 +14,15 @@ import React, { useMemo, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import TransactionItem from "./TransactionItem";
 import TransactionDetailModal from "./TranslationDetailModal";
+import local from "@app/utils/locales";
+
 
 const Transaction: React.FC = () => {
   const { histories, isLoading } = useAuth();
   const { textColor, bgColor, main } = useColors();
   const { isOpen, onToggle } = useDisclose();
   const [currentTx, setCurrentTx] = useState<any>([]);
+  const lang = local.Main.Transaction;
 
   const Item = useMemo(() => {
     return (
@@ -56,7 +59,7 @@ const Transaction: React.FC = () => {
               size="3xl"
               color={textColor}
             />
-            <Text fontSize="4xl">Transactions</Text>
+            <Text fontSize="4xl">{lang.Transactions}</Text>
           </HStack>
           {isLoading && Item ? (
             <VStack flex={1} alignItems="center" justifyContent="center">
