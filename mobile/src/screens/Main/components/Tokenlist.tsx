@@ -47,7 +47,7 @@ const tokenBalances: {
 
 const Tokenlist: React.FC = () => {
   const { textColor, main } = useColors();
-  const { currentAddress, isLoading } = useAuth();
+  const { currentAddress, isLoading, tokenBalances } = useAuth();
   const { tokens, tokenprices, marketcap } = useSelector(
     (store: RootState) => store.app
   );

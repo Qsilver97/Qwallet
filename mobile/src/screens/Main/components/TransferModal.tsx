@@ -23,24 +23,13 @@ import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 import ConfirmModal from "./ConfirmModal";
 import { FontAwesome5 } from "@expo/vector-icons";
+import FormLabel from "@app/components/UI/FormLabel";
 interface IProps {
   isOpen: boolean;
   onToggle: () => void;
   onPress: () => void;
 }
 
-const FormLabel: React.FC<{ label: string; value: string }> = ({
-  label,
-  value,
-}) => {
-  const { textColor } = useColors();
-  return (
-    <FormControl>
-      <FormControl.Label color={textColor}>{label}</FormControl.Label>
-      <Text ml={3}>{value}</Text>
-    </FormControl>
-  );
-};
 
 const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
   const {

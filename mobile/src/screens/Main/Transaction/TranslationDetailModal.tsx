@@ -14,6 +14,8 @@ import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
 import { useSelector } from "react-redux";
 import { useAuth } from "@app/context/AuthContext";
+import FormLabel from "@app/components/UI/FormLabel";
+import { text } from "@fortawesome/fontawesome-svg-core";
 
 interface IProps extends IModalProps {
   isOpen: boolean;
@@ -52,34 +54,31 @@ const TransactionDetailModal: React.FC<IProps> = ({
         <Modal.Body bgColor={bgColor}>
           <VStack justifyContent={"center"} py={6} space={2}>
             <HStack>
-              <FormControl w="1/2">
-                <FormControl.Label>Date</FormControl.Label>
-                <Text>
-                  {d.getMonth()}/{d.getDate()}, {d.getFullYear()}
-                </Text>
-              </FormControl>
-              <FormControl w="1/2">
-                <FormControl.Label>Time</FormControl.Label>
-                <Text>
-                  {d.getHours()}:{d.getMinutes()}
-                </Text>
-              </FormControl>
+              <FormLabel
+                label="Date"
+                value={`${d.getMonth()}/${d.getDate()}, ${d.getFullYear()}`}
+                w="1/2"
+              ></FormLabel>
+              <FormLabel
+                label="Time"
+                value={`${d.getHours()}:${d.getMinutes()}`}
+                w="1/2"
+              ></FormLabel>
             </HStack>
+            <FormLabel
+              label="Total Amount"
+              value={`${Math.abs(parseFloat(transaction[3]))} QU`}
+            ></FormLabel>
+            <FormLabel
+              label="Total Amount($)"
+              value={`$${Math.abs(
+                parseFloat(transaction[3]) * parseFloat(marketcap.price)
+              )}`}
+            ></FormLabel>
             <FormControl>
-              <FormControl.Label>Total Amount</FormControl.Label>
-              <Text>{Math.abs(parseFloat(transaction[3]))} QU</Text>
-            </FormControl>
-            <FormControl>
-              <FormControl.Label>Total Amount($)</FormControl.Label>
-              <Text>
-                $
-                {Math.abs(
-                  parseFloat(transaction[3]) * parseFloat(marketcap.price)
-                )}
-              </Text>
-            </FormControl>
-            <FormControl>
-              <FormControl.Label>Transaction ID</FormControl.Label>
+              <FormControl.Label color={textColor}>
+                Transaction ID
+              </FormControl.Label>
               <Link
                 href={`http://89.38.98.214:7004/explorer/tx/${transaction[1]}`}
                 colorScheme={"blue"}
@@ -91,18 +90,24 @@ const TransactionDetailModal: React.FC<IProps> = ({
                 <Text textAlign="center">{transaction[1]}</Text>
               </Link>
             </FormControl>
-            <FormControl>
-              <FormControl.Label>Status</FormControl.Label>
-              <Text>{transaction[4] !== "" ? transaction[4] : "Unknown"}</Text>
-            </FormControl>
-            <FormControl>
-              <FormControl.Label>From</FormControl.Label>
-              <Text>{isSend ? currentAddress : transaction[2]}</Text>
-            </FormControl>
-            <FormControl>
-              <FormControl.Label>To</FormControl.Label>
-              <Text>{isSend ? transaction[2] : currentAddress}</Text>
-            </FormControl>
+            <FormLabel
+              label="Status"
+              value={`${
+                transaction[4] !== ""
+                  ? transaction[4] == "confirmed"
+                    ? "Confirmed"
+                    : "Failed"
+                  : "Old Epoch"
+              }`}
+            ></FormLabel>
+            <FormLabel
+              label="From"
+              value={`${isSend ? currentAddress : transaction[2]}`}
+            ></FormLabel>
+            <FormLabel
+              label="To"
+              value={`${isSend ? transaction[2] : currentAddress}`}
+            ></FormLabel>
           </VStack>
           <HStack justifyContent="center">
             <Button

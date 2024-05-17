@@ -50,7 +50,7 @@ const TransactionItem: React.FC<IProps> = ({ transaction }) => {
             ? transaction[4] == "confirmed"
               ? "Confirmed"
               : "Failed"
-            : "Finished"}
+            : "Old Epoch"}
         </Text>
         <Text>
           {d.getMonth()}/{d.getDate()}, {d.getFullYear()}

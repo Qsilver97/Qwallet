@@ -24,13 +24,17 @@ type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const RootNavigation: React.FC = () => {
+interface RootNavigationProps {
+  init: boolean;
+}
+
+const RootNavigation: React.FC<RootNavigationProps> = ({ init }) => {
   const { bgColor, textColor } = useColors();
 
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Login"
+        initialRouteName={init ? "Splash" : "Login"}
         screenOptions={{
           headerStyle: {
             backgroundColor: bgColor,

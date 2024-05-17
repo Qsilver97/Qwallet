@@ -9,7 +9,7 @@ import Tokenlist from "../components/Tokenlist";
 
 const Home: React.FC = () => {
   const { balances, currentAddress } = useAuth();
-  const { marketcap } = useSelector((store: RootState) => store.app);
+  const { tick, marketcap } = useSelector((store: RootState) => store.app);
   const { bgColor, textColor, main } = useColors();
 
   const BalanceItem = useMemo(() => {
@@ -19,17 +19,24 @@ const Home: React.FC = () => {
           <Icon as={FontAwesome5} name="wallet" size="3xl" color={textColor} />
           <Text fontSize="4xl">My Wallet</Text>
         </HStack>
-        <Text fontSize="3xl" textAlign="center">
-          ${" "}
-          {(
-            balances[currentAddress] * parseFloat(marketcap.price) || 0
-          ).toFixed(3)}
-          {"\n"}
-          {balances[currentAddress] || 0} QU
-        </Text>
+        <HStack>
+          <Text fontSize="2xl" w="45%" textAlign="center">
+            ${" "}
+            {(
+              balances[currentAddress] * parseFloat(marketcap.price) || 0
+            ).toFixed(3)}
+          </Text>
+          <Text fontSize="2xl" w="45%" textAlign="center">
+            {balances[currentAddress] || 0} QU
+          </Text>
+        </HStack>
+        <HStack justifyContent="center">
+          <Text fontSize="xl">Current Tick: </Text>
+          <Text fontSize="xl">{tick}</Text>
+        </HStack>
       </VStack>
     );
-  }, [balances, currentAddress, marketcap.price]);
+  }, [balances, currentAddress, marketcap.price, tick]);
 
   return (
     <VStack flex={1} space={2} bgColor={bgColor} color={textColor}>
