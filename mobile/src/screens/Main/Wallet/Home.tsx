@@ -2,20 +2,15 @@ import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { faShare } from "@fortawesome/free-solid-svg-icons";
-import { HStack, Icon, Text, VStack, useDisclose } from "native-base";
+import { HStack, Icon, Text, VStack } from "native-base";
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import Tokenlist from "../components/Tokenlist";
-import TransferButton from "../components/TransferButton";
-import TransferModal from "../components/TransferModal";
 
 const Home: React.FC = () => {
   const { balances, currentAddress } = useAuth();
   const { marketcap } = useSelector((store: RootState) => store.app);
-  const { bgColor, textColor } = useColors();
-  const { isOpen, onToggle } = useDisclose();
-  const handleTransfer = () => {};
+  const { bgColor, textColor, main } = useColors();
 
   const BalanceItem = useMemo(() => {
     return (
@@ -37,39 +32,18 @@ const Home: React.FC = () => {
   }, [balances, currentAddress, marketcap.price]);
 
   return (
-    <>
-      <VStack
-        flex={1}
-        space={2}
-        bgColor={bgColor}
-        color={textColor}
-      >
-        <VStack>
-          {BalanceItem}
-          <HStack w="full" justifyContent="center" space={2}>
-            <TransferButton
-              icon={faShare}
-              title="SEND"
-              toggleModal={onToggle}
-            ></TransferButton>
-          </HStack>
-        </VStack>
-        <VStack w="full" flex={1} py="2">
-          <HStack justifyContent="center" alignItems="center" space="3" p="2">
-            <Icon as={FontAwesome5} name="coins" size="2xl" color={textColor} />
-            <Text fontSize="2xl">My All Assets</Text>
-          </HStack>
-          <VStack flex={1} mt="2">
-            <Tokenlist />
-          </VStack>
+    <VStack flex={1} space={2} bgColor={bgColor} color={textColor}>
+      <VStack>{BalanceItem}</VStack>
+      <VStack w="full" flex={1} py="2">
+        <HStack alignItems="center" space="3" px="4">
+          <Icon as={FontAwesome5} name="coins" size="2xl" color={textColor} />
+          <Text fontSize="2xl">My All Assets</Text>
+        </HStack>
+        <VStack flex={1} mt="2">
+          <Tokenlist />
         </VStack>
       </VStack>
-      <TransferModal
-        isOpen={isOpen}
-        onToggle={onToggle}
-        onPress={handleTransfer}
-      />
-    </>
+    </VStack>
   );
 };
 

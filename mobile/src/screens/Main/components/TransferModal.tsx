@@ -12,6 +12,7 @@ import {
   Button,
   FormControl,
   HStack,
+  Icon,
   Modal,
   Text,
   VStack,
@@ -21,12 +22,25 @@ import { useState } from "react";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 import ConfirmModal from "./ConfirmModal";
-
+import { FontAwesome5 } from "@expo/vector-icons";
 interface IProps {
   isOpen: boolean;
   onToggle: () => void;
   onPress: () => void;
 }
+
+const FormLabel: React.FC<{ label: string; value: string }> = ({
+  label,
+  value,
+}) => {
+  const { textColor } = useColors();
+  return (
+    <FormControl>
+      <FormControl.Label color={textColor}>{label}</FormControl.Label>
+      <Text ml={3}>{value}</Text>
+    </FormControl>
+  );
+};
 
 const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
   const {
@@ -40,7 +54,7 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
     setExpectedTick,
     setTxStatus,
   } = useAuth();
-  const { bgColor, main } = useColors();
+  const { bgColor, textColor, main } = useColors();
   const { tick } = useSelector((state: RootState) => state.app);
   const [toAddress, setToAddress] = useState("");
   const [amount, setAmount] = useState("");
@@ -87,25 +101,43 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
         <Modal.Content>
           <Modal.CloseButton />
           <Modal.Body bgColor={bgColor}>
-            <VStack justifyContent={"center"} py={6} space={2}>
+            <HStack
+              bgColor={main.celestialBlue}
+              rounded={"full"}
+              mx={"auto"}
+              p={5}
+              my={6}
+            >
+              <Icon
+                as={FontAwesome5}
+                name="hand-holding-usd"
+                color={textColor}
+                size={"6xl"}
+              ></Icon>
+            </HStack>
+            <VStack>
               {/* <TokenSelect onChnage={() => {}}></TokenSelect> */}
-              <Text>Send Address</Text>
-              <Input
-                onChangeText={setToAddress}
-                placeholder="Send to address"
-                type="text"
-                w={"full"}
-              ></Input>
-              <Text>Amount</Text>
-              <Input
-                onChangeText={setAmount}
-                placeholder="Amount"
-                type="text"
-                w={"full"}
-              ></Input>
-              <Text>{balances[currentAddress]}</Text>
+              <VStack>
+                <Input
+                  label="Send Address"
+                  onChangeText={setToAddress}
+                  placeholder="Send to address"
+                  type="text"
+                  w={"full"}
+                ></Input>
+                <Input
+                  label="Amount"
+                  onChangeText={setAmount}
+                  placeholder="Amount"
+                  type="text"
+                  w={"full"}
+                ></Input>
+              </VStack>
+              <VStack>
+                <Text textAlign="right">{balances[currentAddress]} QU</Text>
+              </VStack>
             </VStack>
-            <HStack justifyContent={"center"} space={3}>
+            <HStack mt={3} justifyContent={"center"} space={3}>
               <Button
                 onPress={onToggle}
                 w={"1/2"}
@@ -124,7 +156,6 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
                 rounded={"md"}
                 _pressed={{ opacity: 0.6 }}
                 bgColor={main.celestialBlue}
-                //   isDisabled={addingStatus}
               >
                 Send
               </Button>
@@ -143,18 +174,9 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
         }}
       >
         <VStack fontSize={"xl"} textAlign={"center"} px={2}>
-          <FormControl>
-            <FormControl.Label>To Address</FormControl.Label>
-            <Text ml={3}>{toAddress}</Text>
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>Amount</FormControl.Label>
-            <Text ml={3}>{amount} QU</Text>
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>Token</FormControl.Label>
-            <Text ml={3}>QU</Text>
-          </FormControl>
+          <FormLabel label="To Address" value={toAddress} />
+          <FormLabel label="Amount" value={amount} />
+          <FormLabel label="Token" value={`${amount} QU`} />
         </VStack>
       </ConfirmModal>
       <ConfirmModal
@@ -164,22 +186,11 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
         onPress={modal2.onToggle}
       >
         <VStack fontSize={"xl"} textAlign={"center"} px={2}>
-          <FormControl>
-            <FormControl.Label>Status</FormControl.Label>
-            <Text ml={3}>{txStatus}</Text>
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>Transaction ID</FormControl.Label>
-            <Text ml={3}>{txId}</Text>
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>Current Tick</FormControl.Label>
-            <Text ml={3}>{tick}</Text>
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>Expected Tick</FormControl.Label>
-            <Text ml={3}>{expectedTick}</Text>
-          </FormControl>
+          <FormLabel label="Status" value={txStatus} />
+          <FormLabel label="Transaction ID" value={txId} />
+          <FormLabel label="Current Tick" value={tick} />
+          <FormLabel label="Expected Tick" value={expectedTick.toString()} />
+          <FormLabel label="Status" value={txStatus} />
         </VStack>
       </ConfirmModal>
     </>
