@@ -16,6 +16,7 @@ import { ColorProvider } from "@app/context/ColorContex";
 import getTheme from "@app/utils/ThemeConfig";
 import local from "@app/utils/locales";
 import toastConfig from "@app/utils/ToastConfig";
+import { StatusBar } from "react-native";
 
 interface ISettings {
   init: string;
@@ -73,18 +74,19 @@ export default function App() {
   local.setLanguage(settings.lang);
 
   return (
-      <Provider store={store}>
-        <AuthProvider>
-          <SocketCom />
-          <NetworkProvider defaultNetwork={settings.network}>
-            <NativeBaseProvider theme={theme}>
-              <ColorProvider>
-                <RootNavigation init={settings.init} />
-                <Toast config={toastConfig} />
-              </ColorProvider>
-            </NativeBaseProvider>
-          </NetworkProvider>
-        </AuthProvider>
-      </Provider>
+    <Provider store={store}>
+      <AuthProvider>
+        <SocketCom />
+        <NetworkProvider defaultNetwork={settings.network}>
+          <NativeBaseProvider theme={theme}>
+            <ColorProvider>
+              <StatusBar barStyle="light-content" backgroundColor="#222222" />
+              <RootNavigation init={settings.init} />
+              <Toast config={toastConfig} />
+            </ColorProvider>
+          </NativeBaseProvider>
+        </NetworkProvider>
+      </AuthProvider>
+    </Provider>
   );
 }
