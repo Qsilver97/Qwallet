@@ -20,7 +20,11 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#192B3B"
       },
-      "package": "com.qsilver.qwallet"
+      "package": "com.qsilver.qwallet",
+      // "statusBar": {
+      //   "barStyle": "light-content",
+      //   "backgroundColor": "#000000"
+      // }
       // "config": {
       //   "emulatorPort": 5555
       // }

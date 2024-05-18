@@ -37,7 +37,7 @@
       },
       "CreatePassword": {
         "Create": "Create Password",
-        "Caption": "This password will unlock your Metamask wallet only on this service",
+        "Caption": "Secure your account with your new password.",
         "AtLeast8Char": "Must be at least 8 characters",
         "PasswordStrength": "Password Strength",
         "NotMatch": "Password does not match.",
@@ -99,7 +99,7 @@
         "ReallyLogout": "Do you really want to logout?",
         "button_Confirm": "Yes",
         "button_Cancel": "Cancel",
-        "button_AllAddress": "All Addresses",
+        "button_CreateAddress": "Create Address",
         "Create": "Create New Address",
         "CreateInfo": "An Account can't have more than 10 addresses"
       },
@@ -139,6 +139,7 @@
       },
       "Transaction": {
         "Transactions": "Transactions",
+        "NoTransactionHistory": "There is no transaction history",
         "Status": {
           "Confirmed": "Confirmed",
           "Failed": "Failed",
@@ -242,7 +243,7 @@
       },
       "CreatePassword": {
         "Create": "创建密码",
-        "Caption": "此密码将只在此服务上解锁您的Metamask钱包",
+        "Caption": "用您的新密码保护您的帐户。",
         "AtLeast8Char": "必须至少8个字符",
         "PasswordStrength": "密码强度",
         "NotMatch": "密码不匹配。",
@@ -304,7 +305,7 @@
         "ReallyLogout": "您确定要注销吗?",
         "button_Confirm": "是",
         "button_Cancel": "取消",
-        "button_AllAddress": "所有地址",
+        "button_CreateAddress": "创建地址",
         "Create": "创建新地址",
         "CreateInfo": "一个账户不能拥有超过10个地址"
       },
@@ -344,6 +345,7 @@
       },
       "Transaction": {
         "Transactions": "交易",
+        "NoTransactionHistory": "没有交易记录",
         "Status": {
           "Confirmed": "已确认",
           "Failed": "失败",
@@ -447,7 +449,7 @@
       },
       "CreatePassword": {
         "Create": "Crear Contraseña",
-        "Caption": "Esta contraseña desbloqueará tu cartera Metamask solo en este servicio",
+        "Caption": "Asegure su cuenta con su nueva contraseña.",
         "AtLeast8Char": "Debe tener al menos 8 caracteres",
         "PasswordStrength": "Fortaleza de la Contraseña",
         "NotMatch": "La contraseña no coincide.",
@@ -509,7 +511,7 @@
         "ReallyLogout": "¿Realmente quieres cerrar sesión?",
         "button_Confirm": "Sí",
         "button_Cancel": "Cancelar",
-        "button_AllAddress": "Todas las Direcciones",
+        "button_CreateAddress": "Crear direcciones",
         "Create": "Crear Nueva Dirección",
         "CreateInfo": "Una cuenta no puede tener más de 10 direcciones"
       },
@@ -549,6 +551,7 @@
       },
       "Transaction": {
         "Transactions": "Transacciones",
+        "NoTransactionHistory": "No hay historial de transacciones",
         "Status": {
           "Confirmed": "Confirmado",
           "Failed": "Fallido",
@@ -652,7 +655,7 @@
       },
       "CreatePassword": {
         "Create": "Créer un mot de passe",
-        "Caption": "Ce mot de passe déverrouillera votre portefeuille Metamask uniquement sur ce service",
+        "Caption": "Sécurisez votre compte avec votre nouveau mot de passe.",
         "AtLeast8Char": "Doit comporter au moins 8 caractères",
         "PasswordStrength": "Force du mot de passe",
         "NotMatch": "Le mot de passe ne correspond pas.",
@@ -714,7 +717,7 @@
         "ReallyLogout": "Voulez-vous vraiment vous déconnecter ?",
         "button_Confirm": "Oui",
         "button_Cancel": "Annuler",
-        "button_AllAddress": "Toutes les adresses",
+        "button_CreateAddress": "Créer des adresses",
         "Create": "Créer une nouvelle adresse",
         "CreateInfo": "Un compte ne peut pas avoir plus de 10 adresses"
       },
@@ -754,6 +757,7 @@
       },
       "Transaction": {
         "Transactions": "Transactions",
+        "NoTransactionHistory": "Il n'y a pas d'historique des transactions",
         "Status": {
           "Confirmed": "Confirmé",
           "Failed": "Échoué",
@@ -857,7 +861,7 @@
       },
       "CreatePassword": {
         "Create": "Passwort erstellen",
-        "Caption": "Dieses Passwort entsperrt Ihr Metamask-Wallet nur auf diesem Dienst",
+        "Caption": "Sichern Sie Ihr Konto mit Ihrem neuen Passwort.",
         "AtLeast8Char": "Muss mindestens 8 Zeichen lang sein",
         "PasswordStrength": "Passwortstärke",
         "NotMatch": "Passwort stimmt nicht überein.",
@@ -919,7 +923,7 @@
         "ReallyLogout": "Möchten Sie sich wirklich abmelden?",
         "button_Confirm": "Ja",
         "button_Cancel": "Abbrechen",
-        "button_AllAddress": "Alle Adressen",
+        "button_CreateAddress": "Adressen erstellen",
         "Create": "Neue Adresse erstellen",
         "CreateInfo": "Ein Konto kann nicht mehr als 10 Adressen haben"
       },
@@ -959,6 +963,7 @@
       },
       "Transaction": {
         "Transactions": "Transaktionen",
+        "NoTransactionHistory": "Es gibt keine Transaktionshistorie",
         "Status": {
           "Confirmed": "Bestätigt",
           "Failed": "Fehlgeschlagen",
@@ -1062,7 +1067,7 @@
       },
       "CreatePassword": {
         "Create": "Создать пароль",
-        "Caption": "Этот пароль разблокирует ваш кошелек Metamask только на этом сервисе",
+        "Caption": "Защитите свою учетную запись новым паролем.",
         "AtLeast8Char": "Должен содержать не менее 8 символов",
         "PasswordStrength": "Надежность пароля",
         "NotMatch": "Пароль не совпадает.",
@@ -1124,7 +1129,7 @@
         "ReallyLogout": "Вы действительно хотите выйти?",
         "button_Confirm": "Да",
         "button_Cancel": "Отмена",
-        "button_AllAddress": "Все адреса",
+        "button_CreateAddress": "Создать адреса",
         "Create": "Создать новый адрес",
         "CreateInfo": "Один аккаунт не может иметь более 10 адресов"
       },
@@ -1164,6 +1169,7 @@
       },
       "Transaction": {
         "Transactions": "Транзакции",
+        "NoTransactionHistory": "Истории транзакций нет",
         "Status": {
           "Confirmed": "Подтверждено",
           "Failed": "Неудачно",
@@ -1267,7 +1273,7 @@
       },
       "CreatePassword": {
         "Create": "パスワードを作成",
-        "Caption": "このパスワードは、このサービスでのみあなたのMetamaskウォレットをアンロックします",
+        "Caption": "新しいパスワードでアカウントを保護してください。",
         "AtLeast8Char": "少なくとも8文字以上でなければなりません",
         "PasswordStrength": "パスワードの強度",
         "NotMatch": "パスワードが一致しません。",
@@ -1329,7 +1335,7 @@
         "ReallyLogout": "本当にログアウトしますか？",
         "button_Confirm": "はい",
         "button_Cancel": "キャンセル",
-        "button_AllAddress": "すべてのアドレス",
+        "button_CreateAddress": "アドレスを作成",
         "Create": "新しいアドレスを作成",
         "CreateInfo": "アカウントは10個以上のアドレスを持つことができません"
       },
@@ -1369,6 +1375,7 @@
       },
       "Transaction": {
         "Transactions": "トランザクション",
+        "NoTransactionHistory": "取引履歴がありません",
         "Status": {
           "Confirmed": "確認済み",
           "Failed": "失敗",

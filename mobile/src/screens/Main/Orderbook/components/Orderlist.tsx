@@ -114,26 +114,24 @@ const Orderlist: React.FC = () => {
         </Text>
       </HStack>
 
-      <ScrollView w="full" textAlign="center">
-        {isLoading && Item ? (
-          <VStack flex={1} alignItems="center" justifyContent="center">
-            <ActivityIndicator size="large" color={main.celestialBlue} />
-          </VStack>
-        ) : showData.length ? (
-          Item
-        ) : (
-          <VStack flex={1} alignItems="center" justifyContent="center">
-            <VStack>
-              <Center>
-                <Icon as={AntDesign} name="questioncircle" size={20}></Icon>
-                <Text color={textColor} fontSize="md" mt="4" textAlign="center">
-                  {lang.NoOrders}
-                </Text>
-              </Center>
-            </VStack>
-          </VStack>
-        )}
-      </ScrollView>
+      {isLoading && Item ? (
+        <VStack flex={1} alignItems="center" justifyContent="center">
+          <ActivityIndicator size="large" color={main.celestialBlue} />
+        </VStack>
+      ) : showData.length ? (
+        <ScrollView w="full" textAlign="center">
+          {Item}
+        </ScrollView>
+      ) : (
+        <VStack flex={1} alignItems="center" justifyContent="center">
+          <Center>
+            <Icon as={AntDesign} name="questioncircle" size={20}></Icon>
+            <Text color={textColor} fontSize="md" mt="4" textAlign="center">
+              {lang.NoOrders}
+            </Text>
+          </Center>
+        </VStack>
+      )}
     </VStack>
   );
 };

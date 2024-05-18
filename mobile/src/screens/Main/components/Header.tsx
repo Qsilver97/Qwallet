@@ -139,7 +139,7 @@ const Header: React.FC = () => {
                     _pressed={{ opacity: 0.6 }}
                     bgColor={main.celestialBlue}
                   >
-                    {local.Main.Header.button_AllAddress}
+                    {local.Main.Header.button_CreateAddress}
                   </Button>
                 </HStack>
               </Popover.Body>

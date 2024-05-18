@@ -1,6 +1,6 @@
 import { useColors } from "@app/context/ColorContex";
 import { Feather } from "@expo/vector-icons";
-import { HStack, Icon, Text, VStack, useColorMode } from "native-base";
+import { HStack, Icon, ScrollView, Text, VStack, useColorMode } from "native-base";
 import React, { useMemo, useState } from "react";
 import ColorModeSetting from "./ColorModeSetting";
 import LanguageSetting from "./LanguageSetting";
@@ -28,12 +28,12 @@ const Settings: React.FC = () => {
           <Text fontSize="4xl">{lang.Settings}</Text>
         </HStack>
       </VStack>
-      <VStack>
+      <ScrollView>
         <LanguageSetting setLanguage={setLanguage} />
         <ColorModeSetting />
         <SecuritySetting />
         <NetworkSetting />
-      </VStack>
+      </ScrollView>
     </VStack>
   );
 };

@@ -24,6 +24,7 @@ const Confirm: React.FC = () => {
   const handleSeedTyping = (txt: string) => {
     setSeedValue(txt);
     if (txt == seeds) setIsCorrectSeed(true);
+    else setIsCorrectSeed(false);
   };
   const handleSeedSelect = (selectedSeed: string) => {
     if (seeds[currentSeedIndex] === selectedSeed) {
@@ -105,7 +106,7 @@ const Confirm: React.FC = () => {
       {seedType == "24words" && step == 1 && (
         <VStack flex={1}>
           <VStack space={5} pt={10}>
-            <Text fontSize="2xl" color={main.jeansBlue} textAlign="center">
+            <Text fontSize="2xl" color={textColor} textAlign="center" px={10}>
               {lang.WriteDownSeedPhrase}
             </Text>
             <Text textAlign="center" px={16}>
@@ -153,7 +154,7 @@ const Confirm: React.FC = () => {
       {seedType == "24words" && step == 2 && (
         <VStack flex={1}>
           <VStack space={5} pt={10}>
-            <Text fontSize="2xl" color={main.jeansBlue} textAlign="center">
+            <Text fontSize="2xl" color={textColor} textAlign="center" px={10}>
               {lang.ConfirmSeedPhrase}
             </Text>
             <Text textAlign="center" px={16}>
@@ -201,7 +202,7 @@ const Confirm: React.FC = () => {
       {seedType == "55chars" && step == 1 && (
         <VStack flex={1} py={16}>
           <VStack space={5} pt={10}>
-            <Text fontSize="2xl" color={main.jeansBlue} textAlign="center">
+            <Text fontSize="2xl" color={textColor} textAlign="center" px={10}>
               {lang.WriteDownSeedPhrase}
             </Text>
             <Text textAlign="justify" px={10}>
@@ -224,7 +225,7 @@ const Confirm: React.FC = () => {
       {seedType == "55chars" && step == 2 && (
         <VStack flex={1} py={16}>
           <VStack space={5} pt={10}>
-            <Text fontSize="2xl" color={main.jeansBlue} textAlign="center">
+            <Text fontSize="2xl" color={textColor} textAlign="center" px={10}>
               {lang.EnterSeedChar}
             </Text>
             <Text textAlign="justify" px={10}>
@@ -242,6 +243,7 @@ const Confirm: React.FC = () => {
               <TextArea
                 value={seedValue}
                 onChangeText={handleSeedTyping}
+                borderColor={gray.gray80}
                 type="text"
                 autoCompleteType={() => {}}
                 w={"full"}
