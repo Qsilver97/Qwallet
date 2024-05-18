@@ -1,9 +1,19 @@
 import { sideBarItems } from "../../utils/constants";
 import SidebarItem from "../dashboard/SidebarItem";
 import { useAuth } from "../../contexts/AuthContext";
+import { useEffect, useState } from "react";
 
 const Sidebar = () => {
     const { logout, activeTabIdx, handleClickSideBar } = useAuth();
+    const [activePath, setActivePath] = useState<string>("");
+
+    useEffect(() => {
+        if (window.location.pathname == '/') {
+            setActivePath('/dashboard')
+        } else {
+            setActivePath(window.location.pathname)
+        }
+    }, [activeTabIdx])
 
     return (
         <>
@@ -15,7 +25,7 @@ const Sidebar = () => {
                             icon={item.icon}
                             label={item.label}
                             link={item.link}
-                            active={activeTabIdx === idx ? true : false}
+                            active={activePath.toLowerCase() === item.link.toLowerCase() ? true : false}
                             onClick={() => {
                                 if (item.link === "/login") {
                                     logout();
