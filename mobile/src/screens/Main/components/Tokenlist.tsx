@@ -75,14 +75,12 @@ const Tokenlist: React.FC = () => {
         </VStack>
       ) : Object.keys(tokenBalances).length === 0 ? (
         <VStack flex={1} alignItems="center" justifyContent="center">
-          <VStack>
-            <Center>
-              <Icon as={AntDesign} name="questioncircle" size={20}></Icon>
-              <Text color={textColor} fontSize="md" mt="4">
-                {lang.NoAssets}
-              </Text>
-            </Center>
-          </VStack>
+          <Center>
+            <Icon as={AntDesign} name="questioncircle" size={20}></Icon>
+            <Text color={textColor} fontSize="md" mt="4">
+              {lang.NoAssets}
+            </Text>
+          </Center>
         </VStack>
       ) : (
         <ScrollView px="1" py="2">
