@@ -2,7 +2,7 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { Text } from "../../commons";
 
 const TxFormsModal = () => {
-    const { txId, expectedTick, txStatus } = useAuth();
+    const { txId, expectedTick, txStatus, tick } = useAuth();
 
     return (
         <div className="py-5 px-6 space-y-6 border-white/60 border rounded-2xl">
@@ -11,6 +11,7 @@ const TxFormsModal = () => {
                     Sending...
                     <br />
                     transactionId: {txId}<br />
+                    currentTick: {tick}<br />
                     expectedTick: {expectedTick}
                 </div>
             }

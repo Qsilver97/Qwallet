@@ -39,7 +39,12 @@ const Trading = () => {
             const orders = await fetchTradingInfoPage();
             console.log(orders, 'fffffffff')
         }
-        init();
+        if (currentToken.value !== 'QU') {
+            init();
+        }
+    }, [currentToken])
+
+    useEffect(() => {
         if (currentToken.value == 'QU') {
             setCurrentToken(options[0])
         }
