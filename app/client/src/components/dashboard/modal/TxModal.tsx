@@ -47,7 +47,7 @@ const TxModal: React.FC<TxModalProps> = ({ handleTx, quantity, price }) => {
                             className="w-full py-4 bg-dark-gray-400 font-Inter font-light rounded-xl cursor-pointer"
                             onClick={() => handleTx()}
                         >
-                            Run
+                            Confirm
                         </button>
                     </div>
                 }

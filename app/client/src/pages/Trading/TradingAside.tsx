@@ -1,15 +1,15 @@
 import Button from "../../components/commons/Button";
 import Input from "../../components/commons/Input";
 import Section from "../../components/commons/Section";
-import { assetsItems } from "../../utils/constants";
 import { useState } from "react";
 import TokenSelect from "../../components/dashboard/select/TokenSelect";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 import TxModal from "../../components/dashboard/modal/TxModal";
+import { TokenOption } from "../../components/commons/Select";
 
-const TradingAside = () => {
-    const { handleBuyCell, txStatus, tokens, setTxStatus } = useAuth();
+const TradingAside = ({ options }: { options: TokenOption[] }) => {
+    const { handleBuyCell, txStatus, setTxStatus } = useAuth();
 
     const [command, setCommand] = useState<'buy' | 'sell' | 'cancelbuy' | 'cancelsell'>();
     const [quantity, setQuantity] = useState<string>();
@@ -40,13 +40,6 @@ const TradingAside = () => {
         setCommand(command);
     }
 
-    const options = tokens.map((token) => {
-        const item = assetsItems.find((k) => k.name == token) || assetsItems[0]
-        return ({
-            label: item.icon,
-            value: token,
-        })
-    });
 
     return (
         <Section>
