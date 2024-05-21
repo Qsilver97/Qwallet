@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { addAccount } from "@app/api/api";
+import eventEmitter from "@app/api/eventEmitter";
+import { useAuth } from "@app/context/AuthContext";
+import { useColors } from "@app/context/ColorContex";
+import local from "@app/utils/locales";
+import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import Clipboard from "@react-native-clipboard/clipboard";
 import {
   Button,
   HStack,
@@ -7,17 +14,11 @@ import {
   VStack,
   useColorMode,
 } from "native-base";
-import Toast from "react-native-toast-message";
+import { useEffect, useMemo, useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faAngleDown, faCheck } from "@fortawesome/free-solid-svg-icons";
-import { useColors } from "@app/context/ColorContex";
-import LogoutButton from "./LogoutButton";
-import { useAuth } from "@app/context/AuthContext";
-import { addAccount } from "@app/api/api";
-import eventEmitter from "@app/api/eventEmitter";
+import Toast from "react-native-toast-message";
 import ConfirmModal from "./ConfirmModal";
-import local from "@app/utils/locales";
+import LogoutButton from "./LogoutButton";
 
 const Header: React.FC = () => {
   const { bgColor, textColor, main, gray } = useColors();
@@ -33,7 +34,7 @@ const Header: React.FC = () => {
       ? require("@assets/icon.png")
       : require("@assets/favicon.png");
   }, [colorMode]);
-
+  const lang = local.Main.Header;
   const toggleModal = () => setModalVisible(!modalVisible);
   const handleAddAdress = () => {
     if (addingStatus) return;
@@ -42,6 +43,10 @@ const Header: React.FC = () => {
       user?.password,
       user?.accountInfo.addresses.findIndex((item) => item == "")
     );
+  };
+  const handleTapAddress = () => {
+    Clipboard.setString(currentAddress);
+    Toast.show({ type: "success", text1: lang.toast_AddressCopied });
   };
 
   useEffect(() => {
@@ -71,9 +76,11 @@ const Header: React.FC = () => {
           />
         </VStack>
         <HStack flex={1} justifyContent={"center"} px={10}>
-          <Text numberOfLines={1} ellipsizeMode="middle">
-            {currentAddress}
-          </Text>
+          <TouchableOpacity onPress={handleTapAddress}>
+            <Text numberOfLines={1} ellipsizeMode="middle">
+              {currentAddress}
+            </Text>
+          </TouchableOpacity>
           <Popover
             trigger={(triggerProps) => {
               return (
@@ -127,7 +134,7 @@ const Header: React.FC = () => {
                     _pressed={{ opacity: 0.6 }}
                     bgColor={gray.gray50}
                   >
-                    {local.Main.Header.button_Cancel}
+                    {lang.button_Cancel}
                   </Button>
                   <Button
                     onPress={() => {
@@ -139,7 +146,7 @@ const Header: React.FC = () => {
                     _pressed={{ opacity: 0.6 }}
                     bgColor={main.celestialBlue}
                   >
-                    {local.Main.Header.button_CreateAddress}
+                    {lang.button_CreateAddress}
                   </Button>
                 </HStack>
               </Popover.Body>
@@ -157,9 +164,9 @@ const Header: React.FC = () => {
       >
         <>
           <Text fontSize={"2xl"} textAlign={"center"}>
-            {local.Main.Header.Create}
+            {lang.Create}
           </Text>
-          <Text textAlign={"center"}>{local.Main.Header.CreateInfo}</Text>
+          <Text textAlign={"center"}>{lang.CreateInfo}</Text>
         </>
       </ConfirmModal>
     </>

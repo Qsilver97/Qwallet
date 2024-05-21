@@ -13,12 +13,19 @@ import {
 import React from "react";
 import ConfirmModal from "../components/ConfirmModal";
 import local from "@app/utils/locales";
+import Clipboard from "@react-native-clipboard/clipboard";
+import Toast from "react-native-toast-message";
 
 const AllAddresses: React.FC = () => {
   const { allAddresses, balances } = useAuth();
   const { bgColor, textColor, panelBgColor } = useColors();
   const { isOpen, onToggle } = useDisclose();
   const lang = local.Main.Wallet.AllAddress;
+
+  const handleTapAddress = (currentAddress: string) => {
+    Clipboard.setString(currentAddress);
+    Toast.show({ type: "success", text1: lang.toast_AddressCopied });
+  };
 
   return (
     <VStack
@@ -44,6 +51,7 @@ const AllAddresses: React.FC = () => {
               <Pressable
                 key={key}
                 _pressed={{ opacity: 0.6 }}
+                onPress={() => handleTapAddress(address)}
                 onLongPress={onToggle}
               >
                 <HStack p="3" space="2" bgColor={panelBgColor}>

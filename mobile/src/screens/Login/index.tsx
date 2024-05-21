@@ -77,7 +77,7 @@ const Login: React.FC = () => {
   useEffect(() => {
     const handleLoginEvent = (res: any) => {
       if (res.success) {
-        Toast.show({ type: "success", text1: "Login Success!" });
+        Toast.show({ type: "success", text1: lang.toast_LoginSuccess });
         const userInfo: UserDetailType = res.data;
         auth.login(userInfo);
         dispatch(resetState());

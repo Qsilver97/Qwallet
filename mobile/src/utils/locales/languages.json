@@ -94,7 +94,8 @@
       "placeholder_Password": "Password",
       "button_ImportUsingSeedPhrase": "Restore your wallet from your  seed ",
       "button_CreateNewWallet": "Create",
-      "button_Login": "Login"
+      "button_Login": "Login",
+      "toast_LoginSuccess": "Login Success!"
     },
     "Main": {
       "Header": {
@@ -103,7 +104,8 @@
         "button_Cancel": "Cancel",
         "button_CreateAddress": "Create Address",
         "Create": "Create New Address",
-        "CreateInfo": "An Account can't have more than 10 addresses"
+        "CreateInfo": "An Account can't have more than 10 addresses",
+        "toast_AddressCopied": "Address Copied!"
       },
       "BottomTab": {
         "Wallet": "Wallet",
@@ -119,7 +121,8 @@
         },
         "AllAddress": {
           "AllAddresses": "All Addresses",
-          "DeleteAddressPrompt": "Do you really want to delete this address?"
+          "DeleteAddressPrompt": "Do you really want to delete this address?",
+          "toast_AddressCopied": "Address Copied!"
         }
       },
       "Orderbook": {
@@ -302,7 +305,8 @@
       "placeholder_Password": "密码",
       "button_ImportUsingSeedPhrase": "通过种子短语恢复您的钱包",
       "button_CreateNewWallet": "创建",
-      "button_Login": "登录"
+      "button_Login": "登录",
+      "toast_LoginSuccess": "登录成功！"
     },
     "Main": {
       "Header": {
@@ -311,7 +315,8 @@
         "button_Cancel": "取消",
         "button_CreateAddress": "创建地址",
         "Create": "创建新地址",
-        "CreateInfo": "一个账户不能拥有超过10个地址"
+        "CreateInfo": "一个账户不能拥有超过10个地址",
+        "toast_AddressCopied": "地址已复制！"
       },
       "BottomTab": {
         "Wallet": "钱包",
@@ -327,7 +332,8 @@
         },
         "AllAddress": {
           "AllAddresses": "所有地址",
-          "DeleteAddressPrompt": "您确定要删除这个地址吗?"
+          "DeleteAddressPrompt": "您确定要删除这个地址吗?",
+          "toast_AddressCopied": "地址已复制！"
         }
       },
       "Orderbook": {
@@ -510,7 +516,8 @@
       "placeholder_Password": "Contraseña",
       "button_ImportUsingSeedPhrase": "Restaura tu cartera desde tu frase de recuperación",
       "button_CreateNewWallet": "Crear",
-      "button_Login": "Iniciar Sesión"
+      "button_Login": "Iniciar Sesión",
+      "toast_LoginSuccess": "¡Inicio de sesión exitoso!"
     },
     "Main": {
       "Header": {
@@ -519,7 +526,8 @@
         "button_Cancel": "Cancelar",
         "button_CreateAddress": "Crear direcciones",
         "Create": "Crear Nueva Dirección",
-        "CreateInfo": "Una cuenta no puede tener más de 10 direcciones"
+        "CreateInfo": "Una cuenta no puede tener más de 10 direcciones",
+        "toast_AddressCopied": "¡Dirección copiada!"
       },
       "BottomTab": {
         "Wallet": "Cartera",
@@ -535,7 +543,8 @@
         },
         "AllAddress": {
           "AllAddresses": "Todas las Direcciones",
-          "DeleteAddressPrompt": "¿Realmente quieres eliminar esta dirección?"
+          "DeleteAddressPrompt": "¿Realmente quieres eliminar esta dirección?",
+          "toast_AddressCopied": "¡Dirección copiada!"
         }
       },
       "Orderbook": {
@@ -718,7 +727,8 @@
       "placeholder_Password": "Mot de passe",
       "button_ImportUsingSeedPhrase": "Restaurer votre portefeuille avec votre phrase secrète",
       "button_CreateNewWallet": "Créer",
-      "button_Login": "Connexion"
+      "button_Login": "Connexion",
+      "toast_LoginSuccess": "Connexion réussie !"
     },
     "Main": {
       "Header": {
@@ -727,7 +737,8 @@
         "button_Cancel": "Annuler",
         "button_CreateAddress": "Créer des adresses",
         "Create": "Créer une nouvelle adresse",
-        "CreateInfo": "Un compte ne peut pas avoir plus de 10 adresses"
+        "CreateInfo": "Un compte ne peut pas avoir plus de 10 adresses",
+        "toast_AddressCopied": "Adresse copiée !"
       },
       "BottomTab": {
         "Wallet": "Portefeuille",
@@ -743,7 +754,8 @@
         },
         "AllAddress": {
           "AllAddresses": "Toutes les adresses",
-          "DeleteAddressPrompt": "Voulez-vous vraiment supprimer cette adresse ?"
+          "DeleteAddressPrompt": "Voulez-vous vraiment supprimer cette adresse ?",
+          "toast_AddressCopied": "Adresse copiée !"
         }
       },
       "Orderbook": {
@@ -926,7 +938,8 @@
       "placeholder_Password": "Passwort",
       "button_ImportUsingSeedPhrase": "Stellen Sie Ihr Wallet mit Ihrer Seed-Phrase wieder her",
       "button_CreateNewWallet": "Erstellen",
-      "button_Login": "Anmelden"
+      "button_Login": "Anmelden",
+      "toast_LoginSuccess": "Anmeldung erfolgreich!"
     },
     "Main": {
       "Header": {
@@ -935,7 +948,8 @@
         "button_Cancel": "Abbrechen",
         "button_CreateAddress": "Adressen erstellen",
         "Create": "Neue Adresse erstellen",
-        "CreateInfo": "Ein Konto kann nicht mehr als 10 Adressen haben"
+        "CreateInfo": "Ein Konto kann nicht mehr als 10 Adressen haben",
+        "toast_AddressCopied": "Adresse kopiert!"
       },
       "BottomTab": {
         "Wallet": "Wallet",
@@ -951,7 +965,8 @@
         },
         "AllAddress": {
           "AllAddresses": "Alle Adressen",
-          "DeleteAddressPrompt": "Möchten Sie diese Adresse wirklich löschen?"
+          "DeleteAddressPrompt": "Möchten Sie diese Adresse wirklich löschen?",
+          "toast_AddressCopied": "Adresse kopiert!"
         }
       },
       "Orderbook": {
@@ -1134,7 +1149,8 @@
       "placeholder_Password": "Пароль",
       "button_ImportUsingSeedPhrase": "Восстановите свой кошелек с помощью секретной фразы",
       "button_CreateNewWallet": "Создать",
-      "button_Login": "Вход"
+      "button_Login": "Вход",
+      "toast_LoginSuccess": "Успешный вход!"
     },
     "Main": {
       "Header": {
@@ -1143,7 +1159,8 @@
         "button_Cancel": "Отмена",
         "button_CreateAddress": "Создать адреса",
         "Create": "Создать новый адрес",
-        "CreateInfo": "Один аккаунт не может иметь более 10 адресов"
+        "CreateInfo": "Один аккаунт не может иметь более 10 адресов",
+        "toast_AddressCopied": "Адрес скопирован!"
       },
       "BottomTab": {
         "Wallet": "Кошелек",
@@ -1159,7 +1176,8 @@
         },
         "AllAddress": {
           "AllAddresses": "Все адреса",
-          "DeleteAddressPrompt": "Вы действительно хотите удалить этот адрес?"
+          "DeleteAddressPrompt": "Вы действительно хотите удалить этот адрес?",
+          "toast_AddressCopied": "Адрес скопирован!"
         }
       },
       "Orderbook": {
@@ -1342,7 +1360,8 @@
       "placeholder_Password": "パスワード",
       "button_ImportUsingSeedPhrase": "シードフレーズからウォレットを復元",
       "button_CreateNewWallet": "作成",
-      "button_Login": "ログイン"
+      "button_Login": "ログイン",
+      "toast_LoginSuccess": "ログイン成功！"
     },
     "Main": {
       "Header": {
@@ -1351,7 +1370,8 @@
         "button_Cancel": "キャンセル",
         "button_CreateAddress": "アドレスを作成",
         "Create": "新しいアドレスを作成",
-        "CreateInfo": "アカウントは10個以上のアドレスを持つことができません"
+        "CreateInfo": "アカウントは10個以上のアドレスを持つことができません",
+        "toast_AddressCopied": "アドレスがコピーされました！"
       },
       "BottomTab": {
         "Wallet": "ウォレット",
@@ -1367,7 +1387,8 @@
         },
         "AllAddress": {
           "AllAddresses": "すべてのアドレス",
-          "DeleteAddressPrompt": "このアドレスを本当に削除しますか？"
+          "DeleteAddressPrompt": "このアドレスを本当に削除しますか？",
+          "toast_AddressCopied": "アドレスがコピーされました！"
         }
       },
       "Orderbook": {

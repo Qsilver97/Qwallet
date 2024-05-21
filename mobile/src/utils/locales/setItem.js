@@ -80,15 +80,15 @@ function deleteKeyPath(keyPath, filePath = "languages.json") {
 }
 
 // Example
-const keyPath = "Create.SeedType.toast_PasswordExist";
+const keyPath = "Login.toast_LoginSuccess";
 const newTranslations = {
-  en: "Password already exists!",
-  zh: "密码已存在！",
-  es: "¡La contraseña ya existe!",
-  fr: "Le mot de passe existe déjà !",
-  de: "Das Passwort existiert bereits!",
-  ja: "パスワードは既に存在します！",
-  ru: "Пароль уже существует!",
+  en: "Login Success!",
+  zh: "登录成功！",
+  es: "¡Inicio de sesión exitoso!",
+  fr: "Connexion réussie !",
+  de: "Anmeldung erfolgreich!",
+  ja: "ログイン成功！",
+  ru: "Успешный вход!",
 };
 
 addTranslation(keyPath, newTranslations);
