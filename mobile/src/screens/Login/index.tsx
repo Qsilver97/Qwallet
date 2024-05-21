@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { VStack, Text, useColorMode } from "native-base";
+import { VStack, Text, useColorMode, KeyboardAvoidingView } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Image,
   NativeSyntheticEvent,
+  Platform,
   TextInputKeyPressEventData,
   TouchableOpacity,
 } from "react-native";
@@ -109,12 +110,12 @@ const Login: React.FC = () => {
       justifyContent="center"
       justifyItems="center"
     >
-      <VStack
-        space={10}
+      <KeyboardAvoidingView
         alignItems="center"
         flex={1}
         justifyContent="center"
         justifyItems="center"
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <Image
           source={logoSource}
@@ -130,7 +131,7 @@ const Login: React.FC = () => {
           type="password"
           error={passwordStatus ? lang.NotExist : ""}
         />
-      </VStack>
+      </KeyboardAvoidingView>
       <ButtonBox>
         <PageButton
           title={lang.button_Login}

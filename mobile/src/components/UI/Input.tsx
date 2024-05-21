@@ -76,13 +76,16 @@ const Input: React.FC<InputProps> = ({
         }
         {...props}
       />
-      {helper && (
-        <FormControl.HelperText>
+      {helper != "" && helper != undefined && (
+        <FormControl.HelperText ml={3}>
           <Text color={textColor}>{helper}</Text>
         </FormControl.HelperText>
       )}
-      {error && (
-        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+      {error !== "" && error != undefined && (
+        <FormControl.ErrorMessage
+          ml={3}
+          leftIcon={<WarningOutlineIcon size="xs" />}
+        >
           {error}
         </FormControl.ErrorMessage>
       )}

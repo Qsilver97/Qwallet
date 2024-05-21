@@ -14,7 +14,6 @@ const ButtonBox: React.FC<IButtonBoxProps> = ({ children }) => {
       pt={4}
       pb={8}
       color={textColor}
-      bgColor={bgColor}
       w="full"
       space={4}
     >

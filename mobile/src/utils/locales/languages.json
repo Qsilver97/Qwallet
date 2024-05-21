@@ -45,7 +45,8 @@
         "LearnMore": "Learn more",
         "placeholder_NewPassword": "New Password",
         "placeholder_ConfirmPassword": "Confirm Password",
-        "button_CreatePassword": "Create Password"
+        "button_CreatePassword": "Create Password",
+        "PasswordExist": "Password already exists!"
       },
       "Reminder": {
         "Secure": "Secure Your Wallet",
@@ -73,7 +74,8 @@
         "_55chars": "55 Chars",
         "_24words": "24 Words",
         "CreatePassword": "Create Password",
-        "toast_SuccessCreate": "Create Wallet Successly!"
+        "toast_SuccessCreate": "Create Wallet Successly!",
+        "toast_PasswordExist": "Password already exists!"
       }
     },
     "Restore": {
@@ -251,7 +253,8 @@
         "LearnMore": "了解更多",
         "placeholder_NewPassword": "新密码",
         "placeholder_ConfirmPassword": "确认密码",
-        "button_CreatePassword": "创建密码"
+        "button_CreatePassword": "创建密码",
+        "PasswordExist": "密码已存在！"
       },
       "Reminder": {
         "Secure": "保护您的钱包",
@@ -279,7 +282,8 @@
         "_55chars": "55字符",
         "_24words": "24个单词",
         "CreatePassword": "创建密码",
-        "toast_SuccessCreate": "钱包创建成功!"
+        "toast_SuccessCreate": "钱包创建成功!",
+        "toast_PasswordExist": "密码已存在！"
       }
     },
     "Restore": {
@@ -457,7 +461,8 @@
         "LearnMore": "Aprende más",
         "placeholder_NewPassword": "Nueva Contraseña",
         "placeholder_ConfirmPassword": "Confirmar Contraseña",
-        "button_CreatePassword": "Crear Contraseña"
+        "button_CreatePassword": "Crear Contraseña",
+        "PasswordExist": "¡La contraseña ya existe!"
       },
       "Reminder": {
         "Secure": "Protege tu Cartera",
@@ -485,7 +490,8 @@
         "_55chars": "55 Caracteres",
         "_24words": "24 Palabras",
         "CreatePassword": "Crear Contraseña",
-        "toast_SuccessCreate": "¡Cartera Creada Exitosamente!"
+        "toast_SuccessCreate": "¡Cartera Creada Exitosamente!",
+        "toast_PasswordExist": "¡La contraseña ya existe!"
       }
     },
     "Restore": {
@@ -663,7 +669,8 @@
         "LearnMore": "En savoir plus",
         "placeholder_NewPassword": "Nouveau mot de passe",
         "placeholder_ConfirmPassword": "Confirmer le mot de passe",
-        "button_CreatePassword": "Créer un mot de passe"
+        "button_CreatePassword": "Créer un mot de passe",
+        "PasswordExist": "Le mot de passe existe déjà !"
       },
       "Reminder": {
         "Secure": "Sécurisez votre portefeuille",
@@ -691,7 +698,8 @@
         "_55chars": "55 Caractères",
         "_24words": "24 Mots",
         "CreatePassword": "Créer un mot de passe",
-        "toast_SuccessCreate": "Portefeuille créé avec succès !"
+        "toast_SuccessCreate": "Portefeuille créé avec succès !",
+        "toast_PasswordExist": "Le mot de passe existe déjà !"
       }
     },
     "Restore": {
@@ -869,7 +877,8 @@
         "LearnMore": "Mehr erfahren",
         "placeholder_NewPassword": "Neues Passwort",
         "placeholder_ConfirmPassword": "Passwort bestätigen",
-        "button_CreatePassword": "Passwort erstellen"
+        "button_CreatePassword": "Passwort erstellen",
+        "PasswordExist": "Das Passwort existiert bereits!"
       },
       "Reminder": {
         "Secure": "Sichern Sie Ihr Wallet",
@@ -897,7 +906,8 @@
         "_55chars": "55 Zeichen",
         "_24words": "24 Wörter",
         "CreatePassword": "Passwort erstellen",
-        "toast_SuccessCreate": "Wallet erfolgreich erstellt!"
+        "toast_SuccessCreate": "Wallet erfolgreich erstellt!",
+        "toast_PasswordExist": "Das Passwort existiert bereits!"
       }
     },
     "Restore": {
@@ -1075,7 +1085,8 @@
         "LearnMore": "Узнать больше",
         "placeholder_NewPassword": "Новый пароль",
         "placeholder_ConfirmPassword": "Подтвердить пароль",
-        "button_CreatePassword": "Создать пароль"
+        "button_CreatePassword": "Создать пароль",
+        "PasswordExist": "Пароль уже существует!"
       },
       "Reminder": {
         "Secure": "Защитите свой кошелек",
@@ -1103,7 +1114,8 @@
         "_55chars": "55 символов",
         "_24words": "24 слова",
         "CreatePassword": "Создать пароль",
-        "toast_SuccessCreate": "Кошелек успешно создан!"
+        "toast_SuccessCreate": "Кошелек успешно создан!",
+        "toast_PasswordExist": "Пароль уже существует!"
       }
     },
     "Restore": {
@@ -1281,7 +1293,8 @@
         "LearnMore": "詳しくはこちら",
         "placeholder_NewPassword": "新しいパスワード",
         "placeholder_ConfirmPassword": "パスワードを確認",
-        "button_CreatePassword": "パスワードを作成"
+        "button_CreatePassword": "パスワードを作成",
+        "PasswordExist": "パスワードは既に存在します！"
       },
       "Reminder": {
         "Secure": "ウォレットを保護する",
@@ -1309,7 +1322,8 @@
         "_55chars": "55文字",
         "_24words": "24単語",
         "CreatePassword": "パスワードを作成",
-        "toast_SuccessCreate": "ウォレットの作成に成功しました！"
+        "toast_SuccessCreate": "ウォレットの作成に成功しました！",
+        "toast_PasswordExist": "パスワードは既に存在します！"
       }
     },
     "Restore": {

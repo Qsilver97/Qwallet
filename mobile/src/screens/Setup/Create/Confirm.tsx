@@ -1,26 +1,29 @@
-import { Box, Button, HStack, Icon, Text, TextArea, VStack } from "native-base";
-import React, { useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import { TouchableOpacity } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { useColors } from "@app/context/ColorContex";
-import { RootState } from "@app/redux/store";
 import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
+import { useColors } from "@app/context/ColorContex";
+import { setCurrentSeedIndex } from "@app/redux/appSlice";
+import { RootState } from "@app/redux/store";
 import local from "@app/utils/locales";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { Box, Button, HStack, Icon, Text, TextArea, VStack } from "native-base";
+import React, { useMemo, useState } from "react";
+import { TouchableOpacity } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 const Confirm: React.FC = () => {
-  const { bgColor, textColor, main, gray } = useColors();
-  const { seeds, seedType } = useSelector((state: RootState) => state.app);
+  const { bgColor, textColor, main, gray, panelBgColor } = useColors();
+  const { seeds, seedType, currentSeedIndex } = useSelector(
+    (state: RootState) => state.app
+  );
   const [blurBackground, setBlurBackground] = useState(true);
-  const [currentSeedIndex, setCurrentSeedIndex] = useState(0);
   const [isCorrectSeed, setIsCorrectSeed] = useState(false);
   const [seedValue, setSeedValue] = useState("");
   const [step, setStep] = useState(1);
   const navigation = useNavigation();
-  const lang = local.Create.Confirm;
+  const dispatch = useDispatch();
 
+  const lang = local.Create.Confirm;
   const handleSeedTyping = (txt: string) => {
     setSeedValue(txt);
     if (txt == seeds) setIsCorrectSeed(true);
@@ -32,7 +35,7 @@ const Confirm: React.FC = () => {
       if (currentSeedIndex < seeds.length - 1) {
         setTimeout(() => {
           setIsCorrectSeed(false);
-          setCurrentSeedIndex(currentSeedIndex + 1);
+          dispatch(setCurrentSeedIndex(currentSeedIndex + 1));
         }, 1200);
       }
     } else {
@@ -70,6 +73,7 @@ const Confirm: React.FC = () => {
                 rounded="md"
                 textAlign="center"
                 p={2}
+                bgColor={panelBgColor}
               >
                 {index + i + 1}.{seeds[index + i]}
               </Text>
@@ -185,7 +189,8 @@ const Confirm: React.FC = () => {
               {getDisplaySeeds.map((seed, index) => (
                 <Button
                   key={index}
-                  bg={"gray.900"}
+                  bg={panelBgColor}
+                  _text={{ color: textColor }}
                   rounded="md"
                   px={4}
                   py={2}
