@@ -9,8 +9,9 @@ import { toast } from "react-toastify";
 import TxModal from "../../components/dashboard/modal/TxModal";
 
 const TradingAside = () => {
-    const { handleBuyCell, txStatus, tokens } = useAuth();
+    const { handleBuyCell, txStatus, tokens, setTxStatus } = useAuth();
 
+    const [command, setCommand] = useState<'buy' | 'sell' | 'cancelbuy' | 'cancelsell'>();
     const [quantity, setQuantity] = useState<string>();
     const [price, setPrice] = useState<string>();
 
@@ -22,12 +23,21 @@ const TradingAside = () => {
         setPrice(e.target.value);
     }
 
-    const _handleBuyCell = (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell',) => {
-        if (!quantity || !price) {
-            toast.error('Input valid quantity or price.')
-            return
+    const handleTx = () => {
+        if (!quantity || !price || !command) {
+            toast.error('Invalid command.');
+            return;
         }
-        handleBuyCell(flag, quantity, price)
+        handleBuyCell(command, quantity, price);
+    }
+
+    const handleAction = (command: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell') => {
+        if (!quantity || !price) {
+            toast.error('Input valid quantity or price.');
+            return;
+        }
+        setTxStatus('confirm');
+        setCommand(command);
     }
 
     const options = tokens.map((token) => {
@@ -41,7 +51,7 @@ const TradingAside = () => {
     return (
         <Section>
             {txStatus != "" &&
-                <TxModal />
+                <TxModal handleTx={handleTx} quantity={quantity} price={price} />
             }
             {/* <Text size="xs" weight="medium" className="text-celestialBlue">
                 SELECT A STRIKE PRICE
@@ -66,18 +76,18 @@ const TradingAside = () => {
                     <Input inputId="price" label="Price" placeholder="0" value={price} onChange={handleChangePrice} gapVariant="xs" />
                 </div>
                 <div className="flex gap-2.5">
-                    <Button variant="primary" font="regular" onClick={() => _handleBuyCell('buy')}>
+                    <Button variant="primary" font="regular" onClick={() => handleAction('buy')}>
                         Buy
                     </Button>
-                    <Button variant="primary" font="regular" onClick={() => _handleBuyCell('sell')}>
+                    <Button variant="primary" font="regular" onClick={() => handleAction('sell')}>
                         Sell
                     </Button>
                 </div>
                 <div className="flex gap-2.5">
-                    <Button variant="primary" font="regular" onClick={() => _handleBuyCell('cancelbuy')}>
+                    <Button variant="primary" font="regular" onClick={() => handleAction('cancelbuy')}>
                         Cancel Buy
                     </Button>
-                    <Button variant="primary" font="regular" onClick={() => _handleBuyCell('cancelsell')}>
+                    <Button variant="primary" font="regular" onClick={() => handleAction('cancelsell')}>
                         Cancel Sell
                     </Button>
                 </div>
