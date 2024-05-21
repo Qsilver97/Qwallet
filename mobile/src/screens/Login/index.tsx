@@ -86,7 +86,7 @@ const Login: React.FC = () => {
       } else {
         setPasswordStatus(true);
         dispatch(setIsAuthenticated(false));
-        Toast.show({ type: "error", text1: "E13: " + res.error });
+        Toast.show({ type: "info", text1: res.error });
       }
       setLoginWaiting(false);
     };

@@ -43,6 +43,41 @@ const toastConfig: ToastConfig = {
       ></BaseToast>
     );
   },
+  info: (props: BaseToastProps) => {
+    const { toast } = useColors();
+    return (
+      <BaseToast
+        {...props}
+        style={{
+          borderRadius: 10,
+          display: "flex",
+          alignItems: "center",
+          borderLeftWidth: 0,
+          padding: 4,
+          paddingLeft: 10,
+          backgroundColor: toast.bgColor,
+          shadowColor: "#444444",
+          shadowOffset: { width: 0, height: 5 },
+          shadowOpacity: 0.2,
+          shadowRadius: 6,
+        }}
+        text1Style={{
+          fontSize: 18,
+          fontFamily: "Arial",
+          color: toast.textColor,
+          fontWeight: "normal",
+        }}
+        renderLeadingIcon={() => (
+          <Icon
+            as={AntDesign}
+            name="infocirlce"
+            size="3xl"
+            color="blue.500"
+          ></Icon>
+        )}
+      ></BaseToast>
+    );
+  },
   error: (props: BaseToastProps) => {
     const { toast } = useColors();
     return (
