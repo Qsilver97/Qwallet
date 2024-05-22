@@ -100,8 +100,14 @@ const Orderbook: React.FC = () => {
           <HStack w="full">
             <Text textAlign="center" fontSize="md">
               {lang.HighestBidPrice.replace("{currentToken}", currentToken)
-                .replace("{price}", tokenprices?.[currentToken]?.[0] || "0")
-                .replace("{price}", tokenprices?.[currentToken]?.[1] || "0")}
+                .replace(
+                  "{high_price}",
+                  tokenprices?.[currentToken]?.[0] || "0"
+                )
+                .replace(
+                  "{low_price}",
+                  tokenprices?.[currentToken]?.[1] || "0"
+                )}
             </Text>
           </HStack>
         </VStack>

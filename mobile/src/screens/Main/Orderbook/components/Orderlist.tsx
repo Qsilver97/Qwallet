@@ -31,7 +31,8 @@ interface IOrderData {
 
 const Orderlist: React.FC = () => {
   const { textColor, bgColor, main } = useColors();
-  const { currentAddress, allAddresses, isLoading, setIsLoading } = useAuth();
+  const { currentAddress, allAddresses, txResult, isLoading, setIsLoading } =
+    useAuth();
   const [orderData, setOrderData] = useState<IOrderData>({});
   const [showData, setShowData] = useState<IOrder[]>([]);
   const lang = local.Main.Orderbook;
@@ -120,7 +121,7 @@ const Orderlist: React.FC = () => {
     return () => {
       eventEmitter.off("S2C/my-orders", handleMyOrdersEvent);
     };
-  }, [currentAddress]);
+  }, [currentAddress, txResult]);
   const modal = useDisclose();
 
   return (

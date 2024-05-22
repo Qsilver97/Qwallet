@@ -46,7 +46,7 @@ const ColorModeSetting: React.FC = () => {
               size="2xl"
               color={textColor}
             />
-            <Text fontSize="xl" color={textColor}>
+            <Text fontSize="md" color={textColor}>
               {lang.LightMode}
             </Text>
           </HStack>
@@ -62,7 +62,7 @@ const ColorModeSetting: React.FC = () => {
               size="2xl"
               color={textColor}
             />
-            <Text fontSize="xl" color={textColor}>
+            <Text fontSize="md" color={textColor}>
               {lang.DarkMode}
             </Text>
           </HStack>

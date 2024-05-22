@@ -15,6 +15,7 @@ export const SocketCom: React.FC = () => {
     useAuth();
   useEffect(() => {
     eventEmitter.on("S2C/live", (res) => {
+      console.log("SOCEKT_LIVE: \n", res.data);
       if (res.data.command == "CurrentTickInfo") {
         dispatch(setTick(res.data.tick));
       } else if (res.data.command == "EntityInfo") {
@@ -55,8 +56,15 @@ export const SocketCom: React.FC = () => {
       } else if (res.data.price) {
         // This maybe changed by server
         dispatch(setMarketcap(res.data));
-      } else if (res.data.tokenprices) {
-        dispatch(setTokenprices(res.data.tokenprices));
+      }
+      if (res.data) {
+        const allEntriesAreArraysOfLengthTwo = Object.values(res.data).every(
+          (entry) => Array.isArray(entry) && entry.length === 2
+        );
+
+        if (allEntriesAreArraysOfLengthTwo) {
+          dispatch(setTokenprices(res.data));
+        }
       }
     });
   }, []);
