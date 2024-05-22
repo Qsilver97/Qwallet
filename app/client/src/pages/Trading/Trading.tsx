@@ -18,8 +18,8 @@ import { TokenOption } from "../../components/commons/Select";
 const tabs = ['Bids', 'Asks']
 
 const Trading = () => {
-    const { fetchTradingInfoPage, tradingPageLoading, orders, tokens, setCurrentToken, currentToken } = useAuth();
-
+    const { fetchTradingInfoPage, tradingPageLoading, orders, tokens, setCurrentToken, currentToken, tokenBalances, currentAddress } = useAuth();
+    console.log(tokenBalances)
     const [activeTab, setActiveTab] = useState<string>('Bids');
     const options: TokenOption[] = tokens
         .map((token) => {
@@ -62,13 +62,18 @@ const Trading = () => {
                     <div className="space-y-2">
                         {
                             Array.isArray(options) && options.length > 0 &&
-                            <TokenSelect
-                                options={options}
-                                showSelectDescription
-                                hideTokenValue
-                            />
+                            <div className="flex items-center gap-2">
+                                <TokenSelect
+                                    options={options}
+                                    showSelectDescription
+                                    hideTokenValue
+                                />
+                                <span className="text-2xl p-2 px-4 bg-slate-500 rounded-lg">{tokenBalances[`${currentToken.value}`] ? tokenBalances[`${currentToken.value}`][currentAddress] : 0}</span>
+                            </div>
                         }
-
+                        <div className="flex my-4">
+                            <span className="p-1 bg-slate-500 rounded">Issuer: {orders?.issuer}</span>
+                        </div>
                         <div className="grid grid-cols-[70%_30%] gap-2">
                             <div className="flex flex-col gap-2">
                                 {/* <Section>
