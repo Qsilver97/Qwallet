@@ -4,7 +4,7 @@ import { handleCopy } from "../../utils/helper";
 import { Text } from "../commons";
 
 const Navbar = () => {
-    const { accountInfo, currentAddress, setCurrentAddress } = useAuth();
+    const { accountInfo, currentAddress, setCurrentAddress, tokenBalances } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
 
     const handleSelectedAddress = (address: string) => {
@@ -21,20 +21,23 @@ const Navbar = () => {
 
                 <div className="relative flex justify-between  items-center flex-wrap gap-1">
                     <div className="flex gap-2.5 items-center w-max">
-                        <Text
-                            weight="bold"
-                            size="sm"
-                            className="uppercase cursor-pointer"
-                            onClick={() => handleCopy(currentAddress)}
-                        >
-                            {currentAddress}
-                        </Text>
-                        <img
-                            src="assets/images/ui/chevron-down.svg"
-                            alt="Icon"
-                            className="cursor-pointer"
-                            onClick={() => setIsOpen(!isOpen)}
-                        />
+                        <div className="flex items-center gap-2">
+                            <Text
+                                weight="bold"
+                                size="sm"
+                                className="uppercase cursor-pointer"
+                                onClick={() => handleCopy(currentAddress)}
+                            >
+                                {currentAddress}
+                            </Text>
+                            <img
+                                src="assets/images/ui/chevron-down.svg"
+                                alt="Icon"
+                                className="cursor-pointer"
+                                onClick={() => setIsOpen(!isOpen)}
+                            />
+                            <span>{tokenBalances['QU'] ? tokenBalances['QU'][currentAddress] : 0}</span>
+                        </div>
 
                         {isOpen && (
                             <div className="absolute top-8 w-max h-20 bg-[#151B1E] pl-1 pr-4 overflow-auto overflow-x-hidden scrolling">
