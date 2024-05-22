@@ -13,36 +13,41 @@ import TokenSelect from "../../components/dashboard/select/TokenSelect";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import TradingAside from "./TradingAside";
+import { TokenOption } from "../../components/commons/Select";
 
 const tabs = ['Bids', 'Asks']
 
 const Trading = () => {
-    const { fetchTradingInfoPage, tradingPageLoading, orders, tokens } = useAuth();
+    const { fetchTradingInfoPage, tradingPageLoading, orders, tokens, setCurrentToken, currentToken } = useAuth();
 
     const [activeTab, setActiveTab] = useState<string>('Bids');
-
-    const options = tokens.map((token) => {
-        const item = assetsItems.find((k) => k.name == token) || assetsItems[0]
-        return ({
-            label: item.icon,
-            value: token,
+    const options: TokenOption[] = tokens
+        .map((token) => {
+            if (token !== "QU") {
+                const item = assetsItems.find((k) => k.name === token) || assetsItems[0];
+                return {
+                    label: item.icon,
+                    value: token,
+                } as TokenOption;
+            }
+            return undefined;
         })
-    });
-    // const dateOptions = [
-    //     "04 Dec 23",
-    //     "05 Dec 23",
-    //     "08 Dec 23",
-    //     "29 Dec 23",
-    //     "26 Jan 24",
-    //     "26 Mar 24",
-    // ];
+        .filter((option): option is TokenOption => option !== undefined);
 
     useEffect(() => {
         async function init() {
             const orders = await fetchTradingInfoPage();
             console.log(orders, 'fffffffff')
         }
-        init();
+        if (currentToken.value !== 'QU') {
+            init();
+        }
+    }, [currentToken])
+
+    useEffect(() => {
+        if (currentToken.value == 'QU') {
+            setCurrentToken(options[0])
+        }
     }, [])
 
     return (
@@ -55,11 +60,14 @@ const Trading = () => {
                     />
 
                     <div className="space-y-2">
-                        <TokenSelect
-                            options={options}
-                            showSelectDescription
-                            hideTokenValue
-                        />
+                        {
+                            Array.isArray(options) && options.length > 0 &&
+                            <TokenSelect
+                                options={options}
+                                showSelectDescription
+                                hideTokenValue
+                            />
+                        }
 
                         <div className="grid grid-cols-[70%_30%] gap-2">
                             <div className="flex flex-col gap-2">
@@ -160,7 +168,7 @@ const Trading = () => {
                                     }
                                 </Section>
                             </div>
-                            <TradingAside />
+                            <TradingAside options={options} />
                         </div>
                     </div>
                 </MainContent>
