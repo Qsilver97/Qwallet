@@ -17,6 +17,7 @@ import {
     ModeProps,
     OrderInterface,
     RichListInterface,
+    TokenPriceInterface,
 } from "../utils/interfaces";
 import { toast } from "react-toastify";
 import { Loading } from "../components/commons";
@@ -46,6 +47,7 @@ interface AuthContextType {
     txStatus: string;
     txId: string;
     expectedTick: number;
+    tokenPrices: TokenPriceInterface;
     setTxStatus: Dispatch<SetStateAction<string>>;
     setCurrentToken: Dispatch<SetStateAction<TokenOption>>;
     fetchTradingInfoPage: () => Promise<void>;
@@ -89,6 +91,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [activeTabIdx, setActiveTabIdx] = useState(0);
     const [accountInfo, setAccountInfo] = useState<AccountInfoInterface>();
     const [totalBalance, setTotalBalance] = useState<string>('0');
+    const [tokenPrices, setTokenprices] = useState<TokenPriceInterface>({});
     // const [totalBalance, setTotalBalance] = useState<string>('0');
 
     const [tick, setTick] = useState("0");
@@ -275,6 +278,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                     });
             });
             setMarketcap(data.marketcap);
+            setTokenprices({ ...data.tokenPrices, 'QU': [1, 1] });
             setTokens(["QU", ...(data?.tokens || [])]);
             setRichlist(data.richlist);
         } else {
@@ -454,6 +458,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 txStatus,
                 txId,
                 expectedTick,
+                tokenPrices,
                 setTxStatus,
                 fetchTradingInfoPage,
                 setCurrentToken,
