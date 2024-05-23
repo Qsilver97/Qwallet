@@ -47,7 +47,7 @@ const ActivityTable = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-200 dark:divide-neutral-700 font-mono">
-                                        {
+                                        {history && history.length > 0 &&
                                             history.map((item, idx) => {
                                                 return <tr key={idx}>
                                                     <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">{item[1].slice(0, 10)}...</td>
