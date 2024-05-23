@@ -3,14 +3,25 @@ import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
 import local from "@app/utils/locales";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { HStack, Icon, Text, VStack, useDisclose } from "native-base";
-import React, { useState } from "react";
+import { faClose, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { HStack, Icon, Text, VStack, View, useDisclose } from "native-base";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import TokenSelect from "../components/TokenSelect";
 import TransferButton from "../components/TransferButton";
 import Core from "./components/Core";
 import Orderlist from "./components/Orderlist";
+import { useAuth } from "@app/context/AuthContext";
+import { myOrders } from "@app/api/api";
+import eventEmitter from "@app/api/eventEmitter";
+
+type IOrderUnit = [number, string, string, string]; // index, address, amount, price
+interface IOrderData {
+  [tokenName: string]: {
+    bids: IOrderUnit[];
+    asks: IOrderUnit[];
+  };
+}
 
 const Orderbook: React.FC = () => {
   const { bgColor, textColor } = useColors();
@@ -21,8 +32,22 @@ const Orderbook: React.FC = () => {
   const [buySellFlag, setBuySellFlag] = useState<
     "buy" | "sell" | "cancelbuy" | "cancelsell"
   >("buy");
+  const [orderData, setOrderData] = useState<IOrderData>({});
   const modal1 = useDisclose();
   const lang = local.Main.Orderbook;
+  const { currentAddress, allAddresses, txResult, isLoading, setIsLoading } =
+    useAuth();
+
+  useEffect(() => {
+    myOrders();
+    const handleMyOrdersEvent = (res: any) => {
+      setOrderData(res.data);
+    };
+    eventEmitter.on("S2C/my-orders", handleMyOrdersEvent);
+    return () => {
+      eventEmitter.off("S2C/my-orders", handleMyOrdersEvent);
+    };
+  }, [currentAddress, txResult]);
 
   return (
     <>
@@ -49,7 +74,7 @@ const Orderbook: React.FC = () => {
             onChange={setCurrentToken}
           ></TokenSelect>
           <HStack py="2">
-            <VStack w="3/4" textAlign="center">
+            <VStack w="3/5" textAlign="center">
               <Input
                 type="text"
                 onChangeText={(text) => {
@@ -77,23 +102,50 @@ const Orderbook: React.FC = () => {
                 parentProps={{ w: "full" }}
               ></Input>
             </VStack>
-            <VStack w={"1/4"} justifyContent="flex-end" space={2}>
-              <TransferButton
-                icon={faPlus}
-                title={lang.Buy}
-                onPress={() => {
-                  setBuySellFlag("buy");
-                  modal1.onToggle();
-                }}
-              ></TransferButton>
-              <TransferButton
-                icon={faMinus}
-                title={lang.Sell}
-                onPress={() => {
-                  setBuySellFlag("sell");
-                  modal1.onToggle();
-                }}
-              ></TransferButton>
+            <VStack
+              w={"2/5"}
+              justifyContent="flex-end"
+              alignItems="center"
+              py="2"
+            >
+              <HStack>
+                <TransferButton
+                  icon={faPlus}
+                  title={lang.Buy}
+                  onPress={() => {
+                    setBuySellFlag("buy");
+                    modal1.onToggle();
+                  }}
+                ></TransferButton>
+                <TransferButton
+                  icon={faMinus}
+                  title={lang.Sell}
+                  onPress={() => {
+                    setBuySellFlag("sell");
+                    modal1.onToggle();
+                  }}
+                ></TransferButton>
+              </HStack>
+              <HStack>
+                <TransferButton
+                  icon={faPlus}
+                  title={lang.Sell}
+                  bgColor="red.500"
+                  onPress={() => {
+                    setBuySellFlag("cancelbuy");
+                    modal1.onToggle();
+                  }}
+                ></TransferButton>
+                <TransferButton
+                  icon={faMinus}
+                  title={lang.Sell}
+                  bgColor="red.500"
+                  onPress={() => {
+                    setBuySellFlag("cancelsell");
+                    modal1.onToggle();
+                  }}
+                ></TransferButton>
+              </HStack>
             </VStack>
           </HStack>
 
@@ -112,7 +164,7 @@ const Orderbook: React.FC = () => {
           </HStack>
         </VStack>
         <VStack flex={1}>
-          <Orderlist />
+          <Orderlist orderData={orderData} />
         </VStack>
       </VStack>
       <Core
@@ -122,7 +174,7 @@ const Orderbook: React.FC = () => {
         price={price}
         buySellFlag={buySellFlag}
         token={currentToken}
-        confirmText={lang.ConfirmBuy}
+        orderData={orderData}
       />
     </>
   );

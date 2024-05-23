@@ -10,6 +10,14 @@ import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 import ConfirmModal from "../../components/ConfirmModal";
 
+type IOrderUnit = [number, string, string, string]; // index, address, amount, price
+interface IOrderData {
+  [tokenName: string]: {
+    bids: IOrderUnit[];
+    asks: IOrderUnit[];
+  };
+}
+
 interface IProps {
   isOpen: boolean;
   onToggle: () => void;
@@ -17,7 +25,7 @@ interface IProps {
   amount: string;
   price: string;
   buySellFlag: "buy" | "sell" | "cancelbuy" | "cancelsell";
-  confirmText: string;
+  orderData: IOrderData;
 }
 
 const Core: React.FC<IProps> = ({
@@ -27,12 +35,27 @@ const Core: React.FC<IProps> = ({
   amount,
   price,
   buySellFlag,
-  confirmText,
+  orderData,
 }) => {
   const { tick } = useSelector((store: RootState) => store.app);
-  const { user, currentAddress, txId, txStatus, expectedTick } = useAuth();
+  const {
+    user,
+    currentAddress,
+    txId,
+    txStatus,
+    expectedTick,
+    tokenBalances,
+    balances,
+  } = useAuth();
   const modal2 = useDisclose();
   const lang = local.Main.Orderbook;
+
+  const confirmText = {
+    buy: lang.ConfirmBuy,
+    sell: lang.ConfirmSell,
+    cancelbuy: lang.ConfirmCancelBuy,
+    cancelsell: lang.ConfirmCancelSell,
+  }[buySellFlag];
 
   const handleBuySell = (
     flag: "buy" | "sell" | "cancelbuy" | "cancelsell",
@@ -41,20 +64,73 @@ const Core: React.FC<IProps> = ({
     token: string
   ) => {
     onToggle();
-    if (amount == "" || amount == "0" || price == "" || price == "0") {
+
+    const showError = (message: string) => {
       Toast.show({
         type: "error",
-        text1: local.Main.Components.InvalidAddressOrAmount,
+        text1: message,
       });
+    };
+
+    const isAmountOrPriceInvalid =
+      amount === "" || amount === "0" || price === "" || price === "0";
+    if (isAmountOrPriceInvalid) {
+      showError(local.Main.Components.InvalidAddressOrAmount);
       return;
     }
+
+    const insufficientTokenBalance =
+      flag === "sell" &&
+      tokenBalances[token][currentAddress] < parseInt(amount);
+    if (insufficientTokenBalance) {
+      showError("E-32: " + lang.TokenBalanceInsufficient);
+      return;
+    }
+
+    const insufficientQU =
+      flag === "buy" &&
+      balances[currentAddress] < parseInt(amount) * parseInt(price);
+    if (insufficientQU) {
+      showError("E-33: " + lang.QUInsufficient);
+      return;
+    }
+
+    const validateOrder = (orderList: IOrderUnit[], flag: string) => {
+      let isValidAddress = false;
+      for (const order of orderList) {
+        if (order[1] === currentAddress) {
+          isValidAddress = true;
+          if (order[3] !== price || parseInt(order[2]) < parseInt(amount)) {
+            showError(
+              "E-34: " +
+                (order[3] !== price ? "Not Exist Order!" : "Wrong amount!")
+            );
+            return false;
+          }
+        }
+      }
+      if (!isValidAddress) {
+        showError("E-35: " + "Current address has not any order!");
+        return false;
+      }
+      return true;
+    };
+
+    if (flag === "cancelbuy" && !validateOrder(orderData[token].bids, flag)) {
+      return;
+    }
+
+    if (flag === "cancelsell" && !validateOrder(orderData[token].asks, flag)) {
+      return;
+    }
+
     buySell(
       flag,
       amount,
       price,
       user?.password as string,
       user?.accountInfo?.addresses.indexOf(currentAddress) as number,
-      parseInt(tick) + 5,
+      parseInt(tick) + 10,
       token
     );
     modal2.onToggle();
@@ -92,7 +168,7 @@ const Core: React.FC<IProps> = ({
           <FormLabel label={lang.TransactionID} value={txId}></FormLabel>
           <FormLabel label={lang.CurrentTick} value={tick}></FormLabel>
           <FormLabel
-            label={lang.CurrentTick}
+            label={lang.ExpectedTick}
             value={`${expectedTick}`}
           ></FormLabel>
         </VStack>

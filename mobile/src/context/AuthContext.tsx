@@ -134,7 +134,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         Toast.show({
           type: "error",
-          text1: "E21: " + "Error ocurred in getting tokens!",
+          text1: "E-21: " + "Error ocurred in getting tokens!",
         });
       }
     };
@@ -147,7 +147,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         Toast.show({
           type: "error",
-          text1: "E22: " + "Error occured in transfer!",
+          text1: "E-22: " + "Error occured in transfer!",
         });
         setTxStatus("Rejected");
       }
@@ -157,7 +157,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (res.data) {
         if (res.data == "failed") {
           setTxStatus("Rejected");
-          Toast.show({ type: "error", text1: "E23: " + "Transfer Failed!" });
+          Toast.show({ type: "error", text1: "E-23: " + "Transfer Failed!" });
         } else if (res.data.value.result == 0) {
           setTxStatus("Pending");
         } else if (res.data.value.result == 1) {
@@ -166,7 +166,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setTxStatus("Rejected");
         }
       } else {
-        Toast.show({ type: "error", text1: "E24: Transfer Failed!" });
+        Toast.show({ type: "error", text1: "E-24: Transfer Failed!" });
         setTxStatus("Rejected");
         clearInterval(statusInterval);
       }
@@ -181,7 +181,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } else if (res.data.value.result < 0) {
           Toast.show({
             type: "error",
-            text1: "E25: " + res.data.value.display,
+            text1: "E-25: " + res.data.value.display,
           });
         } else if (res.data.value.result == 1) {
           setTxStatus(res.data.value.display);

@@ -86,7 +86,8 @@
       "NotMatch": "Password does not match.",
       "ByProceeding": "By proceeding, you agree to these",
       "TermCondition": "Term and Conditions",
-      "ImportButtonTitle": "Imort"
+      "ImportButtonTitle": "Imort",
+      "BackupfromSeed": "Backup from seed"
     },
     "Login": {
       "Login": "Login",
@@ -134,13 +135,19 @@
         "Buy": "BUY",
         "Sell": "SELL",
         "HighestBidPrice": "Currently the highest bid price of {currentToken} is {high_price} QU, lowest ask price is {low_price} QU.",
-        "ConfirmBuy": "Are you really want to buy {amount} {currentToken} as {price} QU",
         "Status": "Status",
         "TransactionID": "Transaction ID",
         "CurrentTick": "Current Tick",
         "ExpectedTick": "Expected Tick",
         "MyOrderList": "My Order List",
-        "NoOrders": "You haven't got any buy/sell orders in this address!"
+        "NoOrders": "You haven't got any buy/sell orders in this address!",
+        "QUInsufficient": "QU is insufficient.",
+        "TokenBalanceInsufficient": "Token balance is insufficient.",
+        "CancelOrderConfirmation": "Do you really want to cancel this order?",
+        "ConfirmCancelBuy": "Do you want to cancel the buy of {amount} number of {currentToken}?",
+        "ConfirmCancelSell": "Do you want to cancel the sell of {amount} number of {currentToken}?",
+        "ConfirmBuy": "Do you really want to buy {amount} {currentToken} as {price} QU?",
+        "ConfirmSell": "Do you really want to sell {amount} {currentToken} as {price} QU?"
       },
       "Transaction": {
         "Transactions": "Transactions",
@@ -297,7 +304,8 @@
       "NotMatch": "密码不匹配。",
       "ByProceeding": "继续操作，即表示您同意这些",
       "TermCondition": "条款和条件",
-      "ImportButtonTitle": "导入"
+      "ImportButtonTitle": "导入",
+      "BackupfromSeed": "从种子备份"
     },
     "Login": {
       "Login": "登录",
@@ -345,13 +353,19 @@
         "Buy": "买入",
         "Sell": "卖出",
         "HighestBidPrice": "当前 {currentToken} 的最高出价是 {high_price} QU，最低要价是 {low_price} QU。",
-        "ConfirmBuy": "您确定要以 {price} QU 的价格购买 {amount} {currentToken} 吗?",
         "Status": "状态",
         "TransactionID": "交易ID",
         "CurrentTick": "当前Tick",
         "ExpectedTick": "预期Tick",
         "MyOrderList": "我的订单列表",
-        "NoOrders": "您在这个地址没有任何买入/卖出订单!"
+        "NoOrders": "您在这个地址没有任何买入/卖出订单!",
+        "QUInsufficient": "QU不足。",
+        "TokenBalanceInsufficient": "代币余额不足。",
+        "CancelOrderConfirmation": "你真的想取消这个订单吗？",
+        "ConfirmCancelBuy": "你想取消购买 {amount} 个 {currentToken} 吗？",
+        "ConfirmCancelSell": "你想取消出售 {amount} 个 {currentToken} 吗？",
+        "ConfirmBuy": "你真的想以 {price} QU 购买 {amount} 个 {currentToken} 吗？",
+        "ConfirmSell": "你真的想以 {price} QU 卖 {amount} 个 {currentToken} 吗？"
       },
       "Transaction": {
         "Transactions": "交易",
@@ -508,7 +522,8 @@
       "NotMatch": "La contraseña no coincide.",
       "ByProceeding": "Al continuar, aceptas estos",
       "TermCondition": "Términos y Condiciones",
-      "ImportButtonTitle": "Importar"
+      "ImportButtonTitle": "Importar",
+      "BackupfromSeed": "Copia de seguridad desde la semilla"
     },
     "Login": {
       "Login": "Iniciar Sesión",
@@ -556,13 +571,19 @@
         "Buy": "COMPRAR",
         "Sell": "VENDER",
         "HighestBidPrice": "Actualmente el precio de oferta más alto de {currentToken} es {high_price} QU, el precio de demanda más bajo es {low_price} QU.",
-        "ConfirmBuy": "¿Realmente quieres comprar {amount} {currentToken} por {price} QU?",
         "Status": "Estado",
         "TransactionID": "ID de la Transacción",
         "CurrentTick": "Tick Actual",
         "ExpectedTick": "Tick Esperado",
         "MyOrderList": "Mi Lista de Órdenes",
-        "NoOrders": "¡No tienes órdenes de compra/venta en esta dirección!"
+        "NoOrders": "¡No tienes órdenes de compra/venta en esta dirección!",
+        "QUInsufficient": "QU es insuficiente.",
+        "TokenBalanceInsufficient": "El saldo del token es insuficiente.",
+        "CancelOrderConfirmation": "¿Realmente quieres cancelar este pedido?",
+        "ConfirmCancelBuy": "¿Quieres cancelar la compra de {amount} {currentToken}?",
+        "ConfirmCancelSell": "¿Quieres cancelar la venta de {amount} {currentToken}?",
+        "ConfirmBuy": "¿Realmente quieres comprar {amount} {currentToken} por {price} QU?",
+        "ConfirmSell": "¿Realmente quieres vender {amount} {currentToken} por {price} QU?"
       },
       "Transaction": {
         "Transactions": "Transacciones",
@@ -719,7 +740,8 @@
       "NotMatch": "Le mot de passe ne correspond pas.",
       "ByProceeding": "En continuant, vous acceptez ces",
       "TermCondition": "Termes et Conditions",
-      "ImportButtonTitle": "Importer"
+      "ImportButtonTitle": "Importer",
+      "BackupfromSeed": "Sauvegarde à partir de la graine"
     },
     "Login": {
       "Login": "Connexion",
@@ -767,13 +789,19 @@
         "Buy": "ACHETER",
         "Sell": "VENDRE",
         "HighestBidPrice": "Le prix d'offre le plus élevé actuellement de {currentToken} est de {high_price} QU, le prix de demande le plus bas est de {low_price} QU.",
-        "ConfirmBuy": "Voulez-vous vraiment acheter {amount} {currentToken} pour {price} QU ?",
         "Status": "Statut",
         "TransactionID": "ID de la transaction",
         "CurrentTick": "Tick actuel",
         "ExpectedTick": "Tick attendu",
         "MyOrderList": "Ma liste d'ordres",
-        "NoOrders": "Vous n'avez pas d'ordres d'achat/vente à cette adresse !"
+        "NoOrders": "Vous n'avez pas d'ordres d'achat/vente à cette adresse !",
+        "QUInsufficient": "QU est insuffisant.",
+        "TokenBalanceInsufficient": "Le solde du token est insuffisant.",
+        "CancelOrderConfirmation": "Voulez-vous vraiment annuler cette commande?",
+        "ConfirmCancelBuy": "Voulez-vous annuler l'achat de {amount} {currentToken} ?",
+        "ConfirmCancelSell": "Voulez-vous annuler la vente de {amount} {currentToken} ?",
+        "ConfirmBuy": "Voulez-vous vraiment acheter {amount} {currentToken} pour {price} QU ?",
+        "ConfirmSell": "Voulez-vous vraiment vendre {amount} {currentToken} pour {price} QU ?"
       },
       "Transaction": {
         "Transactions": "Transactions",
@@ -930,7 +958,8 @@
       "NotMatch": "Passwort stimmt nicht überein.",
       "ByProceeding": "Indem Sie fortfahren, stimmen Sie diesen",
       "TermCondition": "Geschäftsbedingungen",
-      "ImportButtonTitle": "Importieren"
+      "ImportButtonTitle": "Importieren",
+      "BackupfromSeed": "Sicherung vom Seed"
     },
     "Login": {
       "Login": "Anmelden",
@@ -978,13 +1007,19 @@
         "Buy": "KAUFEN",
         "Sell": "VERKAUFEN",
         "HighestBidPrice": "Derzeit liegt der höchste Gebotspreis von {currentToken} bei {high_price} QU, der niedrigste Angebotspreis bei {low_price} QU.",
-        "ConfirmBuy": "Möchten Sie wirklich {amount} {currentToken} für {price} QU kaufen?",
         "Status": "Status",
         "TransactionID": "Transaktions-ID",
         "CurrentTick": "Aktueller Tick",
         "ExpectedTick": "Erwarteter Tick",
         "MyOrderList": "Meine Orderliste",
-        "NoOrders": "Sie haben keine Kauf-/Verkaufsaufträge an dieser Adresse!"
+        "NoOrders": "Sie haben keine Kauf-/Verkaufsaufträge an dieser Adresse!",
+        "QUInsufficient": "QU ist unzureichend.",
+        "TokenBalanceInsufficient": "Token-Guthaben ist unzureichend.",
+        "CancelOrderConfirmation": "Möchten Sie diese Bestellung wirklich stornieren?",
+        "ConfirmCancelBuy": "Möchten Sie den Kauf von {amount} {currentToken} abbrechen?",
+        "ConfirmCancelSell": "Möchten Sie den Verkauf von {amount} {currentToken} abbrechen?",
+        "ConfirmBuy": "Möchten Sie wirklich {amount} {currentToken} für {price} QU kaufen?",
+        "ConfirmSell": "Möchten Sie wirklich {amount} {currentToken} für {price} QU verkaufen?"
       },
       "Transaction": {
         "Transactions": "Transaktionen",
@@ -1141,7 +1176,8 @@
       "NotMatch": "Пароль не совпадает.",
       "ByProceeding": "Продолжая, вы соглашаетесь с этими",
       "TermCondition": "Условиями использования",
-      "ImportButtonTitle": "Импорт"
+      "ImportButtonTitle": "Импорт",
+      "BackupfromSeed": "Резервное копирование из seed"
     },
     "Login": {
       "Login": "Вход",
@@ -1189,13 +1225,19 @@
         "Buy": "КУПИТЬ",
         "Sell": "ПРОДАТЬ",
         "HighestBidPrice": "В настоящее время самая высокая цена предложения {currentToken} составляет {high_price} QU, а самая низкая цена спроса составляет {low_price} QU.",
-        "ConfirmBuy": "Вы действительно хотите купить {amount} {currentToken} по цене {price} QU?",
         "Status": "Статус",
         "TransactionID": "ID транзакции",
         "CurrentTick": "Текущий Tick",
         "ExpectedTick": "Ожидаемый Tick",
         "MyOrderList": "Мой список ордеров",
-        "NoOrders": "У вас нет ордеров на покупку/продажу по этому адресу!"
+        "NoOrders": "У вас нет ордеров на покупку/продажу по этому адресу!",
+        "QUInsufficient": "QU недостаточно.",
+        "TokenBalanceInsufficient": "Баланс токенов недостаточен.",
+        "CancelOrderConfirmation": "Вы действительно хотите отменить этот заказ?",
+        "ConfirmCancelBuy": "Вы хотите отменить покупку {amount} {currentToken}?",
+        "ConfirmCancelSell": "Вы хотите отменить продажу {amount} {currentToken}?",
+        "ConfirmBuy": "Вы действительно хотите купить {amount} {currentToken} за {price} QU?",
+        "ConfirmSell": "Вы действительно хотите продать {amount} {currentToken} за {price} QU?"
       },
       "Transaction": {
         "Transactions": "Транзакции",
@@ -1352,7 +1394,8 @@
       "NotMatch": "パスワードが一致しません。",
       "ByProceeding": "続行することにより、これらに同意したことになります",
       "TermCondition": "利用規約",
-      "ImportButtonTitle": "インポート"
+      "ImportButtonTitle": "インポート",
+      "BackupfromSeed": "シードからのバックアップ"
     },
     "Login": {
       "Login": "ログイン",
@@ -1400,13 +1443,19 @@
         "Buy": "買う",
         "Sell": "売る",
         "HighestBidPrice": "現在の{currentToken}の最高入札価格は{high_price} QU、最低要求価格は{low_price} QUです。",
-        "ConfirmBuy": "{amount} {currentToken}を{price} QUで本当に購入しますか？",
         "Status": "ステータス",
         "TransactionID": "トランザクションID",
         "CurrentTick": "現在のTick",
         "ExpectedTick": "期待されるTick",
         "MyOrderList": "私のオーダーリスト",
-        "NoOrders": "このアドレスには購入/販売オーダーがありません！"
+        "NoOrders": "このアドレスには購入/販売オーダーがありません！",
+        "QUInsufficient": "QUが不足しています。",
+        "TokenBalanceInsufficient": "トークン残高が不足しています。",
+        "CancelOrderConfirmation": "この注文を本当にキャンセルしますか？",
+        "ConfirmCancelBuy": "{amount} {currentToken} の購入をキャンセルしますか？",
+        "ConfirmCancelSell": "{amount} {currentToken} の販売をキャンセルしますか？",
+        "ConfirmBuy": "{amount} {currentToken} を {price} QU で購入しますか？",
+        "ConfirmSell": "{amount} {currentToken} を {price} QU で売りますか？"
       },
       "Transaction": {
         "Transactions": "トランザクション",

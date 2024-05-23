@@ -57,7 +57,7 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
     if (toAddress == "" || amount == "" || amount == "0") {
       Toast.show({
         type: "error",
-        text1: "E02: " + lang.InvalidAddressOrAmount,
+        text1: "E-02: " + lang.InvalidAddressOrAmount,
       });
       return;
     }

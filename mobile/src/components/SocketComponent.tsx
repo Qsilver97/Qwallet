@@ -15,7 +15,6 @@ export const SocketCom: React.FC = () => {
     useAuth();
   useEffect(() => {
     eventEmitter.on("S2C/live", (res) => {
-      console.log("SOCEKT_LIVE: \n", res.data);
       if (res.data.command == "CurrentTickInfo") {
         dispatch(setTick(res.data.tick));
       } else if (res.data.command == "EntityInfo") {

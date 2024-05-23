@@ -35,7 +35,7 @@ exports.login = async ({ password }) => {
   try {
     let liveSocket = socketManager.initLiveSocket();
     liveSocketController(liveSocket);
-    await delay(1000);
+    await delay(2000);
     let realPassword;
     stateManager.init();
     const resultFor24words = await wasmManager.ccall({

@@ -70,7 +70,7 @@ const toastConfig: ToastConfig = {
         renderLeadingIcon={() => (
           <Icon
             as={AntDesign}
-            name="infocirlce"
+            name="exclamationcircle"
             size="3xl"
             color="blue.500"
           ></Icon>

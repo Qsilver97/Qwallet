@@ -103,7 +103,7 @@ const Restore: React.FC = () => {
     >
       <VStack flex={1} px="10">
         <Text fontSize="4xl" p="5">
-          Backup from seed
+          {lang.BackupfromSeed}
         </Text>
         <TextArea
           autoCompleteType=""
@@ -131,13 +131,13 @@ const Restore: React.FC = () => {
         ></Input>
         <Text>
           {lang.ByProceeding}
-          <Link
+          {/* <Link
             href="https://qubic.org/Terms-of-service"
             _text={{ color: main.celestialBlue, marginTop: 2 }}
             display={"inline"}
           >
             {lang.TermCondition}
-          </Link>
+          </Link> */}
           .
         </Text>
       </VStack>

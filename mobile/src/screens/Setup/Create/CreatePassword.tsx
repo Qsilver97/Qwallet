@@ -106,7 +106,7 @@ const CreatePassword: React.FC = () => {
             >
               <Text pr="2">
                 {lang.Understand}
-                <Link
+                {/* <Link
                   href="#"
                   _text={{
                     color: main.celestialBlue,
@@ -116,7 +116,7 @@ const CreatePassword: React.FC = () => {
                   colorScheme={"blue"}
                 >
                   {lang.LearnMore}
-                </Link>
+                </Link> */}
               </Text>
             </Checkbox>
           </Box>

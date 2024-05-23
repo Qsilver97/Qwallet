@@ -36,7 +36,7 @@ const AllAddresses: React.FC = () => {
         login(res.data);
         Toast.show({ type: "success", text1: "Delete Address Successfully!" });
       } else {
-        Toast.show({ type: "error", text1: "E31: " + res.data.value.display });
+        Toast.show({ type: "error", text1: "E-31: " + res.data.value.display });
       }
     };
     eventEmitter.on("S2C/delete-address", handleDeleteAddressEvent);
