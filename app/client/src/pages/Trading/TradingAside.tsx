@@ -10,7 +10,7 @@ import { TokenOption } from "../../components/commons/Select";
 import { isNaturalNumber, isPositiveNumber } from "../../utils/helper";
 
 const TradingAside = ({ options }: { options: TokenOption[] }) => {
-    const { handleBuyCell, txStatus, setTxStatus } = useAuth();
+    const { handleBuyCell, txStatus, setTxStatus, tokenBalances, currentAddress, currentToken } = useAuth();
 
     const [command, setCommand] = useState<'buy' | 'sell' | 'cancelbuy' | 'cancelsell'>();
     const [quantity, setQuantity] = useState<string>();
@@ -35,6 +35,14 @@ const TradingAside = ({ options }: { options: TokenOption[] }) => {
     const handleAction = (command: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell') => {
         if (!quantity || !price || !isPositiveNumber(quantity) || !isNaturalNumber(price)) {
             toast.error('Input valid quantity or price.');
+            return;
+        }
+        if (command == 'buy' && parseInt(price) > tokenBalances['QU'][currentAddress]) {
+            toast.error('Input valid QU amount.');
+            return;
+        }
+        if (command == 'sell' && parseInt(quantity) > tokenBalances[currentToken.value as string][currentAddress]) {
+            toast.error(`Input valid ${currentToken.value} amount.`);
             return;
         }
         setTxStatus('confirm');
