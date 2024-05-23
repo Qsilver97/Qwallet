@@ -125,6 +125,7 @@ exports.fetchUser = async (req, res) => {
     const balances = await socketSync('balances');
     const marketcap = await socketSync('marketcap');
     const tokens = await socketSync('tokenlist');
+    const tokenPrices = await socketSync('tokenprices');
     // const richlist = {};
     // const qurichlist = await socketSync('richlist');
     // richlist[qurichlist.name] = qurichlist.richlist;
@@ -136,7 +137,7 @@ exports.fetchUser = async (req, res) => {
     // } catch (error) {
 
     // }
-    const updatedUserState = { ...userState, ...{ balances: balances.balances, marketcap, tokens: tokens.tokens } };
+    const updatedUserState = { ...userState, ...{ balances: balances.balances, marketcap, tokens: tokens.tokens, tokenPrices: tokenPrices } };
     stateManager.setUserState(updatedUserState);
     res.send(updatedUserState);
 }
