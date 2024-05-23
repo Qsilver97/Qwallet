@@ -19,7 +19,7 @@
     },
     "WalletSetup": {
       "button_ImportUsingSeedPhrase": "Import Using Seed Phrase",
-      "HaveAlreadyYourOwnWallet": "Have Already Your Own Wallet?",
+      "HaveAlreadyYourOwnWallet": "Already Have Your Own Wallet?",
       "WalletSetup": "Wallet Setup",
       "button_CreateNewWallet": "Create New Wallet"
     },
@@ -45,7 +45,8 @@
         "LearnMore": "Learn more",
         "placeholder_NewPassword": "New Password",
         "placeholder_ConfirmPassword": "Confirm Password",
-        "button_CreatePassword": "Create Password"
+        "button_CreatePassword": "Create Password",
+        "PasswordExist": "Password already exists!"
       },
       "Reminder": {
         "Secure": "Secure Your Wallet",
@@ -73,7 +74,8 @@
         "_55chars": "55 Chars",
         "_24words": "24 Words",
         "CreatePassword": "Create Password",
-        "toast_SuccessCreate": "Create Wallet Successly!"
+        "toast_SuccessCreate": "Create Wallet Successly!",
+        "toast_PasswordExist": "Password already exists!"
       }
     },
     "Restore": {
@@ -84,7 +86,8 @@
       "NotMatch": "Password does not match.",
       "ByProceeding": "By proceeding, you agree to these",
       "TermCondition": "Term and Conditions",
-      "ImportButtonTitle": "Imort"
+      "ImportButtonTitle": "Imort",
+      "BackupfromSeed": "Backup from seed"
     },
     "Login": {
       "Login": "Login",
@@ -92,7 +95,10 @@
       "placeholder_Password": "Password",
       "button_ImportUsingSeedPhrase": "Restore your wallet from your  seed ",
       "button_CreateNewWallet": "Create",
-      "button_Login": "Login"
+      "button_Login": "Login",
+      "toast_LoginSuccess": "Login Success!",
+      "toast_InputPwd": "Input password!",
+      "toast_LoginFailed": "Login failed. Please try again."
     },
     "Main": {
       "Header": {
@@ -101,7 +107,8 @@
         "button_Cancel": "Cancel",
         "button_CreateAddress": "Create Address",
         "Create": "Create New Address",
-        "CreateInfo": "An Account can't have more than 10 addresses"
+        "CreateInfo": "An Account can't have more than 10 addresses",
+        "toast_AddressCopied": "Address Copied!"
       },
       "BottomTab": {
         "Wallet": "Wallet",
@@ -117,7 +124,8 @@
         },
         "AllAddress": {
           "AllAddresses": "All Addresses",
-          "DeleteAddressPrompt": "Do you really want to delete this address?"
+          "DeleteAddressPrompt": "Do you really want to delete this address?",
+          "toast_AddressCopied": "Address Copied!"
         }
       },
       "Orderbook": {
@@ -128,14 +136,23 @@
         "PriceOfToken": "Price of {currentToken}",
         "Buy": "BUY",
         "Sell": "SELL",
-        "HighestBidPrice": "Currently the highest bid price of {currentToken} is {price} QU, lowest ask price is {price} QU.",
-        "ConfirmBuy": "Are you really want to buy {amount} {currentToken} as {price} QU",
+        "HighestBidPrice": "Currently the highest bid price of {currentToken} is {high_price} QU, lowest ask price is {low_price} QU.",
         "Status": "Status",
         "TransactionID": "Transaction ID",
         "CurrentTick": "Current Tick",
         "ExpectedTick": "Expected Tick",
         "MyOrderList": "My Order List",
-        "NoOrders": "You haven't got any buy/sell orders in this address!"
+        "NoOrders": "You haven't got any buy/sell orders in this address!",
+        "QUInsufficient": "QU is insufficient.",
+        "TokenBalanceInsufficient": "Token balance is insufficient.",
+        "CancelOrderConfirmation": "Do you really want to cancel this order?",
+        "ConfirmCancelBuy": "Do you want to cancel the buy of {amount} number of {currentToken}?",
+        "ConfirmCancelSell": "Do you want to cancel the sell of {amount} number of {currentToken}?",
+        "ConfirmBuy": "Do you really want to buy {amount} {currentToken} as {price} QU?",
+        "ConfirmSell": "Do you really want to sell {amount} {currentToken} as {price} QU?",
+        "toast_NotExistOrder": "Not Exist Order!",
+        "toast_NoOrder": "Current address has not any order!",
+        "toast_WrongQuantity": "Wrong quantity!"
       },
       "Transaction": {
         "Transactions": "Transactions",
@@ -192,7 +209,9 @@
         "TransactionID": "Transaction ID",
         "CurrentTick": "Current Tick",
         "ExpectedTick": "Expected Tick",
-        "InvalidAddressOrAmount": "Invalid address or amount!"
+        "InvalidAddressOrAmount": "Invalid address or amount!",
+        "toast_QUInsufficient": "QU insufficient!",
+        "toast_InvalidPassword": "Invalid Address!"
       }
     },
     "util": {
@@ -203,6 +222,12 @@
         "Bad": "Bad",
         "NotAvailable": "Not Available"
       }
+    },
+    "Toast": {
+      "ErrorGettingToken": "Error occurred in getting tokens!",
+      "ErrorTransfer": "Error occurred in transfer!",
+      "TransferFailed": "Transfer Failed!",
+      "TransactionCompleted": "Transaction Completed Successfully!"
     }
   },
   "zh": {
@@ -251,7 +276,8 @@
         "LearnMore": "了解更多",
         "placeholder_NewPassword": "新密码",
         "placeholder_ConfirmPassword": "确认密码",
-        "button_CreatePassword": "创建密码"
+        "button_CreatePassword": "创建密码",
+        "PasswordExist": "密码已存在！"
       },
       "Reminder": {
         "Secure": "保护您的钱包",
@@ -279,7 +305,8 @@
         "_55chars": "55字符",
         "_24words": "24个单词",
         "CreatePassword": "创建密码",
-        "toast_SuccessCreate": "钱包创建成功!"
+        "toast_SuccessCreate": "钱包创建成功!",
+        "toast_PasswordExist": "密码已存在！"
       }
     },
     "Restore": {
@@ -290,7 +317,8 @@
       "NotMatch": "密码不匹配。",
       "ByProceeding": "继续操作，即表示您同意这些",
       "TermCondition": "条款和条件",
-      "ImportButtonTitle": "导入"
+      "ImportButtonTitle": "导入",
+      "BackupfromSeed": "从种子备份"
     },
     "Login": {
       "Login": "登录",
@@ -298,7 +326,10 @@
       "placeholder_Password": "密码",
       "button_ImportUsingSeedPhrase": "通过种子短语恢复您的钱包",
       "button_CreateNewWallet": "创建",
-      "button_Login": "登录"
+      "button_Login": "登录",
+      "toast_LoginSuccess": "登录成功！",
+      "toast_InputPwd": "输入密码！",
+      "toast_LoginFailed": "登录失败。请再试一次。"
     },
     "Main": {
       "Header": {
@@ -307,7 +338,8 @@
         "button_Cancel": "取消",
         "button_CreateAddress": "创建地址",
         "Create": "创建新地址",
-        "CreateInfo": "一个账户不能拥有超过10个地址"
+        "CreateInfo": "一个账户不能拥有超过10个地址",
+        "toast_AddressCopied": "地址已复制！"
       },
       "BottomTab": {
         "Wallet": "钱包",
@@ -323,7 +355,8 @@
         },
         "AllAddress": {
           "AllAddresses": "所有地址",
-          "DeleteAddressPrompt": "您确定要删除这个地址吗?"
+          "DeleteAddressPrompt": "您确定要删除这个地址吗?",
+          "toast_AddressCopied": "地址已复制！"
         }
       },
       "Orderbook": {
@@ -334,14 +367,23 @@
         "PriceOfToken": "{currentToken} 的价格",
         "Buy": "买入",
         "Sell": "卖出",
-        "HighestBidPrice": "当前 {currentToken} 的最高出价是 {price} QU，最低要价是 {price} QU。",
-        "ConfirmBuy": "您确定要以 {price} QU 的价格购买 {amount} {currentToken} 吗?",
+        "HighestBidPrice": "当前 {currentToken} 的最高出价是 {high_price} QU，最低要价是 {low_price} QU。",
         "Status": "状态",
         "TransactionID": "交易ID",
         "CurrentTick": "当前Tick",
         "ExpectedTick": "预期Tick",
         "MyOrderList": "我的订单列表",
-        "NoOrders": "您在这个地址没有任何买入/卖出订单!"
+        "NoOrders": "您在这个地址没有任何买入/卖出订单!",
+        "QUInsufficient": "QU不足。",
+        "TokenBalanceInsufficient": "代币余额不足。",
+        "CancelOrderConfirmation": "你真的想取消这个订单吗？",
+        "ConfirmCancelBuy": "你想取消购买 {amount} 个 {currentToken} 吗？",
+        "ConfirmCancelSell": "你想取消出售 {amount} 个 {currentToken} 吗？",
+        "ConfirmBuy": "你真的想以 {price} QU 购买 {amount} 个 {currentToken} 吗？",
+        "ConfirmSell": "你真的想以 {price} QU 卖 {amount} 个 {currentToken} 吗？",
+        "toast_NotExistOrder": "不存在的订单！",
+        "toast_NoOrder": "当前地址没有任何订单！",
+        "toast_WrongQuantity": "数量错误！"
       },
       "Transaction": {
         "Transactions": "交易",
@@ -398,7 +440,9 @@
         "TransactionID": "交易ID",
         "CurrentTick": "当前Tick",
         "ExpectedTick": "预期Tick",
-        "InvalidAddressOrAmount": "无效的地址或金额!"
+        "InvalidAddressOrAmount": "无效的地址或金额!",
+        "toast_QUInsufficient": "QU不足！",
+        "toast_InvalidPassword": "无效地址！"
       }
     },
     "util": {
@@ -409,6 +453,12 @@
         "Bad": "差",
         "NotAvailable": "不可用"
       }
+    },
+    "Toast": {
+      "ErrorGettingToken": "获取令牌时发生错误！",
+      "ErrorTransfer": "转账时发生错误！",
+      "TransferFailed": "转账失败！",
+      "TransactionCompleted": "交易成功完成！"
     }
   },
   "es": {
@@ -457,7 +507,8 @@
         "LearnMore": "Aprende más",
         "placeholder_NewPassword": "Nueva Contraseña",
         "placeholder_ConfirmPassword": "Confirmar Contraseña",
-        "button_CreatePassword": "Crear Contraseña"
+        "button_CreatePassword": "Crear Contraseña",
+        "PasswordExist": "¡La contraseña ya existe!"
       },
       "Reminder": {
         "Secure": "Protege tu Cartera",
@@ -485,7 +536,8 @@
         "_55chars": "55 Caracteres",
         "_24words": "24 Palabras",
         "CreatePassword": "Crear Contraseña",
-        "toast_SuccessCreate": "¡Cartera Creada Exitosamente!"
+        "toast_SuccessCreate": "¡Cartera Creada Exitosamente!",
+        "toast_PasswordExist": "¡La contraseña ya existe!"
       }
     },
     "Restore": {
@@ -496,7 +548,8 @@
       "NotMatch": "La contraseña no coincide.",
       "ByProceeding": "Al continuar, aceptas estos",
       "TermCondition": "Términos y Condiciones",
-      "ImportButtonTitle": "Importar"
+      "ImportButtonTitle": "Importar",
+      "BackupfromSeed": "Copia de seguridad desde la semilla"
     },
     "Login": {
       "Login": "Iniciar Sesión",
@@ -504,7 +557,10 @@
       "placeholder_Password": "Contraseña",
       "button_ImportUsingSeedPhrase": "Restaura tu cartera desde tu frase de recuperación",
       "button_CreateNewWallet": "Crear",
-      "button_Login": "Iniciar Sesión"
+      "button_Login": "Iniciar Sesión",
+      "toast_LoginSuccess": "¡Inicio de sesión exitoso!",
+      "toast_InputPwd": "¡Ingrese la contraseña!",
+      "toast_LoginFailed": "Inicio de sesión fallido. Por favor, inténtelo de nuevo."
     },
     "Main": {
       "Header": {
@@ -513,7 +569,8 @@
         "button_Cancel": "Cancelar",
         "button_CreateAddress": "Crear direcciones",
         "Create": "Crear Nueva Dirección",
-        "CreateInfo": "Una cuenta no puede tener más de 10 direcciones"
+        "CreateInfo": "Una cuenta no puede tener más de 10 direcciones",
+        "toast_AddressCopied": "¡Dirección copiada!"
       },
       "BottomTab": {
         "Wallet": "Cartera",
@@ -529,7 +586,8 @@
         },
         "AllAddress": {
           "AllAddresses": "Todas las Direcciones",
-          "DeleteAddressPrompt": "¿Realmente quieres eliminar esta dirección?"
+          "DeleteAddressPrompt": "¿Realmente quieres eliminar esta dirección?",
+          "toast_AddressCopied": "¡Dirección copiada!"
         }
       },
       "Orderbook": {
@@ -540,14 +598,23 @@
         "PriceOfToken": "Precio de {currentToken}",
         "Buy": "COMPRAR",
         "Sell": "VENDER",
-        "HighestBidPrice": "Actualmente el precio de oferta más alto de {currentToken} es {price} QU, el precio de demanda más bajo es {price} QU.",
-        "ConfirmBuy": "¿Realmente quieres comprar {amount} {currentToken} por {price} QU?",
+        "HighestBidPrice": "Actualmente el precio de oferta más alto de {currentToken} es {high_price} QU, el precio de demanda más bajo es {low_price} QU.",
         "Status": "Estado",
         "TransactionID": "ID de la Transacción",
         "CurrentTick": "Tick Actual",
         "ExpectedTick": "Tick Esperado",
         "MyOrderList": "Mi Lista de Órdenes",
-        "NoOrders": "¡No tienes órdenes de compra/venta en esta dirección!"
+        "NoOrders": "¡No tienes órdenes de compra/venta en esta dirección!",
+        "QUInsufficient": "QU es insuficiente.",
+        "TokenBalanceInsufficient": "El saldo del token es insuficiente.",
+        "CancelOrderConfirmation": "¿Realmente quieres cancelar este pedido?",
+        "ConfirmCancelBuy": "¿Quieres cancelar la compra de {amount} {currentToken}?",
+        "ConfirmCancelSell": "¿Quieres cancelar la venta de {amount} {currentToken}?",
+        "ConfirmBuy": "¿Realmente quieres comprar {amount} {currentToken} por {price} QU?",
+        "ConfirmSell": "¿Realmente quieres vender {amount} {currentToken} por {price} QU?",
+        "toast_NotExistOrder": "¡Orden no existe!",
+        "toast_NoOrder": "¡La dirección actual no tiene ningún pedido!",
+        "toast_WrongQuantity": "¡Cantidad incorrecta!"
       },
       "Transaction": {
         "Transactions": "Transacciones",
@@ -604,7 +671,9 @@
         "TransactionID": "ID de la Transacción",
         "CurrentTick": "Tick Actual",
         "ExpectedTick": "Tick Esperado",
-        "InvalidAddressOrAmount": "¡Dirección o cantidad inválida!"
+        "InvalidAddressOrAmount": "¡Dirección o cantidad inválida!",
+        "toast_QUInsufficient": "¡QU insuficiente!",
+        "toast_InvalidPassword": "¡Dirección inválida!"
       }
     },
     "util": {
@@ -615,6 +684,12 @@
         "Bad": "Malo",
         "NotAvailable": "No Disponible"
       }
+    },
+    "Toast": {
+      "ErrorGettingToken": "¡Error al obtener los tokens!",
+      "ErrorTransfer": "¡Error al transferir!",
+      "TransferFailed": "¡Transferencia fallida!",
+      "TransactionCompleted": "¡Transacción completada con éxito!"
     }
   },
   "fr": {
@@ -663,7 +738,8 @@
         "LearnMore": "En savoir plus",
         "placeholder_NewPassword": "Nouveau mot de passe",
         "placeholder_ConfirmPassword": "Confirmer le mot de passe",
-        "button_CreatePassword": "Créer un mot de passe"
+        "button_CreatePassword": "Créer un mot de passe",
+        "PasswordExist": "Le mot de passe existe déjà !"
       },
       "Reminder": {
         "Secure": "Sécurisez votre portefeuille",
@@ -691,7 +767,8 @@
         "_55chars": "55 Caractères",
         "_24words": "24 Mots",
         "CreatePassword": "Créer un mot de passe",
-        "toast_SuccessCreate": "Portefeuille créé avec succès !"
+        "toast_SuccessCreate": "Portefeuille créé avec succès !",
+        "toast_PasswordExist": "Le mot de passe existe déjà !"
       }
     },
     "Restore": {
@@ -702,7 +779,8 @@
       "NotMatch": "Le mot de passe ne correspond pas.",
       "ByProceeding": "En continuant, vous acceptez ces",
       "TermCondition": "Termes et Conditions",
-      "ImportButtonTitle": "Importer"
+      "ImportButtonTitle": "Importer",
+      "BackupfromSeed": "Sauvegarde à partir de la graine"
     },
     "Login": {
       "Login": "Connexion",
@@ -710,7 +788,10 @@
       "placeholder_Password": "Mot de passe",
       "button_ImportUsingSeedPhrase": "Restaurer votre portefeuille avec votre phrase secrète",
       "button_CreateNewWallet": "Créer",
-      "button_Login": "Connexion"
+      "button_Login": "Connexion",
+      "toast_LoginSuccess": "Connexion réussie !",
+      "toast_InputPwd": "Entrez le mot de passe !",
+      "toast_LoginFailed": "Échec de la connexion. Veuillez réessayer."
     },
     "Main": {
       "Header": {
@@ -719,7 +800,8 @@
         "button_Cancel": "Annuler",
         "button_CreateAddress": "Créer des adresses",
         "Create": "Créer une nouvelle adresse",
-        "CreateInfo": "Un compte ne peut pas avoir plus de 10 adresses"
+        "CreateInfo": "Un compte ne peut pas avoir plus de 10 adresses",
+        "toast_AddressCopied": "Adresse copiée !"
       },
       "BottomTab": {
         "Wallet": "Portefeuille",
@@ -735,7 +817,8 @@
         },
         "AllAddress": {
           "AllAddresses": "Toutes les adresses",
-          "DeleteAddressPrompt": "Voulez-vous vraiment supprimer cette adresse ?"
+          "DeleteAddressPrompt": "Voulez-vous vraiment supprimer cette adresse ?",
+          "toast_AddressCopied": "Adresse copiée !"
         }
       },
       "Orderbook": {
@@ -746,14 +829,23 @@
         "PriceOfToken": "Prix de {currentToken}",
         "Buy": "ACHETER",
         "Sell": "VENDRE",
-        "HighestBidPrice": "Le prix d'offre le plus élevé actuellement de {currentToken} est de {price} QU, le prix de demande le plus bas est de {price} QU.",
-        "ConfirmBuy": "Voulez-vous vraiment acheter {amount} {currentToken} pour {price} QU ?",
+        "HighestBidPrice": "Le prix d'offre le plus élevé actuellement de {currentToken} est de {high_price} QU, le prix de demande le plus bas est de {low_price} QU.",
         "Status": "Statut",
         "TransactionID": "ID de la transaction",
         "CurrentTick": "Tick actuel",
         "ExpectedTick": "Tick attendu",
         "MyOrderList": "Ma liste d'ordres",
-        "NoOrders": "Vous n'avez pas d'ordres d'achat/vente à cette adresse !"
+        "NoOrders": "Vous n'avez pas d'ordres d'achat/vente à cette adresse !",
+        "QUInsufficient": "QU est insuffisant.",
+        "TokenBalanceInsufficient": "Le solde du token est insuffisant.",
+        "CancelOrderConfirmation": "Voulez-vous vraiment annuler cette commande?",
+        "ConfirmCancelBuy": "Voulez-vous annuler l'achat de {amount} {currentToken} ?",
+        "ConfirmCancelSell": "Voulez-vous annuler la vente de {amount} {currentToken} ?",
+        "ConfirmBuy": "Voulez-vous vraiment acheter {amount} {currentToken} pour {price} QU ?",
+        "ConfirmSell": "Voulez-vous vraiment vendre {amount} {currentToken} pour {price} QU ?",
+        "toast_NotExistOrder": "Commande inexistante !",
+        "toast_NoOrder": "L'adresse actuelle n'a aucune commande !",
+        "toast_WrongQuantity": "Quantité incorrecte !"
       },
       "Transaction": {
         "Transactions": "Transactions",
@@ -810,7 +902,9 @@
         "TransactionID": "ID de la transaction",
         "CurrentTick": "Tick actuel",
         "ExpectedTick": "Tick attendu",
-        "InvalidAddressOrAmount": "Adresse ou montant invalide !"
+        "InvalidAddressOrAmount": "Adresse ou montant invalide !",
+        "toast_QUInsufficient": "QU insuffisant !",
+        "toast_InvalidPassword": "Adresse invalide !"
       }
     },
     "util": {
@@ -821,6 +915,12 @@
         "Bad": "Mauvais",
         "NotAvailable": "Non Disponible"
       }
+    },
+    "Toast": {
+      "ErrorGettingToken": "Erreur lors de l'obtention des jetons !",
+      "ErrorTransfer": "Erreur lors du transfert !",
+      "TransferFailed": "Échec du transfert !",
+      "TransactionCompleted": "Transaction terminée avec succès !"
     }
   },
   "de": {
@@ -869,7 +969,8 @@
         "LearnMore": "Mehr erfahren",
         "placeholder_NewPassword": "Neues Passwort",
         "placeholder_ConfirmPassword": "Passwort bestätigen",
-        "button_CreatePassword": "Passwort erstellen"
+        "button_CreatePassword": "Passwort erstellen",
+        "PasswordExist": "Das Passwort existiert bereits!"
       },
       "Reminder": {
         "Secure": "Sichern Sie Ihr Wallet",
@@ -897,7 +998,8 @@
         "_55chars": "55 Zeichen",
         "_24words": "24 Wörter",
         "CreatePassword": "Passwort erstellen",
-        "toast_SuccessCreate": "Wallet erfolgreich erstellt!"
+        "toast_SuccessCreate": "Wallet erfolgreich erstellt!",
+        "toast_PasswordExist": "Das Passwort existiert bereits!"
       }
     },
     "Restore": {
@@ -908,7 +1010,8 @@
       "NotMatch": "Passwort stimmt nicht überein.",
       "ByProceeding": "Indem Sie fortfahren, stimmen Sie diesen",
       "TermCondition": "Geschäftsbedingungen",
-      "ImportButtonTitle": "Importieren"
+      "ImportButtonTitle": "Importieren",
+      "BackupfromSeed": "Sicherung vom Seed"
     },
     "Login": {
       "Login": "Anmelden",
@@ -916,7 +1019,10 @@
       "placeholder_Password": "Passwort",
       "button_ImportUsingSeedPhrase": "Stellen Sie Ihr Wallet mit Ihrer Seed-Phrase wieder her",
       "button_CreateNewWallet": "Erstellen",
-      "button_Login": "Anmelden"
+      "button_Login": "Anmelden",
+      "toast_LoginSuccess": "Anmeldung erfolgreich!",
+      "toast_InputPwd": "Passwort eingeben!",
+      "toast_LoginFailed": "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut."
     },
     "Main": {
       "Header": {
@@ -925,7 +1031,8 @@
         "button_Cancel": "Abbrechen",
         "button_CreateAddress": "Adressen erstellen",
         "Create": "Neue Adresse erstellen",
-        "CreateInfo": "Ein Konto kann nicht mehr als 10 Adressen haben"
+        "CreateInfo": "Ein Konto kann nicht mehr als 10 Adressen haben",
+        "toast_AddressCopied": "Adresse kopiert!"
       },
       "BottomTab": {
         "Wallet": "Wallet",
@@ -941,7 +1048,8 @@
         },
         "AllAddress": {
           "AllAddresses": "Alle Adressen",
-          "DeleteAddressPrompt": "Möchten Sie diese Adresse wirklich löschen?"
+          "DeleteAddressPrompt": "Möchten Sie diese Adresse wirklich löschen?",
+          "toast_AddressCopied": "Adresse kopiert!"
         }
       },
       "Orderbook": {
@@ -952,14 +1060,23 @@
         "PriceOfToken": "Preis von {currentToken}",
         "Buy": "KAUFEN",
         "Sell": "VERKAUFEN",
-        "HighestBidPrice": "Derzeit liegt der höchste Gebotspreis von {currentToken} bei {price} QU, der niedrigste Angebotspreis bei {price} QU.",
-        "ConfirmBuy": "Möchten Sie wirklich {amount} {currentToken} für {price} QU kaufen?",
+        "HighestBidPrice": "Derzeit liegt der höchste Gebotspreis von {currentToken} bei {high_price} QU, der niedrigste Angebotspreis bei {low_price} QU.",
         "Status": "Status",
         "TransactionID": "Transaktions-ID",
         "CurrentTick": "Aktueller Tick",
         "ExpectedTick": "Erwarteter Tick",
         "MyOrderList": "Meine Orderliste",
-        "NoOrders": "Sie haben keine Kauf-/Verkaufsaufträge an dieser Adresse!"
+        "NoOrders": "Sie haben keine Kauf-/Verkaufsaufträge an dieser Adresse!",
+        "QUInsufficient": "QU ist unzureichend.",
+        "TokenBalanceInsufficient": "Token-Guthaben ist unzureichend.",
+        "CancelOrderConfirmation": "Möchten Sie diese Bestellung wirklich stornieren?",
+        "ConfirmCancelBuy": "Möchten Sie den Kauf von {amount} {currentToken} abbrechen?",
+        "ConfirmCancelSell": "Möchten Sie den Verkauf von {amount} {currentToken} abbrechen?",
+        "ConfirmBuy": "Möchten Sie wirklich {amount} {currentToken} für {price} QU kaufen?",
+        "ConfirmSell": "Möchten Sie wirklich {amount} {currentToken} für {price} QU verkaufen?",
+        "toast_NotExistOrder": "Auftrag existiert nicht!",
+        "toast_NoOrder": "Aktuelle Adresse hat keine Bestellung!",
+        "toast_WrongQuantity": "Falsche Menge!"
       },
       "Transaction": {
         "Transactions": "Transaktionen",
@@ -1016,7 +1133,9 @@
         "TransactionID": "Transaktions-ID",
         "CurrentTick": "Aktueller Tick",
         "ExpectedTick": "Erwarteter Tick",
-        "InvalidAddressOrAmount": "Ungültige Adresse oder Menge!"
+        "InvalidAddressOrAmount": "Ungültige Adresse oder Menge!",
+        "toast_QUInsufficient": "QU unzureichend!",
+        "toast_InvalidPassword": "Ungültige Adresse!"
       }
     },
     "util": {
@@ -1027,6 +1146,12 @@
         "Bad": "Schlecht",
         "NotAvailable": "Nicht verfügbar"
       }
+    },
+    "Toast": {
+      "ErrorGettingToken": "Fehler beim Abrufen der Token!",
+      "ErrorTransfer": "Fehler beim Übertragen!",
+      "TransferFailed": "Übertragung fehlgeschlagen!",
+      "TransactionCompleted": "Transaktion erfolgreich abgeschlossen!"
     }
   },
   "ru": {
@@ -1075,7 +1200,8 @@
         "LearnMore": "Узнать больше",
         "placeholder_NewPassword": "Новый пароль",
         "placeholder_ConfirmPassword": "Подтвердить пароль",
-        "button_CreatePassword": "Создать пароль"
+        "button_CreatePassword": "Создать пароль",
+        "PasswordExist": "Пароль уже существует!"
       },
       "Reminder": {
         "Secure": "Защитите свой кошелек",
@@ -1103,7 +1229,8 @@
         "_55chars": "55 символов",
         "_24words": "24 слова",
         "CreatePassword": "Создать пароль",
-        "toast_SuccessCreate": "Кошелек успешно создан!"
+        "toast_SuccessCreate": "Кошелек успешно создан!",
+        "toast_PasswordExist": "Пароль уже существует!"
       }
     },
     "Restore": {
@@ -1114,7 +1241,8 @@
       "NotMatch": "Пароль не совпадает.",
       "ByProceeding": "Продолжая, вы соглашаетесь с этими",
       "TermCondition": "Условиями использования",
-      "ImportButtonTitle": "Импорт"
+      "ImportButtonTitle": "Импорт",
+      "BackupfromSeed": "Резервное копирование из seed"
     },
     "Login": {
       "Login": "Вход",
@@ -1122,7 +1250,10 @@
       "placeholder_Password": "Пароль",
       "button_ImportUsingSeedPhrase": "Восстановите свой кошелек с помощью секретной фразы",
       "button_CreateNewWallet": "Создать",
-      "button_Login": "Вход"
+      "button_Login": "Вход",
+      "toast_LoginSuccess": "Успешный вход!",
+      "toast_InputPwd": "Введите пароль!",
+      "toast_LoginFailed": "Не удалось войти. Пожалуйста, попробуйте еще раз."
     },
     "Main": {
       "Header": {
@@ -1131,7 +1262,8 @@
         "button_Cancel": "Отмена",
         "button_CreateAddress": "Создать адреса",
         "Create": "Создать новый адрес",
-        "CreateInfo": "Один аккаунт не может иметь более 10 адресов"
+        "CreateInfo": "Один аккаунт не может иметь более 10 адресов",
+        "toast_AddressCopied": "Адрес скопирован!"
       },
       "BottomTab": {
         "Wallet": "Кошелек",
@@ -1147,7 +1279,8 @@
         },
         "AllAddress": {
           "AllAddresses": "Все адреса",
-          "DeleteAddressPrompt": "Вы действительно хотите удалить этот адрес?"
+          "DeleteAddressPrompt": "Вы действительно хотите удалить этот адрес?",
+          "toast_AddressCopied": "Адрес скопирован!"
         }
       },
       "Orderbook": {
@@ -1158,14 +1291,23 @@
         "PriceOfToken": "Цена {currentToken}",
         "Buy": "КУПИТЬ",
         "Sell": "ПРОДАТЬ",
-        "HighestBidPrice": "В настоящее время самая высокая цена предложения {currentToken} составляет {price} QU, а самая низкая цена спроса составляет {price} QU.",
-        "ConfirmBuy": "Вы действительно хотите купить {amount} {currentToken} по цене {price} QU?",
+        "HighestBidPrice": "В настоящее время самая высокая цена предложения {currentToken} составляет {high_price} QU, а самая низкая цена спроса составляет {low_price} QU.",
         "Status": "Статус",
         "TransactionID": "ID транзакции",
         "CurrentTick": "Текущий Tick",
         "ExpectedTick": "Ожидаемый Tick",
         "MyOrderList": "Мой список ордеров",
-        "NoOrders": "У вас нет ордеров на покупку/продажу по этому адресу!"
+        "NoOrders": "У вас нет ордеров на покупку/продажу по этому адресу!",
+        "QUInsufficient": "QU недостаточно.",
+        "TokenBalanceInsufficient": "Баланс токенов недостаточен.",
+        "CancelOrderConfirmation": "Вы действительно хотите отменить этот заказ?",
+        "ConfirmCancelBuy": "Вы хотите отменить покупку {amount} {currentToken}?",
+        "ConfirmCancelSell": "Вы хотите отменить продажу {amount} {currentToken}?",
+        "ConfirmBuy": "Вы действительно хотите купить {amount} {currentToken} за {price} QU?",
+        "ConfirmSell": "Вы действительно хотите продать {amount} {currentToken} за {price} QU?",
+        "toast_NotExistOrder": "Заказ не существует!",
+        "toast_NoOrder": "На текущем адресе нет заказов!",
+        "toast_WrongQuantity": "Неправильное количество!"
       },
       "Transaction": {
         "Transactions": "Транзакции",
@@ -1222,7 +1364,9 @@
         "TransactionID": "ID транзакции",
         "CurrentTick": "Текущий Tick",
         "ExpectedTick": "Ожидаемый Tick",
-        "InvalidAddressOrAmount": "Недействительный адрес или сумма!"
+        "InvalidAddressOrAmount": "Недействительный адрес или сумма!",
+        "toast_QUInsufficient": "QU недостаточно!",
+        "toast_InvalidPassword": "Неверный адрес!"
       }
     },
     "util": {
@@ -1233,6 +1377,12 @@
         "Bad": "Плохо",
         "NotAvailable": "Недоступно"
       }
+    },
+    "Toast": {
+      "ErrorGettingToken": "Произошла ошибка при получении токенов!",
+      "ErrorTransfer": "Произошла ошибка при переводе!",
+      "TransferFailed": "Перевод не удался!",
+      "TransactionCompleted": "Транзакция успешно завершена!"
     }
   },
   "ja": {
@@ -1281,7 +1431,8 @@
         "LearnMore": "詳しくはこちら",
         "placeholder_NewPassword": "新しいパスワード",
         "placeholder_ConfirmPassword": "パスワードを確認",
-        "button_CreatePassword": "パスワードを作成"
+        "button_CreatePassword": "パスワードを作成",
+        "PasswordExist": "パスワードは既に存在します！"
       },
       "Reminder": {
         "Secure": "ウォレットを保護する",
@@ -1309,7 +1460,8 @@
         "_55chars": "55文字",
         "_24words": "24単語",
         "CreatePassword": "パスワードを作成",
-        "toast_SuccessCreate": "ウォレットの作成に成功しました！"
+        "toast_SuccessCreate": "ウォレットの作成に成功しました！",
+        "toast_PasswordExist": "パスワードは既に存在します！"
       }
     },
     "Restore": {
@@ -1320,7 +1472,8 @@
       "NotMatch": "パスワードが一致しません。",
       "ByProceeding": "続行することにより、これらに同意したことになります",
       "TermCondition": "利用規約",
-      "ImportButtonTitle": "インポート"
+      "ImportButtonTitle": "インポート",
+      "BackupfromSeed": "シードからのバックアップ"
     },
     "Login": {
       "Login": "ログイン",
@@ -1328,7 +1481,10 @@
       "placeholder_Password": "パスワード",
       "button_ImportUsingSeedPhrase": "シードフレーズからウォレットを復元",
       "button_CreateNewWallet": "作成",
-      "button_Login": "ログイン"
+      "button_Login": "ログイン",
+      "toast_LoginSuccess": "ログイン成功！",
+      "toast_InputPwd": "パスワードを入力してください！",
+      "toast_LoginFailed": "ログインに失敗しました。もう一度お試しください。"
     },
     "Main": {
       "Header": {
@@ -1337,7 +1493,8 @@
         "button_Cancel": "キャンセル",
         "button_CreateAddress": "アドレスを作成",
         "Create": "新しいアドレスを作成",
-        "CreateInfo": "アカウントは10個以上のアドレスを持つことができません"
+        "CreateInfo": "アカウントは10個以上のアドレスを持つことができません",
+        "toast_AddressCopied": "アドレスがコピーされました！"
       },
       "BottomTab": {
         "Wallet": "ウォレット",
@@ -1353,7 +1510,8 @@
         },
         "AllAddress": {
           "AllAddresses": "すべてのアドレス",
-          "DeleteAddressPrompt": "このアドレスを本当に削除しますか？"
+          "DeleteAddressPrompt": "このアドレスを本当に削除しますか？",
+          "toast_AddressCopied": "アドレスがコピーされました！"
         }
       },
       "Orderbook": {
@@ -1364,14 +1522,23 @@
         "PriceOfToken": "{currentToken}の価格",
         "Buy": "買う",
         "Sell": "売る",
-        "HighestBidPrice": "現在の{currentToken}の最高入札価格は{price} QU、最低要求価格は{price} QUです。",
-        "ConfirmBuy": "{amount} {currentToken}を{price} QUで本当に購入しますか？",
+        "HighestBidPrice": "現在の{currentToken}の最高入札価格は{high_price} QU、最低要求価格は{low_price} QUです。",
         "Status": "ステータス",
         "TransactionID": "トランザクションID",
         "CurrentTick": "現在のTick",
         "ExpectedTick": "期待されるTick",
         "MyOrderList": "私のオーダーリスト",
-        "NoOrders": "このアドレスには購入/販売オーダーがありません！"
+        "NoOrders": "このアドレスには購入/販売オーダーがありません！",
+        "QUInsufficient": "QUが不足しています。",
+        "TokenBalanceInsufficient": "トークン残高が不足しています。",
+        "CancelOrderConfirmation": "この注文を本当にキャンセルしますか？",
+        "ConfirmCancelBuy": "{amount} {currentToken} の購入をキャンセルしますか？",
+        "ConfirmCancelSell": "{amount} {currentToken} の販売をキャンセルしますか？",
+        "ConfirmBuy": "{amount} {currentToken} を {price} QU で購入しますか？",
+        "ConfirmSell": "{amount} {currentToken} を {price} QU で売りますか？",
+        "toast_NotExistOrder": "存在しない注文です！",
+        "toast_NoOrder": "現在のアドレスには注文がありません！",
+        "toast_WrongQuantity": "数量が間違っています！"
       },
       "Transaction": {
         "Transactions": "トランザクション",
@@ -1428,7 +1595,9 @@
         "TransactionID": "トランザクションID",
         "CurrentTick": "現在のTick",
         "ExpectedTick": "期待されるTick",
-        "InvalidAddressOrAmount": "無効なアドレスまたは金額！"
+        "InvalidAddressOrAmount": "無効なアドレスまたは金額！",
+        "toast_QUInsufficient": "QUが不足しています！",
+        "toast_InvalidPassword": "無効なアドレスです！"
       }
     },
     "util": {
@@ -1439,6 +1608,12 @@
         "Bad": "悪い",
         "NotAvailable": "利用不可"
       }
+    },
+    "Toast": {
+      "ErrorGettingToken": "トークンの取得中にエラーが発生しました！",
+      "ErrorTransfer": "転送中にエラーが発生しました！",
+      "TransferFailed": "転送に失敗しました！",
+      "TransactionCompleted": "取引が正常に完了しました！"
     }
   }
 }

@@ -44,7 +44,7 @@ const Input = ({
             outerContainer: `flex flex-col ${gaps[gapVariant]}`,
         },
         modal: {
-            input: `${backgrounds["transparent"]} max-w-xl h-10 p-5 outline-none rounded-2xl border-white/60 border text-sm font-semibold font-Inter`,
+            input: `${backgrounds["transparent"]} h-10 p-5 outline-none rounded-2xl border-white/60 border text-sm font-semibold font-Inter`,
             label: "text-lg",
             outerContainer: `flex flex-col ${gaps["strech"]}`,
         },

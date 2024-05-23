@@ -12,7 +12,7 @@ const Home: React.FC = () => {
   const { balances, currentAddress } = useAuth();
   const { tick, marketcap } = useSelector((store: RootState) => store.app);
   const { bgColor, textColor, main } = useColors();
-const lang = local.Main.Wallet.Home;
+  const lang = local.Main.Wallet.Home;
 
   const BalanceItem = useMemo(() => {
     return (
@@ -34,7 +34,7 @@ const lang = local.Main.Wallet.Home;
         </HStack>
         <HStack justifyContent="center">
           <Text fontSize="xl">{lang.CurrentTick}: </Text>
-          <Text fontSize="xl">{tick}</Text>
+          <Text fontSize="xl">{tick || 0}</Text>
         </HStack>
       </VStack>
     );

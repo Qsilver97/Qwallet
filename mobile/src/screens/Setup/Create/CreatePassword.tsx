@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import {
   Box,
   Checkbox,
-  HStack,
+  KeyboardAvoidingView,
   Link,
-  ScrollView,
   Text,
   VStack,
 } from "native-base";
@@ -19,6 +18,9 @@ import Input from "@app/components/UI/Input";
 import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
 import local from "@app/utils/locales";
+import { Platform } from "react-native";
+import eventEmitter from "@app/api/eventEmitter";
+import { passwordAvail } from "@app/api/api";
 
 const CreatePassword: React.FC = () => {
   const navigation = useNavigation();
@@ -26,7 +28,7 @@ const CreatePassword: React.FC = () => {
   const [checkAgreement, setCheckAgreement] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [lengthError, setLengthError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [passwordStrength, setPasswordStrength] = useState<{
     label: string;
     color: string;
@@ -37,57 +39,64 @@ const CreatePassword: React.FC = () => {
   const handlePassword = (text: string) => {
     setPassword(text);
     setPasswordStrength(getPasswordStrengthProps(checkPasswordStrength(text)));
+    // passwordAvail(text);
   };
 
+  useEffect(() => {
+    const handlePasswordAvailEvent = (res: any) => {
+      console.log(res);
+      if (!res.data) setErrorMessage(lang.PasswordExist);
+      else setErrorMessage("");
+    };
+    eventEmitter.on("S2C/passwordAvail", handlePasswordAvailEvent);
+    return () => {
+      eventEmitter.off("S2C/passwordAvail", handlePasswordAvailEvent);
+    };
+  }, []);
+
+  useFocusEffect(() => {
+    passwordAvail(password);
+  });
   return (
-    <VStack
+    <KeyboardAvoidingView
       flex={1}
       justifyItems="center"
       justifyContent="end"
-      space={5}
       bgColor={bgColor}
       color={textColor}
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
     >
-      <ScrollView>
+      <VStack flex={1}>
         <VStack space={5} pt={10}>
-          <Text fontSize={"2xl"} color={main.jeansBlue} textAlign={"center"}>
+          <Text fontSize={"4xl"} textAlign={"center"}>
             {lang.Create}
           </Text>
           <Text textAlign={"center"} px={16}>
             {lang.Caption}
           </Text>
         </VStack>
-        <VStack flex={1} pt={28} justifyItems="center" py={40} space={5}>
-          <Box textAlign={"center"} px={10}>
+        <VStack flex={1} space={5} px={10}>
+          <Box>
             <Input
               onChangeText={handlePassword}
               w={"full"}
               type="password"
               placeholder={lang.placeholder_NewPassword}
+              helper={lang.AtLeast8Char}
+              error={errorMessage}
             ></Input>
-            <Box p={3}>
-              <Text px={2} color={lengthError ? "red.500" : gray.gray40}>
-                {lang.AtLeast8Char}
-              </Text>
-              <Text px={2} color={passwordStrength.color}>
-                {lang.PasswordStrength} : {passwordStrength.label}
-              </Text>
-            </Box>
+            <Text px={3} color={passwordStrength.color}>
+              {lang.PasswordStrength} : {passwordStrength.label}
+            </Text>
           </Box>
-          <Box textAlign={"center"} px={10}>
-            <Input
-              onChangeText={(text) => setConfirmPassword(text)}
-              w={"full"}
-              type="password"
-              placeholder={lang.placeholder_ConfirmPassword}
-            ></Input>
-            {password !== confirmPassword && (
-              <Text px={6} color={"red.400"}>
-                {lang.NotMatch}
-              </Text>
-            )}
-          </Box>
-          <HStack px={10}>
+          <Input
+            onChangeText={(text) => setConfirmPassword(text)}
+            w={"full"}
+            type="password"
+            placeholder={lang.placeholder_ConfirmPassword}
+            error={password !== confirmPassword ? lang.NotMatch : ""}
+          ></Input>
+          <Box>
             <Checkbox
               value={"CheckAgreement"}
               onChange={(isSelected) => setCheckAgreement(!checkAgreement)}
@@ -95,9 +104,9 @@ const CreatePassword: React.FC = () => {
               size={"lg"}
               color={textColor}
             >
-              <Text>
+              <Text pr="2">
                 {lang.Understand}
-                <Link
+                {/* <Link
                   href="#"
                   _text={{
                     color: main.celestialBlue,
@@ -107,12 +116,12 @@ const CreatePassword: React.FC = () => {
                   colorScheme={"blue"}
                 >
                   {lang.LearnMore}
-                </Link>
+                </Link> */}
               </Text>
             </Checkbox>
-          </HStack>
+          </Box>
         </VStack>
-      </ScrollView>
+      </VStack>
       <ButtonBox>
         <PageButton
           title={lang.button_CreatePassword}
@@ -120,6 +129,7 @@ const CreatePassword: React.FC = () => {
           isDisabled={
             password == "" ||
             password !== confirmPassword ||
+            errorMessage != "" ||
             passwordStrength.label == "Bad" ||
             passwordStrength.label == "Not Available" ||
             checkAgreement == false
@@ -130,7 +140,7 @@ const CreatePassword: React.FC = () => {
           }}
         ></PageButton>
       </ButtonBox>
-    </VStack>
+    </KeyboardAvoidingView>
   );
 };
 

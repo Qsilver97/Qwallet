@@ -56,4 +56,8 @@ interface OrderInterface {
     asks: [string, string, string][];
 }
 
-export type { SelectOption, SidebarItemProps, SummaryItemProps, AssetItemProps, ModeProps, AccountInfoInterface, MarketcapInterface, RichListInterface, OrderInterface }
+interface TokenPriceInterface {
+    [key: string]: [number, number];
+}
+
+export type { SelectOption, SidebarItemProps, SummaryItemProps, AssetItemProps, ModeProps, AccountInfoInterface, MarketcapInterface, RichListInterface, OrderInterface, TokenPriceInterface }

@@ -1,8 +1,11 @@
 import { transfer } from "@app/api/api";
+import FormLabel from "@app/components/UI/FormLabel";
 import Input from "@app/components/UI/Input";
 import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
+import local from "@app/utils/locales";
+import { FontAwesome5 } from "@expo/vector-icons";
 import {
   faCheck,
   faQuestion,
@@ -21,9 +24,6 @@ import { useState } from "react";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 import ConfirmModal from "./ConfirmModal";
-import { FontAwesome5 } from "@expo/vector-icons";
-import FormLabel from "@app/components/UI/FormLabel";
-import local from "@app/utils/locales";
 
 interface IProps {
   isOpen: boolean;
@@ -57,7 +57,21 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
     if (toAddress == "" || amount == "" || amount == "0") {
       Toast.show({
         type: "error",
-        text1: "E02: " + lang.InvalidAddressOrAmount,
+        text1: "E-02: " + lang.InvalidAddressOrAmount,
+      });
+      return;
+    }
+    if (parseInt(amount) > balances[currentAddress]) {
+      Toast.show({
+        type: "error",
+        text1: "E-03: " + lang.toast_QUInsufficient,
+      });
+      return;
+    }
+    if (toAddress.length !== 60) {
+      Toast.show({
+        type: "error",
+        text1: "E-04: " + lang.toast_InvalidPassword,
       });
       return;
     }

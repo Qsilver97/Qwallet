@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { Box, Link, Text, TextArea, VStack } from "native-base";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
-import { useColors } from "@app/context/ColorContex";
-import { RootState } from "@app/redux/store";
-import { setPassword, setSeedType } from "@app/redux/appSlice";
 import { passwordAvail, restore } from "@app/api/api";
 import eventEmitter from "@app/api/eventEmitter";
-import Input from "@app/components/UI/Input";
 import ButtonBox from "@app/components/UI/ButtonBox";
+import Input from "@app/components/UI/Input";
 import PageButton from "@app/components/UI/PageButton";
+import { useColors } from "@app/context/ColorContex";
+import { setPassword, setSeedType } from "@app/redux/appSlice";
+import { RootState } from "@app/redux/store";
 import local from "@app/utils/locales";
+import { useNavigation } from "@react-navigation/native";
+import { KeyboardAvoidingView, Text, TextArea, VStack } from "native-base";
+import React, { useEffect, useState } from "react";
+import { Platform } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 const Restore: React.FC = () => {
   const navigation = useNavigation();
@@ -87,72 +88,52 @@ const Restore: React.FC = () => {
   }, []);
 
   return (
-    <VStack
+    <KeyboardAvoidingView
       flex={1}
       justifyItems="center"
-      justifyContent="end"
-      space={5}
       bgColor={bgColor}
       color={textColor}
+      behavior={Platform.OS === "ios" ? "height" : "height"}
     >
-      <VStack
-        flex={1}
-        pt={40}
-        justifyItems="center"
-        py={40}
-        space={5}
-        bgColor={bgColor}
-        color={textColor}
-      >
-        <Box textAlign={"center"} px={10}>
-          <TextArea
-            autoCompleteType=""
-            w={"full"}
-            color={textColor}
-            borderColor={gray.gray80}
-            rounded={"md"}
-            placeholderTextColor={textColor}
-            placeholder={lang.placeholder_SeedPhrase}
-            onChangeText={handleRestoreSeeds}
-          />
-        </Box>
-        <Box textAlign={"center"} px={10}>
-          <Input
-            onChangeText={handlePassword}
-            w={"full"}
-            type="password"
-            placeholder={lang.placeholder_NewPassword}
-          ></Input>
-          <Text px={6} color={lengthError ? "red.500" : gray.gray40}>
-            {lang.AtLeast8characters}
-          </Text>
-        </Box>
-        <Box textAlign={"center"} px={10}>
-          <Input
-            onChangeText={handleConfirmPassword}
-            w={"full"}
-            type="password"
-            placeholder={lang.placeholder_ConfirmPassword}
-          ></Input>
-          {password !== confirmPassword && (
-            <Text px={6} color={"red.400"}>
-              {lang.NotMatch}
-            </Text>
-          )}
-        </Box>
-        <Box textAlign={"center"} px={16}>
-          <Text>
-            {lang.ByProceeding}
-            <Link
-              href="https://qubic.org/Terms-of-service"
-              _text={{ color: main.celestialBlue, marginTop: 2 }}
-              display={"inline"}
-            >
-              {lang.TermCondition}
-            </Link>
-            .
-          </Text>
-        </Box>
+      <Text fontSize="4xl" p="5" textAlign="center">
+        {lang.BackupfromSeed}
+      </Text>
+      <VStack flex={1} px="10">
+        <TextArea
+          autoCompleteType=""
+          w={"full"}
+          color={textColor}
+          borderColor={gray.gray80}
+          rounded={"md"}
+          placeholderTextColor={textColor}
+          placeholder={lang.placeholder_SeedPhrase}
+          onChangeText={handleRestoreSeeds}
+        />
+        <Input
+          onChangeText={handlePassword}
+          w={"full"}
+          type="password"
+          placeholder={lang.placeholder_NewPassword}
+          helper={lang.AtLeast8characters}
+        ></Input>
+        <Input
+          onChangeText={handleConfirmPassword}
+          w={"full"}
+          type="password"
+          placeholder={lang.placeholder_ConfirmPassword}
+          error={password !== confirmPassword ? lang.NotMatch : ""}
+        ></Input>
+        <Text>
+          {lang.ByProceeding}
+          {/* <Link
+            href="https://qubic.org/Terms-of-service"
+            _text={{ color: main.celestialBlue, marginTop: 2 }}
+            display={"inline"}
+          >
+            {lang.TermCondition}
+          </Link> */}
+          .
+        </Text>
       </VStack>
       <ButtonBox>
         <PageButton
@@ -167,7 +148,7 @@ const Restore: React.FC = () => {
           onPress={handleNext}
         ></PageButton>
       </ButtonBox>
-    </VStack>
+    </KeyboardAvoidingView>
   );
 };
 
