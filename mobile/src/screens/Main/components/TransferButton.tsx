@@ -9,12 +9,14 @@ interface Iprops extends TouchableOpacityProps {
   icon: IconProp;
   title: string;
   toggleModal?: () => void;
+  bgColor?: string;
 }
 
 const TransferButton: React.FC<Iprops> = ({
   icon,
   title,
   toggleModal,
+  bgColor,
   ...props
 }) => {
   const { main, textColor } = useColors();
@@ -22,7 +24,7 @@ const TransferButton: React.FC<Iprops> = ({
     <TouchableOpacity onPress={toggleModal} {...props}>
       <VStack p={2} space={2} alignItems={"center"}>
         <VStack
-          bgColor={main.celestialBlue}
+          bgColor={bgColor || main.celestialBlue}
           p={2}
           rounded={"full"}
           justifyItems={"center"}

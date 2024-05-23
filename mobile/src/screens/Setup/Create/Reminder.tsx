@@ -1,17 +1,16 @@
-import React, { useState } from "react";
-import { TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { Image, VStack, Text, Box } from "native-base";
+import ButtonBox from "@app/components/UI/ButtonBox";
+import PageButton from "@app/components/UI/PageButton";
+import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
+import local from "@app/utils/locales";
 import {
   checkPasswordStrength,
   getPasswordStrengthProps,
 } from "@app/utils/utils";
-import ButtonBox from "@app/components/UI/ButtonBox";
-import PageButton from "@app/components/UI/PageButton";
+import { useNavigation } from "@react-navigation/native";
+import { Box, Image, ScrollView, Text, VStack } from "native-base";
+import React, { useState } from "react";
 import ReminderBar from "./Components/ReminderBar";
-import local from "@app/utils/locales";
-import { useAuth } from "@app/context/AuthContext";
 
 interface IProps {}
 
@@ -35,13 +34,7 @@ const Reminder: React.FC<IProps> = () => {
       justifyItems="center"
     >
       {step == 1 && (
-        <VStack
-          space={10}
-          alignItems="center"
-          flex={1}
-          justifyContent="center"
-          justifyItems="center"
-        >
+        <VStack space={10} flex={1} justifyItems="center">
           <Image
             source={require("@assets/images/02/01.png")}
             style={{ width: 214, height: 220 }}
@@ -59,20 +52,21 @@ const Reminder: React.FC<IProps> = () => {
         </VStack>
       )}
       {step == 2 && (
-        <VStack
-          space={10}
-          alignItems="center"
-          flex={1}
-          pt={10}
-          justifyItems="center"
-        >
-          <VStack px={12} space={5}>
+        <ScrollView flex={1} pt={10}>
+          <VStack px="3" space="3" alignItems="center">
             <Text color={textColor} fontSize={"3xl"} textAlign={"center"}>
               {local.Create.Reminder.Secure}
             </Text>
-            <Text color={gray.gray30} fontSize={"xl"} fontWeight={"bold"}>
+            <Text
+              color={gray.gray30}
+              fontSize={"xl"}
+              fontWeight={"bold"}
+              textAlign="center"
+            >
               {local.Create.Reminder.Caption2}
             </Text>
+          </VStack>
+          <VStack px={12} space={5}>
             <VStack color={textColor} textAlign={"center"} space={"2"}>
               <Text fontWeight={"bold"} ml={-3}>
                 {local.Create.Reminder.Manual}
@@ -106,7 +100,7 @@ const Reminder: React.FC<IProps> = () => {
               </VStack>
             </VStack>
           </VStack>
-        </VStack>
+        </ScrollView>
       )}
       <ButtonBox>
         {/* <TouchableOpacity onPress={() => navigation.navigate("Login")}>

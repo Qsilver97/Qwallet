@@ -1,6 +1,13 @@
 import { useColors } from "@app/context/ColorContex";
 import { Feather } from "@expo/vector-icons";
-import { HStack, Icon, ScrollView, Text, VStack, useColorMode } from "native-base";
+import {
+  HStack,
+  Icon,
+  ScrollView,
+  Text,
+  VStack,
+  useColorMode,
+} from "native-base";
 import React, { useMemo, useState } from "react";
 import ColorModeSetting from "./ColorModeSetting";
 import LanguageSetting from "./LanguageSetting";
@@ -8,6 +15,7 @@ import NetworkSetting from "./NetworkSetting";
 import SecuritySetting from "./SecuritySetting";
 import local from "@app/utils/locales";
 import { Image } from "react-native";
+import About from "./About";
 
 const Settings: React.FC = () => {
   const { bgColor, textColor } = useColors();
@@ -33,6 +41,7 @@ const Settings: React.FC = () => {
         <ColorModeSetting />
         <SecuritySetting />
         <NetworkSetting />
+        <About />
       </ScrollView>
     </VStack>
   );

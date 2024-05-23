@@ -1,26 +1,38 @@
-import { Box, Button, HStack, Icon, Text, TextArea, VStack } from "native-base";
-import React, { useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import { TouchableOpacity } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { useColors } from "@app/context/ColorContex";
-import { RootState } from "@app/redux/store";
 import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
+import { useColors } from "@app/context/ColorContex";
+import { setCurrentSeedIndex } from "@app/redux/appSlice";
+import { RootState } from "@app/redux/store";
 import local from "@app/utils/locales";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import {
+  Box,
+  Button,
+  HStack,
+  Icon,
+  ScrollView,
+  Text,
+  TextArea,
+  VStack,
+} from "native-base";
+import React, { useMemo, useState } from "react";
+import { TouchableOpacity } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 const Confirm: React.FC = () => {
-  const { bgColor, textColor, main, gray } = useColors();
-  const { seeds, seedType } = useSelector((state: RootState) => state.app);
+  const { bgColor, textColor, main, gray, panelBgColor } = useColors();
+  const { seeds, seedType, currentSeedIndex } = useSelector(
+    (state: RootState) => state.app
+  );
   const [blurBackground, setBlurBackground] = useState(true);
-  const [currentSeedIndex, setCurrentSeedIndex] = useState(0);
   const [isCorrectSeed, setIsCorrectSeed] = useState(false);
   const [seedValue, setSeedValue] = useState("");
   const [step, setStep] = useState(1);
   const navigation = useNavigation();
-  const lang = local.Create.Confirm;
+  const dispatch = useDispatch();
 
+  const lang = local.Create.Confirm;
   const handleSeedTyping = (txt: string) => {
     setSeedValue(txt);
     if (txt == seeds) setIsCorrectSeed(true);
@@ -32,7 +44,7 @@ const Confirm: React.FC = () => {
       if (currentSeedIndex < seeds.length - 1) {
         setTimeout(() => {
           setIsCorrectSeed(false);
-          setCurrentSeedIndex(currentSeedIndex + 1);
+          dispatch(setCurrentSeedIndex(currentSeedIndex + 1));
         }, 1200);
       }
     } else {
@@ -69,7 +81,9 @@ const Confirm: React.FC = () => {
                 bg="gray.900"
                 rounded="md"
                 textAlign="center"
-                p={2}
+                px="1"
+                py="2"
+                bgColor={panelBgColor}
               >
                 {index + i + 1}.{seeds[index + i]}
               </Text>
@@ -99,17 +113,16 @@ const Confirm: React.FC = () => {
       flex={1}
       justifyItems="center"
       justifyContent="end"
-      space={5}
       bgColor={bgColor}
       color={textColor}
     >
       {seedType == "24words" && step == 1 && (
-        <VStack flex={1}>
-          <VStack space={5} pt={10}>
-            <Text fontSize="2xl" color={textColor} textAlign="center" px={10}>
+        <ScrollView flex={1}>
+          <VStack space="3" pt={10}>
+            <Text fontSize="3xl" color={textColor} textAlign="center" px={5}>
               {lang.WriteDownSeedPhrase}
             </Text>
-            <Text textAlign="center" px={16}>
+            <Text textAlign="center" px={12}>
               {lang.Caption1}
             </Text>
           </VStack>
@@ -126,8 +139,8 @@ const Confirm: React.FC = () => {
                 <VStack
                   position={"absolute"}
                   top={0}
-                  left={0}
-                  right={0}
+                  left={-10}
+                  right={-10}
                   bottom={0}
                   flex={1}
                   justifyContent={"center"}
@@ -149,7 +162,7 @@ const Confirm: React.FC = () => {
               )}
             </VStack>
           </Box>
-        </VStack>
+        </ScrollView>
       )}
       {seedType == "24words" && step == 2 && (
         <VStack flex={1}>
@@ -175,9 +188,9 @@ const Confirm: React.FC = () => {
               </Text>
             </VStack>
             <HStack
-              space={4}
+              space={2}
               flexWrap={"wrap"}
-              p={4}
+              p={2}
               justifyContent={"center"}
               borderColor={gray.gray80}
               borderWidth={2}
@@ -185,7 +198,8 @@ const Confirm: React.FC = () => {
               {getDisplaySeeds.map((seed, index) => (
                 <Button
                   key={index}
-                  bg={"gray.900"}
+                  bg={panelBgColor}
+                  _text={{ color: textColor }}
                   rounded="md"
                   px={4}
                   py={2}

@@ -17,6 +17,7 @@ interface RichlistInterface {
 interface AppState {
   isAuthenticated: boolean | null;
   seedType: string;
+  currentSeedIndex: number;
   password: string;
   seeds: string | string[];
   theme: "light" | "dark";
@@ -36,6 +37,7 @@ interface UpdateRichlistPayload {
 const initialState: AppState = {
   isAuthenticated: null,
   seedType: "24words",
+  currentSeedIndex: 0,
   seeds: "",
   password: "",
   theme: "light",
@@ -62,6 +64,9 @@ export const appSlice = createSlice({
     },
     setSeeds: (state, action: PayloadAction<string | string[]>) => {
       state.seeds = action.payload;
+    },
+    setCurrentSeedIndex: (state, action: PayloadAction<number>) => {
+      state.currentSeedIndex = action.payload;
     },
     setIsAuthenticated: (state, action: PayloadAction<boolean | null>) => {
       state.isAuthenticated = action.payload;
@@ -101,6 +106,7 @@ export const {
   setSeedType,
   setPassword,
   setSeeds,
+  setCurrentSeedIndex,
   setIsAuthenticated,
   toggleTheme,
   setTick,

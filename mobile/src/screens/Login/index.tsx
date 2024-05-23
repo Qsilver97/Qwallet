@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { VStack, Text, useColorMode } from "native-base";
+import { VStack, Text, useColorMode, KeyboardAvoidingView } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Image,
   NativeSyntheticEvent,
+  Platform,
   TextInputKeyPressEventData,
   TouchableOpacity,
 } from "react-native";
@@ -57,7 +58,7 @@ const Login: React.FC = () => {
 
   const handleLogin = () => {
     if (password === "") {
-      Toast.show({ type: "error", text1: "E11: " + "Input password!" });
+      Toast.show({ type: "error", text1: "E-11: " + lang.toast_InputPwd });
       return;
     }
 
@@ -68,7 +69,7 @@ const Login: React.FC = () => {
     //   setPasswordStatus(true);
     //   Toast.show({
     //     type: "error",
-    //     text1: "E12: Login failed. Please try again.",
+    //     text1: "E-12: " + lang.toast_LoginFailed,
     //   });
     // }, 5000);
   };
@@ -76,7 +77,7 @@ const Login: React.FC = () => {
   useEffect(() => {
     const handleLoginEvent = (res: any) => {
       if (res.success) {
-        Toast.show({ type: "success", text1: "Login Success!" });
+        Toast.show({ type: "success", text1: lang.toast_LoginSuccess });
         const userInfo: UserDetailType = res.data;
         auth.login(userInfo);
         dispatch(resetState());
@@ -85,7 +86,7 @@ const Login: React.FC = () => {
       } else {
         setPasswordStatus(true);
         dispatch(setIsAuthenticated(false));
-        Toast.show({ type: "error", text1: "E13: " + res.error });
+        Toast.show({ type: "info", text1: res.error });
       }
       setLoginWaiting(false);
     };
@@ -109,12 +110,12 @@ const Login: React.FC = () => {
       justifyContent="center"
       justifyItems="center"
     >
-      <VStack
-        space={10}
+      <KeyboardAvoidingView
         alignItems="center"
         flex={1}
         justifyContent="center"
         justifyItems="center"
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <Image
           source={logoSource}
@@ -130,7 +131,7 @@ const Login: React.FC = () => {
           type="password"
           error={passwordStatus ? lang.NotExist : ""}
         />
-      </VStack>
+      </KeyboardAvoidingView>
       <ButtonBox>
         <PageButton
           title={lang.button_Login}

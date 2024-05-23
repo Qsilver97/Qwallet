@@ -30,8 +30,9 @@ const SeedType = () => {
 
   useEffect(() => {
     const handleCreateEvent = (res: any) => {
+      console.log(res);
       if (res.data?.value) {
-        if (res.data.value.result >= 0) {
+        if (res.data.value.result == 0 && res.data.value.seedpage == 1) {
           Toast.show({
             type: "success",
             text1: lang.toast_SuccessCreate,
@@ -43,14 +44,19 @@ const SeedType = () => {
             dispatch(setSeeds(seeds));
           }
           navigation.navigate("Confirm");
+        } else if (res.data.value.result == 0 && res.data.value.seedpage == 0) {
+          Toast.show({
+            type: "error",
+            text1: "E-23: " + lang.toast_PasswordExist,
+          });
         } else {
           Toast.show({
             type: "error",
-            text1: "E21: " + res.data.value.display,
+            text1: "E-21: " + res.data.value.display,
           });
         }
       } else {
-        Toast.show({ type: "error", text1: "E22: " + res.error });
+        Toast.show({ type: "error", text1: "E-22: " + res.error });
       }
     };
     eventEmitter.on("S2C/create", handleCreateEvent);

@@ -1,7 +1,11 @@
+import { deleteAccount } from "@app/api/api";
+import eventEmitter from "@app/api/eventEmitter";
 import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
+import local from "@app/utils/locales";
 import { MaterialIcons } from "@expo/vector-icons";
 import { faWarning } from "@fortawesome/free-solid-svg-icons";
+import Clipboard from "@react-native-clipboard/clipboard";
 import {
   HStack,
   Icon,
@@ -10,15 +14,36 @@ import {
   VStack,
   useDisclose,
 } from "native-base";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Toast from "react-native-toast-message";
 import ConfirmModal from "../components/ConfirmModal";
-import local from "@app/utils/locales";
 
 const AllAddresses: React.FC = () => {
-  const { allAddresses, balances } = useAuth();
+  const { allAddresses, balances, user, login } = useAuth();
   const { bgColor, textColor, panelBgColor } = useColors();
+  const [selectedAddress, setSelectedAddress] = useState("");
   const { isOpen, onToggle } = useDisclose();
   const lang = local.Main.Wallet.AllAddress;
+
+  const handleTapAddress = () => {
+    Clipboard.setString(selectedAddress);
+    Toast.show({ type: "success", text1: lang.toast_AddressCopied });
+  };
+
+  useEffect(() => {
+    const handleDeleteAddressEvent = (res: any) => {
+      if (res.data) {
+        login(res.data);
+        Toast.show({ type: "success", text1: "Delete Address Successfully!" });
+      } else {
+        Toast.show({ type: "error", text1: "E-31: " + res.data.value.display });
+      }
+    };
+    eventEmitter.on("S2C/delete-address", handleDeleteAddressEvent);
+    return () => {
+      eventEmitter.off("S2C/delete-address", handleDeleteAddressEvent);
+    };
+  }, []);
 
   return (
     <VStack
@@ -44,7 +69,14 @@ const AllAddresses: React.FC = () => {
               <Pressable
                 key={key}
                 _pressed={{ opacity: 0.6 }}
-                onLongPress={onToggle}
+                onPress={() => {
+                  setSelectedAddress(address);
+                  handleTapAddress();
+                }}
+                onLongPress={() => {
+                  setSelectedAddress(address);
+                  onToggle();
+                }}
               >
                 <HStack p="3" space="2" bgColor={panelBgColor}>
                   <Text w="5%">{key + 1}</Text>
@@ -63,7 +95,14 @@ const AllAddresses: React.FC = () => {
         icon={faWarning}
         isOpen={isOpen}
         onToggle={onToggle}
-        onPress={() => {}}
+        onPress={() => {
+          onToggle();
+          deleteAccount(
+            user?.password,
+            allAddresses.indexOf(selectedAddress),
+            selectedAddress
+          );
+        }}
       >
         <VStack fontSize={"xl"} textAlign={"center"} px={2}>
           <Text>{lang.DeleteAddressPrompt}</Text>

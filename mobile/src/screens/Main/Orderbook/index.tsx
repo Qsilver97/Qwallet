@@ -1,73 +1,53 @@
-import { buySell } from "@app/api/api";
 import Input from "@app/components/UI/Input";
-import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
+import local from "@app/utils/locales";
 import { FontAwesome5 } from "@expo/vector-icons";
-import {
-  faCheck,
-  faMinus,
-  faPlus,
-  faShare,
-} from "@fortawesome/free-solid-svg-icons";
-import {
-  FormControl,
-  HStack,
-  Icon,
-  Text,
-  VStack,
-  useDisclose,
-} from "native-base";
-import React, { useState } from "react";
+import { faClose, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { HStack, Icon, Text, VStack, View, useDisclose } from "native-base";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import ConfirmModal from "../components/ConfirmModal";
 import TokenSelect from "../components/TokenSelect";
 import TransferButton from "../components/TransferButton";
+import Core from "./components/Core";
 import Orderlist from "./components/Orderlist";
-import local from "@app/utils/locales";
-import FormLabel from "@app/components/UI/FormLabel";
-import Toast from "react-native-toast-message";
+import { useAuth } from "@app/context/AuthContext";
+import { myOrders } from "@app/api/api";
+import eventEmitter from "@app/api/eventEmitter";
+
+type IOrderUnit = [number, string, string, string]; // index, address, amount, price
+interface IOrderData {
+  [tokenName: string]: {
+    bids: IOrderUnit[];
+    asks: IOrderUnit[];
+  };
+}
 
 const Orderbook: React.FC = () => {
   const { bgColor, textColor } = useColors();
-  const { tokenprices, tick } = useSelector((store: RootState) => store.app);
-  const { user, currentAddress, txId, txResult, txStatus, expectedTick } =
-    useAuth();
+  const { tokenprices } = useSelector((store: RootState) => store.app);
   const [currentToken, setCurrentToken] = useState<string>("QWALLET");
   const [amount, setAmount] = useState<string>("0");
   const [price, setPrice] = useState<string>("0");
   const [buySellFlag, setBuySellFlag] = useState<
     "buy" | "sell" | "cancelbuy" | "cancelsell"
   >("buy");
+  const [orderData, setOrderData] = useState<IOrderData>({});
   const modal1 = useDisclose();
-  const modal2 = useDisclose();
   const lang = local.Main.Orderbook;
+  const { currentAddress, allAddresses, txResult, isLoading, setIsLoading } =
+    useAuth();
 
-  const handleBuySell = (
-    flag: "buy" | "sell" | "cancelbuy" | "cancelsell",
-    amount: string,
-    price: string,
-    currentToken: string
-  ) => {
-    modal1.onToggle();
-    if (amount == "" || amount == "0" || price == "" || price == "0") {
-      Toast.show({
-        type: "error",
-        text1: local.Main.Components.InvalidAddressOrAmount,
-      });
-      return;
-    }
-    buySell(
-      flag,
-      amount,
-      price,
-      user?.password as string,
-      user?.accountInfo?.addresses.indexOf(currentAddress) as number,
-      parseInt(tick) + 10,
-      currentToken
-    );
-    modal2.onToggle();
-  };
+  useEffect(() => {
+    myOrders();
+    const handleMyOrdersEvent = (res: any) => {
+      setOrderData(res.data);
+    };
+    eventEmitter.on("S2C/my-orders", handleMyOrdersEvent);
+    return () => {
+      eventEmitter.off("S2C/my-orders", handleMyOrdersEvent);
+    };
+  }, [currentAddress, txResult]);
 
   return (
     <>
@@ -94,7 +74,7 @@ const Orderbook: React.FC = () => {
             onChange={setCurrentToken}
           ></TokenSelect>
           <HStack py="2">
-            <VStack w="3/4" textAlign="center">
+            <VStack w="3/5" textAlign="center">
               <Input
                 type="text"
                 onChangeText={(text) => {
@@ -122,73 +102,80 @@ const Orderbook: React.FC = () => {
                 parentProps={{ w: "full" }}
               ></Input>
             </VStack>
-            <VStack w={"1/4"} justifyContent="flex-end" space={2}>
-              <TransferButton
-                icon={faPlus}
-                title={lang.Buy}
-                onPress={() => {
-                  setBuySellFlag("buy");
-                  modal1.onToggle();
-                }}
-              ></TransferButton>
-              <TransferButton
-                icon={faMinus}
-                title={lang.Sell}
-                onPress={() => {
-                  setBuySellFlag("sell");
-                  modal1.onToggle();
-                }}
-              ></TransferButton>
+            <VStack
+              w={"2/5"}
+              justifyContent="flex-end"
+              alignItems="center"
+              py="2"
+            >
+              <HStack>
+                <TransferButton
+                  icon={faPlus}
+                  title={lang.Buy}
+                  onPress={() => {
+                    setBuySellFlag("buy");
+                    modal1.onToggle();
+                  }}
+                ></TransferButton>
+                <TransferButton
+                  icon={faMinus}
+                  title={lang.Sell}
+                  onPress={() => {
+                    setBuySellFlag("sell");
+                    modal1.onToggle();
+                  }}
+                ></TransferButton>
+              </HStack>
+              <HStack>
+                <TransferButton
+                  icon={faPlus}
+                  title={lang.Sell}
+                  bgColor="red.500"
+                  onPress={() => {
+                    setBuySellFlag("cancelbuy");
+                    modal1.onToggle();
+                  }}
+                ></TransferButton>
+                <TransferButton
+                  icon={faMinus}
+                  title={lang.Sell}
+                  bgColor="red.500"
+                  onPress={() => {
+                    setBuySellFlag("cancelsell");
+                    modal1.onToggle();
+                  }}
+                ></TransferButton>
+              </HStack>
             </VStack>
           </HStack>
 
           <HStack w="full">
             <Text textAlign="center" fontSize="md">
               {lang.HighestBidPrice.replace("{currentToken}", currentToken)
-                .replace("{price}", tokenprices?.[currentToken]?.[0] || "0")
-                .replace("{price}", tokenprices?.[currentToken]?.[1] || "0")}
+                .replace(
+                  "{high_price}",
+                  tokenprices?.[currentToken]?.[0] || "0"
+                )
+                .replace(
+                  "{low_price}",
+                  tokenprices?.[currentToken]?.[1] || "0"
+                )}
             </Text>
           </HStack>
         </VStack>
         <VStack flex={1}>
-          <Orderlist />
+          <Orderlist orderData={orderData} />
         </VStack>
       </VStack>
-      <ConfirmModal
-        icon={faCheck}
+      <Core
         isOpen={modal1.isOpen}
         onToggle={modal1.onToggle}
-        onPress={() => {
-          handleBuySell(buySellFlag, amount, price, currentToken);
-        }}
-      >
-        <VStack fontSize={"xl"} textAlign={"center"} px={2}>
-          <Text>
-            {lang.ConfirmBuy.replace("{amount}", amount)
-              .replace("{currentToken}", currentToken)
-              .replace("{price}", price)}
-          </Text>
-        </VStack>
-      </ConfirmModal>
-      <ConfirmModal
-        icon={txStatus == "Success" ? faCheck : faShare}
-        isOpen={modal2.isOpen}
-        onToggle={modal2.onToggle}
-        onPress={() => {
-          modal1.onToggle();
-          modal2.onToggle();
-        }}
-      >
-        <VStack fontSize={"xl"} textAlign={"center"} px={2}>
-          <FormLabel label={lang.Status} value={txStatus}></FormLabel>
-          <FormLabel label={lang.TransactionID} value={txId}></FormLabel>
-          <FormLabel label={lang.CurrentTick} value={tick}></FormLabel>
-          <FormLabel
-            label={lang.CurrentTick}
-            value={`${expectedTick}`}
-          ></FormLabel>
-        </VStack>
-      </ConfirmModal>
+        amount={amount}
+        price={price}
+        buySellFlag={buySellFlag}
+        token={currentToken}
+        orderData={orderData}
+      />
     </>
   );
 };

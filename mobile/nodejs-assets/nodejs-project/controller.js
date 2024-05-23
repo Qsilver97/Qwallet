@@ -35,7 +35,7 @@ exports.login = async ({ password }) => {
   try {
     let liveSocket = socketManager.initLiveSocket();
     liveSocketController(liveSocket);
-    await delay(1000);
+    await delay(2000);
     let realPassword;
     stateManager.init();
     const resultFor24words = await wasmManager.ccall({
@@ -231,7 +231,7 @@ exports.deleteAccount = async (password, index, address) => {
     flag: "delete",
   });
   if (deleteResult.value.result != 0) {
-    // bridge_send("S2C/histories", deleteResult);
+    // bridge_send("S2C/delete-address", deleteResult);
     return;
   }
   const result = await wasmManager.ccall({
@@ -266,7 +266,7 @@ exports.deleteAccount = async (password, index, address) => {
       accountInfo: result.value.display,
       isAuthenticated: true,
     });
-    bridge_send("S2C/delete-account", userState);
+    bridge_send("S2C/delete-address", userState);
   } else {
     bridge_send("S2C/error", "Socket Not Synced!");
   }

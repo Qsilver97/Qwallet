@@ -38,7 +38,7 @@ const Splash: React.FC = () => {
   };
 
   return (
-    <>
+    <VStack bgColor={bgColor} flex={1}>
       <Swiper
         ref={swiperRef}
         loop={false}
@@ -80,7 +80,7 @@ const Splash: React.FC = () => {
           type="primary"
         ></PageButton>
       </ButtonBox>
-    </>
+    </VStack>
   );
 };
 

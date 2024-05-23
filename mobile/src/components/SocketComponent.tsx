@@ -55,8 +55,15 @@ export const SocketCom: React.FC = () => {
       } else if (res.data.price) {
         // This maybe changed by server
         dispatch(setMarketcap(res.data));
-      } else if (res.data.tokenprices) {
-        dispatch(setTokenprices(res.data.tokenprices));
+      }
+      if (res.data) {
+        const allEntriesAreArraysOfLengthTwo = Object.values(res.data).every(
+          (entry) => Array.isArray(entry) && entry.length === 2
+        );
+
+        if (allEntriesAreArraysOfLengthTwo) {
+          dispatch(setTokenprices(res.data));
+        }
       }
     });
   }, []);
