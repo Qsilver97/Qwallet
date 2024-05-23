@@ -8,13 +8,7 @@ import { setPassword, setSeedType } from "@app/redux/appSlice";
 import { RootState } from "@app/redux/store";
 import local from "@app/utils/locales";
 import { useNavigation } from "@react-navigation/native";
-import {
-  KeyboardAvoidingView,
-  Link,
-  Text,
-  TextArea,
-  VStack,
-} from "native-base";
+import { KeyboardAvoidingView, Text, TextArea, VStack } from "native-base";
 import React, { useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -101,10 +95,10 @@ const Restore: React.FC = () => {
       color={textColor}
       behavior={Platform.OS === "ios" ? "height" : "height"}
     >
+      <Text fontSize="4xl" p="5" textAlign="center">
+        {lang.BackupfromSeed}
+      </Text>
       <VStack flex={1} px="10">
-        <Text fontSize="4xl" p="5">
-          {lang.BackupfromSeed}
-        </Text>
         <TextArea
           autoCompleteType=""
           w={"full"}

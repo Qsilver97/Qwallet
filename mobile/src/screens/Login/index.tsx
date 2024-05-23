@@ -58,7 +58,7 @@ const Login: React.FC = () => {
 
   const handleLogin = () => {
     if (password === "") {
-      Toast.show({ type: "error", text1: "E-11: " + "Input password!" });
+      Toast.show({ type: "error", text1: "E-11: " + lang.toast_InputPwd });
       return;
     }
 
@@ -69,7 +69,7 @@ const Login: React.FC = () => {
     //   setPasswordStatus(true);
     //   Toast.show({
     //     type: "error",
-    //     text1: "E-12: Login failed. Please try again.",
+    //     text1: "E-12: " + lang.toast_LoginFailed,
     //   });
     // }, 5000);
   };

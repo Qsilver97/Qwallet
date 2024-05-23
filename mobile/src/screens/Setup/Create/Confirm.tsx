@@ -6,7 +6,16 @@ import { RootState } from "@app/redux/store";
 import local from "@app/utils/locales";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { Box, Button, HStack, Icon, Text, TextArea, VStack } from "native-base";
+import {
+  Box,
+  Button,
+  HStack,
+  Icon,
+  ScrollView,
+  Text,
+  TextArea,
+  VStack,
+} from "native-base";
 import React, { useMemo, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -72,7 +81,8 @@ const Confirm: React.FC = () => {
                 bg="gray.900"
                 rounded="md"
                 textAlign="center"
-                p={2}
+                px="1"
+                py="2"
                 bgColor={panelBgColor}
               >
                 {index + i + 1}.{seeds[index + i]}
@@ -103,17 +113,16 @@ const Confirm: React.FC = () => {
       flex={1}
       justifyItems="center"
       justifyContent="end"
-      space={5}
       bgColor={bgColor}
       color={textColor}
     >
       {seedType == "24words" && step == 1 && (
-        <VStack flex={1}>
-          <VStack space={5} pt={10}>
-            <Text fontSize="2xl" color={textColor} textAlign="center" px={10}>
+        <ScrollView flex={1}>
+          <VStack space="3" pt={10}>
+            <Text fontSize="3xl" color={textColor} textAlign="center" px={5}>
               {lang.WriteDownSeedPhrase}
             </Text>
-            <Text textAlign="center" px={16}>
+            <Text textAlign="center" px={12}>
               {lang.Caption1}
             </Text>
           </VStack>
@@ -130,8 +139,8 @@ const Confirm: React.FC = () => {
                 <VStack
                   position={"absolute"}
                   top={0}
-                  left={0}
-                  right={0}
+                  left={-10}
+                  right={-10}
                   bottom={0}
                   flex={1}
                   justifyContent={"center"}
@@ -153,7 +162,7 @@ const Confirm: React.FC = () => {
               )}
             </VStack>
           </Box>
-        </VStack>
+        </ScrollView>
       )}
       {seedType == "24words" && step == 2 && (
         <VStack flex={1}>
@@ -179,9 +188,9 @@ const Confirm: React.FC = () => {
               </Text>
             </VStack>
             <HStack
-              space={4}
+              space={2}
               flexWrap={"wrap"}
-              p={4}
+              p={2}
               justifyContent={"center"}
               borderColor={gray.gray80}
               borderWidth={2}

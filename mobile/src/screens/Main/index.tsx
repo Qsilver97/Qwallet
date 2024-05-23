@@ -1,24 +1,24 @@
-import React, { useCallback, useEffect } from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Settings from "./Settings";
-import Orderbook from "./Orderbook";
-import Wallet from "./Wallet";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useColors } from "@app/context/ColorContex";
+import local from "@app/utils/locales";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import {
   faBookOpen,
   faClockRotateLeft,
   faGear,
-  faRightLeft,
   faWallet,
 } from "@fortawesome/free-solid-svg-icons";
-import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { useColors } from "@app/context/ColorContex";
-import Header from "./components/Header";
-import Transaction from "./Transaction";
-import { basicInfo } from "@app/api/api";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import local from "@app/utils/locales";
+import {
+  BottomTabNavigationOptions,
+  createBottomTabNavigator,
+} from "@react-navigation/bottom-tabs";
+import React, { useCallback, useEffect } from "react";
+import Orderbook from "./Orderbook";
+import Settings from "./Settings";
+import Transaction from "./Transaction";
+import Wallet from "./Wallet";
+import Header from "./components/Header";
 
 const Tab = createBottomTabNavigator();
 
@@ -38,6 +38,7 @@ const Main = () => {
       tabBarActiveTintColor: panelBgColor,
       tabBarInactiveBackgroundColor: bgColor,
       tabBarLabelStyle: { color: textColor },
+      tabBarShowLabel: false,
     }),
     [bgColor, gray, panelBgColor]
   );

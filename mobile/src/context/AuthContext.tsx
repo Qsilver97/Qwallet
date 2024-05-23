@@ -7,6 +7,7 @@ import {
   setTokenprices,
   setTokens,
 } from "@app/redux/appSlice";
+import local from "@app/utils/locales";
 import {
   ReactNode,
   createContext,
@@ -78,7 +79,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [histories, setHistories] = useState<TransactionItem[]>([]);
   const [txStatus, setTxStatus] = useState<
     "Open" | "Closed" | "Rejected" | "Pending" | "Success"
-  >("Pending");
+  >("Closed");
   const [txId, setTxId] = useState<string>("");
   const [expectedTick, setExpectedTick] = useState<number>(0);
   const [txResult, setTxResult] = useState<string>("");
@@ -87,6 +88,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }>({});
   const [statusInterval, setStatusInterval] = useState<any>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const lang = local.Toast;
 
   const login = (userDetails: UserDetailType | null) => {
     setUser(userDetails);
@@ -108,6 +111,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       getToken();
     }
   }, [currentAddress]);
+
+  useEffect(() => {
+    if (currentAddress != "") {
+      getHistory(currentAddress);
+    }
+  }, [balances]);
 
   useEffect(() => {
     if (user?.accountInfo) {
@@ -134,7 +143,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         Toast.show({
           type: "error",
-          text1: "E-21: " + "Error ocurred in getting tokens!",
+          text1: "E-21: " + lang.ErrorGettingToken,
         });
       }
     };
@@ -147,7 +156,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         Toast.show({
           type: "error",
-          text1: "E-22: " + "Error occured in transfer!",
+          text1: "E-22: " + lang.ErrorTransfer,
         });
         setTxStatus("Rejected");
       }
@@ -157,7 +166,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (res.data) {
         if (res.data == "failed") {
           setTxStatus("Rejected");
-          Toast.show({ type: "error", text1: "E-23: " + "Transfer Failed!" });
+          Toast.show({ type: "error", text1: "E-23: " + lang.TransferFailed });
         } else if (res.data.value.result == 0) {
           setTxStatus("Pending");
         } else if (res.data.value.result == 1) {
@@ -166,7 +175,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setTxStatus("Rejected");
         }
       } else {
-        Toast.show({ type: "error", text1: "E-24: Transfer Failed!" });
+        Toast.show({ type: "error", text1: "E-24: " + lang.TransferFailed });
         setTxStatus("Rejected");
         clearInterval(statusInterval);
       }
@@ -214,7 +223,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setTxStatus("Success");
       Toast.show({
         type: "success",
-        text1: "Transaction Completed Successfully!",
+        text1: lang.TransactionCompleted,
       });
       clearInterval(statusInterval);
     }

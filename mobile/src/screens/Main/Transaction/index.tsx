@@ -29,18 +29,20 @@ const Transaction: React.FC = () => {
     return (
       <>
         {histories.length ? (
-          histories?.map((tx, key) => (
-            <Pressable
-              key={key}
-              onPress={() => {
-                setCurrentTx(tx);
-                onToggle();
-              }}
-              _pressed={{ opacity: 0.7 }}
-            >
-              <TransactionItem transaction={tx} />
-            </Pressable>
-          ))
+          <VStack flex={1}>
+            {histories?.map((tx, key) => (
+              <Pressable
+                key={key}
+                onPress={() => {
+                  setCurrentTx(tx);
+                  onToggle();
+                }}
+                _pressed={{ opacity: 0.7 }}
+              >
+                <TransactionItem transaction={tx} />
+              </Pressable>
+            ))}
+          </VStack>
         ) : (
           <VStack flex={1} alignItems="center" justifyContent="center">
             <Center>
@@ -78,7 +80,6 @@ const Transaction: React.FC = () => {
               flex={1}
               contentContainerStyle={{
                 flexGrow: 1,
-                justifyContent: "center",
               }}
             >
               {Item}

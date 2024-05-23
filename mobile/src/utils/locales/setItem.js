@@ -80,15 +80,15 @@ function deleteKeyPath(keyPath, filePath = "languages.json") {
 }
 
 // Example
-const keyPath = "Main.Orderbook.ConfirmSell";
+const keyPath = "Toast.TransactionCompleted";
 const newTranslations = {
-  en: "Do you really want to sell {amount} {currentToken} as {price} QU?",
-  zh: "你真的想以 {price} QU 卖 {amount} 个 {currentToken} 吗？",
-  es: "¿Realmente quieres vender {amount} {currentToken} por {price} QU?",
-  fr: "Voulez-vous vraiment vendre {amount} {currentToken} pour {price} QU ?",
-  de: "Möchten Sie wirklich {amount} {currentToken} für {price} QU verkaufen?",
-  ja: "{amount} {currentToken} を {price} QU で売りますか？",
-  ru: "Вы действительно хотите продать {amount} {currentToken} за {price} QU?",
+  en: "Transaction Completed Successfully!",
+  zh: "交易成功完成！",
+  es: "¡Transacción completada con éxito!",
+  fr: "Transaction terminée avec succès !",
+  de: "Transaktion erfolgreich abgeschlossen!",
+  ja: "取引が正常に完了しました！",
+  ru: "Транзакция успешно завершена!",
 };
 
 addTranslation(keyPath, newTranslations);

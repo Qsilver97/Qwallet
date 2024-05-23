@@ -103,14 +103,16 @@ const Core: React.FC<IProps> = ({
           if (order[3] !== price || parseInt(order[2]) < parseInt(amount)) {
             showError(
               "E-34: " +
-                (order[3] !== price ? "Not Exist Order!" : "Wrong amount!")
+                (order[3] !== price
+                  ? lang.toast_NotExistOrder
+                  : lang.toast_NoOrder)
             );
             return false;
           }
         }
       }
       if (!isValidAddress) {
-        showError("E-35: " + "Current address has not any order!");
+        showError("E-35: " + lang.toast_NoOrder);
         return false;
       }
       return true;
