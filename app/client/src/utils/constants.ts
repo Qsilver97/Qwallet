@@ -1,6 +1,8 @@
 import { SettingsItems } from "../enums/SettingsItems";
 import { AssetItemProps, ModeProps, SidebarItemProps, SummaryItemProps } from "./interfaces";
 
+const EXPECTEDTICKGAP = 5;
+
 const autoLockTimes = [{
     label: '1 minute',
     value: '1m'
@@ -193,4 +195,4 @@ const currencies = [{ label: "US Dollar", value: "USDT" }]
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:3000";
 
-export { sideBarItems, summaryItems, assetsItems, summaryAccountItems, marketOptions, SERVER_URL, MODES, settingsSidebarItems, currencies, autoLockTimes };
+export { sideBarItems, summaryItems, assetsItems, summaryAccountItems, marketOptions, SERVER_URL, MODES, settingsSidebarItems, currencies, autoLockTimes, EXPECTEDTICKGAP };
