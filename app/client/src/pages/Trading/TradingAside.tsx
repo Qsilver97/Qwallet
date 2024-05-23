@@ -7,6 +7,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 import TxModal from "../../components/dashboard/modal/TxModal";
 import { TokenOption } from "../../components/commons/Select";
+import { isNaturalNumber, isPositiveNumber } from "../../utils/helper";
 
 const TradingAside = ({ options }: { options: TokenOption[] }) => {
     const { handleBuyCell, txStatus, setTxStatus } = useAuth();
@@ -32,7 +33,7 @@ const TradingAside = ({ options }: { options: TokenOption[] }) => {
     }
 
     const handleAction = (command: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell') => {
-        if (!quantity || !price) {
+        if (!quantity || !price || !isPositiveNumber(quantity) || !isNaturalNumber(price)) {
             toast.error('Input valid quantity or price.');
             return;
         }
