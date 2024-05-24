@@ -182,7 +182,7 @@ const marketOptions = [
 
 const MODES: ModeProps[] = [
     {
-        wsUrl: 'wss://qsilver.org:5555',
+        wsUrl: 'wss://websocket.qsilver.org',
         type: 'mainnet',
     },
     {
