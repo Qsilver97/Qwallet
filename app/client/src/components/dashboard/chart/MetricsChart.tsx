@@ -21,9 +21,9 @@ const MetricsChart: React.FC = () => {
     function getYAxisValues(arr: number[], count: number): number[] {
         // Find the minimum and maximum values in the array
         let min = Math.min(...arr);
-        min = min - min * 2;
+        min = min;
         let max = Math.max(...arr);
-        max = max + max * 2;
+        max = max;
 
         // Calculate the interval between each Y-axis value
         const interval = (max - min) / (count - 1); // 9 intervals create 10 Y-axis values
@@ -87,7 +87,7 @@ const MetricsChart: React.FC = () => {
                 </div> :
                 <LineChart
                     xAxis={[{ data: xAxisData, hideTooltip: false, valueFormatter: (value) => formatTimestampToTime(value) }]}
-                    yAxis={[{ data: yAxisData, min: Math.min(...yAxisData) - Math.min(...yAxisData) * 0.2, max: Math.max(...yAxisData) + Math.max(...yAxisData) * 0.2 }]}
+                    yAxis={[{ data: yAxisData, min: Math.min(...yAxisData) - Math.min(...yAxisData) * 0.1, max: Math.max(...yAxisData) + Math.max(...yAxisData) * 0.1 }]}
                     series={[
                         {
                             data,
