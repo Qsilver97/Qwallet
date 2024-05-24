@@ -227,7 +227,8 @@
       "ErrorGettingToken": "Error occurred in getting tokens!",
       "ErrorTransfer": "Error occurred in transfer!",
       "TransferFailed": "Transfer Failed!",
-      "TransactionCompleted": "Transaction Completed Successfully!"
+      "TransactionCompleted": "Transaction Completed Successfully!",
+      "ReceivedQUFrom": "You received {amount} QU from {address}"
     }
   },
   "zh": {
@@ -458,7 +459,8 @@
       "ErrorGettingToken": "获取令牌时发生错误！",
       "ErrorTransfer": "转账时发生错误！",
       "TransferFailed": "转账失败！",
-      "TransactionCompleted": "交易成功完成！"
+      "TransactionCompleted": "交易成功完成！",
+      "ReceivedQUFrom": "你收到来自 {address} 的 {amount} QU"
     }
   },
   "es": {
@@ -689,7 +691,8 @@
       "ErrorGettingToken": "¡Error al obtener los tokens!",
       "ErrorTransfer": "¡Error al transferir!",
       "TransferFailed": "¡Transferencia fallida!",
-      "TransactionCompleted": "¡Transacción completada con éxito!"
+      "TransactionCompleted": "¡Transacción completada con éxito!",
+      "ReceivedQUFrom": "Has recibido {amount} QU de {address}"
     }
   },
   "fr": {
@@ -920,7 +923,8 @@
       "ErrorGettingToken": "Erreur lors de l'obtention des jetons !",
       "ErrorTransfer": "Erreur lors du transfert !",
       "TransferFailed": "Échec du transfert !",
-      "TransactionCompleted": "Transaction terminée avec succès !"
+      "TransactionCompleted": "Transaction terminée avec succès !",
+      "ReceivedQUFrom": "Vous avez reçu {amount} QU de {address}"
     }
   },
   "de": {
@@ -1151,7 +1155,8 @@
       "ErrorGettingToken": "Fehler beim Abrufen der Token!",
       "ErrorTransfer": "Fehler beim Übertragen!",
       "TransferFailed": "Übertragung fehlgeschlagen!",
-      "TransactionCompleted": "Transaktion erfolgreich abgeschlossen!"
+      "TransactionCompleted": "Transaktion erfolgreich abgeschlossen!",
+      "ReceivedQUFrom": "Sie haben {amount} QU von {address} erhalten"
     }
   },
   "ru": {
@@ -1382,7 +1387,8 @@
       "ErrorGettingToken": "Произошла ошибка при получении токенов!",
       "ErrorTransfer": "Произошла ошибка при переводе!",
       "TransferFailed": "Перевод не удался!",
-      "TransactionCompleted": "Транзакция успешно завершена!"
+      "TransactionCompleted": "Транзакция успешно завершена!",
+      "ReceivedQUFrom": "Вы получили {amount} QU от {address}"
     }
   },
   "ja": {
@@ -1613,7 +1619,8 @@
       "ErrorGettingToken": "トークンの取得中にエラーが発生しました！",
       "ErrorTransfer": "転送中にエラーが発生しました！",
       "TransferFailed": "転送に失敗しました！",
-      "TransactionCompleted": "取引が正常に完了しました！"
+      "TransactionCompleted": "取引が正常に完了しました！",
+      "ReceivedQUFrom": "{address} から {amount} QU を受け取りました"
     }
   }
 }

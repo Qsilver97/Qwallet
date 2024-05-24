@@ -63,6 +63,7 @@ interface AuthContextType {
     }>
   >;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setPrevBalances: React.Dispatch<React.SetStateAction<Balances>>;
 }
 
 type TransactionItem = [string, string, string, string, string, string];
@@ -82,12 +83,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   >("Closed");
   const [txId, setTxId] = useState<string>("");
   const [expectedTick, setExpectedTick] = useState<number>(0);
-  const [txResult, setTxResult] = useState<string>("");
+  const [txResult, setTxResult] = useState<string>("Unknown");
   const [tokenBalances, setTokenBalances] = useState<{
     [name: string]: Balances;
   }>({});
   const [statusInterval, setStatusInterval] = useState<any>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [outTx, setOutTx] = useState(false);
+  const [prevBalances, setPrevBalances] = useState<Balances>({});
+  const [historyNum, setHistoryNum] = useState(histories.length);
+  const [expectingHistoryUpdate, setExpectingHistoryUpdate] = useState(false);
 
   const lang = local.Toast;
 
@@ -124,10 +130,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [currentAddress]);
 
+  // If someone send qu to me
   useEffect(() => {
-    if (currentAddress != "") {
-      getHistory(currentAddress);
-    }
+    if (currentAddress == "") return;
+    if (Object.is(prevBalances, {})) return;
+    if (!balances[currentAddress] || !prevBalances[currentAddress]) return;
+    if (balances[currentAddress] > prevBalances[currentAddress]) setOutTx(true);
+    else setOutTx(false);
+    setHistoryNum(histories.length + 1);
+    getHistory(currentAddress);
+    setExpectingHistoryUpdate(true);
   }, [balances[currentAddress]]);
 
   useEffect(() => {
@@ -136,6 +148,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setAllAddresses(user?.accountInfo.addresses);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (expectingHistoryUpdate && currentAddress !== "") {
+      const interval = setInterval(() => {
+        if (histories.length !== historyNum) {
+          getHistory(currentAddress);
+        } else {
+          const newHistory = histories.reverse()[0];
+          if (outTx)
+            Toast.show({
+              type: "info",
+              text1: lang.ReceivedQUFrom.replace(
+                "{amount}",
+                `${Math.abs(parseInt(newHistory[3]))}`
+              ).replace("{address}", newHistory[2]),
+            });
+          setExpectingHistoryUpdate(false); // Clear the flag when history is up-to-date
+          clearInterval(interval); // Clear the interval when done
+        }
+      }, 1500);
+
+      return () => clearInterval(interval);
+    }
+  }, [histories.length, historyNum, currentAddress, expectingHistoryUpdate]);
 
   useEffect(() => {
     const handleHistoryEvent = (res: any) => {
@@ -178,9 +214,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (res.data) {
         if (res.data == "failed") {
           setTxStatus("Rejected");
+          setTxResult("Failed");
           Toast.show({ type: "error", text1: "E-23: " + lang.TransferFailed });
         } else if (res.data.value.result == 0) {
           setTxStatus("Pending");
+          setTxResult("Pending");
         } else if (res.data.value.result == 1) {
           setTxResult(res.data.value.display);
         } else {
@@ -189,6 +227,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         Toast.show({ type: "error", text1: "E-24: " + lang.TransferFailed });
         setTxStatus("Rejected");
+        setTxResult("Pending");
         clearInterval(statusInterval);
       }
     };
@@ -241,12 +280,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [txResult]);
 
-  // useEffect(() => {
-  //   setTokenBalances((prev) => {
-  //     return { ...prev, QU: balances };
-  //   });
-  // }, [balances]);
-
   return (
     <AuthContext.Provider
       value={{
@@ -271,6 +304,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setExpectedTick,
         setTokenBalances,
         setIsLoading,
+        setPrevBalances,
       }}
     >
       {children}
