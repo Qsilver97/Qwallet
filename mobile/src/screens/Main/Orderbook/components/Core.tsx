@@ -97,19 +97,18 @@ const Core: React.FC<IProps> = ({
 
     const validateOrder = (orderList: IOrderUnit[], flag: string) => {
       let isValidAddress = false;
+      let isValidPriceOrAmount = false;
       for (const order of orderList) {
         if (order[1] === currentAddress) {
           isValidAddress = true;
-          if (order[3] !== price || parseInt(order[2]) < parseInt(amount)) {
-            showError(
-              "E-34: " +
-                (order[3] !== price
-                  ? lang.toast_NotExistOrder
-                  : lang.toast_NoOrder)
-            );
-            return false;
+          if (order[3] == price && parseInt(order[2]) >= parseInt(amount)) {
+            isValidPriceOrAmount = true;
           }
         }
+      }
+      if (!isValidPriceOrAmount) {
+        showError("E-34: " + lang.toast_NotExistOrder);
+        return false;
       }
       if (!isValidAddress) {
         showError("E-35: " + lang.toast_NoOrder);
