@@ -16,11 +16,14 @@ const MetricsChart: React.FC = () => {
     const [xAxisData, setXAxisData] = useState<string[]>([]);
     const [data, setData] = useState<number[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [decimals, setDecimals] = useState<number>(0);
 
     function getYAxisValues(arr: number[], count: number): number[] {
         // Find the minimum and maximum values in the array
-        const min = Math.min(...arr);
-        const max = Math.max(...arr);
+        let min = Math.min(...arr);
+        min = min - min * 2;
+        let max = Math.max(...arr);
+        max = max + max * 2;
 
         // Calculate the interval between each Y-axis value
         const interval = (max - min) / (count - 1); // 9 intervals create 10 Y-axis values
@@ -34,6 +37,16 @@ const MetricsChart: React.FC = () => {
         return yAxisValues;
     }
 
+    function formatTimestampToTime(timestamp: number): string {
+        const date = new Date(timestamp * 1000); // Convert to milliseconds
+
+        const hours = date.getUTCHours().toString().padStart(2, '0');
+        const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+        const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+
+        return `${hours}:${minutes}:${seconds}`;
+    }
+
     useEffect(() => {
         async function init() {
             setLoading(true);
@@ -42,8 +55,11 @@ const MetricsChart: React.FC = () => {
                 const prices = (resp.data.prices as [number, string][]).slice(-showLength);
                 const xAxisValues: string[] = prices.map(price => `${price[0]}`)
                 setXAxisData(xAxisValues);
-                setData(prices.map(price => parseFloat(price[1])));
-                const yAxisValues: number[] = getYAxisValues(prices.map(price => parseFloat(price[1]) * 1000000), showLength);
+                let decimals = 0;
+                if (currentToken.value == 'QU') decimals = 6;
+                setDecimals(decimals);
+                setData(prices.map(price => parseFloat(price[1]) * 10 ** decimals));
+                const yAxisValues: number[] = getYAxisValues(prices.map(price => parseFloat(price[1]) * 10 ** decimals), showLength);
                 setYAxisData(yAxisValues);
                 console.log(xAxisValues, yAxisValues,)
             } catch (error) {
@@ -58,7 +74,9 @@ const MetricsChart: React.FC = () => {
     return (
         <div className="relative">
             <Text size="xs" className="absolute top-3 left-4">
-                Price
+                {
+                    currentToken.value == 'QU' ? `USD -${decimals}` : 'QU'
+                }
             </Text>
             {loading ?
                 <div className={`flex items-center justify-center min-h-screen`}>
@@ -68,7 +86,7 @@ const MetricsChart: React.FC = () => {
                     </div>
                 </div> :
                 <LineChart
-                    xAxis={[{ data: xAxisData, hideTooltip: false }]}
+                    xAxis={[{ data: xAxisData, hideTooltip: false, valueFormatter: (value) => formatTimestampToTime(value) }]}
                     yAxis={[{ data: yAxisData }]}
                     series={[
                         {
