@@ -87,7 +87,7 @@ const MetricsChart: React.FC = () => {
                 </div> :
                 <LineChart
                     xAxis={[{ data: xAxisData, hideTooltip: false, valueFormatter: (value) => formatTimestampToTime(value) }]}
-                    yAxis={[{ data: yAxisData }]}
+                    yAxis={[{ data: yAxisData, min: Math.min(...yAxisData) - Math.min(...yAxisData) * 0.2, max: Math.max(...yAxisData) + Math.max(...yAxisData) * 0.2 }]}
                     series={[
                         {
                             data,
