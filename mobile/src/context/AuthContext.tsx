@@ -101,10 +101,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     dispatch(setIsAuthenticated(false));
     dispatch(setPassword(""));
+    setTempPassword("");
     setUser(null);
+    setBalances({});
+    setCurrentAddress("");
+    setAllAddresses([]);
+    setHistories([]);
+    setTxStatus("Closed");
+    setTxId("");
+    setExpectedTick(0);
+    setTxResult("");
+    setTokenBalances({});
+    setIsLoading(false);
   };
 
   useEffect(() => {
+    setTokens([]);
     if (currentAddress != "") {
       setIsLoading(true);
       getHistory(currentAddress);
@@ -116,7 +128,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (currentAddress != "") {
       getHistory(currentAddress);
     }
-  }, [balances]);
+  }, [balances[currentAddress]]);
 
   useEffect(() => {
     if (user?.accountInfo) {

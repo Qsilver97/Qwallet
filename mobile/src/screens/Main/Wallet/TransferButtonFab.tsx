@@ -36,6 +36,8 @@ const TransferButtonFab: React.FC<IProps> = ({ onToggle }) => {
             right: -1,
             zIndex: 100,
           }}
+          borderColor="white"
+          borderWidth="1"
         ></Box>
       )}
     </View>

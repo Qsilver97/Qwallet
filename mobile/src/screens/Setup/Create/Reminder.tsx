@@ -34,7 +34,7 @@ const Reminder: React.FC<IProps> = () => {
       justifyItems="center"
     >
       {step == 1 && (
-        <VStack space={10} flex={1} justifyItems="center">
+        <VStack space={10} flex={1} alignItems="center" justifyContent="center">
           <Image
             source={require("@assets/images/02/01.png")}
             style={{ width: 214, height: 220 }}
