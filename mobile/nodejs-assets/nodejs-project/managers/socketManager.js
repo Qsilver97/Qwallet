@@ -1,5 +1,5 @@
 let liveSocketClient = null;
-const liveSocketURL = 'wss://qsilver.org:5555';
+const liveSocketURL = 'wss://websocket.qsilver.org';
 const WebSocket = require('ws');
 
 module.exports = {
