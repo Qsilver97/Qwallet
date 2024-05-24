@@ -196,7 +196,6 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
             label={lang.ExpectedTick}
             value={expectedTick.toString()}
           />
-          <FormLabel label={lang.Status} value={txStatus} />
         </VStack>
       </ConfirmModal>
     </>

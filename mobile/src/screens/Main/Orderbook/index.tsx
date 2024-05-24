@@ -14,6 +14,7 @@ import Orderlist from "./components/Orderlist";
 import { useAuth } from "@app/context/AuthContext";
 import { myOrders } from "@app/api/api";
 import eventEmitter from "@app/api/eventEmitter";
+import { useIsFocused } from "@react-navigation/native";
 
 type IOrderUnit = [number, string, string, string]; // index, address, amount, price
 interface IOrderData {
@@ -35,11 +36,13 @@ const Orderbook: React.FC = () => {
   const [orderData, setOrderData] = useState<IOrderData>({});
   const modal1 = useDisclose();
   const lang = local.Main.Orderbook;
-  const { currentAddress, allAddresses, txResult, isLoading, setIsLoading } =
-    useAuth();
+  const { currentAddress, txResult, txStatus } = useAuth();
 
   useEffect(() => {
     myOrders();
+  }, [currentAddress, txResult, useIsFocused()]);
+
+  useEffect(() => {
     const handleMyOrdersEvent = (res: any) => {
       setOrderData(res.data);
     };
@@ -47,7 +50,7 @@ const Orderbook: React.FC = () => {
     return () => {
       eventEmitter.off("S2C/my-orders", handleMyOrdersEvent);
     };
-  }, [currentAddress, txResult]);
+  }, []);
 
   return (
     <>

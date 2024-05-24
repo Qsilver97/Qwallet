@@ -30,7 +30,7 @@ const Transaction: React.FC = () => {
       <>
         {histories.length ? (
           <VStack flex={1}>
-            {histories?.map((tx, key) => (
+            {histories?.reverse().map((tx, key) => (
               <Pressable
                 key={key}
                 onPress={() => {
