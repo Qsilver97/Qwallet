@@ -1,28 +1,12 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { SERVER_URL } from "../../utils/constants";
-import { useAuth } from "../../contexts/AuthContext";
+import { HistoryEntry } from "./Activity";
 
-const ActivityTable = () => {
-    const { currentAddress } = useAuth();
-    const [loading, setLoading] = useState<boolean>(true);
-    const [history, setHistory] = useState<[string, string, string, string, string, number][]>([]);
-    useEffect(() => {
-        async function init() {
-            try {
-                setLoading(true);
-                const resp = await axios.post(`${SERVER_URL}/api/history`, { address: currentAddress });
-                console.log(resp.data);
-                setHistory(resp.data.history);
-            } catch (error) {
+interface ActivityTableProps {
+    history: HistoryEntry[];
+    loading: boolean;
+}
 
-            } finally {
-                setLoading(false);
-            }
-        }
-        init();
-    }, [currentAddress]);
 
+const ActivityTable = ({history, loading}: ActivityTableProps) => {
     return (
         <div className="flex flex-col gap-8">
             <div className="flex flex-col">
