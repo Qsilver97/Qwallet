@@ -8,7 +8,7 @@ import React, {
     SetStateAction,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { MODES, SERVER_URL, assetsItems, sideBarItems } from "../utils/constants";
+import { EXPECTEDTICKGAP, MODES, SERVER_URL, assetsItems, sideBarItems } from "../utils/constants";
 import { io, Socket } from "socket.io-client";
 import axios from "axios";
 import {
@@ -21,7 +21,6 @@ import {
 import { toast } from "react-toastify";
 import { Loading } from "../components/commons";
 import { TokenOption } from "../components/commons/Select";
-import { mockOrders } from "../utils/mock";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -284,18 +283,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
     const fetchTradingInfoPage = async (): Promise<any> => {
         setTradingPageLoading(true);
-        // let orders;
-        // try {
-        //     const resp = await axios.post(`${SERVER_URL}/api/trading-page-info`, {
-        //         token: currentToken.value
-        //     });
-        //     orders = resp.data;
-        // } catch (error) {
-        //     orders = [];
-        // }
-        setOrders(mockOrders)
+        let orders;
+        try {
+            const resp = await axios.post(`${SERVER_URL}/api/trading-page-info`, {
+                token: currentToken.value
+            });
+            orders = resp.data;
+        } catch (error) {
+            orders = [];
+        }
+        setOrders(orders)
         setTradingPageLoading(false);
-        return mockOrders;
+        return orders;
     }
 
     const handleBuyCell = async (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell', amount: string, price: string): Promise<any> => {
@@ -303,7 +302,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             flag,
             password,
             index: accountInfo?.addresses.indexOf(currentAddress),
-            tick: parseInt(tick) + 10,
+            tick: parseInt(tick) + EXPECTEDTICKGAP,
             currentToken: currentToken.value,
             amount,
             price,
