@@ -27,6 +27,10 @@ const TokenModal: React.FC<TokenModalProps> = ({ onClose, token }) => {
     });
 
     const handleConfirm = () => {
+        if (toAddress == '' || toAddress == currentAddress || amount == '' || parseFloat(amount) > tokenBalances[selectedToken.name][currentAddress]) {
+            toast.error('Invaild address or amount');
+            return
+        }
         setSendingStatus('confirm');
     }
 
@@ -38,11 +42,6 @@ const TokenModal: React.FC<TokenModalProps> = ({ onClose, token }) => {
     const transfer = async () => {
         setSendingStatus('open');
 
-        if (toAddress == '' || toAddress == currentAddress || amount == '' || parseFloat(amount) > tokenBalances[selectedToken.name][currentAddress]) {
-            toast.error('Invaild address or amount');
-            return
-        }
-        console.log('a');
         setSendingStatus('pending');
         axios
             .post(`${SERVER_URL}/api/transfer`, {
