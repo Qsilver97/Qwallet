@@ -69,7 +69,7 @@ const Trading = () => {
                                     showSelectDescription
                                     hideTokenValue
                                 />
-                                <span className="text-2xl p-2 px-4 bg-slate-500 rounded-lg">{tokenBalances[`${currentToken.value}`] ? tokenBalances[`${currentToken.value}`][currentAddress] : 0}</span>
+                                <span className="text-2xl p-2 px-4 bg-slate-500 rounded-lg">{tokenBalances[`${currentToken.value}`] ? (tokenBalances[`${currentToken.value}`][currentAddress] || 0) : 0}</span>
                             </div>
                         }
                         <div className="flex my-4">
