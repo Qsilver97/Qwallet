@@ -31,7 +31,7 @@ const TokenFormsModal = ({
                 <>
                     <div className="space-y-4">
                         <Input
-                            label="Send Adress"
+                            label="Send Address"
                             placeholder="Send to address"
                             inputId="address"
                             inputStyle="modal"

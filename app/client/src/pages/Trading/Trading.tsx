@@ -2,9 +2,6 @@ import {
     Title,
     Section,
     Loading,
-    // Text,
-    // Select,
-    // SwitchOptions,
 } from "../../components/commons";
 import { assetsItems } from "../../utils/constants";
 import Layout from "../../components/layout";
