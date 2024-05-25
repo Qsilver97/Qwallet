@@ -27,8 +27,8 @@ exports.createAccount = async (req, res) => {
 
 exports.login = async (req, res) => {
     const { password, socketUrl } = req.body;
-    let liveSocket = socketManager.initLiveSocket(socketUrl);
-    liveSocketController(liveSocket)
+    // let liveSocket = socketManager.initLiveSocket(socketUrl);
+    liveSocketController(socketUrl)
     await delay(2000);
     let realPassword;
     stateManager.init();
