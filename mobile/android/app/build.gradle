@@ -2,6 +2,19 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
+import groovy.json.JsonSlurper
+
+// Function to read values from package.json
+def getPackageJsonValue(String key) {
+    def packageJsonFile = file("$rootDir/../package.json")
+    def packageJson = new JsonSlurper().parseText(packageJsonFile.text)
+    return packageJson[key]
+}
+
+// Get app name and version from package.json
+def appName = getPackageJsonValue('name')
+def appVersion = getPackageJsonValue('version')
+
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 
 /**
@@ -89,7 +102,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0.0"
+        versionName appVersion
 
         buildConfigField("boolean", "REACT_NATIVE_UNSTABLE_USE_RUNTIME_SCHEDULER_ALWAYS", (findProperty("reactNative.unstable_useRuntimeSchedulerAlways") ?: true).toString())
     }
@@ -108,10 +121,18 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            //signingConfig signingConfigs.debug
             shrinkResources (findProperty('android.enableShrinkResourcesInReleaseBuilds')?.toBoolean() ?: false)
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+
+            applicationVariants.all { variant ->
+                variant.outputs.all { output ->
+                    def abi = output.getFilter(com.android.build.OutputFile.ABI) ?: "universal"
+                    def newName = "${appName}-v${appVersion}-${abi}.apk"
+                    output.outputFileName = newName
+                }
+            }
         }
     }
     packagingOptions {
