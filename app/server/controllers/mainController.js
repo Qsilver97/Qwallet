@@ -367,15 +367,42 @@ exports.fetchTradingPageInfo = async (req, res) => {
 
 exports.sendTx = async (req, res) => {
     const { flag, password, index, tick, currentToken, amount, price, toAddress } = req.body;
+    const socket = socketManager.getIO();
     let command = "";
-    if(flag == 'send') {
+    if (flag == 'send') {
         command = `send ${password},${index},${tick},${toAddress},${amount}`;
     } else {
         command = `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`;
     }
     console.log({ command: command, flag });
-    await wasmManager.ccallV1request({ command: command, flag });
+    const result = await wasmManager.ccallV1request({ command: command, flag });
+
+    const txStatusInterval = setInterval(async () => {
+        const result = await wasmManager.ccall({ command: 'status 1', flag: 'transferStatus' })
+        socket.emit('txWasmStatus', result.value);
+        
+        let txid;
+        let tick;
+        if (result.value.result == 1) {
+            txid = result.value.display.split(' ')[1];
+            tick = result.value.display.split(' ')[5];
+            setTimeout(async () => {
+                const txStatus = await socketSync(`${txid} ${tick}`);
+                socket.emit('txSocketStatus', txStatus);
+                if (txStatus.status) {
+                    clearInterval(txStatusInterval);
+                }
+            }, 1333);
+        }
+        if (result.value.display == 'no command pending') {
+            clearInterval(txStatusInterval);
+        }
+        setTimeout(() => {
+            wasmManager.ccall({ command: 'v1request', flag: 'transferStatus' });
+        }, 660);
+    }, 2000);
     res.status(200).send(flag);
+
 }
 
 exports.getPrice = async (req, res) => {

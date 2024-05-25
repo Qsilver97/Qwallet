@@ -11,7 +11,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
                 <div className='flex gap-10 h-full'>
                     <Sidebar />
-                    <div className='w-full'>
+                    <div className='w-[calc(100%-230px)]'>
                         {children}
                     </div>
                 </div>

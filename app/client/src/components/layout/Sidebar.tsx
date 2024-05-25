@@ -17,7 +17,7 @@ const Sidebar = () => {
 
     return (
         <>
-            <div className="relative max-w-[230px] w-full">
+            <div className="relative w-[230px]">
                 {sideBarItems.map((item, idx) => {
                     return (
                         <SidebarItem

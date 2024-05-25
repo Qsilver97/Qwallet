@@ -24,12 +24,13 @@ const TradingAside = ({ options }: { options: TokenOption[] }) => {
         setPrice(e.target.value);
     }
 
-    const handleBuySell = () => {
+    const handleBuySell = async () => {
         if (!quantity || !price || !command) {
             toast.error('Invalid command.');
             return;
         }
-        handleTx(command, quantity, price);
+        await handleTx(command, quantity, price);
+        setTxStatus("");
     }
 
     const actionValidate = (command: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell'): boolean => {
@@ -71,7 +72,7 @@ const TradingAside = ({ options }: { options: TokenOption[] }) => {
     return (
         <Section>
             {txStatus != "" &&
-                <TxModal handleTx={handleBuySell} quantity={quantity} price={price} />
+                <TxModal handleBuySell={handleBuySell} quantity={quantity} price={price} />
             }
             {/* <Text size="xs" weight="medium" className="text-celestialBlue">
                 SELECT A STRIKE PRICE

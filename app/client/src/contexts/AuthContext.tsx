@@ -45,9 +45,10 @@ interface AuthContextType {
     orders: OrderInterface | undefined;
     tradingPageLoading: boolean;
     txStatus: string;
-    txId: string;
-    expectedTick: number;
     tokenPrices: TokenPriceInterface;
+    txWasmStatus: any;
+    txSocketStatus: any;
+    txLoading: boolean;
     setTxStatus: Dispatch<SetStateAction<string>>;
     setCurrentToken: Dispatch<SetStateAction<TokenOption>>;
     fetchTradingInfoPage: () => Promise<void>;
@@ -109,9 +110,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [orders, setOrders] = useState<OrderInterface>();
     const [tradingPageLoading, setTradingPageLoading] = useState<boolean>(false);
     const [txStatus, setTxStatus] = useState<string>("");
-    const [txInterval, setTxInterval] = useState<any>();
-    const [txId, setTxId] = useState<string>("");
-    const [expectedTick, setExpectedTick] = useState<number>(0);
+    const [txWasmStatus, setTxWasmStatus] = useState<any>();
+    const [txSocketStatus, setTxSocketStatus] = useState<any>();
+    const [txLoading, setTxLoading] = useState<boolean>(false);
 
     const tokenOptions: TokenOption[] = assetsItems.map((item) => ({
         label: item.icon,
@@ -307,44 +308,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     }
 
     const handleTx = async (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell' | 'send', amount: string, price: string, toAddress?: string): Promise<any> => {
-        await axios.post(`${SERVER_URL}/api/send-tx`, {
-            flag,
-            password,
-            index: accountInfo?.addresses.indexOf(currentAddress),
-            tick: parseInt(tick) + EXPECTEDTICKGAP,
-            currentToken: currentToken.value,
-            amount,
-            price,
-            toAddress
-        }).then(() => {
-            const _statusInterval = setInterval(() => {
-                axios.post(
-                    `${SERVER_URL}/api/tx-status`
-                ).then((resp) => {
-                    console.log(resp.data);
-                    if (resp.data.value.result == '0') {
-                    } else if (resp.data.value.result == '1') {
-                        setTxStatus(resp.data.value.display);
-                    } else {
-                    }
-                }).catch(() => {
-                })
-            }, 2000)
-            setTxInterval(_statusInterval);
-        }).catch(() => {
-
-        })
-    }
-
-    useEffect(() => {
-        if (txStatus.includes('broadcast for tick')) {
-            const sendingResultSplit = txStatus.split(' ');
-            setTxId(sendingResultSplit[1]);
-            setExpectedTick(parseInt(sendingResultSplit[sendingResultSplit.length - 1]));
-        } else if (txStatus.includes('no command pending')) {
-            clearInterval(txInterval);
+        setTxLoading(true);
+        try {
+            await axios.post(`${SERVER_URL}/api/send-tx`, {
+                flag,
+                password,
+                index: accountInfo?.addresses.indexOf(currentAddress),
+                tick: parseInt(tick) + EXPECTEDTICKGAP,
+                currentToken: currentToken.value,
+                amount,
+                price,
+                toAddress
+            })
+            toast.success('Sent tx');
+        } catch (error) {
+            toast.error('Internal Server Error');
+        } finally {
+            setTxLoading(false);
         }
-    }, [txStatus])
+    }
 
     useEffect(() => {
         const newSocket = io(wsUrl);
@@ -383,6 +365,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 console.log(data.marketcap, 4);
             }
         });
+
+        newSocket.on('txWasmStatus', (data) => {
+            console.log('txWasmStatus', data);
+            setTxWasmStatus(data);
+        });
+
+        newSocket.on('txSocketStatus', (data) => {
+            console.log('txSocketStatus', data);
+            setTxSocketStatus(data);
+        })
 
         return () => {
             newSocket.close();
@@ -462,9 +454,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 orders,
                 tradingPageLoading,
                 txStatus,
-                txId,
-                expectedTick,
                 tokenPrices,
+                txWasmStatus,
+                txSocketStatus,
+                txLoading,
                 setTxStatus,
                 fetchTradingInfoPage,
                 setCurrentToken,
