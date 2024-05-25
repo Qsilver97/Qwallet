@@ -99,8 +99,8 @@ const Trading = () => {
                                 <Section>
                                     <div className="flex justify-start gap-5 w-full h-7">
                                         {
-                                            tabs.map((item: string) => {
-                                                return <span className={`font-Inter text-xs text-white rounded-lg px-9 py-1.5 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 transition ease-in duration-100 cursor-pointer ${item == activeTab ? 'bg-blue-500' : 'bg-[#192b3b] hover:bg-blue-500'}`} onClick={() => setActiveTab(item)}>
+                                            tabs.map((item: string, idx) => {
+                                                return <span key={idx} className={`font-Inter text-xs text-white rounded-lg px-9 py-1.5 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 transition ease-in duration-100 cursor-pointer ${item == activeTab ? 'bg-blue-500' : 'bg-[#192b3b] hover:bg-blue-500'}`} onClick={() => setActiveTab(item)}>
                                                     {item}
                                                 </span>
                                             })

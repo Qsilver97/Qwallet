@@ -292,9 +292,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             const resp = await axios.post(`${SERVER_URL}/api/trading-page-info`, {
                 token: currentToken.value
             });
-            orders = resp.data;
+            console.log(resp.data, 'fffffffffffffffffffffffff')
+            if(resp.data.error){
+                console.log(resp.data, currentToken);
+            }else {
+                orders = resp.data;
+            }
         } catch (error) {
-            orders = [];
+            
         }
         setOrders(orders)
         setTradingPageLoading(false);
