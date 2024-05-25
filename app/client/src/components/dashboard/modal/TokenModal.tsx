@@ -38,7 +38,7 @@ const TokenModal: React.FC<TokenModalProps> = ({ onClose, token }) => {
     const transfer = async () => {
         setSendingStatus('open');
 
-        if (toAddress == '' || amount == '' || parseFloat(amount) > tokenBalances[selectedToken.name][currentAddress]) {
+        if (toAddress == '' || toAddress == currentAddress || amount == '' || parseFloat(amount) > tokenBalances[selectedToken.name][currentAddress]) {
             toast.error('Invaild address or amount');
             return
         }

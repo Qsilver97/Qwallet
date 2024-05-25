@@ -19,7 +19,6 @@ const tabs = ['Bids', 'Asks']
 
 const Trading = () => {
     const { fetchTradingInfoPage, tradingPageLoading, orders, tokens, setCurrentToken, currentToken, tokenBalances, currentAddress } = useAuth();
-    console.log(tokenBalances)
     const [activeTab, setActiveTab] = useState<string>('Bids');
     const options: TokenOption[] = tokens
         .map((token) => {
@@ -154,7 +153,7 @@ const Trading = () => {
                                                                 }
                                                             </thead>
                                                             <tbody className="divide-y divide-gray-200 dark:divide-neutral-700 font-Montserrat">
-                                                                {orders && orders[activeTab.toLowerCase() as 'bids' | 'asks'] &&
+                                                                {orders &&
                                                                     orders[activeTab.toLowerCase() as 'bids' | 'asks'].map((bid, idx) => {
                                                                         return <tr key={idx}>
                                                                             <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">{idx + 1}</td>
