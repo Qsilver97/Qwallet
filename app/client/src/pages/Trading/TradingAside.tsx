@@ -13,8 +13,8 @@ const TradingAside = ({ options }: { options: TokenOption[] }) => {
     const { handleBuyCell, txStatus, setTxStatus, tokenBalances, currentAddress, currentToken } = useAuth();
 
     const [command, setCommand] = useState<'buy' | 'sell' | 'cancelbuy' | 'cancelsell'>();
-    const [quantity, setQuantity] = useState<string>();
-    const [price, setPrice] = useState<string>();
+    const [quantity, setQuantity] = useState<string>('');
+    const [price, setPrice] = useState<string>('');
 
     const handleChangeQuantity = (e: React.ChangeEvent<HTMLInputElement>) => {
         setQuantity(e.target.value);
@@ -32,9 +32,27 @@ const TradingAside = ({ options }: { options: TokenOption[] }) => {
         handleBuyCell(command, quantity, price);
     }
 
-    const handleAction = (command: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell') => {
+    const actionValidate = (command: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell'): boolean => {
         if (!quantity || !price || !isPositiveNumber(quantity) || !isNaturalNumber(price)) {
             toast.error('Input valid quantity or price.');
+            return false;
+        }
+        if (command == 'buy' && tokenBalances['QU'][currentAddress] < parseInt(price)) {
+            toast.error('Not enough QU balance');
+            return false;
+        }
+        if (command == 'sell') {
+            const balance = tokenBalances[currentToken.value as string] ? (tokenBalances[currentToken.value as string][currentAddress] || 0) : 0;
+            if (balance < parseInt(quantity)) {
+                toast.error(`Not enough ${currentToken.value} balance`);
+                return false
+            }
+        }
+        return true
+    }
+
+    const handleAction = (command: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell') => {
+        if (!actionValidate(command)) {
             return;
         }
         if (command == 'buy' && parseInt(price) > tokenBalances['QU'][currentAddress]) {
