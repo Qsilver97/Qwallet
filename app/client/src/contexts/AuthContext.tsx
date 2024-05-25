@@ -62,7 +62,7 @@ interface AuthContextType {
     create: () => void;
     restoreAccount: () => void;
     handleAddAccount: () => void;
-    handleBuyCell: (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell', amount: string, price: string) => Promise<void>;
+    handleTx: (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell' | 'send', amount: string, price: string, toAddress?: string) => Promise<void>;
     toAccountOption: (password: string, confirmPassword: string) => void;
     handleClickSideBar: (idx: number) => void;
 }
@@ -293,21 +293,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 token: currentToken.value
             });
             console.log(resp.data, 'fffffffffffffffffffffffff')
-            if(resp.data.error){
+            if (resp.data.error) {
                 console.log(resp.data, currentToken);
-            }else {
+            } else {
                 orders = resp.data;
             }
         } catch (error) {
-            
+
         }
         setOrders(orders)
         setTradingPageLoading(false);
         return orders;
     }
 
-    const handleBuyCell = async (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell', amount: string, price: string): Promise<any> => {
-        await axios.post(`${SERVER_URL}/api/buy-cell`, {
+    const handleTx = async (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell' | 'send', amount: string, price: string, toAddress?: string): Promise<any> => {
+        await axios.post(`${SERVER_URL}/api/send-tx`, {
             flag,
             password,
             index: accountInfo?.addresses.indexOf(currentAddress),
@@ -315,6 +315,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             currentToken: currentToken.value,
             amount,
             price,
+            toAddress
         }).then(() => {
             const _statusInterval = setInterval(() => {
                 axios.post(
@@ -475,7 +476,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 handleClickSideBar,
                 login,
                 logout,
-                handleBuyCell,
+                handleTx,
                 toAccountOption,
                 create,
                 restoreAccount,

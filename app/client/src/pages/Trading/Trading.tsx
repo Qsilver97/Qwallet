@@ -41,9 +41,11 @@ const Trading = () => {
     }, [currentToken, activeTab])
 
     useEffect(() => {
-        setInterval(() => {
-            fetchTradingInfoPage();
-        }, 60000)
+        if (currentToken.value !== 'QU') {
+            setInterval(() => {
+                fetchTradingInfoPage();
+            }, 60000)
+        }
         if (currentToken.value == 'QU') {
             setCurrentToken(options[0])
         }

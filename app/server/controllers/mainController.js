@@ -365,10 +365,16 @@ exports.fetchTradingPageInfo = async (req, res) => {
     }
 }
 
-exports.buySell = async (req, res) => {
-    const { flag, password, index, tick, currentToken, amount, price } = req.body;
-    console.log({ command: `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`, flag });
-    await wasmManager.ccallV1request({ command: `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`, flag });
+exports.sendTx = async (req, res) => {
+    const { flag, password, index, tick, currentToken, amount, price, toAddress } = req.body;
+    let command = "";
+    if(flag == 'send') {
+        command = `send ${password},${index},${tick},${toAddress},${amount}`;
+    } else {
+        command = `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`;
+    }
+    console.log({ command: command, flag });
+    await wasmManager.ccallV1request({ command: command, flag });
     res.status(200).send(flag);
 }
 

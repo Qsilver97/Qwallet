@@ -13,7 +13,7 @@ type TokenModalProps = {
 };
 
 const TokenModal: React.FC<TokenModalProps> = ({ onClose, token }) => {
-    const { currentAddress, accountInfo, tick, tokenBalances } = useAuth();
+    const { currentAddress, accountInfo, tick, tokenBalances, handleTx } = useAuth();
     const [amount, setAmount] = useState("");
     const [toAddress, setToAddress] = useState("");
     const [sendingStatus, setSendingStatus] = useState<'init' | 'confirm' | 'open' | 'pending' | 'success' | 'rejected'>('init');
@@ -40,43 +40,45 @@ const TokenModal: React.FC<TokenModalProps> = ({ onClose, token }) => {
     };
 
     const transfer = async () => {
-        setSendingStatus('open');
+        handleTx('send', amount, '', toAddress);
 
-        setSendingStatus('pending');
-        axios
-            .post(`${SERVER_URL}/api/transfer`, {
-                toAddress,
-                fromIdx: accountInfo?.addresses.indexOf(currentAddress),
-                amount,
-                tick: parseInt(tick) + 5,
-                tokenName: selectedToken.name,
-            })
-            .then(() => {
-                const _statusInterval = setInterval(() => {
-                    axios.post(
-                        `${SERVER_URL}/api/tx-status`
-                    ).then((resp) => {
-                        console.log(resp.data);
-                        if (resp.data.value.result == '0') {
-                            setSendingStatus('pending');
-                        } else if (resp.data.value.result == '1') {
-                            setSendingResult(resp.data.value.display);
-                            // setSendingStatus('success');
-                        } else {
-                            setSendingStatus('rejected');
-                        }
-                    }).catch((error) => {
-                        console.log(error.response);
-                        setSendingStatus('rejected');
-                    })
-                }, 2000)
-                setStatusInterval(_statusInterval);
-            })
-            .catch((error) => {
-                console.log(error.response)
-            })
-            .finally(() => {
-            })
+        // setSendingStatus('open');
+
+        // setSendingStatus('pending');
+        // axios
+        //     .post(`${SERVER_URL}/api/transfer`, {
+        //         toAddress,
+        //         fromIdx: accountInfo?.addresses.indexOf(currentAddress),
+        //         amount,
+        //         tick: parseInt(tick) + 5,
+        //         tokenName: selectedToken.name,
+        //     })
+        //     .then(() => {
+        //         const _statusInterval = setInterval(() => {
+        //             axios.post(
+        //                 `${SERVER_URL}/api/tx-status`
+        //             ).then((resp) => {
+        //                 console.log(resp.data);
+        //                 if (resp.data.value.result == '0') {
+        //                     setSendingStatus('pending');
+        //                 } else if (resp.data.value.result == '1') {
+        //                     setSendingResult(resp.data.value.display);
+        //                     // setSendingStatus('success');
+        //                 } else {
+        //                     setSendingStatus('rejected');
+        //                 }
+        //             }).catch((error) => {
+        //                 console.log(error.response);
+        //                 setSendingStatus('rejected');
+        //             })
+        //         }, 2000)
+        //         setStatusInterval(_statusInterval);
+        //     })
+        //     .catch((error) => {
+        //         console.log(error.response)
+        //     })
+        //     .finally(() => {
+        //     })
 
     };
 

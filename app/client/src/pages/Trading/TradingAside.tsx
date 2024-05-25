@@ -10,7 +10,7 @@ import { TokenOption } from "../../components/commons/Select";
 import { isNaturalNumber, isPositiveNumber } from "../../utils/helper";
 
 const TradingAside = ({ options }: { options: TokenOption[] }) => {
-    const { handleBuyCell, txStatus, setTxStatus, tokenBalances, currentAddress, currentToken } = useAuth();
+    const { handleTx, txStatus, setTxStatus, tokenBalances, currentAddress, currentToken } = useAuth();
 
     const [command, setCommand] = useState<'buy' | 'sell' | 'cancelbuy' | 'cancelsell'>();
     const [quantity, setQuantity] = useState<string>('');
@@ -24,12 +24,12 @@ const TradingAside = ({ options }: { options: TokenOption[] }) => {
         setPrice(e.target.value);
     }
 
-    const handleTx = () => {
+    const handleBuySell = () => {
         if (!quantity || !price || !command) {
             toast.error('Invalid command.');
             return;
         }
-        handleBuyCell(command, quantity, price);
+        handleTx(command, quantity, price);
     }
 
     const actionValidate = (command: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell'): boolean => {
@@ -71,7 +71,7 @@ const TradingAside = ({ options }: { options: TokenOption[] }) => {
     return (
         <Section>
             {txStatus != "" &&
-                <TxModal handleTx={handleTx} quantity={quantity} price={price} />
+                <TxModal handleTx={handleBuySell} quantity={quantity} price={price} />
             }
             {/* <Text size="xs" weight="medium" className="text-celestialBlue">
                 SELECT A STRIKE PRICE
