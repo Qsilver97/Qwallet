@@ -25,7 +25,7 @@ const Navbar = () => {
                             <Text
                                 weight="bold"
                                 size="sm"
-                                className="uppercase cursor-pointer"
+                                className="uppercase cursor-pointer font-mono text-[16px]"
                                 onClick={() => handleCopy(currentAddress)}
                             >
                                 {currentAddress}
@@ -44,7 +44,7 @@ const Navbar = () => {
                                 {accountInfo?.addresses.map((address) => (
                                     <Text
                                         weight="bold"
-                                        className="uppercase py-1 cursor-pointer select-none"
+                                        className="uppercase py-1 cursor-pointer select-none font-mono text-[16px]"
                                         size="sm"
                                         onClick={() => handleSelectedAddress(address)}
                                     >

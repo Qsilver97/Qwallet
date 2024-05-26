@@ -388,7 +388,7 @@ exports.sendTx = async (req, res) => {
             tick = result.value.display.split(' ')[5];
             setTimeout(async () => {
                 const txStatus = await socketSync(`${txid} ${tick}`);
-                socket.emit('txSocketStatus', txStatus);
+                socket.emit('txSocketStatus', {txStatus, txid, tick});
                 if (txStatus.status) {
                     clearInterval(txStatusInterval);
                 }

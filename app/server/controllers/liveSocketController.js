@@ -45,7 +45,7 @@ module.exports = function (liveSocketURL) {
 
         liveSocket.on('close', () => {
             console.log("Disconnected from the server. Attempting to reconnect...");
-            setTimeout(connect, 5000); // Attempt to reconnect after 5 seconds
+            setTimeout(connect, 1000); // Attempt to reconnect after 1 seconds
         });
     };
 
