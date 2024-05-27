@@ -1,7 +1,7 @@
 import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
-import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
+import { RootState } from "@app/redux/store";
 import local from "@app/utils/locales";
 import {
   checkPasswordStrength,
@@ -10,13 +10,14 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { Box, Image, ScrollView, Text, VStack } from "native-base";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import ReminderBar from "./Components/ReminderBar";
 
 interface IProps {}
 
 const Reminder: React.FC<IProps> = () => {
   const navigation = useNavigation();
-  const { tempPassword } = useAuth();
+  const { password } = useSelector((store: RootState) => store.app);
   const { bgColor, textColor, main, gray } = useColors();
   const [step, setStep] = useState<1 | 2>(1);
   const handleNext = () => {
@@ -75,11 +76,11 @@ const Reminder: React.FC<IProps> = () => {
               <Text>
                 {local.Create.Reminder.SecurityLevel}:{" "}
                 {
-                  getPasswordStrengthProps(checkPasswordStrength(tempPassword))
+                  getPasswordStrengthProps(checkPasswordStrength(password))
                     .label
                 }
               </Text>
-              <ReminderBar strength={checkPasswordStrength(tempPassword)} />
+              <ReminderBar strength={checkPasswordStrength(password)} />
 
               <VStack space={"2"}>
                 <Text fontWeight={"bold"} ml={-3}>

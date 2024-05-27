@@ -21,22 +21,14 @@ import Core from "./Core";
 import ConfirmModal from "../../components/ConfirmModal";
 import Input from "@app/components/UI/Input";
 import { faQuestion } from "@fortawesome/free-solid-svg-icons";
+import { IOrder, IOrderData } from "@app/types";
 
-type IOrder = [string, string, string, string]; // token, amount, price, type
-type IOrderUnit = [number, string, string, string]; // index, address, amount, price
-interface IOrderData {
-  [tokenName: string]: {
-    bids: IOrderUnit[];
-    asks: IOrderUnit[];
-  };
-}
 interface IProps {
   orderData: IOrderData;
 }
 const Orderlist: React.FC<IProps> = ({ orderData }) => {
   const { textColor, bgColor, main } = useColors();
-  const { currentAddress, allAddresses, txResult, isLoading, setIsLoading } =
-    useAuth();
+  const { currentAddress, user, isLoading, setIsLoading } = useAuth();
 
   const [showData, setShowData] = useState<IOrder[]>([]);
   const lang = local.Main.Orderbook;
@@ -110,13 +102,13 @@ const Orderlist: React.FC<IProps> = ({ orderData }) => {
     setIsLoading(true);
     Object.keys(orderData).map((token) => {
       orderData[token].bids.map((bid) => {
-        if (allAddresses[bid[0]] == currentAddress)
+        if (user.accountInfo.addresses[bid[0]] == currentAddress)
           setShowData((prev) => {
             return [...prev, [token, bid[2], bid[3], "buy"]];
           });
       });
       orderData[token].asks.map((ask) => {
-        if (allAddresses[ask[0]] == currentAddress)
+        if (user.accountInfo.addresses[ask[0]] == currentAddress)
           setShowData((prev) => {
             return [...prev, [token, ask[2], ask[3], "sell"]];
           });

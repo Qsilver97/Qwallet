@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { Image, Radio, Text, VStack } from "native-base";
-import { useDispatch } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
-import Toast from "react-native-toast-message";
-import { useAuth } from "@app/context/AuthContext";
 import { create } from "@app/api/api";
-import { useColors } from "@app/context/ColorContex";
-import { setSeedType, setSeeds } from "@app/redux/appSlice";
+import eventEmitter from "@app/api/eventEmitter";
 import ButtonBox from "@app/components/UI/ButtonBox";
 import PageButton from "@app/components/UI/PageButton";
-import eventEmitter from "@app/api/eventEmitter";
+import { useColors } from "@app/context/ColorContex";
+import { setSeedType, setSeeds } from "@app/redux/appSlice";
+import { RootState } from "@app/redux/store";
 import local from "@app/utils/locales";
+import { useNavigation } from "@react-navigation/native";
+import { Image, Radio, Text, VStack } from "native-base";
+import React, { useEffect, useState } from "react";
+import Toast from "react-native-toast-message";
+import { useDispatch, useSelector } from "react-redux";
 
 const SeedType = () => {
-  const { bgColor, textColor } = useColors();
-  const { tempPassword } = useAuth();
-
+  const { bgColor } = useColors();
+  const { password } = useSelector((store: RootState) => store.app);
   const [value, setValue] = useState<"24words" | "55chars">("24words");
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -25,7 +24,7 @@ const SeedType = () => {
     dispatch(setSeedType(value));
     let passwordPrefix = "";
     if (value == "55chars") passwordPrefix = "Q";
-    create(`login ${passwordPrefix}${tempPassword}`);
+    create(`login ${passwordPrefix}${password}`);
   };
 
   useEffect(() => {

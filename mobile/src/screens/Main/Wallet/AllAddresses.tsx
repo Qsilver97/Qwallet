@@ -19,7 +19,7 @@ import Toast from "react-native-toast-message";
 import ConfirmModal from "../components/ConfirmModal";
 
 const AllAddresses: React.FC = () => {
-  const { allAddresses, balances, user, login } = useAuth();
+  const { balances, user, login } = useAuth();
   const { bgColor, textColor, panelBgColor } = useColors();
   const [selectedAddress, setSelectedAddress] = useState("");
   const { isOpen, onToggle } = useDisclose();
@@ -63,7 +63,7 @@ const AllAddresses: React.FC = () => {
         <Text fontSize="4xl">{lang.AllAddresses}</Text>
       </HStack>
       <VStack mx={2} space="2">
-        {allAddresses.map((address, key) => {
+        {user.accountInfo.addresses.map((address, key) => {
           if (address !== "")
             return (
               <Pressable
@@ -99,7 +99,7 @@ const AllAddresses: React.FC = () => {
           onToggle();
           deleteAccount(
             user?.password,
-            allAddresses.indexOf(selectedAddress),
+            user.accountInfo.addresses.indexOf(selectedAddress),
             selectedAddress
           );
         }}

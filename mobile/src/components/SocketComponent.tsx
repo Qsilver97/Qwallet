@@ -1,23 +1,12 @@
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import {
-  setMarketcap,
-  setTick,
-  setTokenprices,
-  updateRichlist,
-} from "@app/redux/appSlice";
 import eventEmitter from "@app/api/eventEmitter";
 import { useAuth } from "@app/context/AuthContext";
+import { setMarketcap, setTick, setTokenprices } from "@app/redux/appSlice";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 export const SocketCom: React.FC = () => {
   const dispatch = useDispatch();
-  const {
-    setBalances,
-    setTokenBalances,
-    allAddresses,
-    balances,
-    setPrevBalances,
-  } = useAuth();
+  const { setBalances, setTokenBalances, user, setPrevBalances } = useAuth();
   useEffect(() => {
     eventEmitter.on("S2C/live", (res) => {
       if (res.data.command == "CurrentTickInfo") {
@@ -48,12 +37,14 @@ export const SocketCom: React.FC = () => {
         }
       } else if (res.data.balances) {
         res.data.balances.map((balance: [number, string]) => {
-          if (balance[0] < allAddresses.length)
+          if (balance[0] < user.accountInfo.addresses.length)
             setBalances((prev) => {
               setPrevBalances(prev);
               return {
                 ...prev,
-                [allAddresses[balance[0]]]: parseFloat(balance[1]),
+                [user.accountInfo.addresses[balance[0]]]: parseFloat(
+                  balance[1]
+                ),
               };
             });
         });

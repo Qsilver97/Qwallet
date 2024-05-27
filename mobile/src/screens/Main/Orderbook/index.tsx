@@ -15,14 +15,7 @@ import TokenSelect from "../components/TokenSelect";
 import TransferButton from "../components/TransferButton";
 import Core from "./components/Core";
 import Orderlist from "./components/Orderlist";
-
-type IOrderUnit = [number, string, string, string]; // index, address, amount, price
-interface IOrderData {
-  [tokenName: string]: {
-    bids: IOrderUnit[];
-    asks: IOrderUnit[];
-  };
-}
+import { IOrderData } from "@app/types";
 
 const Orderbook: React.FC = () => {
   const { bgColor, textColor } = useColors();
@@ -36,11 +29,11 @@ const Orderbook: React.FC = () => {
   const [orderData, setOrderData] = useState<IOrderData>({});
   const modal1 = useDisclose();
   const lang = local.Main.Orderbook;
-  const { currentAddress, txResult, txStatus } = useAuth();
+  const { currentAddress, txStatus } = useAuth();
 
   useEffect(() => {
     myOrders();
-  }, [currentAddress, txResult, useIsFocused()]);
+  }, [currentAddress, txStatus.result, useIsFocused()]);
 
   useEffect(() => {
     const handleMyOrdersEvent = (res: any) => {

@@ -25,7 +25,7 @@ const TransferButtonFab: React.FC<IProps> = ({ onToggle }) => {
           <Icon as={FontAwesome5} color="white" name="share" size="xl" />
         </VStack>
       </Pressable>
-      {(txStatus == "Pending" || txStatus == "Open") && (
+      {txStatus.status == "Pending" && (
         <Box
           bgColor="green.600"
           p="2"

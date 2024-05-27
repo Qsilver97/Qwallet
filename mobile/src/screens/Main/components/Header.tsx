@@ -22,7 +22,7 @@ import LogoutButton from "./LogoutButton";
 
 const Header: React.FC = () => {
   const { bgColor, textColor, main, gray } = useColors();
-  const { currentAddress, allAddresses, user, login, setCurrentAddress } =
+  const { currentAddress, user, login, setCurrentAddress } =
     useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -103,7 +103,7 @@ const Header: React.FC = () => {
               <Popover.CloseButton onPress={() => setIsOpen(false)} />
               <Popover.Body bgColor={bgColor}>
                 <VStack justifyContent={"center"} py={6}>
-                  {allAddresses.map((address, key) => {
+                  {user.accountInfo.addresses.map((address, key) => {
                     if (address != "")
                       return (
                         <TouchableOpacity
