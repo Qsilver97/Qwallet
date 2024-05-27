@@ -18,18 +18,7 @@ const tabs = ['Bids', 'Asks']
 const Trading = () => {
     const { fetchTradingInfoPage, tradingPageLoading, orders, tokens, setCurrentToken, currentToken, tokenBalances, currentAddress } = useAuth();
     const [activeTab, setActiveTab] = useState<string>('Bids');
-    const options: TokenOption[] = tokens
-        .map((token) => {
-            if (token !== "QU") {
-                const item = assetsItems.find((k) => k.name === token) || assetsItems[0];
-                return {
-                    label: item.icon,
-                    value: token,
-                } as TokenOption;
-            }
-            return undefined;
-        })
-        .filter((option): option is TokenOption => option !== undefined);
+    const [options, setOptions] = useState<TokenOption[]>([]);
 
     useEffect(() => {
         async function init() {
@@ -48,6 +37,15 @@ const Trading = () => {
             }, 60000)
         }
         if (currentToken.value == 'QU') {
+            let options = tokens.map(token => {
+                const item = assetsItems.find((k) => k.name === token) || assetsItems[0];
+                return {
+                    label: item.icon,
+                    value: token
+                }
+            })
+            options = options.filter(option => option.value != 'QU');
+            setOptions(options);
             setCurrentToken(options[0])
         }
     }, [])
