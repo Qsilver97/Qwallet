@@ -136,7 +136,7 @@ const Core: React.FC<IProps> = ({
       price,
       user?.password as string,
       user?.accountInfo?.addresses.indexOf(currentAddress) as number,
-      parseInt(tick) + 10,
+      parseInt(tick) + 5,
       token
     );
     modal2.onToggle();

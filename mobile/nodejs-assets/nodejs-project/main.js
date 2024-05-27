@@ -114,7 +114,9 @@ rn_bridge.channel.on("message", async (msg) => {
         transfer(
           message.data.toAddress,
           message.data.fromIdx,
-          message.data.amount
+          message.data.amount,
+          message.data.tick,
+          message.data.token
         );
         break;
       }

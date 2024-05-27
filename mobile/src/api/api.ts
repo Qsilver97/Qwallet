@@ -90,12 +90,13 @@ export const transfer = (
   toAddress: string,
   fromIdx: number,
   amount: any,
-  tick: number
+  tick: number,
+  token: string
 ) => {
   nodejs.channel.send(
     JSON.stringify({
       action: "C2S/transfer",
-      data: { toAddress, fromIdx, amount, tick },
+      data: { toAddress, fromIdx, amount, tick, token },
     })
   );
 };

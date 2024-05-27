@@ -287,10 +287,17 @@ exports.restoreAccount = async (password, seeds, seedType) => {
   bridge_send("S2C/restore", recoverResult);
 };
 
-exports.transfer = async (toAddress, fromIdx, amount, tick) => {
-  const command = `send ${
-    stateManager.getUserState().password
-  },${fromIdx},${tick},${toAddress},${amount}`;
+exports.transfer = async (toAddress, fromIdx, amount, tick, token) => {
+  if (token == "QU") {
+    command = `send ${
+      stateManager.getUserState().password
+    },${fromIdx},${tick},${toAddress},${amount}`;
+  } else {
+    command = `tokensend ${
+      stateManager.getUserState().password
+    },${fromIdx},${tick},${toAddress},${amount},${token}`;
+  }
+
   const sendResult = await wasmManager.ccall({ command, flag: "transfer" });
   const v1requestResult = await wasmManager.ccall({
     command: "v1request",

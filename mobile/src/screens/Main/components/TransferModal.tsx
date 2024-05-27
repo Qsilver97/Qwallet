@@ -24,6 +24,7 @@ import { useState } from "react";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 import ConfirmModal from "./ConfirmModal";
+import TokenSelect from "./TokenSelect";
 
 interface IProps {
   isOpen: boolean;
@@ -45,6 +46,7 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
   } = useAuth();
   const { bgColor, textColor, main } = useColors();
   const { tick } = useSelector((state: RootState) => state.app);
+  const [currentToken, setCurrentToken] = useState("QU");
   const [toAddress, setToAddress] = useState("");
   const [amount, setAmount] = useState("");
   const lang = local.Main.Components;
@@ -82,7 +84,8 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
       toAddress,
       allAddresses.indexOf(currentAddress),
       amount,
-      expectedTick
+      expectedTick,
+      currentToken
     );
     modal2.onToggle();
   };
@@ -122,6 +125,12 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
               ></Icon>
             </HStack>
             <VStack>
+              <VStack>
+                <TokenSelect
+                  selectedToken={currentToken}
+                  onChange={setCurrentToken}
+                ></TokenSelect>
+              </VStack>
               <VStack>
                 <Input
                   label={lang.SendAddress}
