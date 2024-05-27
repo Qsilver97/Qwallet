@@ -17,4 +17,13 @@ function isPositiveNumber(str: string): boolean {
     return positiveNumberRegex.test(str);
 }
 
-export { handleCopy, isNaturalNumber, isPositiveNumber }
+function formatNumberWithCommas(number: number) {
+    if(!number) return 0;
+    const options = Number.isInteger(number)
+        ? {}
+        : { minimumFractionDigits: 3, maximumFractionDigits: 3 };
+
+    return number.toLocaleString('en-US', options);
+}
+
+export { handleCopy, isNaturalNumber, isPositiveNumber, formatNumberWithCommas }

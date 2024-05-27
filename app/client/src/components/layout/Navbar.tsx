@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { handleCopy } from "../../utils/helper";
+import { formatNumberWithCommas, handleCopy } from "../../utils/helper";
 import { Text } from "../commons";
 
 const Navbar = () => {
@@ -36,7 +36,7 @@ const Navbar = () => {
                                 className="cursor-pointer"
                                 onClick={() => setIsOpen(!isOpen)}
                             />
-                            <span>{tokenBalances['QU'] ? tokenBalances['QU'][currentAddress] : 0}</span>
+                            <span>{tokenBalances['QU'] ? formatNumberWithCommas(tokenBalances['QU'][currentAddress]) : 0}</span>
                         </div>
 
                         {isOpen && (
