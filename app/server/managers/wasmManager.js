@@ -59,9 +59,10 @@ module.exports = {
             ['v1request']
         ))
         console.log(v1requestResult, 'v1request')
+        let txStatus;
         if(v1requestResult.display && v1requestResult.result == 0) {
-            await socketSync(v1requestResult.display);
+            txStatus = await socketSync(v1requestResult.display);
         }
-        return { value: parsedResult, flag: data.flag };
+        return { value: txStatus, flag: data.flag };
     }
 };

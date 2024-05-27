@@ -1,5 +1,4 @@
 import { useAuth } from "../../../contexts/AuthContext";
-import { Text } from "../../commons";
 import Input from "../../commons/Input";
 import TokenSubmitModal from "./TokenSubmitModal";
 
@@ -9,9 +8,7 @@ type TokenFormsModalProps = {
     setAmount: React.Dispatch<React.SetStateAction<string>>;
     addressToSend: string;
     setAddressToSend: React.Dispatch<React.SetStateAction<string>>;
-    transactionId: string;
     sendingStatus: 'init' | 'confirm' | 'open' | 'pending' | 'success' | 'rejected' | 'closed';
-    expectedTick: number | undefined;
 };
 
 const TokenFormsModal = ({
@@ -20,18 +17,16 @@ const TokenFormsModal = ({
     setAmount,
     addressToSend,
     setAddressToSend,
-    transactionId,
-    expectedTick,
     sendingStatus,
 }: TokenFormsModalProps) => {
-    const { tokenBalances, currentAddress, tick } = useAuth();
+    const { tokenBalances, currentAddress } = useAuth();
     return (
         <div className="py-5 px-6 space-y-6 border-white/60 border rounded-2xl">
             {sendingStatus === 'init' && (
                 <>
                     <div className="space-y-4">
                         <Input
-                            label="Send Adress"
+                            label="Send Address"
                             placeholder="Send to address"
                             inputId="address"
                             inputStyle="modal"
@@ -77,7 +72,7 @@ const TokenFormsModal = ({
                     token={tokenName}
                 />
             )}
-            {sendingStatus === 'pending' &&
+            {/* {sendingStatus === 'pending' &&
                 <div className="break-all">
                     Sending...
                     <br />
@@ -103,7 +98,7 @@ const TokenFormsModal = ({
 
                     <Text className="text-center break-all">{addressToSend}</Text>
                 </div>
-            )}
+            )} */}
         </div>
     );
 };
