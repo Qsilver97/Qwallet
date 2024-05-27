@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { formatNumberWithCommas } from '../../utils/helper';
 
 type AccountGridProps = {
     data: {
@@ -35,7 +36,7 @@ const AccountGrid: React.FC<AccountGridProps> = ({ data }) => {
                                             <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">{address}</td>
                                             {
                                                 tokens.map((token) => {
-                                                    return <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200 font-mono">{tokenBalances[token] ? (tokenBalances[token][address] || 0) : 0}</td>
+                                                    return <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200 font-mono">{tokenBalances[token] ? formatNumberWithCommas(tokenBalances[token][address] || 0) : 0}</td>
                                                 })
                                             }
                                         </tr>

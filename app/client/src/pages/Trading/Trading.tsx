@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import TradingAside from "./TradingAside";
 import { TokenOption } from "../../components/commons/Select";
+import { formatNumberWithCommas } from "../../utils/helper";
 
 const tabs = ['Bids', 'Asks']
 
@@ -157,8 +158,8 @@ const Trading = () => {
                                                                         return <tr key={idx}>
                                                                             <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">{idx + 1}</td>
                                                                             <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200 font-mono">{bid[0]}</td>
-                                                                            <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{bid[1]}</td>
-                                                                            <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{bid[2]}</td>
+                                                                            <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{formatNumberWithCommas(parseInt(bid[1]))}</td>
+                                                                            <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{formatNumberWithCommas(parseInt(bid[2]))}</td>
                                                                             {/* <td className="px-1 py-4 whitespace-nowrap text-end text-sm font-medium">
                                                                                 <button type="button" className="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-400 hover:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:text-blue-400">Select</button>
                                                                             </td> */}
