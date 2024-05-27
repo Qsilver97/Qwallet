@@ -4,7 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useEffect, useState } from "react";
 
 const Sidebar = () => {
-    const { logout, activeTabIdx, handleClickSideBar, txSocketStatus, txWasmStatus } = useAuth();
+    const { logout, activeTabIdx, handleClickSideBar, txSocketStatus, txWasmStatus, tick } = useAuth();
     const [activePath, setActivePath] = useState<string>("");
 
     useEffect(() => {
@@ -37,11 +37,15 @@ const Sidebar = () => {
                     );
                 })}
             </div>
-            <div className="fixed bottom-5 bg-slate-500 p-2 rounded max-h-[300px] max-w-[230px] break-all break-words">
-                {JSON.stringify(txSocketStatus)}
-
-                {JSON.stringify(txWasmStatus)}
-            </div>
+            {txSocketStatus &&
+                <div className="fixed bottom-5 bg-slate-500 p-2 rounded max-h-[300px] max-w-[230px] break-all break-words">
+                    Txid: {txSocketStatus.txid}<br />
+                    Current tick: {tick}<br />
+                    Expected tick: {txSocketStatus.tick}<br />
+                    {JSON.stringify(txSocketStatus)}<br />
+                    {JSON.stringify(txWasmStatus)}<br />
+                </div>
+            }
         </>
     );
 };

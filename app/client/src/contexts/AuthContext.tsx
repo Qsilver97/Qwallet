@@ -143,9 +143,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         } catch (error) { }
 
         if (resp && resp.status == 200) {
-            setIsAuthenticated(resp.data.isAuthenticated);
-            setPassword(resp.data.password);
-            setAccountInfo(resp.data.accountInfo);
+            setIsAuthenticated(resp.data.userState.isAuthenticated);
+            setPassword(resp.data.userState.password);
+            setAccountInfo(resp.data.userState.accountInfo);
+            setTick(resp.data.addressResp.tick);
             await fetchInfo();
         } else {
             toast.error("Couldn't log in");
@@ -282,6 +283,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             setTokenprices({ ...data.tokenPrices, 'QU': [1, 1] });
             setTokens(["QU", ...(data?.tokens || [])]);
             setRichlist(data.richlist);
+            setTick(data.addressInfo.tick)
+            console.log(data, 'bbbbbbbbbbbbbbbbbb')
         } else {
         }
     };
