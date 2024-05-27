@@ -64,7 +64,6 @@ const Core: React.FC<IProps> = ({
     token: string
   ) => {
     onToggle();
-
     const showError = (message: string) => {
       Toast.show({
         type: "error",
@@ -73,7 +72,12 @@ const Core: React.FC<IProps> = ({
     };
 
     const isAmountOrPriceInvalid =
-      amount === "" || amount === "0" || price === "" || price === "0";
+      amount === "" ||
+      amount === "0" ||
+      price === "" ||
+      price === "0" ||
+      !Number.isInteger(parseInt(amount)) ||
+      !Number.isInteger(parseInt(price));
     if (isAmountOrPriceInvalid) {
       showError(local.Main.Components.InvalidAddressOrAmount);
       return;
@@ -81,7 +85,8 @@ const Core: React.FC<IProps> = ({
 
     const insufficientTokenBalance =
       flag === "sell" &&
-      tokenBalances[token][currentAddress] < parseInt(amount);
+      (Object.is(tokenBalances, {}) ||
+        tokenBalances[token][currentAddress] < parseInt(amount));
     if (insufficientTokenBalance) {
       showError("E-32: " + lang.TokenBalanceInsufficient);
       return;

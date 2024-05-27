@@ -1,17 +1,13 @@
 import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
 import tokenIcons from "@app/utils/tokens";
-import {
-  AntDesign,
-  FontAwesome,
-  Fontisto,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import {
   Box,
   Center,
   HStack,
   Icon,
+  NumberInput,
   Pressable,
   ScrollView,
   Text,
@@ -22,6 +18,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import local from "@app/utils/locales";
 import Core from "./Core";
+import ConfirmModal from "../../components/ConfirmModal";
+import Input from "@app/components/UI/Input";
+import { faQuestion } from "@fortawesome/free-solid-svg-icons";
 
 type IOrder = [string, string, string, string]; // token, amount, price, type
 type IOrderUnit = [number, string, string, string]; // index, address, amount, price
@@ -44,6 +43,7 @@ const Orderlist: React.FC<IProps> = ({ orderData }) => {
   const { panelBgColor } = useColors();
   const [currentToken, setCurrentToken] = useState<string>("QWALLET");
   const [amount, setAmount] = useState<string>("0");
+  const [seletedAmount, setSelectedAmount] = useState<string>("0");
   const [price, setPrice] = useState<string>("0");
   const [buySellFlag, setBuySellFlag] = useState<
     "buy" | "sell" | "cancelbuy" | "cancelsell"
@@ -63,7 +63,9 @@ const Orderlist: React.FC<IProps> = ({ orderData }) => {
               m="1"
             >
               <HStack alignItems="center" space="2">
-                <Box w="1/6">{TokenIcon && <TokenIcon width={32} height={32} />}</Box>
+                <Box w="1/6">
+                  {TokenIcon && <TokenIcon width={32} height={32} />}
+                </Box>
                 <Text w="2/6">
                   {dt[1]} {dt[0]}
                 </Text>
@@ -81,7 +83,7 @@ const Orderlist: React.FC<IProps> = ({ orderData }) => {
                 <Pressable
                   _pressed={{ opacity: 0.6 }}
                   onPress={() => {
-                    modal.onToggle();
+                    cancelModal.onToggle();
                     //@ts-ignore
                     setBuySellFlag(`cancel${dt[3]}`);
                     setAmount(dt[1]);
@@ -124,6 +126,7 @@ const Orderlist: React.FC<IProps> = ({ orderData }) => {
   }, [orderData, currentAddress]);
 
   const modal = useDisclose();
+  const cancelModal = useDisclose();
 
   return (
     <>
@@ -161,10 +164,31 @@ const Orderlist: React.FC<IProps> = ({ orderData }) => {
           </VStack>
         )}
       </VStack>
+      <ConfirmModal
+        isOpen={cancelModal.isOpen}
+        onToggle={cancelModal.onToggle}
+        onPress={() => {
+          cancelModal.onClose();
+          modal.onToggle();
+        }}
+        icon={faQuestion}
+      >
+        <VStack fontSize={"xl"} textAlign={"center"} px={2}>
+          <Input
+            label="Amount"
+            placeholder="Please input amount to cancel"
+            onChangeText={(text: string) => setSelectedAmount(text)}
+            keyboardType="numeric"
+            type="text"
+            w="full"
+          ></Input>
+          <Text textAlign="right">{amount + " " + currentToken}</Text>
+        </VStack>
+      </ConfirmModal>
       <Core
         isOpen={modal.isOpen}
         onToggle={modal.onToggle}
-        amount={amount}
+        amount={seletedAmount}
         price={price}
         buySellFlag={buySellFlag}
         token={currentToken}

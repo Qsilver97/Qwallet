@@ -1,20 +1,20 @@
+import { myOrders } from "@app/api/api";
+import eventEmitter from "@app/api/eventEmitter";
 import Input from "@app/components/UI/Input";
+import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
 import local from "@app/utils/locales";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { faClose, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { HStack, Icon, Text, VStack, View, useDisclose } from "native-base";
+import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { useIsFocused } from "@react-navigation/native";
+import { HStack, Icon, Text, VStack, useDisclose } from "native-base";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import TokenSelect from "../components/TokenSelect";
 import TransferButton from "../components/TransferButton";
 import Core from "./components/Core";
 import Orderlist from "./components/Orderlist";
-import { useAuth } from "@app/context/AuthContext";
-import { myOrders } from "@app/api/api";
-import eventEmitter from "@app/api/eventEmitter";
-import { useIsFocused } from "@react-navigation/native";
 
 type IOrderUnit = [number, string, string, string]; // index, address, amount, price
 interface IOrderData {
@@ -77,7 +77,7 @@ const Orderbook: React.FC = () => {
             onChange={setCurrentToken}
           ></TokenSelect>
           <HStack py="2">
-            <VStack w="3/5" textAlign="center">
+            <VStack w="4/5" textAlign="center">
               <Input
                 type="text"
                 onChangeText={(text) => {
@@ -106,49 +106,27 @@ const Orderbook: React.FC = () => {
               ></Input>
             </VStack>
             <VStack
-              w={"2/5"}
+              w={"1/5"}
               justifyContent="flex-end"
               alignItems="center"
               py="2"
             >
-              <HStack>
-                <TransferButton
-                  icon={faPlus}
-                  title={lang.Buy}
-                  onPress={() => {
-                    setBuySellFlag("buy");
-                    modal1.onToggle();
-                  }}
-                ></TransferButton>
-                <TransferButton
-                  icon={faMinus}
-                  title={lang.Sell}
-                  onPress={() => {
-                    setBuySellFlag("sell");
-                    modal1.onToggle();
-                  }}
-                ></TransferButton>
-              </HStack>
-              <HStack>
-                <TransferButton
-                  icon={faPlus}
-                  title={lang.Sell}
-                  bgColor="red.500"
-                  onPress={() => {
-                    setBuySellFlag("cancelbuy");
-                    modal1.onToggle();
-                  }}
-                ></TransferButton>
-                <TransferButton
-                  icon={faMinus}
-                  title={lang.Sell}
-                  bgColor="red.500"
-                  onPress={() => {
-                    setBuySellFlag("cancelsell");
-                    modal1.onToggle();
-                  }}
-                ></TransferButton>
-              </HStack>
+              <TransferButton
+                icon={faPlus}
+                title={lang.Buy}
+                onPress={() => {
+                  setBuySellFlag("buy");
+                  modal1.onToggle();
+                }}
+              ></TransferButton>
+              <TransferButton
+                icon={faMinus}
+                title={lang.Sell}
+                onPress={() => {
+                  setBuySellFlag("sell");
+                  modal1.onToggle();
+                }}
+              ></TransferButton>
             </VStack>
           </HStack>
 
