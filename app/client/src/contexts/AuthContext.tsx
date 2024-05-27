@@ -49,6 +49,8 @@ interface AuthContextType {
     txWasmStatus: any;
     txSocketStatus: any;
     txLoading: boolean;
+    txModalStatus: 'middle' | 'bottom' | 'closed' | string;
+    setTxModalStatus: Dispatch<SetStateAction<'middle' | 'bottom' | 'closed' | string>>;
     setTxStatus: Dispatch<SetStateAction<string>>;
     setCurrentToken: Dispatch<SetStateAction<TokenOption>>;
     fetchTradingInfoPage: () => Promise<void>;
@@ -113,6 +115,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [txWasmStatus, setTxWasmStatus] = useState<any>();
     const [txSocketStatus, setTxSocketStatus] = useState<any>();
     const [txLoading, setTxLoading] = useState<boolean>(false);
+    const [txModalStatus, setTxModalStatus] = useState<'middle' | 'bottom' | 'closed' | string>('closed');
 
     const tokenOptions: TokenOption[] = assetsItems.map((item) => ({
         label: item.icon,
@@ -324,6 +327,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 toAddress
             })
             toast.success('Sent tx');
+            setTxModalStatus('middle');
         } catch (error) {
             toast.error('Internal Server Error');
         } finally {
@@ -461,6 +465,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 txWasmStatus,
                 txSocketStatus,
                 txLoading,
+                txModalStatus,
+                setTxModalStatus,
                 setTxStatus,
                 fetchTradingInfoPage,
                 setCurrentToken,

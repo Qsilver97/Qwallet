@@ -381,25 +381,31 @@ exports.sendTx = async (req, res) => {
     }
     console.log({ command: command, flag });
     const result = await wasmManager.ccallV1request({ command: command, flag });
+    const statusResult = await wasmManager.ccall({ command: 'status 1', flag: 'transferStatus' })
+    let txid = statusResult.value.display.split(' ')[1];
+    let expectedTick = statusResult.value.display.split(' ')[5];
+    console.log(statusResult, 'aaaaaaaaaaaasssssssss')
+    if (statusResult.value.result != 1) {
+        res.status(400).send('error');
+        return;
+    }
+
     const handleTx = async () => {
         const result = await wasmManager.ccall({ command: 'status 1', flag: 'transferStatus' })
         socket.emit('txWasmStatus', result.value);
 
-        let txid;
-        let tick;
         if (result.value.result == 1) {
-            txid = result.value.display.split(' ')[1];
-            tick = result.value.display.split(' ')[5];
             if (txid.length == 60) {
                 setTimeout(async () => {
-                    const txStatus = await socketSync(`${txid} ${tick}`);
-                    socket.emit('txSocketStatus', { txStatus, txid, tick, flag, currentToken, amount, price, toAddress });
+                    const txStatus = await socketSync(`${txid} ${expectedTick}`);
+                    socket.emit('txSocketStatus', { txStatus, txid, tick: expectedTick, flag, currentToken, amount, price, toAddress });
                     if (txStatus.status) {
                         clearInterval(txStatusInterval);
                     }
                 }, 1333);
             }
         }
+
         if (result.value.display == 'no command pending') {
             clearInterval(txStatusInterval);
         }

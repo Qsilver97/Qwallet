@@ -10,7 +10,8 @@ module.exports = function (liveSocketURL) {
     const connect = () => {
         liveSocket = socketManager.initLiveSocket(liveSocketURL);
 
-        liveSocket.on('open', () => {
+        liveSocket.on('open', (client) => {
+            console.log(client)
             console.log("Connected to the live socket");
         });
 
