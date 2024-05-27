@@ -10,11 +10,11 @@ import { TokenOption } from "../../components/commons/Select";
 import { isNaturalNumber, isPositiveNumber } from "../../utils/helper";
 
 const TradingAside = ({ options }: { options: TokenOption[] }) => {
-    const { handleBuyCell, txStatus, setTxStatus, tokenBalances, currentAddress, currentToken } = useAuth();
+    const { handleTx, txStatus, setTxStatus, tokenBalances, currentAddress, currentToken } = useAuth();
 
     const [command, setCommand] = useState<'buy' | 'sell' | 'cancelbuy' | 'cancelsell'>();
-    const [quantity, setQuantity] = useState<string>();
-    const [price, setPrice] = useState<string>();
+    const [quantity, setQuantity] = useState<string>('');
+    const [price, setPrice] = useState<string>('');
 
     const handleChangeQuantity = (e: React.ChangeEvent<HTMLInputElement>) => {
         setQuantity(e.target.value);
@@ -24,17 +24,36 @@ const TradingAside = ({ options }: { options: TokenOption[] }) => {
         setPrice(e.target.value);
     }
 
-    const handleTx = () => {
+    const handleBuySell = async () => {
         if (!quantity || !price || !command) {
             toast.error('Invalid command.');
             return;
         }
-        handleBuyCell(command, quantity, price);
+        await handleTx(command, quantity, price);
+        setTxStatus("");
+    }
+
+    const actionValidate = (command: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell'): boolean => {
+        if (!quantity || !price || !isPositiveNumber(quantity) || !isNaturalNumber(price)) {
+            toast.error('Input valid quantity or price.');
+            return false;
+        }
+        if (command == 'buy' && tokenBalances['QU'][currentAddress] < parseInt(price)) {
+            toast.error('Not enough QU balance');
+            return false;
+        }
+        if (command == 'sell') {
+            const balance = tokenBalances[currentToken.value as string] ? (tokenBalances[currentToken.value as string][currentAddress] || 0) : 0;
+            if (balance < parseInt(quantity)) {
+                toast.error(`Not enough ${currentToken.value} balance`);
+                return false
+            }
+        }
+        return true
     }
 
     const handleAction = (command: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell') => {
-        if (!quantity || !price || !isPositiveNumber(quantity) || !isNaturalNumber(price)) {
-            toast.error('Input valid quantity or price.');
+        if (!actionValidate(command)) {
             return;
         }
         if (command == 'buy' && parseInt(price) > tokenBalances['QU'][currentAddress]) {
@@ -53,7 +72,7 @@ const TradingAside = ({ options }: { options: TokenOption[] }) => {
     return (
         <Section>
             {txStatus != "" &&
-                <TxModal handleTx={handleTx} quantity={quantity} price={price} />
+                <TxModal handleBuySell={handleBuySell} quantity={quantity} price={price} />
             }
             {/* <Text size="xs" weight="medium" className="text-celestialBlue">
                 SELECT A STRIKE PRICE

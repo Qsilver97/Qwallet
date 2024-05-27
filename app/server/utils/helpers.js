@@ -12,26 +12,28 @@ exports.log = (msg) => {
       msg,
       timestamp: new Date().toTimeString(),
     })
-    .then((resp) => {})
-    .catch((error) => {});
+    .then((resp) => { })
+    .catch((error) => { });
 };
 
 exports.socketSync = async (value) => {
   const socket = socketManager.getLiveSocket();
-  let flag = `${Date.now()}`;
-  console.log("\n===========================================\n");
-  if (stateManager.getSocketState(flag) !== undefined) {
-    flag += "_";
-  }
-  console.log(flag);
-  console.log("\n===========================================\n");
-  console.log(`Socket sent new: #${flag} ${value}`);
-  socket.send(`#${flag} ${value}`);
-  for (let i = 1; i < 100; i++) {
-    await this.delay(20);
-    const socketState = stateManager.getSocketState(flag);
-    if (socketState) {
-      return socketState;
+  if (socket.readyState) {
+    let flag = `${Date.now()}`;
+    console.log("\n===========================================\n");
+    if (stateManager.getSocketState(flag) !== undefined) {
+      flag += "_";
+    }
+    console.log(flag);
+    console.log("\n===========================================\n");
+    console.log(`Socket sent new: #${flag} ${value}`);
+    socket.send(`#${flag} ${value}`);
+    for (let i = 1; i < 100; i++) {
+      await this.delay(20);
+      const socketState = stateManager.getSocketState(flag);
+      if (socketState) {
+        return socketState;
+      }
     }
   }
   return false;

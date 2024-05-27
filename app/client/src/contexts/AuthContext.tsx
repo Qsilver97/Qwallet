@@ -45,9 +45,12 @@ interface AuthContextType {
     orders: OrderInterface | undefined;
     tradingPageLoading: boolean;
     txStatus: string;
-    txId: string;
-    expectedTick: number;
     tokenPrices: TokenPriceInterface;
+    txWasmStatus: any;
+    txSocketStatus: any;
+    txLoading: boolean;
+    txModalStatus: 'middle' | 'bottom' | 'closed' | string;
+    setTxModalStatus: Dispatch<SetStateAction<'middle' | 'bottom' | 'closed' | string>>;
     setTxStatus: Dispatch<SetStateAction<string>>;
     setCurrentToken: Dispatch<SetStateAction<TokenOption>>;
     fetchTradingInfoPage: () => Promise<void>;
@@ -62,7 +65,7 @@ interface AuthContextType {
     create: () => void;
     restoreAccount: () => void;
     handleAddAccount: () => void;
-    handleBuyCell: (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell', amount: string, price: string) => Promise<void>;
+    handleTx: (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell' | 'send', amount: string, price: string, toAddress?: string) => Promise<void>;
     toAccountOption: (password: string, confirmPassword: string) => void;
     handleClickSideBar: (idx: number) => void;
 }
@@ -109,9 +112,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [orders, setOrders] = useState<OrderInterface>();
     const [tradingPageLoading, setTradingPageLoading] = useState<boolean>(false);
     const [txStatus, setTxStatus] = useState<string>("");
-    const [txInterval, setTxInterval] = useState<any>();
-    const [txId, setTxId] = useState<string>("");
-    const [expectedTick, setExpectedTick] = useState<number>(0);
+    const [txWasmStatus, setTxWasmStatus] = useState<any>();
+    const [txSocketStatus, setTxSocketStatus] = useState<any>();
+    const [txLoading, setTxLoading] = useState<boolean>(false);
+    const [txModalStatus, setTxModalStatus] = useState<'middle' | 'bottom' | 'closed' | string>('closed');
 
     const tokenOptions: TokenOption[] = assetsItems.map((item) => ({
         label: item.icon,
@@ -142,9 +146,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         } catch (error) { }
 
         if (resp && resp.status == 200) {
-            setIsAuthenticated(resp.data.isAuthenticated);
-            setPassword(resp.data.password);
-            setAccountInfo(resp.data.accountInfo);
+            setIsAuthenticated(resp.data.userState.isAuthenticated);
+            setPassword(resp.data.userState.password);
+            setAccountInfo(resp.data.userState.accountInfo);
+            setTick(resp.data.addressResp.tick);
             await fetchInfo();
         } else {
             toast.error("Couldn't log in");
@@ -281,6 +286,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             setTokenprices({ ...data.tokenPrices, 'QU': [1, 1] });
             setTokens(["QU", ...(data?.tokens || [])]);
             setRichlist(data.richlist);
+            setTick(data.addressInfo.tick)
+            console.log(data, 'bbbbbbbbbbbbbbbbbb')
         } else {
         }
     };
@@ -292,53 +299,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             const resp = await axios.post(`${SERVER_URL}/api/trading-page-info`, {
                 token: currentToken.value
             });
-            orders = resp.data;
+            console.log(resp.data, 'fffffffffffffffffffffffff')
+            if (resp.data.error) {
+                console.log(resp.data, currentToken);
+            } else {
+                orders = resp.data;
+            }
         } catch (error) {
-            orders = [];
+
         }
         setOrders(orders)
         setTradingPageLoading(false);
         return orders;
     }
 
-    const handleBuyCell = async (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell', amount: string, price: string): Promise<any> => {
-        await axios.post(`${SERVER_URL}/api/buy-cell`, {
-            flag,
-            password,
-            index: accountInfo?.addresses.indexOf(currentAddress),
-            tick: parseInt(tick) + EXPECTEDTICKGAP,
-            currentToken: currentToken.value,
-            amount,
-            price,
-        }).then(() => {
-            const _statusInterval = setInterval(() => {
-                axios.post(
-                    `${SERVER_URL}/api/tx-status`
-                ).then((resp) => {
-                    console.log(resp.data);
-                    if (resp.data.value.result == '0') {
-                    } else if (resp.data.value.result == '1') {
-                        setTxStatus(resp.data.value.display);
-                    } else {
-                    }
-                }).catch(() => {
-                })
-            }, 2000)
-            setTxInterval(_statusInterval);
-        }).catch(() => {
-
-        })
-    }
-
-    useEffect(() => {
-        if (txStatus.includes('broadcast for tick')) {
-            const sendingResultSplit = txStatus.split(' ');
-            setTxId(sendingResultSplit[1]);
-            setExpectedTick(parseInt(sendingResultSplit[sendingResultSplit.length - 1]));
-        } else if (txStatus.includes('no command pending')) {
-            clearInterval(txInterval);
+    const handleTx = async (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell' | 'send', amount: string, price: string, toAddress?: string): Promise<any> => {
+        setTxLoading(true);
+        try {
+            await axios.post(`${SERVER_URL}/api/send-tx`, {
+                flag,
+                password,
+                index: accountInfo?.addresses.indexOf(currentAddress),
+                tick: parseInt(tick) + EXPECTEDTICKGAP,
+                currentToken: currentToken.value,
+                amount,
+                price,
+                toAddress
+            })
+            toast.success('Sent tx');
+            setTxModalStatus('middle');
+        } catch (error) {
+            toast.error('Internal Server Error');
+        } finally {
+            setTxLoading(false);
         }
-    }, [txStatus])
+    }
 
     useEffect(() => {
         const newSocket = io(wsUrl);
@@ -377,6 +372,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 console.log(data.marketcap, 4);
             }
         });
+
+        newSocket.on('txWasmStatus', (data) => {
+            console.log('txWasmStatus', data);
+            setTxWasmStatus(data);
+        });
+
+        newSocket.on('txSocketStatus', (data) => {
+            console.log('txSocketStatus', data);
+            setTxSocketStatus(data);
+        })
 
         return () => {
             newSocket.close();
@@ -456,9 +461,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 orders,
                 tradingPageLoading,
                 txStatus,
-                txId,
-                expectedTick,
                 tokenPrices,
+                txWasmStatus,
+                txSocketStatus,
+                txLoading,
+                txModalStatus,
+                setTxModalStatus,
                 setTxStatus,
                 fetchTradingInfoPage,
                 setCurrentToken,
@@ -470,7 +478,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 handleClickSideBar,
                 login,
                 logout,
-                handleBuyCell,
+                handleTx,
                 toAccountOption,
                 create,
                 restoreAccount,

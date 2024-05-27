@@ -11,8 +11,9 @@ const Assets: React.FC = () => {
             tokens.forEach(token => {
                 let amount = 0;
                 if (tokenPrices[token][0] !== 0 && tokenBalances[token] && tokenPrices[token]) {
-                    amount = tokenBalances[token][currentAddress] * tokenPrices[token][1] / tokenPrices[token][0];
+                    amount = (tokenBalances[token][currentAddress] || 0) * tokenPrices[token][1] / tokenPrices[token][0];
                 }
+                console.log(amount)
                 _totalAmount += amount;
             })
         }
@@ -23,8 +24,15 @@ const Assets: React.FC = () => {
         <div className="rounded-lg bg-dark px-6 py-8 flex flex-col text-center">
             {tokens.map((token, idx) => {
                 let percent = 0;
+                let amount = 0;
+                if (token == 'QU' && tokenBalances[token]) {
+                    amount = (tokenBalances[token][currentAddress] || 0);
+                }
+                else if (tokenPrices[token][0] !== 0 && tokenBalances[token] && tokenPrices[token]) {
+                    amount = (tokenBalances[token][currentAddress] || 0) * tokenPrices[token][1] / tokenPrices[token][0];
+                }
                 if (totalAmount !== 0 && tokenBalances[token]) {
-                    percent = tokenBalances[token][currentAddress] * 100 / totalAmount
+                    percent = amount * 100 / totalAmount
                 }
                 return <AssetItem token={token} key={idx} percent={percent} />;
             })}
