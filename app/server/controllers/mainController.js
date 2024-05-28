@@ -391,7 +391,7 @@ exports.sendTx = async (req, res) => {
         res.status(400).send('error');
         return;
     }
-
+    let txStatusInterval;
     const handleTx = async () => {
         const result = await wasmManager.ccall({ command: 'status 1', flag: 'transferStatus' })
         socket.emit('txWasmStatus', result.value);
@@ -417,13 +417,16 @@ exports.sendTx = async (req, res) => {
     }
 
     const handleTxInterval = async () => {
-        const networkResp = await socketSync('network');
-        console.log(networkResp, networkResp.latest, parseInt(expectedTick), '11111111')
-        if (networkResp.latest >= parseInt(expectedTick)) {
+        const tick = stateManager.getTick();
+        if (tick && tick >= parseInt(expectedTick)) {
+            const networkResp = await socketSync('network');
+            if (networkResp.txdata > parseInt(expectedTick) || networkResp.latest >= parseInt(expectedTick) + 5) {
+                clearInterval(txStatusInterval);
+            }
             handleTx();
         }
     }
-    const txStatusInterval = setInterval(handleTxInterval, 2000);
+    txStatusInterval = setInterval(handleTxInterval, 2000);
     handleTx();
     res.status(200).send(flag);
 

@@ -2,6 +2,7 @@ let userState = {};
 let remoteSubshas = "";
 let localSubshash = "";
 let socketState = {};
+let tick;
 
 // export interface AccountDetailType {
 //     addresses: string[],
@@ -63,5 +64,12 @@ module.exports = {
     },
     getSocketState: (flag) => {
         return socketState[flag];
+    },
+    setTick: (_tick) => {
+        tick = _tick;
+        return tick;
+    },
+    getTick: () => {
+        return tick;
     }
 };
