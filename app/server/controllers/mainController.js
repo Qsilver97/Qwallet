@@ -66,6 +66,7 @@ exports.login = async (req, res) => {
         const remoteSubshas = stateManager.getRemoteSubshash();
         return (localSubshash != "") && (remoteSubshas == localSubshash);
     }
+    const networkResp = await socketSync('network');
 
     const matchStatus = await checkSubshash();
 
@@ -73,7 +74,7 @@ exports.login = async (req, res) => {
         stateManager.setRemoteSubshash("");
         stateManager.setLocalSubshash("");
         const userState = stateManager.setUserState({ password: realPassword, accountInfo: listResult.value.display, isAuthenticated: true });
-        res.send({ userState, addressResp });
+        res.send({ userState, networkResp });
         return;
     } else if (matchStatus == 'Socket server error') {
         res.status(401).send('Socket server error');
@@ -100,7 +101,7 @@ exports.login = async (req, res) => {
             stateManager.setRemoteSubshash("");
             stateManager.setLocalSubshash("");
             const userState = stateManager.setUserState({ password: realPassword, accountInfo: listResult.value.display, isAuthenticated: true });
-            res.send({ userState, addressResp, balances });
+            res.send({ userState, networkResp });
         } else {
             res.status(401).send('not synced');
         }
@@ -131,6 +132,7 @@ exports.fetchUser = async (req, res) => {
     const marketcap = await socketSync('marketcap');
     const tokens = await socketSync('tokenlist');
     const tokenPrices = await socketSync('tokenprices');
+    const networkResp = await socketSync('network');
     // const richlist = {};
     // const qurichlist = await socketSync('richlist');
     // richlist[qurichlist.name] = qurichlist.richlist;
@@ -142,7 +144,7 @@ exports.fetchUser = async (req, res) => {
     // } catch (error) {
 
     // }
-    const updatedUserState = { ...userState, ...{ balances: balances.balances, marketcap, tokens: tokens.tokens, tokenPrices: tokenPrices, addressInfo } };
+    const updatedUserState = { ...userState, ...{ balances: balances.balances, marketcap, tokens: tokens.tokens, tokenPrices: tokenPrices, networkResp } };
     stateManager.setUserState(updatedUserState);
     res.send(updatedUserState);
 }
@@ -413,7 +415,15 @@ exports.sendTx = async (req, res) => {
             wasmManager.ccall({ command: 'v1request', flag: 'transferStatus' });
         }, 660);
     }
-    const txStatusInterval = setInterval(handleTx, 2000);
+
+    const handleTxInterval = async () => {
+        const networkResp = await socketSync('network');
+        console.log(networkResp, networkResp.latest, parseInt(expectedTick), '11111111')
+        if (networkResp.latest >= parseInt(expectedTick)) {
+            handleTx();
+        }
+    }
+    const txStatusInterval = setInterval(handleTxInterval, 2000);
     handleTx();
     res.status(200).send(flag);
 

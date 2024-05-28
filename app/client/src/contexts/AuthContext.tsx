@@ -149,7 +149,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             setIsAuthenticated(resp.data.userState.isAuthenticated);
             setPassword(resp.data.userState.password);
             setAccountInfo(resp.data.userState.accountInfo);
-            setTick(resp.data.addressResp.tick);
+            setTick(resp.data.networkResp.latest);
             await fetchInfo();
         } else {
             toast.error("Couldn't log in");
@@ -286,7 +286,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             setTokenprices({ ...data.tokenPrices, 'QU': [1, 1] });
             setTokens(["QU", ...(data?.tokens || [])]);
             setRichlist(data.richlist);
-            setTick(data.addressInfo.tick)
+            setTick(data.networkResp.latest)
             console.log(data, 'bbbbbbbbbbbbbbbbbb')
         } else {
         }
@@ -343,7 +343,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
             if (data.command == "CurrentTickInfo") {
                 setTick(data.tick);
             } else if (data.command == "EntityInfo") {
-                console.log(data.balance, 1);
+                // console.log(data.balance, 1);
                 if (data.address)
                     setBalances((prev) => {
                         return {
