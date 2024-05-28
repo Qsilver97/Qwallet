@@ -12,12 +12,15 @@ import { useAuth } from "../../contexts/AuthContext";
 import TradingAside from "./TradingAside";
 import { formatNumberWithCommas } from "../../utils/helper";
 import { toast } from "react-toastify";
+import { OrderInterface } from "../../utils/interfaces";
 
 const tabs = ['Bids', 'Asks']
 
 const Trading = () => {
     const { fetchTradingInfoPage, setTxStatus, tradingPageLoading, orders, tokens, currentToken, tokenBalances, currentAddress, handleTx } = useAuth();
     const [activeTab, setActiveTab] = useState<string>('Bids');
+    const [filteredOrders, setFilteredOrders] = useState<OrderInterface | undefined>();
+    const [openOrderStatus, setOpenOrderStatus] = useState<boolean>(false);
 
     const options = tokens.map((token) => {
         const item = assetsItems.find((k) => k.name == token) || assetsItems[0]
@@ -51,6 +54,10 @@ const Trading = () => {
         setCommand(command);
     }
 
+    const handleOpenOrders = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setOpenOrderStatus(e.target.checked);
+    }
+
     useEffect(() => {
         async function init() {
             const orders = await fetchTradingInfoPage();
@@ -70,6 +77,16 @@ const Trading = () => {
                 clearInterval(fetchInterval)
         })
     }, [currentToken, activeTab])
+
+    useEffect(() => {
+        if (orders) {
+            if (openOrderStatus) {
+                setFilteredOrders({ ...orders, bids: orders?.bids.filter(bid => bid[0] == currentAddress), asks: orders?.asks.filter(ask => ask[0] == currentAddress) })
+            } else {
+                setFilteredOrders({ ...orders });
+            }
+        }
+    }, [openOrderStatus, orders])
 
     return (
         <>
@@ -100,6 +117,10 @@ const Trading = () => {
                                 <div className="grid grid-cols-[70%_30%] gap-2">
                                     <div className="flex flex-col gap-2">
                                         <Section>
+                                            <div className="flex items-center gap-2">
+                                                <input type="checkbox" id="openorders" onChange={handleOpenOrders} checked={openOrderStatus} />
+                                                <label htmlFor="openorders">My Open Orders</label>
+                                            </div>
                                             <div className="flex justify-start gap-5 w-full h-7">
                                                 {
                                                     tabs.map((item: string, idx) => {
@@ -137,8 +158,8 @@ const Trading = () => {
                                                                         }
                                                                     </thead>
                                                                     <tbody className="divide-y divide-gray-200 dark:divide-neutral-700 font-Montserrat">
-                                                                        {orders &&
-                                                                            orders[activeTab.toLowerCase() as 'bids' | 'asks'].map((bid, idx) => {
+                                                                        {filteredOrders &&
+                                                                            filteredOrders[activeTab.toLowerCase() as 'bids' | 'asks'].map((bid, idx) => {
                                                                                 return <tr key={idx}>
                                                                                     <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">{idx + 1}</td>
                                                                                     <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200 font-mono">{bid[0]}</td>
