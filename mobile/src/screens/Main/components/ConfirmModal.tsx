@@ -30,7 +30,6 @@ const ConfirmModal: React.FC<IProps> = ({
   icon,
   buttons,
   children,
-  avoidKeyboard,
 }) => {
   const lang = local.Main.Components;
   const { bgColor, textColor, main } = useColors();
@@ -40,7 +39,6 @@ const ConfirmModal: React.FC<IProps> = ({
       isOpen={isOpen}
       onClose={onToggle}
       avoidKeyboard
-      size="md"
       _backdrop={{
         _dark: {
           bg: "coolGray.600",
@@ -52,7 +50,7 @@ const ConfirmModal: React.FC<IProps> = ({
       }}
     >
       <KeyboardAvoidingView behavior="padding">
-        <Modal.Content>
+        <Modal.Content w="80">
           <Modal.CloseButton />
           <Modal.Body bgColor={bgColor}>
             <VStack justifyContent={"center"} py={6}>

@@ -94,10 +94,8 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
           opacity: 0.8,
         }}
       >
-        <KeyboardAvoidingView
-          behavior={"padding"}
-        >
-          <Modal.Content>
+        <KeyboardAvoidingView behavior="padding">
+          <Modal.Content w="80">
             <Modal.CloseButton />
             <Modal.Body bgColor={bgColor}>
               <HStack
