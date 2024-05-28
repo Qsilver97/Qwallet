@@ -377,16 +377,18 @@ exports.sendTx = async (req, res) => {
     const socket = socketManager.getIO();
     let command = "";
     if (flag == 'send') {
-        command = `send ${password},${index},${tick},${toAddress},${amount}`;
+        if (currentToken) {
+            command = `tokensend ${password},${index},${tick},${toAddress},${amount},${currentToken}`;
+        } else {
+            command = `send ${password},${index},${tick},${toAddress},${amount}`;
+        }
     } else {
         command = `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`;
     }
-    console.log({ command: command, flag });
     const result = await wasmManager.ccallV1request({ command: command, flag });
     const statusResult = await wasmManager.ccall({ command: 'status 1', flag: 'transferStatus' })
     let txid = statusResult.value.display.split(' ')[1];
     let expectedTick = statusResult.value.display.split(' ')[5];
-    console.log(statusResult, 'aaaaaaaaaaaasssssssss')
     if (statusResult.value.result != 1) {
         res.status(400).send('error');
         return;
