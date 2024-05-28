@@ -9,8 +9,6 @@ import AccountSummary from "./AccountSummary";
 import AccountGrid from "./AccountGrid";
 import { useAuth } from "../../contexts/AuthContext";
 import { useEffect, useState } from "react";
-import TokenSelect from "../../components/dashboard/select/TokenSelect";
-import { assetsItems } from "../../utils/constants";
 type DataType = {
     address: string;
     balance: number;
@@ -40,13 +38,8 @@ const Accounts = () => {
             }
         });
     }, [accountInfo, balances]);
-    
-    const pagesTotal = Math.round(data.length / 10);
 
-    const options = assetsItems.map((item) => ({
-        label: item.icon,
-        value: item.name,
-    }));
+    const pagesTotal = Math.round(data.length / 10);
 
     return (
         <>
