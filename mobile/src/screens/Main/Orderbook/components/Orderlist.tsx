@@ -159,6 +159,7 @@ const Orderlist: React.FC<IProps> = ({ orderData }) => {
       <ConfirmModal
         isOpen={cancelModal.isOpen}
         onToggle={cancelModal.onToggle}
+        avoidKeyboard
         onPress={() => {
           cancelModal.onClose();
           modal.onToggle();

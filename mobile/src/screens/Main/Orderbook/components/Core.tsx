@@ -119,8 +119,8 @@ const Core: React.FC<IProps> = ({
       flag,
       amount,
       price,
-      user?.password as string,
-      user?.accountInfo?.addresses.indexOf(currentAddress) as number,
+      user.password as string,
+      user.accountInfo.addresses.indexOf(currentAddress) as number,
       parseInt(tick) + 5,
       token
     );

@@ -1,10 +1,18 @@
-import { basicInfo, getHistory, getToken, transferStatus } from "@app/api/api";
+import {
+  basicInfo,
+  getHistory,
+  getToken,
+  network,
+  transferStatus,
+} from "@app/api/api";
 import eventEmitter from "@app/api/eventEmitter";
 import {
   setIsAuthenticated,
   setPassword,
+  setTick,
   setTokens,
 } from "@app/redux/appSlice";
+import { RootState } from "@app/redux/store";
 import {
   AuthContextType,
   Balances,
@@ -18,15 +26,17 @@ import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import Toast from "react-native-toast-message";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const dispatch = useDispatch();
+  const { tick } = useSelector((store: RootState) => store.app);
 
   //////////////// Acccount Info /////////////////////
   const [user, setUser] = useState<UserDetailType>({
@@ -59,7 +69,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [historyNum, setHistoryNum] = useState(histories.length);
   const [expectingHistoryUpdate, setExpectingHistoryUpdate] = useState(false);
 
+  const [lastSocketResponseTime, setLastSocketResponseTime] = useState(0);
+  const intervalRef = useRef<NodeJS.Timeout>();
+
   const lang = local.Toast;
+
+  // useEffect(() => {
+  //   if (lastSocketResponseTime != 0)
+  //     intervalRef.current = setInterval(() => {
+  //       if (Date.now() - lastSocketResponseTime > 4000) {
+  //         console.log(Date.now());
+  //         console.log(lastSocketResponseTime);
+  //         network();
+  //       }
+  //     }, 5000);
+
+  //   return () => {
+  //     if (intervalRef.current) {
+  //       clearInterval(intervalRef.current);
+  //     }
+  //   };
+  // }, [lastSocketResponseTime]);
+
+  useEffect(() => {
+    if (user.accountInfo.numaddrs)
+      setTimeout(() => {
+        network();
+      }, 5000);
+  }, [user.accountInfo.numaddrs]);
 
   const clear = () => {
     dispatch(setIsAuthenticated(false));
@@ -83,7 +120,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const login = (userDetails: UserDetailType) => {
-    setUser(userDetails);
+    setUser({ ...userDetails, isAuthenticated: true });
     setCurrentAddress(userDetails?.accountInfo?.addresses[0]);
     basicInfo();
   };
@@ -114,8 +151,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [balances[currentAddress]]);
 
   useEffect(() => {
-    if (user?.accountInfo) {
-      setCurrentAddress(user?.accountInfo.addresses[0]);
+    if (user.accountInfo.numaddrs) {
+      setCurrentAddress(user.accountInfo.addresses[0]);
     }
   }, [user]);
 
@@ -145,6 +182,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [histories.length, historyNum, currentAddress, expectingHistoryUpdate]);
 
   useEffect(() => {
+    if (
+      txStatus.status == "Pending" &&
+      parseInt(tick) >= txStatus.expectedTick
+    ) {
+      transferStatus();
+    }
+  }, [tick]);
+
+  useEffect(() => {
     const handleHistoryEvent = (res: any) => {
       console.log("S2C/histories: ", res);
       if (res.data === false) {
@@ -168,10 +214,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     const handleTransferEvent = (res: any) => {
       if (res.data) {
-        const _statusInterval = setInterval(() => {
-          transferStatus();
-        }, 2000);
-        setStatusInterval(_statusInterval);
       } else {
         Toast.show({
           type: "error",
@@ -201,10 +243,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     const handleBuySellEvent = (res: any) => {
       if (res.data) {
-        const _statusInterval = setInterval(() => {
-          transferStatus();
-        }, 2000);
-        setStatusInterval(_statusInterval);
         if (res.data.value.result == 0) {
         } else if (res.data.value.result < 0) {
           Toast.show({
@@ -217,11 +255,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
       }
     };
+    const handleNetwork = (res: any) => {
+      if (res.data) {
+        console.log(res.data);
+        dispatch(setTick(res.data?.latest));
+      }
+    };
     eventEmitter.on("S2C/histories", handleHistoryEvent);
     eventEmitter.on("S2C/tokens", handleTokenEvent);
     eventEmitter.on("S2C/transfer", handleTransferEvent);
     eventEmitter.on("S2C/transfer-status", handleTransferStatusEvent);
     eventEmitter.on("S2C/buy-sell", handleBuySellEvent);
+    eventEmitter.on("S2C/network", handleNetwork);
 
     // Cleanup function to remove the event listener
     return () => {
@@ -230,18 +275,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       eventEmitter.off("S2C/transfer", handleTransferEvent);
       eventEmitter.off("S2C/transfer-status", handleTransferStatusEvent);
       eventEmitter.off("S2C/buy-sell", handleBuySellEvent);
+      // eventEmitter.off("S2C/network", handleNetwork);
     };
   }, []);
 
   useEffect(() => {
-    if (txStatus.result.includes("broadcast for tick")) {
+    if (txStatus.result?.includes("broadcast for tick")) {
       const txResultSplit = txStatus.result.split(" ");
       setTxStatus({ ...txStatus, txid: txResultSplit[1] });
       setTxStatus({
         ...txStatus,
         expectedTick: parseInt(txResultSplit[txResultSplit.length - 1]),
       });
-    } else if (txStatus.result.includes("no command pending")) {
+    } else if (txStatus.result?.includes("no command pending")) {
       setTxStatus({ ...txStatus, status: "Success" });
       Toast.show({
         type: "success",
@@ -269,6 +315,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setTxStatus,
         setIsLoading,
         setPrevBalances,
+        setLastSocketResponseTime,
       }}
     >
       {children}

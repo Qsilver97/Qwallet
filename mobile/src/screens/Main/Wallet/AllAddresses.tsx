@@ -98,7 +98,7 @@ const AllAddresses: React.FC = () => {
         onPress={() => {
           onToggle();
           deleteAccount(
-            user?.password,
+            user.password,
             user.accountInfo.addresses.indexOf(selectedAddress),
             selectedAddress
           );

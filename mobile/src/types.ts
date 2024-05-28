@@ -45,6 +45,7 @@ interface AuthContextType {
   >;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setPrevBalances: React.Dispatch<React.SetStateAction<Balances>>;
+  setLastSocketResponseTime: React.Dispatch<React.SetStateAction<number>>;
 }
 
 type IOrderUnit = [number, string, string, string]; // index, address, amount, price

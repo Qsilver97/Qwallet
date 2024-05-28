@@ -6,9 +6,17 @@ import { useDispatch } from "react-redux";
 
 export const SocketCom: React.FC = () => {
   const dispatch = useDispatch();
-  const { setBalances, setTokenBalances, user, setPrevBalances } = useAuth();
+  const {
+    setBalances,
+    setTokenBalances,
+    user,
+    setPrevBalances,
+    setLastSocketResponseTime,
+  } = useAuth();
   useEffect(() => {
     eventEmitter.on("S2C/live", (res) => {
+      console.log(res);
+      setLastSocketResponseTime(Date.now());
       if (res.data.command == "CurrentTickInfo") {
         dispatch(setTick(res.data.tick));
       } else if (res.data.command == "EntityInfo") {

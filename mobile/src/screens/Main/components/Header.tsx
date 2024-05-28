@@ -40,8 +40,8 @@ const Header: React.FC = () => {
     if (addingStatus) return;
     setAddingStatus(true);
     addAccount(
-      user?.password,
-      user?.accountInfo.addresses.findIndex((item) => item == "")
+      user.password,
+      user.accountInfo.addresses.findIndex((item) => item == "")
     );
   };
   const handleTapAddress = () => {

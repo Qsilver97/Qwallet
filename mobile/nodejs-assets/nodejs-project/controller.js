@@ -4,6 +4,7 @@ const rn_bridge = require("rn-bridge");
 const socketManager = require("./managers/socketManager");
 const { delay, socketSync } = require("./utils/helpers");
 const liveSocketController = require("./liveSocketController");
+
 const bridge_send = (responseType, result) => {
   rn_bridge.channel.send(
     JSON.stringify({
@@ -208,6 +209,13 @@ exports.fetchUser = async () => {
 exports.history = async (address) => {
   const result = await socketSync(`history ${address}`);
   bridge_send("S2C/histories", result);
+};
+
+exports.network = async () => {
+  console.log("NET")
+  const result = await socketSync("network");
+  console.log(result)
+  bridge_send("S2C/network", result);
 };
 
 exports.deleteAccount = async (password, index, address) => {
