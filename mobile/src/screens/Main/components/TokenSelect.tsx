@@ -19,13 +19,8 @@ const TokenSelect: React.FC<TokenSelectProps> = ({
 }) => {
   const { textColor, main, panelBgColor } = useColors();
   const { tokens } = useSelector((store: RootState) => store.app);
-  const [dispTokens, setDispTokens] = useState<string[]>(tokens);
 
-  useEffect(() => {
-    if (includeQU) setDispTokens(["QU", ...tokens]);
-    else setDispTokens(tokens)
-  }, [includeQU, tokens]);
-
+  const dispTokens = includeQU ? ["QU", ...tokens] : tokens;
   const TokenList = useMemo(() => {
     return (
       <HStack space={3} px="4" w="full">

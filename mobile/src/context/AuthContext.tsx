@@ -16,6 +16,7 @@ import { RootState } from "@app/redux/store";
 import {
   AuthContextType,
   Balances,
+  QxTxItem,
   TransactionItem,
   TransactionStatus,
   UserDetailType,
@@ -32,6 +33,33 @@ import {
 import Toast from "react-native-toast-message";
 import { useDispatch, useSelector } from "react-redux";
 
+interface AuthContextType {
+  user: UserDetailType;
+  balances: Balances;
+  currentAddress: string;
+  histories: TransactionItem[];
+  qxHistories: QxTxItem[];
+  tokenBalances: {
+    [name: string]: Balances;
+  };
+  txStatus: TransactionStatus;
+  isLoading: boolean;
+
+  login: (userDetails: UserDetailType) => void;
+  logout: () => void;
+  setBalances: React.Dispatch<React.SetStateAction<Balances>>;
+  setCurrentAddress: (value: React.SetStateAction<string>) => void;
+  setTxStatus: React.Dispatch<React.SetStateAction<TransactionStatus>>;
+  setTokenBalances: React.Dispatch<
+    React.SetStateAction<{
+      [name: string]: Balances;
+    }>
+  >;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setPrevBalances: React.Dispatch<React.SetStateAction<Balances>>;
+  setLastSocketResponseTime: React.Dispatch<React.SetStateAction<number>>;
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -46,6 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   });
   const [balances, setBalances] = useState<Balances>({});
   const [histories, setHistories] = useState<TransactionItem[]>([]);
+  const [qxHistories, setQxHistories] = useState<QxTxItem[]>([]);
   const [tokenBalances, setTokenBalances] = useState<{
     [name: string]: Balances;
   }>({});
@@ -117,6 +146,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
     setTokenBalances({});
     setIsLoading(false);
+    setExpectingHistoryUpdate(false);
   };
 
   const login = (userDetails: UserDetailType) => {
@@ -132,6 +162,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     setTokens([]);
     if (!!currentAddress) {
+      setExpectingHistoryUpdate(false);
       setIsLoading(true);
       getHistory(currentAddress);
       getToken();
@@ -139,16 +170,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [currentAddress]);
 
   // If someone send qu to me
-  useEffect(() => {
-    if (!currentAddress) return;
-    if (Object.is(prevBalances, {})) return;
-    if (!balances[currentAddress] || !prevBalances[currentAddress]) return;
-    if (balances[currentAddress] > prevBalances[currentAddress]) setOutTx(true);
-    else setOutTx(false);
-    setHistoryNum(histories.length + 1);
-    getHistory(currentAddress);
-    setExpectingHistoryUpdate(true);
-  }, [balances[currentAddress]]);
+  // useEffect(() => {
+  //   if (!currentAddress) return;
+  //   if (Object.is(prevBalances, {})) return;
+  //   if (!balances[currentAddress] || !prevBalances[currentAddress]) return;
+  //   if (balances[currentAddress] > prevBalances[currentAddress]) setOutTx(true);
+  //   else setOutTx(false);
+  //   setHistoryNum(histories.length + 1);
+  //   getHistory(currentAddress);
+  //   setExpectingHistoryUpdate(true);
+  // }, [balances[currentAddress]]);
 
   useEffect(() => {
     if (user.accountInfo.numaddrs) {
@@ -156,30 +187,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [user]);
 
-  // useEffect(() => {
-  //   if (!currentAddress) return;
-  //   if (expectingHistoryUpdate && currentAddress !== "") {
-  //     const interval = setInterval(() => {
-  //       if (histories.length !== historyNum) {
-  //         getHistory(currentAddress);
-  //       } else {
-  //         const newHistory = histories.reverse()[0];
-  //         if (outTx)
-  //           Toast.show({
-  //             type: "info",
-  //             text1: lang.ReceivedQUFrom.replace(
-  //               "{amount}",
-  //               `${Math.abs(parseInt(newHistory[3]))}`
-  //             ).replace("{address}", newHistory[2]),
-  //           });
-  //         setExpectingHistoryUpdate(false); // Clear the flag when history is up-to-date
-  //         clearInterval(interval); // Clear the interval when done
-  //       }
-  //     }, 1500);
+  useEffect(() => {
+    if (!currentAddress) return;
+    if (expectingHistoryUpdate && currentAddress !== "") {
+      const interval = setInterval(() => {
+        if (histories.length !== historyNum) {
+          getHistory(currentAddress);
+        } else {
+          const newHistory = histories.reverse()[0];
+          if (outTx)
+            Toast.show({
+              type: "info",
+              text1: lang.ReceivedQUFrom.replace(
+                "{amount}",
+                `${Math.abs(parseInt(newHistory[3]))}`
+              ).replace("{address}", newHistory[2]),
+            });
+          setExpectingHistoryUpdate(false); // Clear the flag when history is up-to-date
+          clearInterval(interval); // Clear the interval when done
+        }
+      }, 1500);
 
-  //     return () => clearInterval(interval);
-  //   }
-  // }, [histories.length, historyNum, currentAddress, expectingHistoryUpdate]);
+      return () => clearInterval(interval);
+    }
+  }, [histories.length, historyNum, expectingHistoryUpdate]);
 
   useEffect(() => {
     if (
@@ -204,6 +235,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     const handleTokenEvent = (res: any) => {
       if (res.data) {
+        console.log(res.data);
         if (res.data.tokens) dispatch(setTokens(res.data.tokens));
       } else {
         Toast.show({
@@ -304,6 +336,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         balances,
         currentAddress,
         histories,
+        qxHistories,
         txStatus,
         tokenBalances,
         isLoading,

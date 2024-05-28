@@ -32,7 +32,7 @@ const TxStatusModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
         <FormLabel label={lang.CurrentTick} value={tick} />
         <FormLabel
           label={lang.ExpectedTick}
-          value={txStatus.expectedTick.toString()}
+          value={txStatus.expectedTick?.toString()}
         />
       </VStack>
     </ConfirmModal>

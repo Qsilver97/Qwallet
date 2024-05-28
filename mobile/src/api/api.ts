@@ -152,3 +152,18 @@ export const network = () => {
     })
   );
 };
+
+export const qxhistory = (address: string) => {
+  nodejs.channel.send(
+    JSON.stringify({ action: "C2S/qxhistory", data: { address } })
+  );
+};
+
+export const txFetch = (txids: string[]) => {
+  nodejs.channel.send(
+    JSON.stringify({
+      action: "C2S/tx-fetch",
+      data: { txids },
+    })
+  );
+};

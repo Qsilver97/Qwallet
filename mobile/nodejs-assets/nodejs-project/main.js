@@ -17,6 +17,8 @@ const {
   tokenPrices,
   logout,
   network,
+  txFetch,
+  qxhistory,
 } = require("./controller");
 const wasmManager = require("./managers/wasmManager");
 const stateManager = require("./managers/stateManager");
@@ -91,6 +93,10 @@ rn_bridge.channel.on("message", async (msg) => {
         history(message.data.address);
         break;
       }
+      case "C2S/qxhistory": {
+        qxhistory(message.data.address);
+        break;
+      }
       case "C2S/fetch-user": {
         fetchUser();
         break;
@@ -127,6 +133,10 @@ rn_bridge.channel.on("message", async (msg) => {
       }
       case "C2S/network": {
         network();
+        break;
+      }
+      case "C2S/tx-fetch": {
+        txFetch(message.data.txid);
         break;
       }
       case "C2S/switch-network": {

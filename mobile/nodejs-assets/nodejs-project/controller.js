@@ -198,7 +198,7 @@ exports.addAccout = async ({ password, index }) => {
 
 exports.logout = async () => {
   stateManager.init();
-  console.log("LOGOUT")
+  console.log("LOGOUT");
   const result = await wasmManager.ccall({ command: "logout", flag: "logout" });
   console.log(result);
   bridge_send("S2C/logout", {});
@@ -212,6 +212,11 @@ exports.fetchUser = async () => {
 exports.history = async (address) => {
   const result = await socketSync(`history ${address}`);
   bridge_send("S2C/histories", result);
+};
+
+exports.qxhistory = async (address) => {
+  const result = await socketSync(`qxhistory ${address}`);
+  bridge_send("S2C/qxhistory", result);
 };
 
 exports.network = async () => {
@@ -446,6 +451,15 @@ exports.tokenPrices = async () => {
   try {
     const result = await socketSync("tokenprices");
     bridge_send("S2C/token-prices", result);
+  } catch (error) {
+    bridge_send("S2C/error", error);
+  }
+};
+
+exports.txFetch = async (txid) => {
+  try {
+    const result = await socketSync(txid);
+    bridge_send("S2C/tx-fetch", result);
   } catch (error) {
     bridge_send("S2C/error", error);
   }

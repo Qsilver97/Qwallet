@@ -7,15 +7,14 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import local from "@app/utils/locales"; // Importing the localization setup
 import { useColors } from "@app/context/ColorContex";
 import { IHStackProps } from "native-base/lib/typescript/components/primitives/Stack/HStack";
-
-type TransactionItemType = [string, string, string, string, string, string];
+import { TransactionItem as ITransactionItem } from "@app/types";
 
 interface IProps extends IHStackProps {
-  transaction: TransactionItemType;
+  transaction: ITransactionItem;
   index: number;
 }
 
-const TransactionItem: React.FC<IProps> = ({
+const QuTransactionItem: React.FC<IProps> = ({
   transaction,
   index,
   ...props
@@ -39,7 +38,9 @@ const TransactionItem: React.FC<IProps> = ({
       {...props}
     >
       <View w="8">
-        <Text fontSize="xl" textAlign="center" ml={-2}>{index}</Text>
+        <Text fontSize="xl" textAlign="center" ml={-2}>
+          {index}
+        </Text>
       </View>
       <HStack alignItems="center" space={4} flex={1}>
         <Icon
@@ -74,4 +75,4 @@ const TransactionItem: React.FC<IProps> = ({
   );
 };
 
-export default TransactionItem;
+export default QuTransactionItem;
