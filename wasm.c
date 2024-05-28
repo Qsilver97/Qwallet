@@ -792,7 +792,7 @@ int32_t wssupdate(char *jsonstr)
         if ( tick > LATEST_TICK )
         {
             LATEST_TICK = tick;
-            if ( tick > PENDINGTX.pendingtick+20 )
+            if ( tick > PENDINGTX.pendingtick+2 )
             {
                 memset(&PENDINGTX,0,sizeof(PENDINGTX));
                 strcpy(PENDINGSTATUS,"pending send failed, but not resending due to timeout");
