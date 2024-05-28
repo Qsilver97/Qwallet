@@ -10,12 +10,13 @@ const AccountSummary: React.FC = () => {
                 <SummaryItem
                     label={'Balance'}
                     icon={'/assets/images/dashboard/totalDeposit.svg'}
-                    amount={marketcap?.price ? `$${(Object.keys(balances).reduce((sum, key) => sum + balances[key], 0) * parseFloat(marketcap?.price)).toFixed(3)}` : '0'}
+                    unit='$'
+                    amount={parseFloat(marketcap?.price ? (Object.keys(balances).reduce((sum, key) => sum + balances[key], 0) * parseFloat(marketcap?.price)).toFixed(3) : '0')}
                 />
                 <SummaryItem
                     label={'Ticks'}
                     icon={'/assets/images/dashboard/totalAssets.svg'}
-                    amount={tick}
+                    amount={parseInt(tick)}
                 />
             </div>
         </div>

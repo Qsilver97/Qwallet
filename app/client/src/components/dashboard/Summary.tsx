@@ -24,18 +24,20 @@ const Summary: React.FC = () => {
                     <SummaryItem
                         label="Total assets"
                         icon="/assets/images/dashboard/totalAssets.svg"
-                        amount={`$${(parseInt(totalBalance) * parseFloat(marketcap?.price)).toFixed(3)}`}
+                        unit="$"
+                        amount={parseFloat((parseInt(totalBalance) * parseFloat(marketcap?.price)).toFixed(3))}
                     />
                 }
                 <SummaryItem
                     label="Total QU"
                     icon="/assets/images/dashboard/totalDeposit.svg"
-                    amount={`QU ${totalBalance}`}
+                    unit="QU"
+                    amount={parseInt(totalBalance)}
                 />
                 <SummaryItem
                     label="Tick"
                     icon="/assets/images/dashboard/totalAssets.svg"
-                    amount={`${tick}`}
+                    amount={parseInt(tick)}
                 />
             </div>
             <TokenSelect options={options} />

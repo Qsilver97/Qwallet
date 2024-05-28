@@ -2,9 +2,6 @@ import {
     Title,
     Section,
     Loading,
-    // Text,
-    // Select,
-    // SwitchOptions,
 } from "../../components/commons";
 import { assetsItems } from "../../utils/constants";
 import Layout from "../../components/layout";
@@ -14,12 +11,12 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import TradingAside from "./TradingAside";
 import { TokenOption } from "../../components/commons/Select";
+import { formatNumberWithCommas } from "../../utils/helper";
 
 const tabs = ['Bids', 'Asks']
 
 const Trading = () => {
     const { fetchTradingInfoPage, tradingPageLoading, orders, tokens, setCurrentToken, currentToken, tokenBalances, currentAddress } = useAuth();
-    console.log(tokenBalances)
     const [activeTab, setActiveTab] = useState<string>('Bids');
     const options: TokenOption[] = tokens
         .map((token) => {
@@ -45,9 +42,11 @@ const Trading = () => {
     }, [currentToken, activeTab])
 
     useEffect(() => {
-        setInterval(() => {
-            fetchTradingInfoPage();
-        }, 60000)
+        if (currentToken.value !== 'QU') {
+            setInterval(() => {
+                fetchTradingInfoPage();
+            }, 60000)
+        }
         if (currentToken.value == 'QU') {
             setCurrentToken(options[0])
         }
@@ -71,7 +70,7 @@ const Trading = () => {
                                     showSelectDescription
                                     hideTokenValue
                                 />
-                                <span className="text-2xl p-2 px-4 bg-slate-500 rounded-lg">{tokenBalances[`${currentToken.value}`] ? tokenBalances[`${currentToken.value}`][currentAddress] : 0}</span>
+                                <span className="text-2xl p-2 px-4 bg-slate-500 rounded-lg">{tokenBalances[`${currentToken.value}`] ? (tokenBalances[`${currentToken.value}`][currentAddress] || 0) : 0}</span>
                             </div>
                         }
                         <div className="flex my-4">
@@ -103,8 +102,8 @@ const Trading = () => {
                                 <Section>
                                     <div className="flex justify-start gap-5 w-full h-7">
                                         {
-                                            tabs.map((item: string) => {
-                                                return <span className={`font-Inter text-xs text-white rounded-lg px-9 py-1.5 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 transition ease-in duration-100 cursor-pointer ${item == activeTab ? 'bg-blue-500' : 'bg-[#192b3b] hover:bg-blue-500'}`} onClick={() => setActiveTab(item)}>
+                                            tabs.map((item: string, idx) => {
+                                                return <span key={idx} className={`font-Inter text-xs text-white rounded-lg px-9 py-1.5 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 transition ease-in duration-100 cursor-pointer ${item == activeTab ? 'bg-blue-500' : 'bg-[#192b3b] hover:bg-blue-500'}`} onClick={() => setActiveTab(item)}>
                                                     {item}
                                                 </span>
                                             })
@@ -159,8 +158,8 @@ const Trading = () => {
                                                                         return <tr key={idx}>
                                                                             <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">{idx + 1}</td>
                                                                             <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200 font-mono">{bid[0]}</td>
-                                                                            <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{bid[1]}</td>
-                                                                            <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{bid[2]}</td>
+                                                                            <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{formatNumberWithCommas(parseInt(bid[1]))}</td>
+                                                                            <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{formatNumberWithCommas(parseInt(bid[2]))}</td>
                                                                             {/* <td className="px-1 py-4 whitespace-nowrap text-end text-sm font-medium">
                                                                                 <button type="button" className="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-400 hover:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:text-blue-400">Select</button>
                                                                             </td> */}

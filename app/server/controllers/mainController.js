@@ -27,8 +27,8 @@ exports.createAccount = async (req, res) => {
 
 exports.login = async (req, res) => {
     const { password, socketUrl } = req.body;
-    let liveSocket = socketManager.initLiveSocket(socketUrl);
-    liveSocketController(liveSocket)
+    // let liveSocket = socketManager.initLiveSocket(socketUrl);
+    liveSocketController(socketUrl)
     await delay(2000);
     let realPassword;
     stateManager.init();
@@ -45,7 +45,7 @@ exports.login = async (req, res) => {
     }
 
     let listResult;
-
+    let addressResp;
     async function checkSubshash() {
         listResult = await wasmManager.ccall({ command: `list ${realPassword}`, flag: 'login' });
         const socket = socketManager.getIO();
@@ -54,8 +54,8 @@ exports.login = async (req, res) => {
 
         const addresses = listResult.value.display.addresses;
         stateManager.updateUserState({ currentAddress: addresses[0] });
-        const addressesResp = await socketSync(addresses[0]);
-        if (!addressesResp) {
+        addressResp = await socketSync(addresses[0]);
+        if (!addressResp) {
             return 'Socket server error';
         };
         const hexResult = await wasmManager.ccall({ command: `logintx ${realPassword}`, flag: 'logintx' });
@@ -73,7 +73,7 @@ exports.login = async (req, res) => {
         stateManager.setRemoteSubshash("");
         stateManager.setLocalSubshash("");
         const userState = stateManager.setUserState({ password: realPassword, accountInfo: listResult.value.display, isAuthenticated: true });
-        res.send(userState);
+        res.send({ userState, addressResp });
         return;
     } else if (matchStatus == 'Socket server error') {
         res.status(401).send('Socket server error');
@@ -100,7 +100,7 @@ exports.login = async (req, res) => {
             stateManager.setRemoteSubshash("");
             stateManager.setLocalSubshash("");
             const userState = stateManager.setUserState({ password: realPassword, accountInfo: listResult.value.display, isAuthenticated: true });
-            res.send(userState);
+            res.send({ userState, addressResp, balances });
         } else {
             res.status(401).send('not synced');
         }
@@ -121,7 +121,12 @@ exports.fetchUser = async (req, res) => {
         res.status(401).send('Socket server error.');
         return
     }
-    await socketSync(userState.currentAddress);
+    let addressInfo;
+    if (userState.currentAddress) {
+        addressInfo = await socketSync(userState.currentAddress);
+    } else {
+        addressInfo = await socketSync(userState.accountInfo.addresses[0]);
+    }
     const balances = await socketSync('balances');
     const marketcap = await socketSync('marketcap');
     const tokens = await socketSync('tokenlist');
@@ -137,7 +142,7 @@ exports.fetchUser = async (req, res) => {
     // } catch (error) {
 
     // }
-    const updatedUserState = { ...userState, ...{ balances: balances.balances, marketcap, tokens: tokens.tokens, tokenPrices: tokenPrices } };
+    const updatedUserState = { ...userState, ...{ balances: balances.balances, marketcap, tokens: tokens.tokens, tokenPrices: tokenPrices, addressInfo } };
     stateManager.setUserState(updatedUserState);
     res.send(updatedUserState);
 }
@@ -365,11 +370,53 @@ exports.fetchTradingPageInfo = async (req, res) => {
     }
 }
 
-exports.buySell = async (req, res) => {
-    const { flag, password, index, tick, currentToken, amount, price } = req.body;
-    console.log({ command: `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`, flag });
-    await wasmManager.ccallV1request({ command: `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`, flag });
+exports.sendTx = async (req, res) => {
+    const { flag, password, index, tick, currentToken, amount, price, toAddress } = req.body;
+    const socket = socketManager.getIO();
+    let command = "";
+    if (flag == 'send') {
+        command = `send ${password},${index},${tick},${toAddress},${amount}`;
+    } else {
+        command = `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`;
+    }
+    console.log({ command: command, flag });
+    const result = await wasmManager.ccallV1request({ command: command, flag });
+    const statusResult = await wasmManager.ccall({ command: 'status 1', flag: 'transferStatus' })
+    let txid = statusResult.value.display.split(' ')[1];
+    let expectedTick = statusResult.value.display.split(' ')[5];
+    console.log(statusResult, 'aaaaaaaaaaaasssssssss')
+    if (statusResult.value.result != 1) {
+        res.status(400).send('error');
+        return;
+    }
+
+    const handleTx = async () => {
+        const result = await wasmManager.ccall({ command: 'status 1', flag: 'transferStatus' })
+        socket.emit('txWasmStatus', result.value);
+
+        if (result.value.result == 1) {
+            if (txid.length == 60) {
+                setTimeout(async () => {
+                    const txStatus = await socketSync(`${txid} ${expectedTick}`);
+                    socket.emit('txSocketStatus', { txStatus, txid, tick: expectedTick, flag, currentToken, amount, price, toAddress });
+                    if (txStatus.status) {
+                        clearInterval(txStatusInterval);
+                    }
+                }, 1333);
+            }
+        }
+
+        if (result.value.display == 'no command pending') {
+            clearInterval(txStatusInterval);
+        }
+        setTimeout(() => {
+            wasmManager.ccall({ command: 'v1request', flag: 'transferStatus' });
+        }, 660);
+    }
+    const txStatusInterval = setInterval(handleTx, 2000);
+    handleTx();
     res.status(200).send(flag);
+
 }
 
 exports.getPrice = async (req, res) => {

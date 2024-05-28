@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { handleCopy } from "../../utils/helper";
+import { formatNumberWithCommas, handleCopy } from "../../utils/helper";
 import { Text } from "../commons";
 
 const Navbar = () => {
@@ -25,7 +25,7 @@ const Navbar = () => {
                             <Text
                                 weight="bold"
                                 size="sm"
-                                className="uppercase cursor-pointer"
+                                className="uppercase cursor-pointer font-mono text-[16px]"
                                 onClick={() => handleCopy(currentAddress)}
                             >
                                 {currentAddress}
@@ -36,7 +36,7 @@ const Navbar = () => {
                                 className="cursor-pointer"
                                 onClick={() => setIsOpen(!isOpen)}
                             />
-                            <span>{tokenBalances['QU'] ? tokenBalances['QU'][currentAddress] : 0}</span>
+                            <span>{tokenBalances['QU'] ? formatNumberWithCommas(tokenBalances['QU'][currentAddress]) : 0}</span>
                         </div>
 
                         {isOpen && (
@@ -44,7 +44,7 @@ const Navbar = () => {
                                 {accountInfo?.addresses.map((address) => (
                                     <Text
                                         weight="bold"
-                                        className="uppercase py-1 cursor-pointer select-none"
+                                        className="uppercase py-1 cursor-pointer select-none font-mono text-[16px]"
                                         size="sm"
                                         onClick={() => handleSelectedAddress(address)}
                                     >

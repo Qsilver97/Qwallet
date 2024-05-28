@@ -95,12 +95,12 @@ const summaryItems: SummaryItemProps[] = [
     {
         icon: '/assets/images/dashboard/totalAssets.svg',
         label: 'Total assets',
-        amount: '87.743',
+        amount: 87.743,
     },
     {
         icon: '/assets/images/dashboard/totalDeposit.svg',
         label: 'Total deposits',
-        amount: '78.342',
+        amount: 78.342,
     }
 ]
 
@@ -108,12 +108,12 @@ const summaryAccountItems: SummaryItemProps[] = [
     {
         icon: '/assets/images/dashboard/totalDeposit.svg',
         label: 'Balance',
-        amount: '78.342',
+        amount: 78.342,
     },
     {
         icon: '/assets/images/dashboard/totalAssets.svg',
         label: 'Ticks',
-        amount: '87.743',
+        amount: 87.743,
     }
 ]
 
@@ -182,7 +182,7 @@ const marketOptions = [
 
 const MODES: ModeProps[] = [
     {
-        wsUrl: 'wss://qsilver.org:5555',
+        wsUrl: 'wss://websocket.qsilver.org',
         type: 'mainnet',
     },
     {

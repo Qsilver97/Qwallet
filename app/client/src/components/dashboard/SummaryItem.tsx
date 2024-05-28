@@ -1,7 +1,8 @@
 import React from "react";
 import { SummaryItemProps } from "../../utils/interfaces";
+import { formatNumberWithCommas } from "../../utils/helper";
 
-const SummaryItem: React.FC<SummaryItemProps> = ({ icon, label, amount }) => {
+const SummaryItem: React.FC<SummaryItemProps> = ({ icon, label, unit, amount }) => {
     return (
         <div className="items-center justify-between rounded-lg inline-block mr-4">
             <div className="flex items-center gap-2">
@@ -15,7 +16,7 @@ const SummaryItem: React.FC<SummaryItemProps> = ({ icon, label, amount }) => {
                         {label}
                     </div>
                     <div className="text-2xl font-bold font-Inter">
-                        {amount}
+                        {unit ? unit : ''} {formatNumberWithCommas(amount)}
                     </div>
                 </div>
             </div>
