@@ -1,5 +1,6 @@
 import React from "react";
 import { useAuth } from "../../../contexts/AuthContext";
+import { formatNumberWithCommas } from "../../../utils/helper";
 type TxModalProps = {
     handleBuySell: () => void;
     quantity?: string;
@@ -7,7 +8,7 @@ type TxModalProps = {
 };
 
 const TxModal: React.FC<TxModalProps> = ({ handleBuySell, quantity, price }) => {
-    const { txStatus, setTxStatus } = useAuth();
+    const { txStatus, setTxStatus, currentToken } = useAuth();
 
     const handleCloseModal = () => {
         setTxStatus("");
@@ -20,8 +21,9 @@ const TxModal: React.FC<TxModalProps> = ({ handleBuySell, quantity, price }) => 
                 {txStatus == 'confirm' &&
                     <>
                         <div>
-                            <p>Quantity: {quantity}</p>
-                            <p>Price: {price}</p>
+                            <p>Token: {currentToken.value}</p>
+                            <p>Quantity: {formatNumberWithCommas(parseInt(quantity as string))}</p>
+                            <p>Price: {formatNumberWithCommas(parseInt(price as string))}</p>
                         </div>
                         <div className="flex gap-2">
                             < button
