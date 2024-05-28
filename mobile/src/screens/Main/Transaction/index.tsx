@@ -9,6 +9,7 @@ import {
   ScrollView,
   Text,
   VStack,
+  View,
   useDisclose,
 } from "native-base";
 import React, { useMemo, useState } from "react";
@@ -20,28 +21,36 @@ import { AntDesign } from "@expo/vector-icons";
 
 const Transaction: React.FC = () => {
   const { histories, isLoading } = useAuth();
-  const { textColor, bgColor, main } = useColors();
+  const { textColor, bgColor, main, panelBgColor } = useColors();
   const { isOpen, onToggle } = useDisclose();
   const [currentTx, setCurrentTx] = useState<any>([]);
   const lang = local.Main.Transaction;
+  let index = 0;
 
   const Item = useMemo(() => {
     return (
       <>
         {histories.length ? (
           <VStack flex={1}>
-            {histories?.reverse().map((tx, key) => (
-              <Pressable
-                key={key}
-                onPress={() => {
-                  setCurrentTx(tx);
-                  onToggle();
-                }}
-                _pressed={{ opacity: 0.7 }}
-              >
-                <TransactionItem transaction={tx} />
-              </Pressable>
-            ))}
+            {histories?.reverse().map((tx, key) => {
+              if (Math.abs(parseInt(tx[3]))) {
+                index++;
+                return (
+                  <Pressable
+                    key={key}
+                    onPress={() => {
+                      setCurrentTx(tx);
+                      onToggle();
+                    }}
+                    _pressed={{ opacity: 0.7 }}
+                  >
+                    <TransactionItem transaction={tx} index={index} flex={1} />
+                  </Pressable>
+                );
+              } else {
+                return <View key={key}></View>;
+              }
+            })}
           </VStack>
         ) : (
           <VStack flex={1} alignItems="center" justifyContent="center">

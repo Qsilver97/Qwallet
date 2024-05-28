@@ -31,7 +31,14 @@ interface IProps {
 }
 
 const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
-  const { currentAddress, user, balances, txStatus, setTxStatus } = useAuth();
+  const {
+    currentAddress,
+    user,
+    balances,
+    tokenBalances,
+    txStatus,
+    setTxStatus,
+  } = useAuth();
   const { bgColor, main } = useColors();
   const { tick } = useSelector((state: RootState) => state.app);
   const [currentToken, setCurrentToken] = useState("QU");
@@ -117,6 +124,7 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
                   <TokenSelect
                     selectedToken={currentToken}
                     onChange={setCurrentToken}
+                    includeQU
                   ></TokenSelect>
                 </VStack>
                 <VStack>
@@ -131,12 +139,19 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
                     label={lang.Amount}
                     onChangeText={setAmount}
                     placeholder={lang.Amount}
+                    keyboardType="numeric"
                     type="text"
                     w={"full"}
                   ></Input>
                 </VStack>
                 <VStack>
-                  <Text textAlign="right">{balances[currentAddress]} QU</Text>
+                  <Text textAlign="right">
+                    {currentToken == "QU"
+                      ? balances[currentAddress]
+                      : tokenBalances?.[currentToken]?.[currentAddress] ||
+                        0}{" "}
+                    {currentToken}
+                  </Text>
                 </VStack>
               </VStack>
               <HStack mt={3} justifyContent={"center"} space={3}>

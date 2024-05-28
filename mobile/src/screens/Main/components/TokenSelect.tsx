@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box, HStack, ScrollView, Text } from "native-base";
 import { useColors } from "@app/context/ColorContex";
 import { TouchableOpacity } from "react-native";
@@ -9,19 +9,27 @@ import tokenIcons from "@app/utils/tokens";
 interface TokenSelectProps {
   selectedToken: string;
   onChange: React.Dispatch<React.SetStateAction<string>>;
+  includeQU?: boolean;
 }
 
 const TokenSelect: React.FC<TokenSelectProps> = ({
   selectedToken,
   onChange,
+  includeQU,
 }) => {
   const { textColor, main, panelBgColor } = useColors();
   const { tokens } = useSelector((store: RootState) => store.app);
+  const [dispTokens, setDispTokens] = useState<string[]>(tokens);
+
+  useEffect(() => {
+    if (includeQU) setDispTokens(["QU", ...tokens]);
+    else setDispTokens(tokens)
+  }, [includeQU, tokens]);
 
   const TokenList = useMemo(() => {
     return (
       <HStack space={3} px="4" w="full">
-        {tokens.map((token, key) => {
+        {dispTokens.map((token, key) => {
           const Icon = tokenIcons.find((t) => t.symbol === token)?.icon;
           return (
             <TouchableOpacity key={key} onPress={() => onChange(token)}>

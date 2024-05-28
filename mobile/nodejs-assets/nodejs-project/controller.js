@@ -198,6 +198,9 @@ exports.addAccout = async ({ password, index }) => {
 
 exports.logout = async () => {
   stateManager.init();
+  console.log("LOGOUT")
+  const result = await wasmManager.ccall({ command: "logout", flag: "logout" });
+  console.log(result);
   bridge_send("S2C/logout", {});
 };
 
@@ -212,9 +215,9 @@ exports.history = async (address) => {
 };
 
 exports.network = async () => {
-  console.log("NET")
+  console.log("NET");
   const result = await socketSync("network");
-  console.log(result)
+  console.log(result);
   bridge_send("S2C/network", result);
 };
 

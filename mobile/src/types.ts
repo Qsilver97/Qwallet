@@ -15,7 +15,7 @@ interface Balances {
 
 interface TransactionStatus {
   txid: string;
-  status: "Closed" | "Failed" | "Rejected" | "Pending" | "Success";
+  status: "Closed" | "Waiting" | "Pending" | "Sucess" | "Failed";
   expectedTick: number;
   result: string;
 }

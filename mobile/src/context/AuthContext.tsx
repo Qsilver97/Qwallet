@@ -120,7 +120,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const login = (userDetails: UserDetailType) => {
-    setUser({ ...userDetails, isAuthenticated: true });
+    setUser(userDetails);
     setCurrentAddress(userDetails?.accountInfo?.addresses[0]);
     basicInfo();
   };
@@ -156,30 +156,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [user]);
 
-  useEffect(() => {
-    if (!currentAddress) return;
-    if (expectingHistoryUpdate && currentAddress !== "") {
-      const interval = setInterval(() => {
-        if (histories.length !== historyNum) {
-          getHistory(currentAddress);
-        } else {
-          const newHistory = histories.reverse()[0];
-          if (outTx)
-            Toast.show({
-              type: "info",
-              text1: lang.ReceivedQUFrom.replace(
-                "{amount}",
-                `${Math.abs(parseInt(newHistory[3]))}`
-              ).replace("{address}", newHistory[2]),
-            });
-          setExpectingHistoryUpdate(false); // Clear the flag when history is up-to-date
-          clearInterval(interval); // Clear the interval when done
-        }
-      }, 1500);
+  // useEffect(() => {
+  //   if (!currentAddress) return;
+  //   if (expectingHistoryUpdate && currentAddress !== "") {
+  //     const interval = setInterval(() => {
+  //       if (histories.length !== historyNum) {
+  //         getHistory(currentAddress);
+  //       } else {
+  //         const newHistory = histories.reverse()[0];
+  //         if (outTx)
+  //           Toast.show({
+  //             type: "info",
+  //             text1: lang.ReceivedQUFrom.replace(
+  //               "{amount}",
+  //               `${Math.abs(parseInt(newHistory[3]))}`
+  //             ).replace("{address}", newHistory[2]),
+  //           });
+  //         setExpectingHistoryUpdate(false); // Clear the flag when history is up-to-date
+  //         clearInterval(interval); // Clear the interval when done
+  //       }
+  //     }, 1500);
 
-      return () => clearInterval(interval);
-    }
-  }, [histories.length, historyNum, currentAddress, expectingHistoryUpdate]);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [histories.length, historyNum, currentAddress, expectingHistoryUpdate]);
 
   useEffect(() => {
     if (
@@ -275,7 +275,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       eventEmitter.off("S2C/transfer", handleTransferEvent);
       eventEmitter.off("S2C/transfer-status", handleTransferStatusEvent);
       eventEmitter.off("S2C/buy-sell", handleBuySellEvent);
-      // eventEmitter.off("S2C/network", handleNetwork);
+      eventEmitter.off("S2C/network", handleNetwork);
     };
   }, []);
 
