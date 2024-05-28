@@ -35,7 +35,13 @@ const Activity = () => {
     const getPaginatedHistory = (pageNum: number, pagePerNum: number): HistoryEntry[] => {
         const startIndex = (pageNum - 1) * pagePerNum;
         const endIndex = startIndex + pagePerNum;
-        return history.slice(startIndex, endIndex);
+        const sortedHistory = [...history].sort((a, b) => {
+            if (a[0] < b[0]) return 1;
+            if (a[0] > b[0]) return -1;
+            return 0;
+        })
+        const filteredHistory = sortedHistory.slice(startIndex, endIndex);
+        return filteredHistory;
     };
 
     useEffect(() => {

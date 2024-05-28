@@ -4,6 +4,7 @@ import TokenFormsModal from "./TokenFormsModal";
 import { AssetItemProps, SelectOption } from "../../../utils/interfaces";
 import { useAuth } from "../../../contexts/AuthContext";
 import { toast } from "react-toastify";
+import { isPositiveNumber } from "../../../utils/helper";
 
 type TokenModalProps = {
     onClose: (token: AssetItemProps | null) => void;
@@ -21,9 +22,13 @@ const TokenModal: React.FC<TokenModalProps> = ({ onClose, token }) => {
     });
 
     const handleConfirm = () => {
-        if (toAddress == '' || toAddress == currentAddress || amount == '' || parseFloat(amount) > tokenBalances[selectedToken.name][currentAddress]) {
-            toast.error('Invaild address or amount');
-            return
+        if (toAddress == '' || toAddress.length != 60 || toAddress == currentAddress) {
+            toast.error('Invaild address');
+            return;
+        }
+        if (amount == '' || !isPositiveNumber(amount) || parseFloat(amount) > tokenBalances[selectedToken.name][currentAddress]) {
+            toast.error('Invalid amount');
+            return;
         }
         setSendingStatus('confirm');
     }
