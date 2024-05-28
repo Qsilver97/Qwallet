@@ -1,5 +1,11 @@
-import { formatNumberWithCommas } from "../../utils/helper";
+import axios from "axios";
+import { formatNumberWithCommas, handleCopy } from "../../utils/helper";
 import { HistoryEntry } from "./Activity";
+import { SERVER_URL } from "../../utils/constants";
+import { useCallback, useState } from "react";
+import _ from 'lodash';
+import { ClipboardDocumentIcon } from '@heroicons/react/24/solid';
+
 
 interface ActivityTableProps {
     history: HistoryEntry[];
@@ -7,7 +13,33 @@ interface ActivityTableProps {
 }
 
 
-const ActivityTable = ({history, loading}: ActivityTableProps) => {
+const ActivityTable = ({ history, loading }: ActivityTableProps) => {
+    const [hoverIdx, setHoverIdx] = useState<number>();
+    const [hoverItem, setHoverItem] = useState<string>();
+    const [itemLoading, setItemLoading] = useState<boolean>(false);
+
+
+    const handleMouseEnter = useCallback(_.throttle(async (_: React.MouseEvent<HTMLSpanElement, MouseEvent>, item: HistoryEntry, idx: number) => {
+        setItemLoading(true);
+        setHoverIdx(idx);
+        const command = `${item[1]} ${item[0]}`;
+        try {
+            const resp = await axios.post(`${SERVER_URL}/api/call-socket`, { command });
+            setHoverItem(JSON.stringify(resp.data.sctx));
+            console.log(JSON.stringify(resp.data.sctx));
+        } catch (error) {
+
+        } finally {
+            setItemLoading(false);
+        }
+    }, 100), []);
+
+
+    const handleMouseLeave = () => {
+        setHoverIdx(undefined);
+        setHoverItem(undefined);
+    };
+
     return (
         <div className="flex flex-col gap-8">
             <div className="flex flex-col">
@@ -34,14 +66,64 @@ const ActivityTable = ({history, loading}: ActivityTableProps) => {
                                     <tbody className="divide-y divide-gray-200 dark:divide-neutral-700 font-mono">
                                         {history && history.length > 0 &&
                                             history.map((item, idx) => {
-                                                return <tr key={idx}>
-                                                    <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">{item[1]}</td>
-                                                    <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200 font-mono">{formatNumberWithCommas(parseInt(item[0]))}</td>
-                                                    <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{item[2]}</td>
-                                                    <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{formatNumberWithCommas(parseInt(item[3]))}</td>
-                                                    {/* <td className="px-1 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                                        <button type="button" className="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-400 hover:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:text-blue-400">Select</button>
-                                                    </td> */}
+                                                return <tr
+                                                    key={idx}
+                                                    onMouseEnter={(e) => { handleMouseEnter(e, item, idx) }}
+                                                    onMouseLeave={handleMouseLeave}
+                                                    className="relative px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200"
+                                                >
+                                                    <td
+                                                        className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200 font-mono"
+                                                    >
+                                                        <div className="flex gap-1">
+                                                            <span>
+                                                                {item[1]}
+                                                            </span>
+                                                            <span>
+                                                                <ClipboardDocumentIcon className="h-5 w-5 cursor-pointer text-white hover:text-red-400" onClick={() => handleCopy(item[1])} />
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200 font-mono">
+                                                        <div className="flex gap-1">
+                                                            <span>
+                                                                {formatNumberWithCommas(parseInt(item[0]))}
+                                                            </span>
+                                                            <span>
+                                                                <ClipboardDocumentIcon className="h-5 w-5 cursor-pointer text-white hover:text-red-400" onClick={() => handleCopy(item[0])} />
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                                                        <div className="flex gap-1">
+                                                            <span>
+                                                                {item[2]}
+                                                            </span>
+                                                            <span>
+                                                                <ClipboardDocumentIcon className="h-5 w-5 cursor-pointer text-white hover:text-red-400" onClick={() => handleCopy(item[2])} />
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                                                        <div className="flex gap-1">
+                                                            <span>
+                                                                {formatNumberWithCommas(parseInt(item[3]))}
+                                                            </span>
+                                                            <span>
+                                                                <ClipboardDocumentIcon className="h-5 w-5 cursor-pointer text-white hover:text-red-400" onClick={() => handleCopy(item[3])} />
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    {hoverIdx != undefined && hoverIdx == idx && item[2].startsWith('BAAAAAAA') &&
+                                                        <div
+                                                            className="absolute bg-white text-black border border-gray-300 shadow-lg p-2 max-w-[300px] top-0 left-0 break-words overflow-hidden whitespace-normal z-10"
+                                                        >
+                                                            {itemLoading ?
+                                                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div> :
+                                                                hoverItem
+                                                            }
+                                                        </div>
+                                                    }
                                                 </tr>
                                             })
                                         }

@@ -9,8 +9,6 @@ import AccountSummary from "./AccountSummary";
 import AccountGrid from "./AccountGrid";
 import { useAuth } from "../../contexts/AuthContext";
 import { useEffect, useState } from "react";
-import TokenSelect from "../../components/dashboard/select/TokenSelect";
-import { assetsItems } from "../../utils/constants";
 type DataType = {
     address: string;
     balance: number;
@@ -40,13 +38,8 @@ const Accounts = () => {
             }
         });
     }, [accountInfo, balances]);
-    
-    const pagesTotal = Math.round(data.length / 10);
 
-    const options = assetsItems.map((item) => ({
-        label: item.icon,
-        value: item.name,
-    }));
+    const pagesTotal = Math.round(data.length / 10);
 
     return (
         <>
@@ -71,9 +64,9 @@ const Accounts = () => {
                     </div>
 
                     <InnerContainer gapVariant="forms" paddingVariant="lists">
-                        <div className="absolute top-2 left-2">
+                        {/* <div className="absolute top-2 left-2">
                             <TokenSelect options={options} hideTokenValue />
-                        </div>
+                        </div> */}
 
                         <div className="mt-4">
                             <AccountGrid data={data} currentPage={1} />
