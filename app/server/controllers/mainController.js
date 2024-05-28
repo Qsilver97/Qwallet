@@ -446,3 +446,9 @@ exports.getPrice = async (req, res) => {
     }
 
 }
+
+exports.callSocket = async (req, res) => {
+    const { command } = req.body;
+    const resp = await socketSync(command);
+    res.status(200).send(resp);
+}
