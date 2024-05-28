@@ -71,9 +71,9 @@ const Accounts = () => {
                     </div>
 
                     <InnerContainer gapVariant="forms" paddingVariant="lists">
-                        <div className="absolute top-2 left-2">
+                        {/* <div className="absolute top-2 left-2">
                             <TokenSelect options={options} hideTokenValue />
-                        </div>
+                        </div> */}
 
                         <div className="mt-4">
                             <AccountGrid data={data} currentPage={1} />
