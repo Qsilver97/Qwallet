@@ -26,5 +26,6 @@ router.post('/ccall-v1request', mainController.ccallV1request);
 router.post('/send-tx', mainController.sendTx);
 router.post('/update-userstate', mainController.updatedUserState);
 router.post('/prices', mainController.getPrice);
+router.post('/call-socket', mainController.callSocket);
 
 module.exports = router;
