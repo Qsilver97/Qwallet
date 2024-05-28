@@ -42,6 +42,7 @@ const Navbar = () => {
                         {isOpen && (
                             <div className="absolute top-8 w-max h-20 bg-[#151B1E] pl-1 pr-4 overflow-auto overflow-x-hidden scrolling">
                                 {accountInfo?.addresses.map((address) => (
+                                    address != "" &&
                                     <Text
                                         weight="bold"
                                         className="uppercase py-1 cursor-pointer select-none font-mono text-[16px]"
