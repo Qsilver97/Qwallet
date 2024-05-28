@@ -12,13 +12,38 @@ import { useAuth } from "../../contexts/AuthContext";
 import TradingAside from "./TradingAside";
 import { TokenOption } from "../../components/commons/Select";
 import { formatNumberWithCommas } from "../../utils/helper";
+import { toast } from "react-toastify";
 
 const tabs = ['Bids', 'Asks']
 
 const Trading = () => {
-    const { fetchTradingInfoPage, tradingPageLoading, orders, tokens, setCurrentToken, currentToken, tokenBalances, currentAddress } = useAuth();
+    const { fetchTradingInfoPage, setTxStatus, tradingPageLoading, orders, tokens, setCurrentToken, currentToken, tokenBalances, currentAddress, handleTx } = useAuth();
     const [activeTab, setActiveTab] = useState<string>('Bids');
     const [options, setOptions] = useState<TokenOption[]>([]);
+
+    const [command, setCommand] = useState<'buy' | 'sell' | 'cancelbuy' | 'cancelsell'>();
+    const [quantity, setQuantity] = useState<string>('');
+    const [price, setPrice] = useState<string>('');
+
+    const handleBuySell = async () => {
+        if (!quantity || !price || !command) {
+            toast.error('Invalid command.');
+            return;
+        }
+        await handleTx(command, quantity, price);
+        setTxStatus("");
+    }
+
+    const handleAction = (bid: any) => {
+        let command: "buy" | "sell" | "cancelbuy" | "cancelsell" | undefined = 'cancelsell';
+        if (activeTab == 'Bids') {
+            command = 'cancelbuy';
+        }
+        setTxStatus('confirm');
+        setQuantity(bid[1]);
+        setPrice(bid[2]);
+        setCommand(command);
+    }
 
     useEffect(() => {
         async function init() {
@@ -137,6 +162,7 @@ const Trading = () => {
                                                                         <th scope="col" className="px-1 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Buyer</th>
                                                                         <th scope="col" className="px-1 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Quantity</th>
                                                                         <th scope="col" className="px-1 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Price</th>
+                                                                        <th scope="col" className="px-1 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Action</th>
                                                                         {/* <th scope="col" className="px-1 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Action</th> */}
                                                                     </tr>
                                                                 }
@@ -146,6 +172,7 @@ const Trading = () => {
                                                                         <th scope="col" className="px-1 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Seller</th>
                                                                         <th scope="col" className="px-1 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Quantity</th>
                                                                         <th scope="col" className="px-1 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Price</th>
+                                                                        <th scope="col" className="px-1 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Action</th>
                                                                         {/* <th scope="col" className="px-1 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Action</th> */}
                                                                     </tr>
                                                                 }
@@ -158,6 +185,12 @@ const Trading = () => {
                                                                             <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200 font-mono">{bid[0]}</td>
                                                                             <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{formatNumberWithCommas(parseInt(bid[1]))}</td>
                                                                             <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{formatNumberWithCommas(parseInt(bid[2]))}</td>
+                                                                            {
+                                                                                bid[0] == currentAddress &&
+                                                                                <td className="mx-1 my-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200 cursor-pointer">
+                                                                                    <span className="bg-slate-950 p-1 rounded hover:bg-slate-800" onClick={() => handleAction(bid)}>Cancel</span>
+                                                                                </td>
+                                                                            }
                                                                             {/* <td className="px-1 py-4 whitespace-nowrap text-end text-sm font-medium">
                                                                                 <button type="button" className="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-400 hover:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:text-blue-400">Select</button>
                                                                             </td> */}
@@ -173,7 +206,7 @@ const Trading = () => {
                                     }
                                 </Section>
                             </div>
-                            <TradingAside options={options} />
+                            <TradingAside options={options} price={price} quantity={quantity} setPrice={setPrice} setQuantity={setQuantity} handleBuySell={handleBuySell} setCommand={setCommand} />
                         </div>
                     </div>
                 </MainContent>
