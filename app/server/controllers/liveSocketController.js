@@ -55,6 +55,9 @@ module.exports = function (liveSocketURL) {
                 if (flag) {
                     stateManager.updateSocketState(flag.slice(1), data);
                 }
+                if (data.command == "CurrentTickInfo") {
+                    stateManager.setTick(data.tick);
+                }
                 socketManager.getIO().emit('live', data);
             } catch (error) {
                 console.error(`Error processing message: ${error}`);

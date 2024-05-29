@@ -65,7 +65,7 @@ interface AuthContextType {
     create: () => void;
     restoreAccount: () => void;
     handleAddAccount: () => void;
-    handleTx: (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell' | 'send', amount: string, price: string, toAddress?: string) => Promise<void>;
+    handleTx: (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell' | 'send', amount: string, price: string, toAddress?: string, token?: string) => Promise<void>;
     toAccountOption: (password: string, confirmPassword: string) => void;
     handleClickSideBar: (idx: number) => void;
 }
@@ -313,15 +313,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         return orders;
     }
 
-    const handleTx = async (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell' | 'send', amount: string, price: string, toAddress?: string): Promise<any> => {
+    const handleTx = async (flag: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell' | 'send', amount: string, price: string, toAddress?: string, token?: string): Promise<any> => {
         setTxLoading(true);
+        let tokenName = currentToken.value;
+        if (token) {
+            tokenName = token;
+        }
         try {
             await axios.post(`${SERVER_URL}/api/send-tx`, {
                 flag,
                 password,
                 index: accountInfo?.addresses.indexOf(currentAddress),
                 tick: parseInt(tick) + EXPECTEDTICKGAP,
-                currentToken: currentToken.value,
+                currentToken: tokenName,
                 amount,
                 price,
                 toAddress

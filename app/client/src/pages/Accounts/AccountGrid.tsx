@@ -33,7 +33,7 @@ const AccountGrid: React.FC<AccountGridProps> = ({ data }) => {
                                 {accountInfo?.addresses.map((address, idx) => {
                                     if (address != "")
                                         return <tr key={idx}>
-                                            <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">{address}</td>
+                                            <td className="px-1 py-4 whitespace-nowrap font-medium text-gray-800 dark:text-neutral-200 font-mono text-[16px]">{address}</td>
                                             {
                                                 tokens.map((token) => {
                                                     return <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200 font-mono">{tokenBalances[token] ? formatNumberWithCommas(tokenBalances[token][address] || 0) : 0}</td>

@@ -10,7 +10,7 @@ const Tokens: React.FC = () => {
     const [token, setToken] = useState<AssetItemProps | null>(null);
 
     const handleSend = (token: AssetItemProps) => {
-        if(tokenBalances[token.name]){
+        if (tokenBalances[token.name]) {
             setToken(token);
         } else {
             toast.error('No available banacle.')
