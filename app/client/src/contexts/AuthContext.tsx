@@ -53,7 +53,7 @@ interface AuthContextType {
     setTxModalStatus: Dispatch<SetStateAction<'middle' | 'bottom' | 'closed' | string>>;
     setTxStatus: Dispatch<SetStateAction<string>>;
     setCurrentToken: Dispatch<SetStateAction<TokenOption>>;
-    fetchTradingInfoPage: () => Promise<void>;
+    fetchTradingInfoPage: (token?: string) => Promise<void>;
     setRecoverStatus: Dispatch<SetStateAction<boolean>>;
     setSeedType: Dispatch<SetStateAction<"55chars" | "24words">>;
     setMode: Dispatch<SetStateAction<ModeProps>>;
@@ -292,16 +292,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         }
     };
 
-    const fetchTradingInfoPage = async (): Promise<any> => {
+    const fetchTradingInfoPage = async (token?: string): Promise<any> => {
         setTradingPageLoading(true);
+        let _token = currentToken.value;
+        if (token) _token = token;
         let orders;
         try {
             const resp = await axios.post(`${SERVER_URL}/api/trading-page-info`, {
-                token: currentToken.value
+                token: _token
             });
-            console.log(resp.data, 'fffffffffffffffffffffffff')
+            console.log(resp.data, _token, 'fffffffffffffffffffffffff')
             if (resp.data.error) {
-                console.log(resp.data, currentToken);
+                console.log(resp.data, _token);
             } else {
                 orders = resp.data;
             }
@@ -385,6 +387,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         newSocket.on('txSocketStatus', (data) => {
             console.log('txSocketStatus', data);
             setTxSocketStatus(data);
+            if (data.txStatus.status) {
+                fetchTradingInfoPage(data.currentToken);
+            }
         })
 
         return () => {
