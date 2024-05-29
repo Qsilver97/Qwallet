@@ -35,7 +35,7 @@ const TradingAside = ({ options, quantity, price, setQuantity, setPrice, setComm
             toast.error('Input valid quantity or price.');
             return false;
         }
-        if (command == 'buy' && tokenBalances['QU'][currentAddress] < parseInt(price)) {
+        if (command == 'buy' && tokenBalances['QU'][currentAddress] < parseInt(price) * parseInt(quantity)) {
             toast.error('Not enough QU balance');
             return false;
         }
