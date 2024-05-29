@@ -166,7 +166,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(true);
       getHistory(currentAddress);
       getToken();
-      fetchAddress(currentAddress)
+      fetchAddress(currentAddress);
     }
   }, [currentAddress]);
 
@@ -215,12 +215,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (
-      txStatus.status == "Pending" ||
-      txStatus.status == "Waiting"
-      // parseInt(tick) >= txStatus.expectedTick
-    ) {
-      transferStatus();
-    }
+      txStatus.status == "Success" ||
+      txStatus.status == "Failed" ||
+      txStatus.status == "Closed"
+    )
+      return;
+    transferStatus();
   }, [tick]);
 
   useEffect(() => {
@@ -248,31 +248,49 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     const handleTransferEvent = (res: any) => {
       if (res.data) {
+        setTimeout(() => transferStatus(), 1500);
       } else {
         Toast.show({
           type: "error",
           text1: "E-22: " + lang.ErrorTransfer,
         });
-        setTxStatus({ ...txStatus, status: "Failed" });
+        setTxStatus((prev) => {
+          return { ...prev, status: "Failed" };
+        });
       }
     };
     const handleTransferStatusEvent = (res: any) => {
       console.log("S2C/transfer-status", res);
       if (res.data) {
         if (res.data == "failed") {
-          setTxStatus({ ...txStatus, status: "Rejected" });
+          setTxStatus((prev) => {
+            return { ...prev, status: "Failed" };
+          });
           Toast.show({ type: "error", text1: "E-23: " + lang.TransferFailed });
         } else if (res.data.value.result == 0) {
-          setTxStatus({ ...txStatus, status: "Pending" });
+          setTxStatus((prev) => {
+            return { ...prev, status: "Pending" };
+          });
         } else if (res.data.value.result == 1) {
-          setTxStatus({ ...res.data.value.display });
+          const splited = res.data.value.display.split(" ");
+          setTxStatus((prev) => {
+            return {
+              ...prev,
+              expectedTick: splited[5],
+              txid: splited[1],
+              status: "Pending",
+            };
+          });
         } else {
-          setTxStatus({ ...txStatus, status: "Rejected" });
+          setTxStatus((prev) => {
+            return { ...prev, status: "Failed" };
+          });
         }
       } else {
         Toast.show({ type: "error", text1: "E-24: " + lang.TransferFailed });
-        setTxStatus({ ...txStatus, status: "Rejected" });
-        clearInterval(statusInterval);
+        setTxStatus((prev) => {
+          return { ...prev, status: "Failed" };
+        });
       }
     };
     const handleBuySellEvent = (res: any) => {
@@ -284,7 +302,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             text1: "E-25: " + res.data.value.display,
           });
         } else if (res.data.value.result == 1) {
-          setTxStatus(res.data.value.display);
+          const splited = res.data.value.display.split(" ");
+          setTxStatus((prev) => {
+            return {
+              ...prev,
+              expectedTick: splited[5],
+              txid: splited[1],
+              status: "Pending",
+            };
+          });
         }
       } else {
       }
@@ -316,13 +342,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (txStatus.result?.includes("broadcast for tick")) {
       const txResultSplit = txStatus.result.split(" ");
-      setTxStatus({ ...txStatus, txid: txResultSplit[1] });
-      setTxStatus({
-        ...txStatus,
-        expectedTick: parseInt(txResultSplit[txResultSplit.length - 1]),
+      setTxStatus((prev) => {
+        return { ...prev, txid: txResultSplit[1] };
+      });
+      setTxStatus((prev) => {
+        return {
+          ...prev,
+          expectedTick: parseInt(txResultSplit[txResultSplit.length - 1]),
+        };
       });
     } else if (txStatus.result?.includes("no command pending")) {
-      setTxStatus({ ...txStatus, status: "Success" });
+      setTxStatus((prev) => {
+        return { ...prev, status: "Success" };
+      });
       Toast.show({
         type: "success",
         text1: lang.TransactionCompleted,

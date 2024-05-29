@@ -31,7 +31,8 @@ const Core: React.FC<IProps> = ({
   orderData,
 }) => {
   const { tick } = useSelector((store: RootState) => store.app);
-  const { user, currentAddress, txStatus, tokenBalances, balances } = useAuth();
+  const { user, currentAddress, setTxStatus, tokenBalances, balances } =
+    useAuth();
   const modal2 = useDisclose();
   const lang = local.Main.Orderbook;
 
@@ -114,7 +115,9 @@ const Core: React.FC<IProps> = ({
     if (flag === "cancelsell" && !validateOrder(orderData[token].asks, flag)) {
       return;
     }
-
+    setTxStatus((prev) => {
+      return { ...prev, expectedTick: parseInt(tick) + 5, status: "Waiting" };
+    });
     buySell(
       flag,
       amount,

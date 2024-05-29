@@ -5,8 +5,7 @@ import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
 import local from "@app/utils/locales";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesome5, AntDesign } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import { HStack, Icon, Text, VStack, useDisclose } from "native-base";
 import React, { useEffect, useState } from "react";
@@ -105,7 +104,14 @@ const Orderbook: React.FC = () => {
               py="2"
             >
               <TransferButton
-                icon={faPlus}
+                icon={
+                  <Icon
+                    as={AntDesign}
+                    name="plus"
+                    size="xl"
+                    color="white"
+                  ></Icon>
+                }
                 title={lang.Buy}
                 onPress={() => {
                   setBuySellFlag("buy");
@@ -113,7 +119,14 @@ const Orderbook: React.FC = () => {
                 }}
               ></TransferButton>
               <TransferButton
-                icon={faMinus}
+                icon={
+                  <Icon
+                    as={AntDesign}
+                    name="minus"
+                    size="xl"
+                    color="white"
+                  ></Icon>
+                }
                 title={lang.Sell}
                 onPress={() => {
                   setBuySellFlag("sell");

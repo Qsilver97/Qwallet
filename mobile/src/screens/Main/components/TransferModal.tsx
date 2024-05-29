@@ -73,7 +73,9 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
       return;
     }
     const expectedTick = parseInt(tick) + 5;
-    setTxStatus({ ...txStatus, expectedTick, status: "Closed" });
+    setTxStatus((prev) => {
+      return { ...prev, expectedTick, status: "Waiting" };
+    });
     transfer(
       toAddress,
       user.accountInfo.addresses.indexOf(currentAddress),

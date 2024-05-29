@@ -28,7 +28,10 @@ export const SocketCom: React.FC = () => {
                 setTokenBalances((prev) => {
                   return {
                     ...prev,
-                    [item[0]]: { [res.data.address]: parseInt(item[1]) },
+                    [item[0]]: {
+                      ...prev[item[0]],
+                      [res.data.address]: parseInt(item[1]),
+                    },
                   };
                 });
               });

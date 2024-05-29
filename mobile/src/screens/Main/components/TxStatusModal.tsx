@@ -24,7 +24,10 @@ const TxStatusModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
       icon={txStatus.status == "Success" ? faCheck : faShare}
       isOpen={isOpen}
       onToggle={onToggle}
-      onPress={onToggle}
+      onPress={() => {
+        if (onPress) onPress();
+        onToggle();
+      }}
     >
       <VStack fontSize={"xl"} textAlign={"center"} px={2}>
         <FormLabel label={lang.Status} value={txStatus.status} />
