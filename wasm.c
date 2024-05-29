@@ -796,7 +796,6 @@ int32_t wssupdate(char *jsonstr)
             {
                 memset(&PENDINGTX,0,sizeof(PENDINGTX));
                 strcpy(PENDINGSTATUS,"pending send failed, but not resending due to timeout");
-                strcpy(PENDINGRESULT,"pending send failed, but not resending due to timeout");
             }
         }
         //printf("current tick.%d latest.%d\n",tick,LATEST_TICK);
