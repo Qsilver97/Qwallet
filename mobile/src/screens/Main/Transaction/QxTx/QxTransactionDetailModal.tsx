@@ -102,7 +102,7 @@ const QxTransactionDetailModal: React.FC<IProps> = ({
                 w="1/2"
               ></FormLabel>
             </HStack>
-            <FormLabel label={"Action"} value={action}></FormLabel>
+            <FormLabel label={lang.Action} value={action}></FormLabel>
             <FormLabel
               label={lang.TotalAmount}
               value={

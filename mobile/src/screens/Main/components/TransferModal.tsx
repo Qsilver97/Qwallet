@@ -53,7 +53,7 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
     if (txStatus.status != "Closed") {
       Toast.show({
         type: "info",
-        text1: "There is running transaction.",
+        text1: lang.RunningTransaction,
       });
       return;
     }

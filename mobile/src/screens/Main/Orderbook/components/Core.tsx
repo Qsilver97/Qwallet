@@ -58,7 +58,7 @@ const Core: React.FC<IProps> = ({
     if (txStatus.status != "Closed") {
       Toast.show({
         type: "info",
-        text1: "There is running transaction.",
+        text1: lang.toast_RunningTransaction,
       });
       return;
     }
