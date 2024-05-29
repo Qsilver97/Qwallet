@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Button,
   FormControl,
@@ -15,25 +15,62 @@ import { useSelector } from "react-redux";
 import { useAuth } from "@app/context/AuthContext";
 import FormLabel from "@app/components/UI/FormLabel";
 import local from "@app/utils/locales";
+import { QxTxItem } from "@app/types";
+import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 
 interface IProps extends IModalProps {
   isOpen: boolean;
   onToggle: () => void;
-  transaction: any;
+  tx: QxTxItem;
 }
 
-const TransactionDetailModal: React.FC<IProps> = ({
+const QxTransactionDetailModal: React.FC<IProps> = ({
   isOpen,
   onToggle,
-  transaction,
+  tx,
 }) => {
   const { bgColor, textColor, main } = useColors();
   const { currentAddress } = useAuth();
   const { marketcap } = useSelector((store: RootState) => store.app);
-  const isSend = parseFloat(transaction[3]) < 0;
-  var d = new Date(parseInt(`${transaction[5]}000`));
+  //   const isSend = parseFloat(tx[3]) < 0;
+  var d = new Date(parseInt(`${tx.utc}000`));
   const lang = local.Main.Transaction.Details;
   const statusLang = local.Main.Transaction.Status;
+
+  console.log(tx);
+
+  const action = useMemo(() => {
+    if (tx.action === "transfer") {
+      return tx.dest !== currentAddress ? "Send" : "Receive";
+    }
+    if (tx.action === "addbid") return "Bid";
+    if (tx.action === "addask") return "Ask";
+    return "Cancel";
+  }, [tx, currentAddress]);
+
+  const iconProps = useMemo(() => {
+    if (action === "Send")
+      return { name: "share", color: "red.600", as: FontAwesome5 };
+    if (action === "Receive")
+      return { name: "reply", color: "green.600", as: FontAwesome5 };
+    if (action === "Bid")
+      return {
+        name: "add-shopping-cart",
+        color: "green.400",
+        as: MaterialIcons,
+      };
+    if (action === "Ask")
+      return {
+        name: "shopping-cart-checkout",
+        color: "blue.400",
+        as: MaterialIcons,
+      };
+    return {
+      name: "remove-shopping-cart",
+      color: "red.400",
+      as: MaterialIcons,
+    };
+  }, [action]);
 
   return (
     <Modal
@@ -67,50 +104,26 @@ const TransactionDetailModal: React.FC<IProps> = ({
                 w="1/2"
               ></FormLabel>
             </HStack>
+            <FormLabel label={"Action"} value={action}></FormLabel>
             <FormLabel
               label={lang.TotalAmount}
-              value={`${Math.abs(parseFloat(transaction[3]))} QU`}
+              value={
+                tx.amount + " " + (tx.action == "transfer" ? tx.token : tx.name)
+              }
             ></FormLabel>
-            <FormLabel
-              label={lang.TotalAmountUSD}
-              value={`$${Math.abs(
-                parseFloat(transaction[3]) * parseFloat(marketcap.price)
-              )}`}
-            ></FormLabel>
-            <FormControl>
-              <Text color={textColor} fontWeight="semibold">
-                {lang.TransactionID}
-              </Text>
-              <Link
-                href={`http://89.38.98.214:7004/explorer/tx/${transaction[1]}`}
-                colorScheme={"blue"}
-                _text={{
-                  color: main.celestialBlue,
-                  textDecoration: "none",
-                }}
-              >
-                <Text ml="2" textAlign="center">
-                  {transaction[1]}
-                </Text>
-              </Link>
-            </FormControl>
+            {tx.action != "transfer" && (
+                <FormLabel label={"Price"} value={`${tx.price as string} QU`}></FormLabel>
+            )}
+            <FormLabel label={lang.TransactionID} value={tx.txid}></FormLabel>
             <FormLabel
               label={lang.Status}
               value={`${
-                transaction[4] !== ""
-                  ? transaction[4] == "confirmed"
+                tx.status !== ""
+                  ? tx.status == "confirmed"
                     ? statusLang.Confirmed
                     : statusLang.Failed
                   : statusLang.OldEpoch
               }`}
-            ></FormLabel>
-            <FormLabel
-              label={lang.From}
-              value={`${isSend ? currentAddress : transaction[2]}`}
-            ></FormLabel>
-            <FormLabel
-              label={lang.To}
-              value={`${isSend ? transaction[2] : currentAddress}`}
             ></FormLabel>
           </VStack>
           <HStack justifyContent="center">
@@ -130,4 +143,4 @@ const TransactionDetailModal: React.FC<IProps> = ({
   );
 };
 
-export default TransactionDetailModal;
+export default QxTransactionDetailModal;

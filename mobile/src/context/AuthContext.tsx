@@ -4,6 +4,7 @@ import {
   getHistory,
   getToken,
   network,
+  qxhistory,
   transferStatus,
 } from "@app/api/api";
 import eventEmitter from "@app/api/eventEmitter";
@@ -165,6 +166,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setExpectingHistoryUpdate(false);
       setIsLoading(true);
       getHistory(currentAddress);
+      qxhistory(currentAddress);
       getToken();
       fetchAddress(currentAddress);
     }
@@ -230,6 +232,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setHistories([]);
       } else if (res.data.history) {
         setHistories(res.data.history);
+      } else {
+        // setHistories([]);
+      }
+      setIsLoading(false);
+    };
+    const handleQxHistoryEvent = (res: any) => {
+      if (res.data === false) {
+        setQxHistories([]);
+      } else if (res.data.history) {
+        setQxHistories(res.data.history);
       } else {
         // setHistories([]);
       }
@@ -322,6 +334,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     };
     eventEmitter.on("S2C/histories", handleHistoryEvent);
+    eventEmitter.on("S2C/qxhistory", handleQxHistoryEvent);
     eventEmitter.on("S2C/tokens", handleTokenEvent);
     eventEmitter.on("S2C/transfer", handleTransferEvent);
     eventEmitter.on("S2C/transfer-status", handleTransferStatusEvent);

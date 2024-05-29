@@ -59,17 +59,30 @@ const QuTransactionItem: React.FC<IProps> = ({
           </Text>
         </VStack>
       </HStack>
-      <VStack>
-        <Text>
-          {transaction[4] !== ""
-            ? transaction[4] == "confirmed"
-              ? lang.Confirmed
-              : lang.Failed
-            : lang.OldEpoch}
-        </Text>
+      <VStack space="1">
         <Text>
           {d.getMonth() + 1}/{d.getDate()}, {d.getFullYear()}
         </Text>
+        <HStack justifyContent="flex-end">
+          <Icon
+            as={FontAwesome5}
+            name={
+              transaction[4] == "confirmed"
+                ? "check"
+                : transaction[4] == "failed"
+                ? "times"
+                : "question"
+            }
+            color={
+              transaction[4] == "confirmed"
+                ? "green.500"
+                : transaction[4] == "failed"
+                ? "red.500"
+                : "black"
+            }
+            size="md"
+          />
+        </HStack>
       </VStack>
     </HStack>
   );

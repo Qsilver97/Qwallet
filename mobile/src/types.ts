@@ -54,7 +54,17 @@ interface IScTx {
 
 interface QxTxItem {
   txid: string;
-  sctx: IScTx;
+  scind: number;
+  fn: number;
+  action: string;
+  issuer: string;
+  amount: string;
+  status: string;
+  name?: string;
+  price?: string;
+  token?: string;
+  dest?: string;
+  utc?: string;
 }
 
 export {

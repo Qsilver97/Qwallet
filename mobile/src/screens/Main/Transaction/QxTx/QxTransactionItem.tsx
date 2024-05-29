@@ -1,31 +1,57 @@
 import { HStack, Icon, Text, VStack, View } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useSelector } from "react-redux";
-
 import { RootState } from "@app/redux/store";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import local from "@app/utils/locales"; // Importing the localization setup
 import { useColors } from "@app/context/ColorContex";
 import { IHStackProps } from "native-base/lib/typescript/components/primitives/Stack/HStack";
-import { IScTx, TransactionItem as ITransactionItem } from "@app/types";
+import { QxTxItem } from "@app/types";
+import { useAuth } from "@app/context/AuthContext";
 
 interface IProps extends IHStackProps {
-  transaction: ITransactionItem;
+  tx: QxTxItem;
   index: number;
-  scTx: IScTx;
 }
 
-const QxTransactionItem: React.FC<IProps> = ({
-  transaction,
-  index,
-  scTx,
-  ...props
-}) => {
-  const { marketcap } = useSelector((store: RootState) => store.app);
+const QxTransactionItem: React.FC<IProps> = ({ tx, index, ...props }) => {
+  const { currentAddress } = useAuth();
   const { panelBgColor } = useColors();
-  // const isSend = parseFloat(transaction[3]) < 0;
-  var d = new Date(parseInt(`${transaction[5]}000`));
-  const lang = local.Main.Transaction.Status;
+
+  const action = useMemo(() => {
+    if (tx.action === "transfer") {
+      return tx.dest !== currentAddress ? "Send" : "Receive";
+    }
+    if (tx.action === "addbid") return "Bid";
+    if (tx.action === "addask") return "Ask";
+    return "Cancel";
+  }, [tx, currentAddress]);
+
+  const iconProps = useMemo(() => {
+    if (action === "Send")
+      return { name: "share", color: "red.600", as: FontAwesome5 };
+    if (action === "Receive")
+      return { name: "reply", color: "green.600", as: FontAwesome5 };
+    if (action === "Bid")
+      return {
+        name: "add-shopping-cart",
+        color: "green.400",
+        as: MaterialIcons,
+      };
+    if (action === "Ask")
+      return {
+        name: "shopping-cart-checkout",
+        color: "blue.400",
+        as: MaterialIcons,
+      };
+    return {
+      name: "remove-shopping-cart",
+      color: "red.400",
+      as: MaterialIcons,
+    };
+  }, [action]);
+
+  const date = useMemo(() => new Date(parseInt(`${tx.utc}000`)), [tx.utc]);
 
   return (
     <HStack
@@ -46,33 +72,29 @@ const QxTransactionItem: React.FC<IProps> = ({
         </Text>
       </View>
       <HStack alignItems="center" space={4} flex={1}>
-        {/* <Icon
-          as={FontAwesome5}
-          name={isSend ? "share" : "reply"}
-          color={isSend ? "red.600" : "green.600"}
-          size="xl"
-        ></Icon> */}
+        <Icon {...iconProps} size="xl" />
         <VStack>
-          <Text>{scTx?.action}</Text>
+          <Text>{action}</Text>
           <Text>
-            ${" "}
-            {Math.abs(
-              parseFloat(transaction[3]) * parseFloat(marketcap.price)
-            ).toFixed(5)}
+            {tx.amount}{" "}
+            {tx.action !== "transfer"
+              ? `${tx.name} / ${tx.price} QU`
+              : tx.token}
           </Text>
         </VStack>
       </HStack>
-      <VStack>
+      <VStack space="1">
         <Text>
-          {transaction[4] !== ""
-            ? transaction[4] == "confirmed"
-              ? lang.Confirmed
-              : lang.Failed
-            : lang.OldEpoch}
+          {date.getMonth() + 1}/{date.getDate()}, {date.getFullYear()}
         </Text>
-        <Text>
-          {d.getMonth() + 1}/{d.getDate()}, {d.getFullYear()}
-        </Text>
+        <HStack justifyContent="flex-end">
+          <Icon
+            as={FontAwesome5}
+            name={tx.status == "confirmed" ? "check" : "times"}
+            color={tx.status == "confirmed" ? "green.500" : "red.500"}
+            size="md"
+          />
+        </HStack>
       </VStack>
     </HStack>
   );

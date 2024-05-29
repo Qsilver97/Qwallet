@@ -68,7 +68,7 @@ const Orderlist: React.FC<IProps> = ({ orderData }) => {
                       ? "add-shopping-cart"
                       : "shopping-cart-checkout"
                   }
-                  color={dt[3] == "buy" ? "green.400" : "red.400"}
+                  color={dt[3] == "buy" ? "green.500" : "blue.500"}
                   size="xl"
                 />
                 <Text w="1/5">{dt[2]} QU</Text>
