@@ -98,6 +98,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [prevBalances, setPrevBalances] = useState<Balances>({});
   const [historyNum, setHistoryNum] = useState(histories.length);
   const [expectingHistoryUpdate, setExpectingHistoryUpdate] = useState(false);
+  const [qxHistoryNum, setQxHistoryNum] = useState(qxHistories.length);
+  const [expectingQxHistoryUpdate, setExpectingQxHistoryUpdate] =
+    useState(false);
 
   const [lastSocketResponseTime, setLastSocketResponseTime] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout>();
@@ -148,6 +151,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setTokenBalances({});
     setIsLoading(false);
     setExpectingHistoryUpdate(false);
+    setExpectingQxHistoryUpdate(false);
   };
 
   const login = (userDetails: UserDetailType) => {
@@ -164,6 +168,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setTokens([]);
     if (!!currentAddress) {
       setExpectingHistoryUpdate(false);
+      setExpectingQxHistoryUpdate(false);
       setIsLoading(true);
       getHistory(currentAddress);
       qxhistory(currentAddress);
@@ -198,14 +203,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           getHistory(currentAddress);
         } else {
           const newHistory = histories.reverse()[0];
-          if (outTx)
-            Toast.show({
-              type: "info",
-              text1: lang.ReceivedQUFrom.replace(
-                "{amount}",
-                `${Math.abs(parseInt(newHistory[3]))}`
-              ).replace("{address}", newHistory[2]),
-            });
+          // if (outTx)
+          //   Toast.show({
+          //     type: "info",
+          //     text1: lang.ReceivedQUFrom.replace(
+          //       "{amount}",
+          //       `${Math.abs(parseInt(newHistory[3]))}`
+          //     ).replace("{address}", newHistory[2]),
+          //   });
           setExpectingHistoryUpdate(false); // Clear the flag when history is up-to-date
           clearInterval(interval); // Clear the interval when done
         }
@@ -214,6 +219,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return () => clearInterval(interval);
     }
   }, [histories.length, historyNum, expectingHistoryUpdate]);
+
+  useEffect(() => {
+    if (!currentAddress) return;
+    if (expectingQxHistoryUpdate && currentAddress !== "") {
+      const interval = setInterval(() => {
+        if (qxHistories.length !== qxHistoryNum) {
+          qxhistory(currentAddress);
+        } else {
+          setExpectingHistoryUpdate(false); // Clear the flag when history is up-to-date
+          clearInterval(interval); // Clear the interval when done
+        }
+      }, 1500);
+
+      return () => clearInterval(interval);
+    }
+  }, [qxHistories.length, qxHistoryNum, expectingQxHistoryUpdate]);
 
   useEffect(() => {
     if (
@@ -362,6 +383,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         };
       });
     } else if (txStatus.result?.includes("no command pending")) {
+      setExpectingHistoryUpdate(true);
+      setExpectingQxHistoryUpdate(true);
+      setHistoryNum(histories.length + 1);
+      setQxHistoryNum(qxHistories.length + 1);
       setTxStatus((prev) => {
         return { ...prev, status: "Success" };
       });

@@ -79,7 +79,13 @@ const TransferStatusFab: React.FC<IProps> = ({ onToggle }) => {
         onPress={() => {
           if (txStatus.status == "Success" || txStatus.status == "Failed") {
             setTxStatus((prev) => {
-              return { ...prev, status: "Closed" };
+              return {
+                ...prev,
+                expectedTick: 0,
+                txid: "",
+                result: "",
+                status: "Closed",
+              };
             });
           }
         }}
