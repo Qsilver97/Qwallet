@@ -159,11 +159,20 @@ export const qxhistory = (address: string) => {
   );
 };
 
-export const txFetch = (txids: string[]) => {
+export const txFetch = (txid: string) => {
   nodejs.channel.send(
     JSON.stringify({
       action: "C2S/tx-fetch",
-      data: { txids },
+      data: { txid },
+    })
+  );
+};
+
+export const fetchAddress = (address: string) => {
+  nodejs.channel.send(
+    JSON.stringify({
+      action: "C2S/fetch-address",
+      data: { address },
     })
   );
 };

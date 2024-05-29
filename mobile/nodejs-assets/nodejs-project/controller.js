@@ -34,8 +34,7 @@ const base_controller = (
 
 exports.login = async ({ password }) => {
   try {
-    let liveSocket = socketManager.initLiveSocket();
-    liveSocketController(liveSocket);
+    liveSocketController("wss://websocket.qsilver.org");
     await delay(2000);
     let realPassword;
     stateManager.init();
@@ -207,6 +206,11 @@ exports.logout = async () => {
 exports.fetchUser = async () => {
   const userState = stateManager.getUserState();
   bridge_send("S2C/fetchuser", userState);
+};
+
+exports.fetchAddress = async (address) => {
+  const result = await socketSync(address);
+  bridge_send("S2C/fetch-address", result);
 };
 
 exports.history = async (address) => {

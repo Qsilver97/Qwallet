@@ -1,5 +1,6 @@
 import {
   basicInfo,
+  fetchAddress,
   getHistory,
   getToken,
   network,
@@ -14,7 +15,6 @@ import {
 } from "@app/redux/appSlice";
 import { RootState } from "@app/redux/store";
 import {
-  AuthContextType,
   Balances,
   QxTxItem,
   TransactionItem,
@@ -166,6 +166,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(true);
       getHistory(currentAddress);
       getToken();
+      fetchAddress(currentAddress)
     }
   }, [currentAddress]);
 
@@ -214,8 +215,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (
-      txStatus.status == "Pending" &&
-      parseInt(tick) >= txStatus.expectedTick
+      txStatus.status == "Pending" ||
+      txStatus.status == "Waiting"
+      // parseInt(tick) >= txStatus.expectedTick
     ) {
       transferStatus();
     }
@@ -251,7 +253,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           type: "error",
           text1: "E-22: " + lang.ErrorTransfer,
         });
-        setTxStatus({ ...txStatus, status: "Rejected" });
+        setTxStatus({ ...txStatus, status: "Failed" });
       }
     };
     const handleTransferStatusEvent = (res: any) => {
