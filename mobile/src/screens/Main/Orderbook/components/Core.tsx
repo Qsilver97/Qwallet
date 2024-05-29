@@ -31,8 +31,14 @@ const Core: React.FC<IProps> = ({
   orderData,
 }) => {
   const { tick } = useSelector((store: RootState) => store.app);
-  const { user, currentAddress, setTxStatus, tokenBalances, balances } =
-    useAuth();
+  const {
+    user,
+    currentAddress,
+    txStatus,
+    setTxStatus,
+    tokenBalances,
+    balances,
+  } = useAuth();
   const modal2 = useDisclose();
   const lang = local.Main.Orderbook;
 
@@ -49,6 +55,14 @@ const Core: React.FC<IProps> = ({
     price: string,
     token: string
   ) => {
+    if (txStatus.status != "Closed") {
+      Toast.show({
+        type: "info",
+        text1: "There is running transaction.",
+      });
+      return;
+    }
+
     onToggle();
     const showError = (message: string) => {
       Toast.show({

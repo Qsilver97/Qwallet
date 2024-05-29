@@ -37,8 +37,6 @@ const QxTransactionDetailModal: React.FC<IProps> = ({
   const lang = local.Main.Transaction.Details;
   const statusLang = local.Main.Transaction.Status;
 
-  console.log(tx);
-
   const action = useMemo(() => {
     if (tx.action === "transfer") {
       return tx.dest !== currentAddress ? "Send" : "Receive";

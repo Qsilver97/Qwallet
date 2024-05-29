@@ -50,6 +50,13 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
   const modal2 = useDisclose();
 
   const handleTransfer = () => {
+    if (txStatus.status != "Closed") {
+      Toast.show({
+        type: "info",
+        text1: "There is running transaction.",
+      });
+      return;
+    }
     modal1.onToggle();
     if (toAddress == "" || amount == "" || amount == "0") {
       Toast.show({

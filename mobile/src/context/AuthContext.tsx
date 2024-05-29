@@ -284,13 +284,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             return { ...prev, status: "Pending" };
           });
         } else if (res.data.value.result == 1) {
-          const splited = res.data.value.display.split(" ");
           setTxStatus((prev) => {
             return {
               ...prev,
-              expectedTick: splited[5],
-              txid: splited[1],
-              status: "Pending",
+              result: res.data.value.display,
             };
           });
         } else {
@@ -372,7 +369,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         type: "success",
         text1: lang.TransactionCompleted,
       });
-      clearInterval(statusInterval);
     }
   }, [txStatus.result]);
 
