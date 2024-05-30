@@ -1,22 +1,15 @@
 import { buySell } from "@app/api/api";
-import FormLabel from "@app/components/UI/FormLabel";
 import { useAuth } from "@app/context/AuthContext";
 import { RootState } from "@app/redux/store";
+import { IOrderData, IOrderUnit } from "@app/types";
 import local from "@app/utils/locales";
-import { faCheck, faShare } from "@fortawesome/free-solid-svg-icons";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { Text, VStack, useDisclose } from "native-base";
 import React from "react";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 import ConfirmModal from "../../components/ConfirmModal";
-
-type IOrderUnit = [number, string, string, string]; // index, address, amount, price
-interface IOrderData {
-  [tokenName: string]: {
-    bids: IOrderUnit[];
-    asks: IOrderUnit[];
-  };
-}
+import TxStatusModal from "../../components/TxStatusModal";
 
 interface IProps {
   isOpen: boolean;
@@ -41,9 +34,8 @@ const Core: React.FC<IProps> = ({
   const {
     user,
     currentAddress,
-    txId,
     txStatus,
-    expectedTick,
+    setTxStatus,
     tokenBalances,
     balances,
   } = useAuth();
@@ -63,8 +55,15 @@ const Core: React.FC<IProps> = ({
     price: string,
     token: string
   ) => {
-    onToggle();
+    if (txStatus.status != "Closed") {
+      Toast.show({
+        type: "info",
+        text1: lang.toast_RunningTransaction,
+      });
+      return;
+    }
 
+    onToggle();
     const showError = (message: string) => {
       Toast.show({
         type: "error",
@@ -73,7 +72,12 @@ const Core: React.FC<IProps> = ({
     };
 
     const isAmountOrPriceInvalid =
-      amount === "" || amount === "0" || price === "" || price === "0";
+      amount === "" ||
+      amount === "0" ||
+      price === "" ||
+      price === "0" ||
+      !Number.isInteger(parseInt(amount)) ||
+      !Number.isInteger(parseInt(price));
     if (isAmountOrPriceInvalid) {
       showError(local.Main.Components.InvalidAddressOrAmount);
       return;
@@ -81,7 +85,8 @@ const Core: React.FC<IProps> = ({
 
     const insufficientTokenBalance =
       flag === "sell" &&
-      tokenBalances[token][currentAddress] < parseInt(amount);
+      (Object.is(tokenBalances, {}) ||
+        tokenBalances[token][currentAddress] < parseInt(amount));
     if (insufficientTokenBalance) {
       showError("E-32: " + lang.TokenBalanceInsufficient);
       return;
@@ -124,14 +129,16 @@ const Core: React.FC<IProps> = ({
     if (flag === "cancelsell" && !validateOrder(orderData[token].asks, flag)) {
       return;
     }
-
+    setTxStatus((prev) => {
+      return { ...prev, expectedTick: parseInt(tick) + 5, status: "Waiting" };
+    });
     buySell(
       flag,
       amount,
       price,
-      user?.password as string,
-      user?.accountInfo?.addresses.indexOf(currentAddress) as number,
-      parseInt(tick) + 10,
+      user.password as string,
+      user.accountInfo.addresses.indexOf(currentAddress) as number,
+      parseInt(tick) + 5,
       token
     );
     modal2.onToggle();
@@ -156,24 +163,7 @@ const Core: React.FC<IProps> = ({
           </Text>
         </VStack>
       </ConfirmModal>
-      <ConfirmModal
-        icon={txStatus == "Success" ? faCheck : faShare}
-        isOpen={modal2.isOpen}
-        onToggle={modal2.onToggle}
-        onPress={() => {
-          modal2.onToggle();
-        }}
-      >
-        <VStack fontSize={"xl"} textAlign={"center"} px={2}>
-          <FormLabel label={lang.Status} value={txStatus}></FormLabel>
-          <FormLabel label={lang.TransactionID} value={txId}></FormLabel>
-          <FormLabel label={lang.CurrentTick} value={tick}></FormLabel>
-          <FormLabel
-            label={lang.ExpectedTick}
-            value={`${expectedTick}`}
-          ></FormLabel>
-        </VStack>
-      </ConfirmModal>
+      <TxStatusModal isOpen={modal2.isOpen} onToggle={modal2.onToggle} />
     </>
   );
 };

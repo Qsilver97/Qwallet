@@ -80,15 +80,15 @@ function deleteKeyPath(keyPath, filePath = "languages.json") {
 }
 
 // Example
-const keyPath = "Toast.ReceivedQUFrom";
+const keyPath = "Main.Orderbook.toast_RunningTransaction";
 const newTranslations = {
-  en: "You received {amount} QU from {address}",
-  zh: "你收到来自 {address} 的 {amount} QU",
-  es: "Has recibido {amount} QU de {address}",
-  fr: "Vous avez reçu {amount} QU de {address}",
-  de: "Sie haben {amount} QU von {address} erhalten",
-  ja: "{address} から {amount} QU を受け取りました",
-  ru: "Вы получили {amount} QU от {address}",
+  en: "There is already a running transaction.",
+  zh: "已经有一个正在进行的交易。",
+  es: "Ya hay una transacción en curso.",
+  fr: "Il y a déjà une transaction en cours.",
+  de: "Es läuft bereits eine Transaktion.",
+  ja: "既に進行中の取引があります。",
+  ru: "Уже есть выполняемая транзакция.",
 };
 
 addTranslation(keyPath, newTranslations);

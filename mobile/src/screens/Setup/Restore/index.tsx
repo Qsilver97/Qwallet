@@ -8,7 +8,13 @@ import { setPassword, setSeedType } from "@app/redux/appSlice";
 import { RootState } from "@app/redux/store";
 import local from "@app/utils/locales";
 import { useNavigation } from "@react-navigation/native";
-import { KeyboardAvoidingView, Text, TextArea, VStack } from "native-base";
+import {
+  HStack,
+  KeyboardAvoidingView,
+  Text,
+  TextArea,
+  VStack,
+} from "native-base";
 import React, { useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -31,6 +37,7 @@ const Restore: React.FC = () => {
     if (seedType == "55chars") passwordPrefix = "Q";
     let _password = `${passwordPrefix}${password}`;
     restore(_password, restoreSeeds, seedType);
+    dispatch(setPassword(""));
   };
 
   const handlePassword = (value: string) => {
@@ -88,54 +95,57 @@ const Restore: React.FC = () => {
   }, []);
 
   return (
-    <KeyboardAvoidingView
-      flex={1}
-      justifyItems="center"
-      bgColor={bgColor}
-      color={textColor}
-      behavior={Platform.OS === "ios" ? "height" : "height"}
-    >
+    <VStack flex={1} justifyItems="center" bgColor={bgColor} color={textColor}>
       <Text fontSize="4xl" p="5" textAlign="center">
         {lang.BackupfromSeed}
       </Text>
       <VStack flex={1} px="10">
-        <TextArea
-          autoCompleteType=""
-          w={"full"}
-          color={textColor}
-          borderColor={gray.gray80}
-          rounded={"md"}
-          placeholderTextColor={textColor}
-          placeholder={lang.placeholder_SeedPhrase}
-          onChangeText={handleRestoreSeeds}
-        />
-        <Input
-          onChangeText={handlePassword}
-          w={"full"}
-          type="password"
-          placeholder={lang.placeholder_NewPassword}
-          helper={lang.AtLeast8characters}
-        ></Input>
-        <Input
-          onChangeText={handleConfirmPassword}
-          w={"full"}
-          type="password"
-          placeholder={lang.placeholder_ConfirmPassword}
-          error={password !== confirmPassword ? lang.NotMatch : ""}
-        ></Input>
-        <Text>
-          {lang.ByProceeding}
-          {/* <Link
-            href="https://qubic.org/Terms-of-service"
-            _text={{ color: main.celestialBlue, marginTop: 2 }}
-            display={"inline"}
-          >
-            {lang.TermCondition}
-          </Link> */}
-          .
-        </Text>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "height" : "height"}
+        >
+          <TextArea
+            autoCompleteType=""
+            w={"full"}
+            color={textColor}
+            borderColor={gray.gray80}
+            rounded={"md"}
+            placeholderTextColor={textColor}
+            placeholder={lang.placeholder_SeedPhrase}
+            onChangeText={handleRestoreSeeds}
+          />
+          <HStack justifyContent="flex-end" px="2">
+            <Text
+              color={
+                restoreSeeds.length != (Array.isArray(restoreSeeds) ? 24 : 55)
+                  ? "red.500"
+                  : textColor
+              }
+            >
+              {restoreSeeds.length}/{Array.isArray(restoreSeeds) ? "24" : "55"}
+            </Text>
+          </HStack>
+          <Input
+            onChangeText={handlePassword}
+            w={"full"}
+            type="password"
+            placeholder={lang.placeholder_NewPassword}
+            helper={lang.AtLeast8characters}
+          ></Input>
+          <Input
+            onChangeText={handleConfirmPassword}
+            w={"full"}
+            type="password"
+            placeholder={lang.placeholder_ConfirmPassword}
+            error={password !== confirmPassword ? lang.NotMatch : ""}
+          ></Input>
+        </KeyboardAvoidingView>
+        <VStack p="2" space="2">
+          <Text>{lang.ByProceeding}</Text>
+          <Text ml="2">- {lang.SeedPhraseSecurity}</Text>
+          <Text ml="2">- {lang.WalletRecoverySupport}</Text>
+        </VStack>
       </VStack>
-      <ButtonBox>
+      <ButtonBox bgColor={bgColor}>
         <PageButton
           title={lang.ImportButtonTitle}
           type="primary"
@@ -148,7 +158,7 @@ const Restore: React.FC = () => {
           onPress={handleNext}
         ></PageButton>
       </ButtonBox>
-    </KeyboardAvoidingView>
+    </VStack>
   );
 };
 

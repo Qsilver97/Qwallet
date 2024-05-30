@@ -87,7 +87,9 @@
       "ByProceeding": "By proceeding, you agree to these",
       "TermCondition": "Term and Conditions",
       "ImportButtonTitle": "Import",
-      "BackupfromSeed": "Backup from seed"
+      "BackupfromSeed": "Backup from seed",
+      "SeedPhraseSecurity": "You are responsible for maintaining the security of your seed phrase and password. The loss of the seed phrase may result in the irreversible loss of access to your wallet.",
+      "WalletRecoverySupport": "Support for wallet recovery is limited, and we do not guarantee wallet recovery in the event of seed phrase loss."
     },
     "Login": {
       "Login": "Login",
@@ -152,7 +154,8 @@
         "ConfirmSell": "Do you really want to sell {amount} {currentToken} as {price} QU?",
         "toast_NotExistOrder": "Not Exist Order!",
         "toast_NoOrder": "Current address has not any order!",
-        "toast_WrongQuantity": "Wrong quantity!"
+        "toast_WrongQuantity": "Wrong quantity!",
+        "toast_RunningTransaction": "There is already a running transaction."
       },
       "Transaction": {
         "Transactions": "Transactions",
@@ -171,7 +174,8 @@
           "Status": "Status",
           "From": "From",
           "To": "To",
-          "Back": "Back"
+          "Back": "Back",
+          "Action": "Action"
         }
       },
       "Settings": {
@@ -211,7 +215,8 @@
         "ExpectedTick": "Expected Tick",
         "InvalidAddressOrAmount": "Invalid address or amount!",
         "toast_QUInsufficient": "QU insufficient!",
-        "toast_InvalidPassword": "Invalid Address!"
+        "toast_InvalidPassword": "Invalid Address!",
+        "RunningTransaction": "There is already a running transaction."
       }
     },
     "util": {
@@ -319,7 +324,9 @@
       "ByProceeding": "继续操作，即表示您同意这些",
       "TermCondition": "条款和条件",
       "ImportButtonTitle": "导入",
-      "BackupfromSeed": "从种子备份"
+      "BackupfromSeed": "从种子备份",
+      "SeedPhraseSecurity": "您有责任维护种子短语和密码的安全性。种子短语的丢失可能导致无法访问您的钱包。",
+      "WalletRecoverySupport": "钱包恢复支持有限，且我们不保证在种子短语丢失的情况下能恢复钱包。"
     },
     "Login": {
       "Login": "登录",
@@ -384,7 +391,8 @@
         "ConfirmSell": "你真的想以 {price} QU 卖 {amount} 个 {currentToken} 吗？",
         "toast_NotExistOrder": "不存在的订单！",
         "toast_NoOrder": "当前地址没有任何订单！",
-        "toast_WrongQuantity": "数量错误！"
+        "toast_WrongQuantity": "数量错误！",
+        "toast_RunningTransaction": "已经有一个正在进行的交易。"
       },
       "Transaction": {
         "Transactions": "交易",
@@ -403,7 +411,8 @@
           "Status": "状态",
           "From": "来自",
           "To": "到",
-          "Back": "返回"
+          "Back": "返回",
+          "Action": "操作"
         }
       },
       "Settings": {
@@ -443,7 +452,8 @@
         "ExpectedTick": "预期Tick",
         "InvalidAddressOrAmount": "无效的地址或金额!",
         "toast_QUInsufficient": "QU不足！",
-        "toast_InvalidPassword": "无效地址！"
+        "toast_InvalidPassword": "无效地址！",
+        "RunningTransaction": "已经有一个正在进行的交易。"
       }
     },
     "util": {
@@ -551,7 +561,9 @@
       "ByProceeding": "Al continuar, aceptas estos",
       "TermCondition": "Términos y Condiciones",
       "ImportButtonTitle": "Importar",
-      "BackupfromSeed": "Copia de seguridad desde la semilla"
+      "BackupfromSeed": "Copia de seguridad desde la semilla",
+      "SeedPhraseSecurity": "Usted es responsable de mantener la seguridad de su frase semilla y contraseña. La pérdida de la frase semilla puede resultar en la pérdida irreversible de acceso a su billetera.",
+      "WalletRecoverySupport": "El soporte para la recuperación de la billetera es limitado y no garantizamos la recuperación de la billetera en caso de pérdida de la frase semilla."
     },
     "Login": {
       "Login": "Iniciar Sesión",
@@ -616,7 +628,8 @@
         "ConfirmSell": "¿Realmente quieres vender {amount} {currentToken} por {price} QU?",
         "toast_NotExistOrder": "¡Orden no existe!",
         "toast_NoOrder": "¡La dirección actual no tiene ningún pedido!",
-        "toast_WrongQuantity": "¡Cantidad incorrecta!"
+        "toast_WrongQuantity": "¡Cantidad incorrecta!",
+        "toast_RunningTransaction": "Ya hay una transacción en curso."
       },
       "Transaction": {
         "Transactions": "Transacciones",
@@ -635,7 +648,8 @@
           "Status": "Estado",
           "From": "De",
           "To": "A",
-          "Back": "Atrás"
+          "Back": "Atrás",
+          "Action": "Acción"
         }
       },
       "Settings": {
@@ -675,7 +689,8 @@
         "ExpectedTick": "Tick Esperado",
         "InvalidAddressOrAmount": "¡Dirección o cantidad inválida!",
         "toast_QUInsufficient": "¡QU insuficiente!",
-        "toast_InvalidPassword": "¡Dirección inválida!"
+        "toast_InvalidPassword": "¡Dirección inválida!",
+        "RunningTransaction": "Ya hay una transacción en curso."
       }
     },
     "util": {
@@ -783,7 +798,9 @@
       "ByProceeding": "En continuant, vous acceptez ces",
       "TermCondition": "Termes et Conditions",
       "ImportButtonTitle": "Importer",
-      "BackupfromSeed": "Sauvegarde à partir de la graine"
+      "BackupfromSeed": "Sauvegarde à partir de la graine",
+      "SeedPhraseSecurity": "Vous êtes responsable de la sécurité de votre phrase de récupération et de votre mot de passe. La perte de la phrase de récupération peut entraîner une perte irréversible d'accès à votre portefeuille.",
+      "WalletRecoverySupport": "Le support pour la récupération du portefeuille est limité, et nous ne garantissons pas la récupération du portefeuille en cas de perte de la phrase de récupération."
     },
     "Login": {
       "Login": "Connexion",
@@ -848,7 +865,8 @@
         "ConfirmSell": "Voulez-vous vraiment vendre {amount} {currentToken} pour {price} QU ?",
         "toast_NotExistOrder": "Commande inexistante !",
         "toast_NoOrder": "L'adresse actuelle n'a aucune commande !",
-        "toast_WrongQuantity": "Quantité incorrecte !"
+        "toast_WrongQuantity": "Quantité incorrecte !",
+        "toast_RunningTransaction": "Il y a déjà une transaction en cours."
       },
       "Transaction": {
         "Transactions": "Transactions",
@@ -867,7 +885,8 @@
           "Status": "Statut",
           "From": "De",
           "To": "À",
-          "Back": "Retour"
+          "Back": "Retour",
+          "Action": "Action"
         }
       },
       "Settings": {
@@ -907,7 +926,8 @@
         "ExpectedTick": "Tick attendu",
         "InvalidAddressOrAmount": "Adresse ou montant invalide !",
         "toast_QUInsufficient": "QU insuffisant !",
-        "toast_InvalidPassword": "Adresse invalide !"
+        "toast_InvalidPassword": "Adresse invalide !",
+        "RunningTransaction": "Il y a déjà une transaction en cours."
       }
     },
     "util": {
@@ -1015,7 +1035,9 @@
       "ByProceeding": "Indem Sie fortfahren, stimmen Sie diesen",
       "TermCondition": "Geschäftsbedingungen",
       "ImportButtonTitle": "Importieren",
-      "BackupfromSeed": "Sicherung vom Seed"
+      "BackupfromSeed": "Sicherung vom Seed",
+      "SeedPhraseSecurity": "Sie sind für die Sicherheit Ihrer Seed-Phrase und Ihres Passworts verantwortlich. Der Verlust der Seed-Phrase kann zu einem unwiderruflichen Verlust des Zugriffs auf Ihr Wallet führen.",
+      "WalletRecoverySupport": "Die Unterstützung für die Wiederherstellung des Wallets ist begrenzt, und wir garantieren keine Wiederherstellung des Wallets im Falle eines Verlusts der Seed-Phrase."
     },
     "Login": {
       "Login": "Anmelden",
@@ -1080,7 +1102,8 @@
         "ConfirmSell": "Möchten Sie wirklich {amount} {currentToken} für {price} QU verkaufen?",
         "toast_NotExistOrder": "Auftrag existiert nicht!",
         "toast_NoOrder": "Aktuelle Adresse hat keine Bestellung!",
-        "toast_WrongQuantity": "Falsche Menge!"
+        "toast_WrongQuantity": "Falsche Menge!",
+        "toast_RunningTransaction": "Es läuft bereits eine Transaktion."
       },
       "Transaction": {
         "Transactions": "Transaktionen",
@@ -1099,7 +1122,8 @@
           "Status": "Status",
           "From": "Von",
           "To": "An",
-          "Back": "Zurück"
+          "Back": "Zurück",
+          "Action": "Aktion"
         }
       },
       "Settings": {
@@ -1139,7 +1163,8 @@
         "ExpectedTick": "Erwarteter Tick",
         "InvalidAddressOrAmount": "Ungültige Adresse oder Menge!",
         "toast_QUInsufficient": "QU unzureichend!",
-        "toast_InvalidPassword": "Ungültige Adresse!"
+        "toast_InvalidPassword": "Ungültige Adresse!",
+        "RunningTransaction": "Es läuft bereits eine Transaktion."
       }
     },
     "util": {
@@ -1247,7 +1272,9 @@
       "ByProceeding": "Продолжая, вы соглашаетесь с этими",
       "TermCondition": "Условиями использования",
       "ImportButtonTitle": "Импорт",
-      "BackupfromSeed": "Резервное копирование из seed"
+      "BackupfromSeed": "Резервное копирование из seed",
+      "SeedPhraseSecurity": "Вы несете ответственность за безопасность вашей сид-фразы и пароля. Потеря сид-фразы может привести к безвозвратной потере доступа к вашему кошельку.",
+      "WalletRecoverySupport": "Поддержка восстановления кошелька ограничена, и мы не гарантируем восстановление кошелька в случае утраты сид-фразы."
     },
     "Login": {
       "Login": "Вход",
@@ -1312,7 +1339,8 @@
         "ConfirmSell": "Вы действительно хотите продать {amount} {currentToken} за {price} QU?",
         "toast_NotExistOrder": "Заказ не существует!",
         "toast_NoOrder": "На текущем адресе нет заказов!",
-        "toast_WrongQuantity": "Неправильное количество!"
+        "toast_WrongQuantity": "Неправильное количество!",
+        "toast_RunningTransaction": "Уже есть выполняемая транзакция."
       },
       "Transaction": {
         "Transactions": "Транзакции",
@@ -1331,7 +1359,8 @@
           "Status": "Статус",
           "From": "От",
           "To": "К",
-          "Back": "Назад"
+          "Back": "Назад",
+          "Action": "Действие"
         }
       },
       "Settings": {
@@ -1371,7 +1400,8 @@
         "ExpectedTick": "Ожидаемый Tick",
         "InvalidAddressOrAmount": "Недействительный адрес или сумма!",
         "toast_QUInsufficient": "QU недостаточно!",
-        "toast_InvalidPassword": "Неверный адрес!"
+        "toast_InvalidPassword": "Неверный адрес!",
+        "RunningTransaction": "Уже есть выполняемая транзакция."
       }
     },
     "util": {
@@ -1479,7 +1509,9 @@
       "ByProceeding": "続行することにより、これらに同意したことになります",
       "TermCondition": "利用規約",
       "ImportButtonTitle": "インポート",
-      "BackupfromSeed": "シードからのバックアップ"
+      "BackupfromSeed": "シードからのバックアップ",
+      "SeedPhraseSecurity": "シードフレーズとパスワードのセキュリティを維持する責任はあなたにあります。シードフレーズを紛失すると、ウォレットへのアクセスが回復不能になる可能性があります。",
+      "WalletRecoverySupport": "ウォレットの回復サポートは限られており、シードフレーズが失われた場合のウォレットの回復は保証されません。"
     },
     "Login": {
       "Login": "ログイン",
@@ -1544,7 +1576,8 @@
         "ConfirmSell": "{amount} {currentToken} を {price} QU で売りますか？",
         "toast_NotExistOrder": "存在しない注文です！",
         "toast_NoOrder": "現在のアドレスには注文がありません！",
-        "toast_WrongQuantity": "数量が間違っています！"
+        "toast_WrongQuantity": "数量が間違っています！",
+        "toast_RunningTransaction": "既に進行中の取引があります。"
       },
       "Transaction": {
         "Transactions": "トランザクション",
@@ -1563,7 +1596,8 @@
           "Status": "ステータス",
           "From": "送信元",
           "To": "送信先",
-          "Back": "戻る"
+          "Back": "戻る",
+          "Action": "アクション"
         }
       },
       "Settings": {
@@ -1603,7 +1637,8 @@
         "ExpectedTick": "期待されるTick",
         "InvalidAddressOrAmount": "無効なアドレスまたは金額！",
         "toast_QUInsufficient": "QUが不足しています！",
-        "toast_InvalidPassword": "無効なアドレスです！"
+        "toast_InvalidPassword": "無効なアドレスです！",
+        "RunningTransaction": "既に進行中の取引があります。"
       }
     },
     "util": {

@@ -1,12 +1,13 @@
 import React, { ReactNode } from "react";
 import { VStack } from "native-base";
 import { useColors } from "../../context/ColorContex";
+import { IVStackProps } from "native-base/lib/typescript/components/primitives/Stack/VStack";
 
-interface IButtonBoxProps {
+interface IButtonBoxProps extends IVStackProps {
   children: ReactNode;
 }
 
-const ButtonBox: React.FC<IButtonBoxProps> = ({ children }) => {
+const ButtonBox: React.FC<IButtonBoxProps> = ({ children, ...props }) => {
   const { textColor, bgColor } = useColors();
   return (
     <VStack
@@ -16,6 +17,7 @@ const ButtonBox: React.FC<IButtonBoxProps> = ({ children }) => {
       color={textColor}
       w="full"
       space={4}
+      {...props}
     >
       {children}
     </VStack>

@@ -1,28 +1,27 @@
+import { myOrders } from "@app/api/api";
+import eventEmitter from "@app/api/eventEmitter";
 import Input from "@app/components/UI/Input";
+import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
 import local from "@app/utils/locales";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { faClose, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { HStack, Icon, Text, VStack, View, useDisclose } from "native-base";
+import { FontAwesome5, AntDesign } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
+import {
+  HStack,
+  Icon,
+  KeyboardAvoidingView,
+  Text,
+  VStack,
+  useDisclose,
+} from "native-base";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import TokenSelect from "../components/TokenSelect";
 import TransferButton from "../components/TransferButton";
 import Core from "./components/Core";
 import Orderlist from "./components/Orderlist";
-import { useAuth } from "@app/context/AuthContext";
-import { myOrders } from "@app/api/api";
-import eventEmitter from "@app/api/eventEmitter";
-import { useIsFocused } from "@react-navigation/native";
-
-type IOrderUnit = [number, string, string, string]; // index, address, amount, price
-interface IOrderData {
-  [tokenName: string]: {
-    bids: IOrderUnit[];
-    asks: IOrderUnit[];
-  };
-}
+import { IOrderData } from "@app/types";
 
 const Orderbook: React.FC = () => {
   const { bgColor, textColor } = useColors();
@@ -36,11 +35,11 @@ const Orderbook: React.FC = () => {
   const [orderData, setOrderData] = useState<IOrderData>({});
   const modal1 = useDisclose();
   const lang = local.Main.Orderbook;
-  const { currentAddress, txResult, txStatus } = useAuth();
+  const { currentAddress, txStatus } = useAuth();
 
   useEffect(() => {
     myOrders();
-  }, [currentAddress, txResult, useIsFocused()]);
+  }, [currentAddress, txStatus.result, useIsFocused()]);
 
   useEffect(() => {
     const handleMyOrdersEvent = (res: any) => {
@@ -76,44 +75,53 @@ const Orderbook: React.FC = () => {
             selectedToken={currentToken}
             onChange={setCurrentToken}
           ></TokenSelect>
-          <HStack py="2">
-            <VStack w="3/5" textAlign="center">
-              <Input
-                type="text"
-                onChangeText={(text) => {
-                  setAmount(text);
-                }}
-                placeholder={lang.InputAmount}
-                label={lang.AmountOfToken.replace(
-                  "{currentToken}",
-                  currentToken
-                )}
-                w="full"
-                parentProps={{ w: "full" }}
-              ></Input>
-              <Input
-                type="text"
-                onChangeText={(text) => {
-                  setPrice(text);
-                }}
-                placeholder={lang.InputPrice}
-                label={lang.PriceOfToken.replace(
-                  "{currentToken}",
-                  currentToken
-                )}
-                w="full"
-                parentProps={{ w: "full" }}
-              ></Input>
-            </VStack>
-            <VStack
-              w={"2/5"}
-              justifyContent="flex-end"
-              alignItems="center"
-              py="2"
-            >
-              <HStack>
+          <KeyboardAvoidingView behavior="height">
+            <HStack py="2">
+              <VStack w="4/5" textAlign="center">
+                <Input
+                  type="text"
+                  onChangeText={(text) => {
+                    setAmount(text);
+                  }}
+                  placeholder={lang.InputAmount}
+                  label={lang.AmountOfToken.replace(
+                    "{currentToken}",
+                    currentToken
+                  )}
+                  w="full"
+                  keyboardType="numeric"
+                  parentProps={{ w: "full" }}
+                ></Input>
+                <Input
+                  type="text"
+                  onChangeText={(text) => {
+                    setPrice(text);
+                  }}
+                  placeholder={lang.InputPrice}
+                  label={lang.PriceOfToken.replace(
+                    "{currentToken}",
+                    currentToken
+                  )}
+                  w="full"
+                  keyboardType="numeric"
+                  parentProps={{ w: "full" }}
+                ></Input>
+              </VStack>
+              <VStack
+                w={"1/5"}
+                justifyContent="flex-end"
+                alignItems="center"
+                py="2"
+              >
                 <TransferButton
-                  icon={faPlus}
+                  icon={
+                    <Icon
+                      as={AntDesign}
+                      name="plus"
+                      size="xl"
+                      color="white"
+                    ></Icon>
+                  }
                   title={lang.Buy}
                   onPress={() => {
                     setBuySellFlag("buy");
@@ -121,36 +129,23 @@ const Orderbook: React.FC = () => {
                   }}
                 ></TransferButton>
                 <TransferButton
-                  icon={faMinus}
+                  icon={
+                    <Icon
+                      as={AntDesign}
+                      name="minus"
+                      size="xl"
+                      color="white"
+                    ></Icon>
+                  }
                   title={lang.Sell}
                   onPress={() => {
                     setBuySellFlag("sell");
                     modal1.onToggle();
                   }}
                 ></TransferButton>
-              </HStack>
-              <HStack>
-                <TransferButton
-                  icon={faPlus}
-                  title={lang.Sell}
-                  bgColor="red.500"
-                  onPress={() => {
-                    setBuySellFlag("cancelbuy");
-                    modal1.onToggle();
-                  }}
-                ></TransferButton>
-                <TransferButton
-                  icon={faMinus}
-                  title={lang.Sell}
-                  bgColor="red.500"
-                  onPress={() => {
-                    setBuySellFlag("cancelsell");
-                    modal1.onToggle();
-                  }}
-                ></TransferButton>
-              </HStack>
-            </VStack>
-          </HStack>
+              </VStack>
+            </HStack>
+          </KeyboardAvoidingView>
 
           <HStack w="full">
             <Text textAlign="center" fontSize="md">

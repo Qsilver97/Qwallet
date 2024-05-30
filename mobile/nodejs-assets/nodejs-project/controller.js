@@ -4,6 +4,7 @@ const rn_bridge = require("rn-bridge");
 const socketManager = require("./managers/socketManager");
 const { delay, socketSync } = require("./utils/helpers");
 const liveSocketController = require("./liveSocketController");
+
 const bridge_send = (responseType, result) => {
   rn_bridge.channel.send(
     JSON.stringify({
@@ -33,8 +34,7 @@ const base_controller = (
 
 exports.login = async ({ password }) => {
   try {
-    let liveSocket = socketManager.initLiveSocket();
-    liveSocketController(liveSocket);
+    liveSocketController("wss://websocket.qsilver.org");
     await delay(2000);
     let realPassword;
     stateManager.init();
@@ -197,6 +197,9 @@ exports.addAccout = async ({ password, index }) => {
 
 exports.logout = async () => {
   stateManager.init();
+  console.log("LOGOUT");
+  const result = await wasmManager.ccall({ command: "logout", flag: "logout" });
+  console.log(result);
   bridge_send("S2C/logout", {});
 };
 
@@ -205,9 +208,26 @@ exports.fetchUser = async () => {
   bridge_send("S2C/fetchuser", userState);
 };
 
+exports.fetchAddress = async (address) => {
+  const result = await socketSync(address);
+  bridge_send("S2C/fetch-address", result);
+};
+
 exports.history = async (address) => {
   const result = await socketSync(`history ${address}`);
   bridge_send("S2C/histories", result);
+};
+
+exports.qxhistory = async (address) => {
+  const result = await socketSync(`qxhistory ${address}`);
+  bridge_send("S2C/qxhistory", result);
+};
+
+exports.network = async () => {
+  console.log("NET");
+  const result = await socketSync("network");
+  console.log(result);
+  bridge_send("S2C/network", result);
 };
 
 exports.deleteAccount = async (password, index, address) => {
@@ -287,10 +307,17 @@ exports.restoreAccount = async (password, seeds, seedType) => {
   bridge_send("S2C/restore", recoverResult);
 };
 
-exports.transfer = async (toAddress, fromIdx, amount, tick) => {
-  const command = `send ${
-    stateManager.getUserState().password
-  },${fromIdx},${tick},${toAddress},${amount}`;
+exports.transfer = async (toAddress, fromIdx, amount, tick, token) => {
+  if (token == "QU") {
+    command = `send ${
+      stateManager.getUserState().password
+    },${fromIdx},${tick},${toAddress},${amount}`;
+  } else {
+    command = `tokensend ${
+      stateManager.getUserState().password
+    },${fromIdx},${tick},${toAddress},${amount},${token}`;
+  }
+
   const sendResult = await wasmManager.ccall({ command, flag: "transfer" });
   const v1requestResult = await wasmManager.ccall({
     command: "v1request",
@@ -428,6 +455,15 @@ exports.tokenPrices = async () => {
   try {
     const result = await socketSync("tokenprices");
     bridge_send("S2C/token-prices", result);
+  } catch (error) {
+    bridge_send("S2C/error", error);
+  }
+};
+
+exports.txFetch = async (txid) => {
+  try {
+    const result = await socketSync(txid);
+    bridge_send("S2C/tx-fetch", result);
   } catch (error) {
     bridge_send("S2C/error", error);
   }

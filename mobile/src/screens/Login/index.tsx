@@ -1,21 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { VStack, Text, useColorMode, KeyboardAvoidingView } from "native-base";
-import { useNavigation } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  Image,
-  NativeSyntheticEvent,
-  Platform,
-  TextInputKeyPressEventData,
-  TouchableOpacity,
-} from "react-native";
-// import nodejs from "nodejs-mobile-react-native";
-import Toast from "react-native-toast-message";
-import ButtonBox from "@app/components/UI/ButtonBox";
-import PageButton from "@app/components/UI/PageButton";
-import local from "@app/utils/locales";
-import { UserDetailType, useAuth } from "@app/context/AuthContext";
 import { login, passwordAvail } from "@app/api/api";
+import eventEmitter from "@app/api/eventEmitter";
+import ButtonBox from "@app/components/UI/ButtonBox";
+import Input from "@app/components/UI/Input";
+import PageButton from "@app/components/UI/PageButton";
+import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
 import {
   resetState,
@@ -23,8 +11,20 @@ import {
   setPassword,
 } from "@app/redux/appSlice";
 import { RootState } from "@app/redux/store";
-import eventEmitter from "@app/api/eventEmitter";
-import Input from "@app/components/UI/Input";
+import { UserDetailType } from "@app/types";
+import local from "@app/utils/locales";
+import { useNavigation } from "@react-navigation/native";
+import { KeyboardAvoidingView, Text, VStack, useColorMode } from "native-base";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  Image,
+  NativeSyntheticEvent,
+  Platform,
+  TextInputKeyPressEventData,
+  TouchableOpacity,
+} from "react-native";
+import Toast from "react-native-toast-message";
+import { useDispatch, useSelector } from "react-redux";
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
