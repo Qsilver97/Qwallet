@@ -6,15 +6,12 @@ import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
 import local from "@app/utils/locales";
 import { FontAwesome5 } from "@expo/vector-icons";
-import {
-  faCheck,
-  faQuestion,
-  faShare,
-} from "@fortawesome/free-solid-svg-icons";
+import { faQuestion } from "@fortawesome/free-solid-svg-icons";
 import {
   Button,
   HStack,
   Icon,
+  KeyboardAvoidingView,
   Modal,
   Text,
   VStack,
@@ -24,6 +21,8 @@ import { useState } from "react";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 import ConfirmModal from "./ConfirmModal";
+import TokenSelect from "./TokenSelect";
+import TxStatusModal from "./TxStatusModal";
 
 interface IProps {
   isOpen: boolean;
@@ -34,17 +33,15 @@ interface IProps {
 const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
   const {
     currentAddress,
-    allAddresses,
+    user,
     balances,
-    txId,
+    tokenBalances,
     txStatus,
-    txResult,
-    expectedTick,
-    setExpectedTick,
     setTxStatus,
   } = useAuth();
-  const { bgColor, textColor, main } = useColors();
+  const { bgColor, main } = useColors();
   const { tick } = useSelector((state: RootState) => state.app);
+  const [currentToken, setCurrentToken] = useState("QU");
   const [toAddress, setToAddress] = useState("");
   const [amount, setAmount] = useState("");
   const lang = local.Main.Components;
@@ -53,6 +50,13 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
   const modal2 = useDisclose();
 
   const handleTransfer = () => {
+    if (txStatus.status != "Closed") {
+      Toast.show({
+        type: "info",
+        text1: lang.RunningTransaction,
+      });
+      return;
+    }
     modal1.onToggle();
     if (toAddress == "" || amount == "" || amount == "0") {
       Toast.show({
@@ -75,14 +79,16 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
       });
       return;
     }
-    setTxStatus("Open");
     const expectedTick = parseInt(tick) + 5;
-    setExpectedTick(expectedTick);
+    setTxStatus((prev) => {
+      return { ...prev, expectedTick, status: "Waiting" };
+    });
     transfer(
       toAddress,
-      allAddresses.indexOf(currentAddress),
+      user.accountInfo.addresses.indexOf(currentAddress),
       amount,
-      expectedTick
+      expectedTick,
+      currentToken
     );
     modal2.onToggle();
   };
@@ -92,8 +98,8 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
       <Modal
         isOpen={isOpen}
         onClose={onToggle}
+        animationPreset="fade"
         avoidKeyboard
-        size="lg"
         _backdrop={{
           _dark: {
             bg: "coolGray.600",
@@ -104,69 +110,85 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
           opacity: 0.8,
         }}
       >
-        <Modal.Content>
-          <Modal.CloseButton />
-          <Modal.Body bgColor={bgColor}>
-            <HStack
-              bgColor={main.celestialBlue}
-              rounded={"full"}
-              mx={"auto"}
-              p={5}
-              my={6}
-            >
-              <Icon
-                as={FontAwesome5}
-                name="hand-holding-usd"
-                color="white"
-                size={"6xl"}
-              ></Icon>
-            </HStack>
-            <VStack>
-              <VStack>
-                <Input
-                  label={lang.SendAddress}
-                  onChangeText={setToAddress}
-                  placeholder={lang.SendToAddress}
-                  type="text"
-                  w={"full"}
-                ></Input>
-                <Input
-                  label={lang.Amount}
-                  onChangeText={setAmount}
-                  placeholder={lang.Amount}
-                  type="text"
-                  w={"full"}
-                ></Input>
-              </VStack>
-              <VStack>
-                <Text textAlign="right">{balances[currentAddress]} QU</Text>
-              </VStack>
-            </VStack>
-            <HStack mt={3} justifyContent={"center"} space={3}>
-              <Button
-                onPress={onToggle}
-                w={"1/2"}
-                rounded={"md"}
-                _pressed={{ opacity: 0.6 }}
-                bgColor={"red.500"}
-              >
-                {lang.Cancel}
-              </Button>
-              <Button
-                onPress={() => {
-                  onToggle();
-                  modal1.onToggle();
-                }}
-                w={"1/2"}
-                rounded={"md"}
-                _pressed={{ opacity: 0.6 }}
+        <KeyboardAvoidingView behavior="padding">
+          <Modal.Content w="80">
+            <Modal.CloseButton />
+            <Modal.Body bgColor={bgColor}>
+              <HStack
                 bgColor={main.celestialBlue}
+                rounded={"full"}
+                mx={"auto"}
+                p={5}
+                my={6}
               >
-                {lang.Send}
-              </Button>
-            </HStack>
-          </Modal.Body>
-        </Modal.Content>
+                <Icon
+                  as={FontAwesome5}
+                  name="hand-holding-usd"
+                  color="white"
+                  size={"6xl"}
+                ></Icon>
+              </HStack>
+              <VStack>
+                <VStack>
+                  <TokenSelect
+                    selectedToken={currentToken}
+                    onChange={setCurrentToken}
+                    includeQU
+                  ></TokenSelect>
+                </VStack>
+                <VStack>
+                  <Input
+                    label={lang.SendAddress}
+                    onChangeText={setToAddress}
+                    placeholder={lang.SendToAddress}
+                    type="text"
+                    w={"full"}
+                  ></Input>
+                  <Input
+                    label={lang.Amount}
+                    onChangeText={setAmount}
+                    placeholder={lang.Amount}
+                    keyboardType="numeric"
+                    type="text"
+                    w={"full"}
+                  ></Input>
+                </VStack>
+                <VStack>
+                  <Text textAlign="right">
+                    {currentToken == "QU"
+                      ? balances[currentAddress]
+                      : tokenBalances?.[currentToken]?.[currentAddress] ||
+                        0}{" "}
+                    {currentToken}
+                  </Text>
+                </VStack>
+              </VStack>
+              <HStack mt={3} justifyContent={"center"} space={3}>
+                <Button
+                  onPress={onToggle}
+                  w={"1/2"}
+                  rounded={"md"}
+                  _pressed={{ opacity: 0.6 }}
+                  bgColor={"red.500"}
+                >
+                  {lang.Cancel}
+                </Button>
+                <Button
+                  onPress={() => {
+                    onToggle();
+                    modal1.onToggle();
+                  }}
+                  w={"1/2"}
+                  rounded={"md"}
+                  _pressed={{ opacity: 0.6 }}
+                  bgColor={main.celestialBlue}
+                >
+                  {lang.Send}
+                </Button>
+              </HStack>
+            </Modal.Body>
+          </Modal.Content>
+        </KeyboardAvoidingView>
       </Modal>
       <ConfirmModal
         icon={faQuestion}
@@ -182,22 +204,10 @@ const TransferModal: React.FC<IProps> = ({ isOpen, onToggle, onPress }) => {
           <FormLabel label={lang.Token} value={`${amount} QU`} />
         </VStack>
       </ConfirmModal>
-      <ConfirmModal
-        icon={txStatus == "Success" ? faCheck : faShare}
+      <TxStatusModal
         isOpen={modal2.isOpen}
         onToggle={modal2.onToggle}
-        onPress={modal2.onToggle}
-      >
-        <VStack fontSize={"xl"} textAlign={"center"} px={2}>
-          <FormLabel label={lang.Status} value={txStatus} />
-          <FormLabel label={lang.TransactionID} value={txId} />
-          <FormLabel label={lang.CurrentTick} value={tick} />
-          <FormLabel
-            label={lang.ExpectedTick}
-            value={expectedTick.toString()}
-          />
-        </VStack>
-      </ConfirmModal>
+      ></TxStatusModal>
     </>
   );
 };

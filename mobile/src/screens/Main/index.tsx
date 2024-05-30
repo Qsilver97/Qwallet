@@ -19,6 +19,7 @@ import Settings from "./Settings";
 import Transaction from "./Transaction";
 import Wallet from "./Wallet";
 import Header from "./components/Header";
+import TransferStatusFab from "./Wallet/TransferStatusFab";
 
 const Tab = createBottomTabNavigator();
 
@@ -44,34 +45,37 @@ const Main = () => {
   );
 
   return (
-    <Tab.Navigator
-      initialRouteName={local.Main.BottomTab.Wallet}
-      screenOptions={{
-        tabBarActiveTintColor: "white",
-        header: () => <Header />,
-      }}
-    >
-      <Tab.Screen
-        name={local.Main.BottomTab.Wallet}
-        component={Wallet}
-        options={tabBarOptions(faWallet)}
-      />
-      <Tab.Screen
-        name={local.Main.BottomTab.Orderbook}
-        component={Orderbook}
-        options={tabBarOptions(faBookOpen)}
-      />
-      <Tab.Screen
-        name={local.Main.BottomTab.Transaction}
-        component={Transaction}
-        options={tabBarOptions(faClockRotateLeft)}
-      />
-      <Tab.Screen
-        name={local.Main.BottomTab.Settings}
-        component={Settings}
-        options={tabBarOptions(faGear)}
-      />
-    </Tab.Navigator>
+    <>
+      <Tab.Navigator
+        initialRouteName={local.Main.BottomTab.Wallet}
+        screenOptions={{
+          tabBarActiveTintColor: "white",
+          header: () => <Header />,
+        }}
+      >
+        <Tab.Screen
+          name={local.Main.BottomTab.Wallet}
+          component={Wallet}
+          options={tabBarOptions(faWallet)}
+        />
+        <Tab.Screen
+          name={local.Main.BottomTab.Orderbook}
+          component={Orderbook}
+          options={tabBarOptions(faBookOpen)}
+        />
+        <Tab.Screen
+          name={local.Main.BottomTab.Transaction}
+          component={Transaction}
+          options={tabBarOptions(faClockRotateLeft)}
+        />
+        <Tab.Screen
+          name={local.Main.BottomTab.Settings}
+          component={Settings}
+          options={tabBarOptions(faGear)}
+        />
+      </Tab.Navigator>
+      <TransferStatusFab />
+    </>
   );
 };
 

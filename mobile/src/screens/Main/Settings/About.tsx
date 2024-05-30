@@ -4,6 +4,7 @@ import { Entypo } from "@expo/vector-icons";
 import { Icon, Text } from "native-base";
 import React from "react";
 import local from "@app/utils/locales";
+import pkg from "@app/../package.json";
 
 const About: React.FC = () => {
   const { textColor } = useColors();
@@ -13,10 +14,17 @@ const About: React.FC = () => {
     <>
       <CollapsibleView
         title="About"
-        icon={<Icon as={Entypo} name="info-with-circle" size="xl" color={textColor} />}
+        icon={
+          <Icon
+            as={Entypo}
+            name="info-with-circle"
+            size="xl"
+            color={textColor}
+          />
+        }
       >
         <Text fontSize="xl" mx="auto" color={textColor}>
-          QWallet version 0.1.4
+          QWallet version {pkg.version}
         </Text>
       </CollapsibleView>
     </>

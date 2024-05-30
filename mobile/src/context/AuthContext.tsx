@@ -1,62 +1,56 @@
-import { basicInfo, getHistory, getToken, transferStatus } from "@app/api/api";
+import {
+  basicInfo,
+  fetchAddress,
+  getHistory,
+  getToken,
+  network,
+  qxhistory,
+  transferStatus,
+} from "@app/api/api";
 import eventEmitter from "@app/api/eventEmitter";
 import {
   setIsAuthenticated,
-  setMarketcap,
   setPassword,
-  setTokenprices,
+  setTick,
   setTokens,
 } from "@app/redux/appSlice";
+import { RootState } from "@app/redux/store";
+import {
+  Balances,
+  QxTxItem,
+  TransactionItem,
+  TransactionStatus,
+  UserDetailType,
+} from "@app/types";
 import local from "@app/utils/locales";
 import {
   ReactNode,
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import Toast from "react-native-toast-message";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-export interface AccountDetailType {
-  addresses: string[];
-  numaddrs: number;
-  subshash: string;
-}
-
-export interface UserDetailType {
-  isAuthenticated: boolean;
-  password: string;
-  accountInfo: AccountDetailType;
-}
-interface Balances {
-  [address: string]: number;
-}
 interface AuthContextType {
-  user: UserDetailType | null;
+  user: UserDetailType;
   balances: Balances;
-  tempPassword: string;
   currentAddress: string;
-  allAddresses: string[];
   histories: TransactionItem[];
+  qxHistories: QxTxItem[];
   tokenBalances: {
     [name: string]: Balances;
   };
-  txId: string;
-  txStatus: "Open" | "Closed" | "Rejected" | "Pending" | "Success";
-  expectedTick: number;
-  txResult: string;
+  txStatus: TransactionStatus;
   isLoading: boolean;
 
   login: (userDetails: UserDetailType) => void;
   logout: () => void;
-  setTempPassword: React.Dispatch<React.SetStateAction<string>>;
   setBalances: React.Dispatch<React.SetStateAction<Balances>>;
   setCurrentAddress: (value: React.SetStateAction<string>) => void;
-  setTxStatus: React.Dispatch<
-    React.SetStateAction<"Open" | "Closed" | "Rejected" | "Pending" | "Success">
-  >;
-  setExpectedTick: React.Dispatch<React.SetStateAction<number>>;
+  setTxStatus: React.Dispatch<React.SetStateAction<TransactionStatus>>;
   setTokenBalances: React.Dispatch<
     React.SetStateAction<{
       [name: string]: Balances;
@@ -64,29 +58,39 @@ interface AuthContextType {
   >;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setPrevBalances: React.Dispatch<React.SetStateAction<Balances>>;
+  setLastSocketResponseTime: React.Dispatch<React.SetStateAction<number>>;
 }
-
-type TransactionItem = [string, string, string, string, string, string];
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const dispatch = useDispatch();
-  const [user, setUser] = useState<UserDetailType | null>(null);
-  const [tempPassword, setTempPassword] = useState("");
+  const { tick } = useSelector((store: RootState) => store.app);
+
+  //////////////// Acccount Info /////////////////////
+  const [user, setUser] = useState<UserDetailType>({
+    isAuthenticated: false,
+    password: "",
+    accountInfo: { addresses: [], numaddrs: 0, subshash: "" },
+  });
   const [balances, setBalances] = useState<Balances>({});
-  const [currentAddress, setCurrentAddress] = useState<string>("");
-  const [allAddresses, setAllAddresses] = useState<string[]>([]);
   const [histories, setHistories] = useState<TransactionItem[]>([]);
-  const [txStatus, setTxStatus] = useState<
-    "Open" | "Closed" | "Rejected" | "Pending" | "Success"
-  >("Closed");
-  const [txId, setTxId] = useState<string>("");
-  const [expectedTick, setExpectedTick] = useState<number>(0);
-  const [txResult, setTxResult] = useState<string>("Unknown");
+  const [qxHistories, setQxHistories] = useState<QxTxItem[]>([]);
   const [tokenBalances, setTokenBalances] = useState<{
     [name: string]: Balances;
   }>({});
+
+  ////////////// Transaction Data ////////////////
+  const [txStatus, setTxStatus] = useState<TransactionStatus>({
+    txid: "",
+    expectedTick: 0,
+    status: "Closed",
+    result: "",
+  });
+
+  ////////////// Temp Data ////////////////
+  const [currentAddress, setCurrentAddress] = useState<string>("");
+
   const [statusInterval, setStatusInterval] = useState<any>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -94,76 +98,119 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [prevBalances, setPrevBalances] = useState<Balances>({});
   const [historyNum, setHistoryNum] = useState(histories.length);
   const [expectingHistoryUpdate, setExpectingHistoryUpdate] = useState(false);
+  const [qxHistoryNum, setQxHistoryNum] = useState(qxHistories.length);
+  const [expectingQxHistoryUpdate, setExpectingQxHistoryUpdate] =
+    useState(false);
+
+  const [lastSocketResponseTime, setLastSocketResponseTime] = useState(0);
+  const intervalRef = useRef<NodeJS.Timeout>();
 
   const lang = local.Toast;
 
-  const login = (userDetails: UserDetailType | null) => {
+  // useEffect(() => {
+  //   if (lastSocketResponseTime != 0)
+  //     intervalRef.current = setInterval(() => {
+  //       if (Date.now() - lastSocketResponseTime > 4000) {
+  //         console.log(Date.now());
+  //         console.log(lastSocketResponseTime);
+  //         network();
+  //       }
+  //     }, 5000);
+
+  //   return () => {
+  //     if (intervalRef.current) {
+  //       clearInterval(intervalRef.current);
+  //     }
+  //   };
+  // }, [lastSocketResponseTime]);
+
+  useEffect(() => {
+    if (user.accountInfo.numaddrs)
+      setTimeout(() => {
+        network();
+      }, 5000);
+  }, [user.accountInfo.numaddrs]);
+
+  const clear = () => {
+    dispatch(setIsAuthenticated(false));
+    dispatch(setPassword(""));
+    setUser({
+      isAuthenticated: false,
+      password: "",
+      accountInfo: { addresses: [], numaddrs: 0, subshash: "" },
+    });
+    setBalances({});
+    setCurrentAddress("");
+    setHistories([]);
+    setTxStatus({
+      txid: "",
+      expectedTick: 0,
+      status: "Closed",
+      result: "",
+    });
+    setTokenBalances({});
+    setIsLoading(false);
+    setExpectingHistoryUpdate(false);
+    setExpectingQxHistoryUpdate(false);
+  };
+
+  const login = (userDetails: UserDetailType) => {
     setUser(userDetails);
-    if (userDetails !== null)
-      setCurrentAddress(userDetails?.accountInfo?.addresses[0]);
+    setCurrentAddress(userDetails?.accountInfo?.addresses[0]);
     basicInfo();
   };
 
   const logout = () => {
-    dispatch(setIsAuthenticated(false));
-    dispatch(setPassword(""));
-    setTempPassword("");
-    setUser(null);
-    setBalances({});
-    setCurrentAddress("");
-    setAllAddresses([]);
-    setHistories([]);
-    setTxStatus("Closed");
-    setTxId("");
-    setExpectedTick(0);
-    setTxResult("");
-    setTokenBalances({});
-    setIsLoading(false);
+    clear();
   };
 
   useEffect(() => {
     setTokens([]);
-    if (currentAddress != "") {
+    if (!!currentAddress) {
+      setExpectingHistoryUpdate(false);
+      setExpectingQxHistoryUpdate(false);
       setIsLoading(true);
       getHistory(currentAddress);
+      qxhistory(currentAddress);
       getToken();
+      fetchAddress(currentAddress);
     }
   }, [currentAddress]);
 
   // If someone send qu to me
-  useEffect(() => {
-    if (currentAddress == "") return;
-    if (Object.is(prevBalances, {})) return;
-    if (!balances[currentAddress] || !prevBalances[currentAddress]) return;
-    if (balances[currentAddress] > prevBalances[currentAddress]) setOutTx(true);
-    else setOutTx(false);
-    setHistoryNum(histories.length + 1);
-    getHistory(currentAddress);
-    setExpectingHistoryUpdate(true);
-  }, [balances[currentAddress]]);
+  // useEffect(() => {
+  //   if (!currentAddress) return;
+  //   if (Object.is(prevBalances, {})) return;
+  //   if (!balances[currentAddress] || !prevBalances[currentAddress]) return;
+  //   if (balances[currentAddress] > prevBalances[currentAddress]) setOutTx(true);
+  //   else setOutTx(false);
+  //   setHistoryNum(histories.length + 1);
+  //   getHistory(currentAddress);
+  //   setExpectingHistoryUpdate(true);
+  // }, [balances[currentAddress]]);
 
   useEffect(() => {
-    if (user?.accountInfo) {
-      setCurrentAddress(user?.accountInfo.addresses[0]);
-      setAllAddresses(user?.accountInfo.addresses);
+    if (user.accountInfo.numaddrs) {
+      setCurrentAddress(user.accountInfo.addresses[0]);
     }
   }, [user]);
 
   useEffect(() => {
+    if (!currentAddress) return;
     if (expectingHistoryUpdate && currentAddress !== "") {
       const interval = setInterval(() => {
         if (histories.length !== historyNum) {
           getHistory(currentAddress);
         } else {
           const newHistory = histories.reverse()[0];
-          if (outTx)
-            Toast.show({
-              type: "info",
-              text1: lang.ReceivedQUFrom.replace(
-                "{amount}",
-                `${Math.abs(parseInt(newHistory[3]))}`
-              ).replace("{address}", newHistory[2]),
-            });
+          // if (outTx)
+          //   Toast.show({
+          //     type: "info",
+          //     text1: lang.ReceivedQUFrom.replace(
+          //       "{amount}",
+          //       `${Math.abs(parseInt(newHistory[3]))}`
+          //     ).replace("{address}", newHistory[2]),
+          //   });
           setExpectingHistoryUpdate(false); // Clear the flag when history is up-to-date
           clearInterval(interval); // Clear the interval when done
         }
@@ -171,7 +218,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       return () => clearInterval(interval);
     }
-  }, [histories.length, historyNum, currentAddress, expectingHistoryUpdate]);
+  }, [histories.length, historyNum, expectingHistoryUpdate]);
+
+  useEffect(() => {
+    if (!currentAddress) return;
+    if (expectingQxHistoryUpdate && currentAddress !== "") {
+      const interval = setInterval(() => {
+        if (qxHistories.length !== qxHistoryNum) {
+          qxhistory(currentAddress);
+        } else {
+          setExpectingHistoryUpdate(false); // Clear the flag when history is up-to-date
+          clearInterval(interval); // Clear the interval when done
+        }
+      }, 1500);
+
+      return () => clearInterval(interval);
+    }
+  }, [qxHistories.length, qxHistoryNum, expectingQxHistoryUpdate]);
+
+  useEffect(() => {
+    if (
+      txStatus.status == "Success" ||
+      txStatus.status == "Failed" ||
+      txStatus.status == "Closed"
+    )
+      return;
+    transferStatus();
+  }, [tick]);
 
   useEffect(() => {
     const handleHistoryEvent = (res: any) => {
@@ -185,8 +258,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       setIsLoading(false);
     };
+    const handleQxHistoryEvent = (res: any) => {
+      if (res.data === false) {
+        setQxHistories([]);
+      } else if (res.data.history) {
+        setQxHistories(res.data.history);
+      } else {
+        // setHistories([]);
+      }
+      setIsLoading(false);
+    };
     const handleTokenEvent = (res: any) => {
       if (res.data) {
+        console.log(res.data);
         if (res.data.tokens) dispatch(setTokens(res.data.tokens));
       } else {
         Toast.show({
@@ -197,46 +281,50 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     const handleTransferEvent = (res: any) => {
       if (res.data) {
-        const _statusInterval = setInterval(() => {
-          transferStatus();
-        }, 2000);
-        setStatusInterval(_statusInterval);
+        setTimeout(() => transferStatus(), 1500);
       } else {
         Toast.show({
           type: "error",
           text1: "E-22: " + lang.ErrorTransfer,
         });
-        setTxStatus("Rejected");
+        setTxStatus((prev) => {
+          return { ...prev, status: "Failed" };
+        });
       }
     };
     const handleTransferStatusEvent = (res: any) => {
       console.log("S2C/transfer-status", res);
       if (res.data) {
         if (res.data == "failed") {
-          setTxStatus("Rejected");
-          setTxResult("Failed");
+          setTxStatus((prev) => {
+            return { ...prev, status: "Failed" };
+          });
           Toast.show({ type: "error", text1: "E-23: " + lang.TransferFailed });
         } else if (res.data.value.result == 0) {
-          setTxStatus("Pending");
-          setTxResult("Pending");
+          setTxStatus((prev) => {
+            return { ...prev, status: "Pending" };
+          });
         } else if (res.data.value.result == 1) {
-          setTxResult(res.data.value.display);
+          setTxStatus((prev) => {
+            return {
+              ...prev,
+              result: res.data.value.display,
+            };
+          });
         } else {
-          setTxStatus("Rejected");
+          setTxStatus((prev) => {
+            return { ...prev, status: "Failed" };
+          });
         }
       } else {
         Toast.show({ type: "error", text1: "E-24: " + lang.TransferFailed });
-        setTxStatus("Rejected");
-        setTxResult("Pending");
-        clearInterval(statusInterval);
+        setTxStatus((prev) => {
+          return { ...prev, status: "Failed" };
+        });
       }
     };
     const handleBuySellEvent = (res: any) => {
       if (res.data) {
-        const _statusInterval = setInterval(() => {
-          transferStatus();
-        }, 2000);
-        setStatusInterval(_statusInterval);
         if (res.data.value.result == 0) {
         } else if (res.data.value.result < 0) {
           Toast.show({
@@ -244,16 +332,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             text1: "E-25: " + res.data.value.display,
           });
         } else if (res.data.value.result == 1) {
-          setTxStatus(res.data.value.display);
+          const splited = res.data.value.display.split(" ");
+          setTxStatus((prev) => {
+            return {
+              ...prev,
+              expectedTick: splited[5],
+              txid: splited[1],
+              status: "Pending",
+            };
+          });
         }
       } else {
       }
     };
+    const handleNetwork = (res: any) => {
+      if (res.data) {
+        console.log(res.data);
+        dispatch(setTick(res.data?.latest));
+      }
+    };
     eventEmitter.on("S2C/histories", handleHistoryEvent);
+    eventEmitter.on("S2C/qxhistory", handleQxHistoryEvent);
     eventEmitter.on("S2C/tokens", handleTokenEvent);
     eventEmitter.on("S2C/transfer", handleTransferEvent);
     eventEmitter.on("S2C/transfer-status", handleTransferStatusEvent);
     eventEmitter.on("S2C/buy-sell", handleBuySellEvent);
+    eventEmitter.on("S2C/network", handleNetwork);
 
     // Cleanup function to remove the event listener
     return () => {
@@ -262,49 +366,57 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       eventEmitter.off("S2C/transfer", handleTransferEvent);
       eventEmitter.off("S2C/transfer-status", handleTransferStatusEvent);
       eventEmitter.off("S2C/buy-sell", handleBuySellEvent);
+      eventEmitter.off("S2C/network", handleNetwork);
     };
   }, []);
 
   useEffect(() => {
-    if (txResult.includes("broadcast for tick")) {
-      const txResultSplit = txResult.split(" ");
-      setTxId(txResultSplit[1]);
-      setExpectedTick(parseInt(txResultSplit[txResultSplit.length - 1]));
-    } else if (txResult.includes("no command pending")) {
-      setTxStatus("Success");
+    if (txStatus.result?.includes("broadcast for tick")) {
+      const txResultSplit = txStatus.result.split(" ");
+      setTxStatus((prev) => {
+        return { ...prev, txid: txResultSplit[1] };
+      });
+      setTxStatus((prev) => {
+        return {
+          ...prev,
+          expectedTick: parseInt(txResultSplit[txResultSplit.length - 1]),
+        };
+      });
+    } else if (txStatus.result?.includes("no command pending")) {
+      setExpectingHistoryUpdate(true);
+      setExpectingQxHistoryUpdate(true);
+      setHistoryNum(histories.length + 1);
+      setQxHistoryNum(qxHistories.length + 1);
+      setTxStatus((prev) => {
+        return { ...prev, status: "Success" };
+      });
       Toast.show({
         type: "success",
         text1: lang.TransactionCompleted,
       });
-      clearInterval(statusInterval);
     }
-  }, [txResult]);
+  }, [txStatus.result]);
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        tempPassword,
         balances,
         currentAddress,
-        allAddresses,
         histories,
-        txId,
+        qxHistories,
         txStatus,
-        expectedTick,
-        txResult,
         tokenBalances,
         isLoading,
         login,
         logout,
-        setTempPassword,
         setBalances,
         setCurrentAddress,
-        setTxStatus,
-        setExpectedTick,
         setTokenBalances,
+        setTxStatus,
         setIsLoading,
         setPrevBalances,
+        setLastSocketResponseTime,
       }}
     >
       {children}

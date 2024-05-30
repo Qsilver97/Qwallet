@@ -1,27 +1,25 @@
-import { TouchableOpacity, TouchableOpacityProps } from "react-native";
-import React from "react";
-import { Box, Button, Pressable, Text, VStack } from "native-base";
 import { useColors } from "@app/context/ColorContex";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { VStack } from "native-base";
+import React, { ReactNode } from "react";
+import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 
 interface Iprops extends TouchableOpacityProps {
-  icon: IconProp;
+  icon: ReactNode;
   title: string;
-  toggleModal?: () => void;
+  onPress?: () => void;
   bgColor?: string;
 }
 
 const TransferButton: React.FC<Iprops> = ({
   icon,
   title,
-  toggleModal,
+  onPress,
   bgColor,
   ...props
 }) => {
-  const { main, textColor } = useColors();
+  const { main } = useColors();
   return (
-    <TouchableOpacity onPress={toggleModal} {...props}>
+    <TouchableOpacity onPress={onPress} {...props}>
       <VStack p={2} space={2} alignItems={"center"}>
         <VStack
           bgColor={bgColor || main.celestialBlue}
@@ -30,11 +28,7 @@ const TransferButton: React.FC<Iprops> = ({
           justifyItems={"center"}
           justifyContent={"center"}
         >
-          <FontAwesomeIcon
-            icon={icon}
-            color="white"
-            size={24}
-          ></FontAwesomeIcon>
+          {icon}
         </VStack>
         {/* <Text color={textColor}>{title}</Text> */}
       </VStack>

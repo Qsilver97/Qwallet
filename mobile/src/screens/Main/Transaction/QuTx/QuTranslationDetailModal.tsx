@@ -22,7 +22,7 @@ interface IProps extends IModalProps {
   transaction: any;
 }
 
-const TransactionDetailModal: React.FC<IProps> = ({
+const QuTransactionDetailModal: React.FC<IProps> = ({
   isOpen,
   onToggle,
   transaction,
@@ -78,9 +78,9 @@ const TransactionDetailModal: React.FC<IProps> = ({
               )}`}
             ></FormLabel>
             <FormControl>
-              <FormControl.Label color={textColor}>
+              <Text color={textColor} fontWeight="semibold">
                 {lang.TransactionID}
-              </FormControl.Label>
+              </Text>
               <Link
                 href={`http://89.38.98.214:7004/explorer/tx/${transaction[1]}`}
                 colorScheme={"blue"}
@@ -89,7 +89,9 @@ const TransactionDetailModal: React.FC<IProps> = ({
                   textDecoration: "none",
                 }}
               >
-                <Text textAlign="center">{transaction[1]}</Text>
+                <Text ml="2" textAlign="center">
+                  {transaction[1]}
+                </Text>
               </Link>
             </FormControl>
             <FormLabel
@@ -128,4 +130,4 @@ const TransactionDetailModal: React.FC<IProps> = ({
   );
 };
 
-export default TransactionDetailModal;
+export default QuTransactionDetailModal;

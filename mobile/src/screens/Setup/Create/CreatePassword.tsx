@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import {
-  Box,
-  Checkbox,
-  KeyboardAvoidingView,
-  Link,
-  Text,
-  VStack,
-} from "native-base";
-import { useAuth } from "@app/context/AuthContext";
+import { Box, Checkbox, KeyboardAvoidingView, Text, VStack } from "native-base";
 import { useColors } from "@app/context/ColorContex";
 import {
   checkPasswordStrength,
@@ -21,6 +13,8 @@ import local from "@app/utils/locales";
 import { Platform } from "react-native";
 import eventEmitter from "@app/api/eventEmitter";
 import { passwordAvail } from "@app/api/api";
+import { setPassword as setGlobalPwd } from "@app/redux/appSlice";
+import { useDispatch } from "react-redux";
 
 const CreatePassword: React.FC = () => {
   const navigation = useNavigation();
@@ -33,7 +27,7 @@ const CreatePassword: React.FC = () => {
     label: string;
     color: string;
   }>(getPasswordStrengthProps(0));
-  const { setTempPassword } = useAuth();
+  const dispatch = useDispatch();
   const lang = local.Create.CreatePassword;
 
   const handlePassword = (text: string) => {
@@ -135,7 +129,7 @@ const CreatePassword: React.FC = () => {
             checkAgreement == false
           }
           onPress={() => {
-            setTempPassword(password);
+            dispatch(setGlobalPwd(password));
             navigation.navigate("Reminder");
           }}
         ></PageButton>
