@@ -377,10 +377,10 @@ exports.sendTx = async (req, res) => {
     const socket = socketManager.getIO();
     let command = "";
     if (flag == 'send') {
-        if (currentToken) {
-            command = `tokensend ${password},${index},${tick},${toAddress},${amount},${currentToken}`;
-        } else {
+        if (currentToken == 'QU') {
             command = `send ${password},${index},${tick},${toAddress},${amount}`;
+        } else {
+            command = `tokensend ${password},${index},${tick},${toAddress},${amount},${currentToken}`;
         }
     } else {
         command = `${flag} ${password},${index},${tick},${currentToken},${amount},${price}`;
