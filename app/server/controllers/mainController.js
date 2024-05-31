@@ -243,18 +243,23 @@ exports.addAccount = async (req, res) => {
 
 exports.restoreAccount = async (req, res) => {
     const { password, seeds, seedType } = req.body;
-    let command = null;
-    if (seedType == '24words') {
-        command = `addseed ${password},${seeds.join(' ')}`;
-    } else if (seedType == '55chars') {
-        command = `addseed Q${password},${seeds}`;
-    }
-    if (command == null) {
-        res.status(401).send('error');
+    if ((typeof seeds == 'string' && seeds.length == '55') || (typeof seeds == 'object' && seeds.length == '24' && seeds.every(element => element !== ""))) {
+        let command = null;
+        if (seedType == '24words') {
+            command = `addseed ${password},${seeds.join(' ')}`;
+        } else if (seedType == '55chars') {
+            command = `addseed Q${password},${seeds}`;
+        }
+        if (command == null) {
+            res.status(401).send('error');
+            return;
+        }
+        const recoverResult = await wasmManager.ccall({ command, flag: 'recover' });
+        res.send(recoverResult);
         return;
+    } else {
+        return res.status(400).send('seeds error');
     }
-    const recoverResult = await wasmManager.ccall({ command, flag: 'recover' });
-    res.send(recoverResult)
 }
 
 exports.transfer = async (req, res) => {
