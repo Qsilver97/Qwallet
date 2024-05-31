@@ -14,26 +14,36 @@ const ColumnGrid = ({ inputValues = false, handleInputSeed }: ColumnGridProps) =
 
     return (
         <div className="grid grid-cols-4 gap-6 relative rounded-lg">
-            {typeof seeds == "object" &&
+            {inputValues &&
+                Array.from({ length: 24 }, (_, index) => index + 1).map((_, idx) => (
+                    <div
+                        key={idx}
+                        className="relative flex justify-between w-20 bg-gray-200 rounded-md"
+                    >
+                        <span>{idx + 1}</span>
+                        <input
+                            type="text"
+                            className="border-none outline-none select-none text-center text-white m-0 p-0 bg-transparent w-full"
+                            onChange={(e) => { if (handleInputSeed) handleInputSeed(e, idx) }}
+                        />
+                        <div className="absolute bottom-0 border border-white w-full h-[1px]"></div>
+                    </div>
+                ))
+
+            }
+            {!inputValues && typeof seeds == "object" &&
                 seeds.map((seed, idx) => (
                     <div
                         key={idx}
                         className="relative flex justify-between w-20 bg-gray-200 rounded-md"
                     >
                         <span>{idx}</span>
-                        {inputValues ? (
-                            <input
-                                type="text"
-                                className="border-none outline-none select-none text-center text-white m-0 p-0 bg-transparent w-full"
-                                onChange={(e) => { if (handleInputSeed) handleInputSeed(e, idx) }}
-                            />
-                        ) : (
-                            <span>{seed}</span>
-                        )}
+                        <span>{seed}</span>
 
                         <div className="absolute bottom-0 border border-white w-full h-[1px]"></div>
                     </div>
-                ))}
+                ))
+            }
             {!inputValues && blurBackground && (
                 <>
                     <div className="bg-dark-gray-400 bg-opacity-40 backdrop-filter backdrop-blur-md absolute top-0 left-0 w-[108%] h-[115%] -translate-x-[5%] -translate-y-[5%] rounded-lg"></div>
