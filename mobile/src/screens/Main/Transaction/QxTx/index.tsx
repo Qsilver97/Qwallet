@@ -52,7 +52,7 @@ const index = () => {
             >
               {qxHistories.length ? (
                 <VStack flex={1}>
-                  {qxHistories.map((tx, key) => (
+                  {qxHistories.reverse().map((tx, key) => (
                     <Pressable
                       key={key}
                       onPress={() => {

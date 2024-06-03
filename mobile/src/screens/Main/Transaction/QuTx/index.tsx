@@ -62,7 +62,7 @@ const index = () => {
                 flexGrow: 1,
               }}
             >
-              {quHistory.length ? (
+              {quHistory.reverse().length ? (
                 <VStack flex={1}>
                   {quHistory.map((tx, key) => (
                     <Pressable
