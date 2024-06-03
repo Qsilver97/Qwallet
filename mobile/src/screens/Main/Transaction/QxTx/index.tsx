@@ -12,7 +12,7 @@ import {
   VStack,
   useDisclose,
 } from "native-base";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import QxTransactionItem from "./QxTransactionItem";
 import QxTransactionDetailModal from "./QxTransactionDetailModal";
@@ -24,6 +24,25 @@ const index = () => {
   const lang = local.Main.Transaction;
 
   const { isOpen, onToggle } = useDisclose();
+
+  const Item = useMemo(() => {
+    return (
+      <>
+        {qxHistories.reverse().map((tx, key) => (
+          <Pressable
+            key={key}
+            onPress={() => {
+              setCurrentTx(tx);
+              onToggle();
+            }}
+            _pressed={{ opacity: 0.7 }}
+          >
+            <QxTransactionItem tx={tx} index={key + 1} />
+          </Pressable>
+        ))}
+      </>
+    );
+  }, [qxHistories]);
 
   return (
     <>
@@ -50,36 +69,7 @@ const index = () => {
                 flexGrow: 1,
               }}
             >
-              {qxHistories.length ? (
-                <VStack flex={1}>
-                  {qxHistories.reverse().map((tx, key) => (
-                    <Pressable
-                      key={key}
-                      onPress={() => {
-                        setCurrentTx(tx);
-                        onToggle();
-                      }}
-                      _pressed={{ opacity: 0.7 }}
-                    >
-                      <QxTransactionItem tx={tx} index={key + 1} />
-                    </Pressable>
-                  ))}
-                </VStack>
-              ) : (
-                <VStack flex={1} alignItems="center" justifyContent="center">
-                  <Center>
-                    <Icon as={AntDesign} name="questioncircle" size={20}></Icon>
-                    <Text
-                      color={textColor}
-                      fontSize="md"
-                      mt="4"
-                      textAlign="center"
-                    >
-                      {lang.NoTransactionHistory}
-                    </Text>
-                  </Center>
-                </VStack>
-              )}
+              {Item}
             </ScrollView>
           )}
         </VStack>
