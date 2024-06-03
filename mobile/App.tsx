@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NativeBaseProvider } from "native-base";
+import { Center, NativeBaseProvider } from "native-base";
 import RNFS from "react-native-fs";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -16,7 +16,10 @@ import { ColorProvider } from "@app/context/ColorContex";
 import getTheme from "@app/utils/ThemeConfig";
 import local from "@app/utils/locales";
 import toastConfig from "@app/utils/ToastConfig";
-import { StatusBar } from "react-native";
+import { StatusBar, Text } from "react-native";
+import ErrorBoundary, {
+  FallbackComponentProps,
+} from "react-native-error-boundary";
 
 interface ISettings {
   init: string;
@@ -24,6 +27,10 @@ interface ISettings {
   lang: string;
   network: "mainnet" | "testnet";
 }
+
+const errorHandler = (error: Error, stackTrace: string) => {
+  console.log(error);
+};
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -74,19 +81,21 @@ export default function App() {
   local.setLanguage(settings.lang);
 
   return (
-    <Provider store={store}>
-      <AuthProvider>
-        <SocketCom />
-        <NetworkProvider defaultNetwork={settings.network}>
-          <NativeBaseProvider theme={theme}>
-            <ColorProvider>
-              <StatusBar barStyle="light-content" backgroundColor="#222222" />
-              <RootNavigation init={settings.init} />
-              <Toast config={toastConfig} />
-            </ColorProvider>
-          </NativeBaseProvider>
-        </NetworkProvider>
-      </AuthProvider>
-    </Provider>
+    <ErrorBoundary onError={errorHandler}>
+      <Provider store={store}>
+        <AuthProvider>
+          <SocketCom />
+          <NetworkProvider defaultNetwork={settings.network}>
+            <NativeBaseProvider theme={theme}>
+              <ColorProvider>
+                <StatusBar barStyle="light-content" backgroundColor="#222222" />
+                <RootNavigation init={settings.init} />
+                <Toast config={toastConfig} />
+              </ColorProvider>
+            </NativeBaseProvider>
+          </NetworkProvider>
+        </AuthProvider>
+      </Provider>
+    </ErrorBoundary>
   );
 }
