@@ -133,7 +133,14 @@ const assetsItems: AssetItemProps[] = [
         colorClassName: 'bg-[#FB03F5]',
     },
     {
-        icon: '/assets/images/tokens/qft.svg',
+        icon: '/assets/images/tokens/cfb.svg',
+        name: 'CFB',
+        amount: '0',
+        percentage: 0,
+        colorClassName: 'bg-[#50AF00]',
+    },
+    {
+        icon: '/assets/images/tokens/qwallet.svg',
         name: 'QWALLET',
         amount: '0',
         percentage: 0,
