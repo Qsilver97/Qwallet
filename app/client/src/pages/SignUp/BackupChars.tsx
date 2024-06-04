@@ -4,6 +4,7 @@ import { Button, Text } from "../../components/commons";
 import Container from "../Login/LoginContainer";
 import { useAuth } from "../../contexts/AuthContext";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const BackupChars = () => {
     const { seeds, setSeeds, recoverStatus, restoreAccount } = useAuth();
@@ -11,13 +12,17 @@ const BackupChars = () => {
 
     const [backupSeeds, setBackupSeeds] = useState<string>("");
 
-    const handleChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSeeds = (e: React.ChangeEvent<HTMLInputElement>) => {
         setBackupSeeds(e.target.value);
     };
 
 
     const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
+        if (backupSeeds.length !== 55 || backupSeeds !== backupSeeds.toLowerCase()) {
+            toast.error('Please input valid seeds');
+            return;
+        }
         if (recoverStatus) {
             restoreAccount()
         } else {
@@ -55,7 +60,7 @@ const BackupChars = () => {
                         type="text"
                         placeholder="Input seeds you have just created"
                         className="bg-transparent border-b border-white pl-2.5 py-1 outline-none"
-                        onChange={handleChangePassword}
+                        onChange={handleSeeds}
                     />
 
                     <div className="flex justify-center gap-8 lg:gap-20">
