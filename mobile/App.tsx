@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Center, NativeBaseProvider } from "native-base";
+import { NativeBaseProvider } from "native-base/src/core/NativeBaseProvider";
 import RNFS from "react-native-fs";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";

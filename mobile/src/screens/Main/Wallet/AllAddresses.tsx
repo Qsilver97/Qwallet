@@ -3,9 +3,9 @@ import eventEmitter from "@app/api/eventEmitter";
 import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
 import local from "@app/utils/locales";
+import { handleCopy } from "@app/utils/utils";
 import { MaterialIcons } from "@expo/vector-icons";
 import { faWarning } from "@fortawesome/free-solid-svg-icons";
-import Clipboard from "@react-native-clipboard/clipboard";
 import {
   HStack,
   Icon,
@@ -24,11 +24,6 @@ const AllAddresses: React.FC = () => {
   const [selectedAddress, setSelectedAddress] = useState("");
   const { isOpen, onToggle } = useDisclose();
   const lang = local.Main.Wallet.AllAddress;
-
-  const handleTapAddress = () => {
-    Clipboard.setString(selectedAddress);
-    Toast.show({ type: "success", text1: lang.toast_AddressCopied });
-  };
 
   useEffect(() => {
     const handleDeleteAddressEvent = (res: any) => {
@@ -71,7 +66,7 @@ const AllAddresses: React.FC = () => {
                 _pressed={{ opacity: 0.6 }}
                 onPress={() => {
                   setSelectedAddress(address);
-                  handleTapAddress();
+                  handleCopy(selectedAddress);
                 }}
                 onLongPress={() => {
                   setSelectedAddress(address);
