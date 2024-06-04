@@ -11,7 +11,7 @@ const AccountSummary: React.FC = () => {
                     label={'Balance'}
                     icon={'/assets/images/dashboard/totalDeposit.svg'}
                     unit='$'
-                    amount={parseFloat(marketcap?.price ? (Object.keys(balances).reduce((sum, key) => sum + balances[key], 0) * parseFloat(marketcap?.price)).toFixed(3) : '0')}
+                    amount={parseFloat(marketcap?.price ? (Object.keys(balances).reduce((sum, key) => BigInt(sum) + balances[key], 0n) * BigInt(parseFloat(marketcap?.price) * 100000000)).toString() : '0') / 100000000}
                 />
                 <SummaryItem
                     label={'Ticks'}
