@@ -5,7 +5,7 @@ import { formatNumberWithCommas } from '../../utils/helper';
 type AccountGridProps = {
     data: {
         address: string
-        balance: number
+        balance: bigint
     }[]
     currentPage: number
 }

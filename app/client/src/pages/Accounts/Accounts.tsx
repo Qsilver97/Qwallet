@@ -11,7 +11,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useEffect, useState } from "react";
 type DataType = {
     address: string;
-    balance: number;
+    balance: bigint;
 };
 
 const Accounts = () => {
@@ -23,7 +23,7 @@ const Accounts = () => {
             if (item !== "") {
                 setData((currentData) => {
                     const idx = currentData.findIndex((temp) => temp.address === item);
-                    const balance = balances[item] || 0;
+                    const balance = balances[item] || 0n;
 
                     if (idx === -1) {
                         // If the address doesn't exist, add it
