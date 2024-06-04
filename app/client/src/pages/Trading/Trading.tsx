@@ -106,7 +106,7 @@ const Trading = () => {
                                     showSelectDescription
                                     hideTokenValue
                                 />
-                                <span className="text-2xl p-2 px-4 bg-slate-500 rounded-lg">{tokenBalances[`${currentToken.value}`] ? (tokenBalances[`${currentToken.value}`][currentAddress] || 0) : 0}</span>
+                                <span className="text-2xl p-2 px-4 bg-slate-500 rounded-lg">{tokenBalances[`${currentToken.value}`] ? (tokenBalances[`${currentToken.value}`][currentAddress] || 0).toString() : '0'}</span>
                             </div>
                         }
                         {currentToken.value == 'QU' ? <div className="relative top-5 p-5">Switch to the other token to trade</div> :

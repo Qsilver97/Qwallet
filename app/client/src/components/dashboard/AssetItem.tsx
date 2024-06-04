@@ -14,9 +14,7 @@ const AssetItem: React.FC<{ token: string, percent: number }> = ({ token, percen
                 </div>
                 <div>
                     {
-                        tokenBalances[item.name] ?
-                            <>{tokenBalances[item.name][currentAddress] | 0}</> :
-                            <>0</>
+                        <>{tokenBalances?.[item.name]?.[currentAddress] || 0n}</>
                     }
                 </div>
             </div>

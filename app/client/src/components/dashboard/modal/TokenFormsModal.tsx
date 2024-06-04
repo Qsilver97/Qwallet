@@ -59,7 +59,7 @@ const TokenFormsModal = ({
                                 Available
                             </label>
                             <span className="font-Inter font-light text-xs">
-                                {tokenBalances[tokenName][currentAddress]} {tokenName}
+                                {tokenBalances[tokenName][currentAddress].toString()} {tokenName}
                             </span>
                         </div>
                     </div>
