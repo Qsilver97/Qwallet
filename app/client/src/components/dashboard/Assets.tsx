@@ -13,7 +13,6 @@ const Assets: React.FC = () => {
                 if (tokenPrices[token][0] !== 0 && tokenBalances[token] && tokenPrices[token]) {
                     amount = (BigInt(tokenBalances[token][currentAddress] || 0)) * BigInt(tokenPrices[token][0] * 100000000);
                 }
-                console.log(token, amount)
                 _totalAmount += amount;
             })
         }
