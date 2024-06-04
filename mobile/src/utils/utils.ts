@@ -1,4 +1,6 @@
+import Clipboard from "@react-native-clipboard/clipboard";
 import local from "./locales";
+import Toast from "react-native-toast-message";
 
 export const checkPasswordStrength = (password: string) => {
   let strength = 0;
@@ -41,4 +43,9 @@ export const getPasswordStrengthProps = (strength: number) => {
     default:
       return { label: lang.NotAvailable, color: "gray.500" };
   }
+};
+
+export const handleCopy = (txt: string) => {
+  Clipboard.setString(txt);
+  Toast.show({ type: "success", text1: "Copied!" });
 };

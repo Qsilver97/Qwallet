@@ -7,31 +7,44 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { useColors } from "@app/context/ColorContex";
 
+const defaultProps = {
+  style: {
+    borderRadius: 10,
+    display: "flex",
+    alignItems: "center",
+    borderLeftWidth: 0,
+    padding: 4,
+    paddingLeft: 10,
+    shadowColor: "#444444",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+  },
+  text1Style: {
+    fontSize: 18,
+    fontFamily: "Arial",
+    fontWeight: "normal",
+  },
+};
+
 const toastConfig: ToastConfig = {
   success: (props: BaseToastProps) => {
     const { toast } = useColors();
     return (
       <BaseToast
         {...props}
-        style={{
-          borderRadius: 10,
-          display: "flex",
-          alignItems: "center",
-          borderLeftWidth: 0,
-          padding: 4,
-          paddingLeft: 10,
-          backgroundColor: toast.bgColor,
-          shadowColor: "#444444",
-          shadowOffset: { width: 0, height: 5 },
-          shadowOpacity: 0.2,
-          shadowRadius: 6,
-        }}
-        text1Style={{
-          fontSize: 18,
-          fontFamily: "Arial",
-          color: toast.textColor,
-          fontWeight: "normal",
-        }}
+        style={
+          {
+            ...defaultProps.style,
+            backgroundColor: toast.bgColor,
+          } as any
+        }
+        text1Style={
+          {
+            ...defaultProps.text1Style,
+            color: toast.textColor,
+          } as any
+        }
         renderLeadingIcon={() => (
           <Icon
             as={AntDesign}
@@ -48,25 +61,18 @@ const toastConfig: ToastConfig = {
     return (
       <BaseToast
         {...props}
-        style={{
-          borderRadius: 10,
-          display: "flex",
-          alignItems: "center",
-          borderLeftWidth: 0,
-          padding: 4,
-          paddingLeft: 10,
-          backgroundColor: toast.bgColor,
-          shadowColor: "#444444",
-          shadowOffset: { width: 0, height: 5 },
-          shadowOpacity: 0.2,
-          shadowRadius: 6,
-        }}
-        text1Style={{
-          fontSize: 18,
-          fontFamily: "Arial",
-          color: toast.textColor,
-          fontWeight: "normal",
-        }}
+        style={
+          {
+            ...defaultProps.style,
+            backgroundColor: toast.bgColor,
+          } as any
+        }
+        text1Style={
+          {
+            ...defaultProps.text1Style,
+            color: toast.textColor,
+          } as any
+        }
         renderLeadingIcon={() => (
           <Icon
             as={AntDesign}
@@ -83,25 +89,18 @@ const toastConfig: ToastConfig = {
     return (
       <BaseToast
         {...props}
-        style={{
-          borderRadius: 10,
-          display: "flex",
-          alignItems: "center",
-          borderLeftWidth: 0,
-          padding: 4,
-          paddingLeft: 10,
-          backgroundColor: toast.bgColor,
-          shadowColor: "#444444",
-          shadowOffset: { width: 0, height: 5 },
-          shadowOpacity: 0.2,
-          shadowRadius: 6,
-        }}
-        text1Style={{
-          fontSize: 18,
-          fontFamily: "Arial",
-          color: toast.textColor,
-          fontWeight: "normal",
-        }}
+        style={
+          {
+            ...defaultProps.style,
+            backgroundColor: toast.bgColor,
+          } as any
+        }
+        text1Style={
+          {
+            ...defaultProps.text1Style,
+            color: toast.textColor,
+          } as any
+        }
         renderLeadingIcon={() => (
           <Icon
             as={AntDesign}

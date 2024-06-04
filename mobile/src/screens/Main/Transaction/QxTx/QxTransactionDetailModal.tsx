@@ -1,22 +1,21 @@
-import React, { useMemo } from "react";
-import {
-  Button,
-  FormControl,
-  HStack,
-  IModalProps,
-  Link,
-  Modal,
-  Text,
-  VStack,
-} from "native-base";
+import FormLabel from "@app/components/UI/FormLabel";
+import { useAuth } from "@app/context/AuthContext";
 import { useColors } from "@app/context/ColorContex";
 import { RootState } from "@app/redux/store";
-import { useSelector } from "react-redux";
-import { useAuth } from "@app/context/AuthContext";
-import FormLabel from "@app/components/UI/FormLabel";
-import local from "@app/utils/locales";
 import { QxTxItem } from "@app/types";
+import local from "@app/utils/locales";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import Clipboard from "@react-native-clipboard/clipboard";
+import {
+  Button,
+  HStack,
+  IModalProps,
+  Modal,
+  Pressable,
+  VStack
+} from "native-base";
+import React, { useMemo } from "react";
+import { useSelector } from "react-redux";
 
 interface IProps extends IModalProps {
   isOpen: boolean;
@@ -110,9 +109,14 @@ const QxTransactionDetailModal: React.FC<IProps> = ({
               }
             ></FormLabel>
             {tx.action != "transfer" && (
-                <FormLabel label={"Price"} value={`${tx.price as string} QU`}></FormLabel>
+              <FormLabel
+                label={"Price"}
+                value={`${tx.price as string} QU`}
+              ></FormLabel>
             )}
-            <FormLabel label={lang.TransactionID} value={tx.txid}></FormLabel>
+            <Pressable onPress={() => Clipboard.setString(tx.txid)} _pressed={{ opacity: 0.6 }}>
+              <FormLabel label={lang.TransactionID} value={tx.txid}></FormLabel>
+            </Pressable>
             <FormLabel
               label={lang.Status}
               value={`${

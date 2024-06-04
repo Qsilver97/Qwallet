@@ -85,8 +85,8 @@ const Core: React.FC<IProps> = ({
 
     const insufficientTokenBalance =
       flag === "sell" &&
-      (Object.is(tokenBalances, {}) ||
-        tokenBalances[token][currentAddress] < parseInt(amount));
+      (!tokenBalances?.[token]?.[currentAddress] ||
+        tokenBalances?.[token]?.[currentAddress] < parseInt(amount));
     if (insufficientTokenBalance) {
       showError("E-32: " + lang.TokenBalanceInsufficient);
       return;

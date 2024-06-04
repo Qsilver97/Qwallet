@@ -5,7 +5,6 @@ import { useColors } from "@app/context/ColorContex";
 import local from "@app/utils/locales";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import Clipboard from "@react-native-clipboard/clipboard";
 import {
   Button,
   HStack,
@@ -19,11 +18,11 @@ import { Image, TouchableOpacity } from "react-native";
 import Toast from "react-native-toast-message";
 import ConfirmModal from "./ConfirmModal";
 import LogoutButton from "./LogoutButton";
+import { handleCopy } from "@app/utils/utils";
 
 const Header: React.FC = () => {
   const { bgColor, textColor, main, gray } = useColors();
-  const { currentAddress, user, login, setCurrentAddress } =
-    useAuth();
+  const { currentAddress, user, login, setCurrentAddress } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [addingStatus, setAddingStatus] = useState(false);
@@ -43,10 +42,6 @@ const Header: React.FC = () => {
       user.password,
       user.accountInfo.addresses.findIndex((item) => item == "")
     );
-  };
-  const handleTapAddress = () => {
-    Clipboard.setString(currentAddress);
-    Toast.show({ type: "success", text1: lang.toast_AddressCopied });
   };
 
   useEffect(() => {
@@ -76,7 +71,7 @@ const Header: React.FC = () => {
           />
         </VStack>
         <HStack flex={1} justifyContent={"center"} px={10}>
-          <TouchableOpacity onPress={handleTapAddress}>
+          <TouchableOpacity onPress={() => handleCopy(currentAddress)}>
             <Text numberOfLines={1} ellipsizeMode="middle">
               {currentAddress}
             </Text>
