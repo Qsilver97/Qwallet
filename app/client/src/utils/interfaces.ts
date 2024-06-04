@@ -21,7 +21,7 @@ type SidebarItemProps = {
 type SummaryItemProps = {
     icon: string;
     label: string;
-    amount: number;
+    amount: number | bigint;
     unit?: string;
 };
 

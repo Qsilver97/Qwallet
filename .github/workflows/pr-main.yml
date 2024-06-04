@@ -28,7 +28,7 @@ jobs:
       run: |
         cd app/server
         npm install
-        npx electron-packager . --overwrite --platform=win32 --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f
+        npx electron-packager . --overwrite --platform=win32 --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f --asar
         mkdir ./release-builds/server-win32-x64/keys
         touch ./release-builds/server-win32-x64/keys/.keep
       
@@ -64,7 +64,7 @@ jobs:
       run: |
         cd app/server
         npm install
-        npx electron-packager . --overwrite --platform=darwin --arch=x64 --icon=logo.icns --prune=true --out=release-builds -f
+        npx electron-packager . --overwrite --platform=win32 --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f --asar
       
     - name: Zip the macOS build
       run: |
@@ -100,7 +100,7 @@ jobs:
       run: |
         cd app/server
         npm install
-        npx electron-packager . --overwrite --platform=linux --arch=x64 --icon=logo.png --prune=true --out=release-builds -f
+        npx electron-packager . --overwrite --platform=win32 --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f --asar
         mkdir ./release-builds/server-linux-x64/keys
       
     - name: Zip the Linux build

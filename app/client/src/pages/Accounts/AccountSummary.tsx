@@ -3,21 +3,23 @@ import SummaryItem from '../../components/dashboard/SummaryItem';
 import { useAuth } from '../../contexts/AuthContext';
 
 const AccountSummary: React.FC = () => {
-    const { balances, marketcap, tick } = useAuth();
+    const { marketcap, portfolio, currentAddress } = useAuth();
     return (
         <div>
-            <div >
-                <SummaryItem
-                    label={'Balance'}
-                    icon={'/assets/images/dashboard/totalDeposit.svg'}
-                    unit='$'
-                    amount={parseFloat(marketcap?.price ? (Object.keys(balances).reduce((sum, key) => sum + balances[key], 0) * parseFloat(marketcap?.price)).toFixed(3) : '0')}
-                />
-                <SummaryItem
-                    label={'Ticks'}
-                    icon={'/assets/images/dashboard/totalAssets.svg'}
-                    amount={parseInt(tick)}
-                />
+            <div className="flex">
+                {marketcap?.price && portfolio[currentAddress] ? <>
+                    <SummaryItem
+                        label="Portfolio(USD)"
+                        icon="/assets/images/dashboard/totalDeposit.svg"
+                        unit="$"
+                        amount={Number(BigInt(portfolio[currentAddress]) * BigInt(Math.floor((parseFloat(marketcap?.price) || 0) * 10000000))) / 10000000}
+                    />
+                    <SummaryItem
+                        label="Portfolio(QU)"
+                        icon="/assets/images/dashboard/totalAssets.svg"
+                        unit="QU"
+                        amount={portfolio[currentAddress]}
+                    /></> : <></>}
             </div>
         </div>
     );
