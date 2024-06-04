@@ -70,7 +70,7 @@ interface AuthContextType {
     handleClickSideBar: (idx: number) => void;
 }
 interface Balances {
-    [address: string]: number;
+    [address: string]: bigint;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -276,7 +276,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                     setBalances((prev) => {
                         return {
                             ...prev,
-                            [data.accountInfo?.addresses[item[0]]]: parseFloat(
+                            [data.accountInfo?.addresses[item[0]]]: BigInt(
                                 item[1]
                             ),
                         };
@@ -326,7 +326,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 flag,
                 password,
                 index: accountInfo?.addresses.indexOf(currentAddress),
-                tick: parseInt(tick) + EXPECTEDTICKGAP,
+                tick: tick + EXPECTEDTICKGAP,
                 currentToken: tokenName,
                 amount,
                 price,
@@ -354,12 +354,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                     setBalances((prev) => {
                         return {
                             ...prev,
-                            [data.address]: parseFloat(data.balance),
+                            [data.address]: BigInt(data.balance),
                         };
                     });
                 if (data.tokens) {
                     data.tokens.map((item: [string, string]) => {
-                        setTokenBalances((prev) => { return { ...prev, [item[0]]: { [data.address]: parseInt(item[1]) } } })
+                        setTokenBalances((prev) => { return { ...prev, [item[0]]: { [data.address]: BigInt(item[1]) } } })
                     })
                 }
             } else if (data.balances) {
@@ -367,7 +367,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 data.balances.map((item: [number, string]) => {
                     if (data[0])
                         setBalances((prev) => {
-                            return { ...prev, [data[0]]: parseFloat(item[1]) };
+                            return { ...prev, [data[0]]: BigInt(item[1]) };
                         });
                 });
             } else if (data.richlist) {

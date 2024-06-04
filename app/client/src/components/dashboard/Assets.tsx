@@ -4,14 +4,14 @@ import { useAuth } from "../../contexts/AuthContext";
 
 const Assets: React.FC = () => {
     const { tokens, tokenBalances, tokenPrices, currentAddress } = useAuth();
-    const [totalAmount, setTotalAmount] = useState<number>(0);
+    const [totalAmount, setTotalAmount] = useState<bigint>(0n);
     useEffect(() => {
-        let _totalAmount = 0;
+        let _totalAmount = 0n;
         if (tokens && tokenBalances && currentAddress && tokenPrices) {
             tokens.forEach(token => {
-                let amount = 0;
+                let amount = 0n;  // All amount amplified by 100000000
                 if (tokenPrices[token][0] !== 0 && tokenBalances[token] && tokenPrices[token]) {
-                    amount = (tokenBalances[token][currentAddress] || 0) * tokenPrices[token][1] / tokenPrices[token][0];
+                    amount = (BigInt(tokenBalances[token][currentAddress] || 0)) * BigInt(tokenPrices[token][1] * 100000000) / BigInt(tokenPrices[token][0]);
                 }
                 console.log(amount)
                 _totalAmount += amount;
@@ -24,15 +24,15 @@ const Assets: React.FC = () => {
         <div className="rounded-lg bg-dark px-6 py-8 flex flex-col text-center">
             {tokens.map((token, idx) => {
                 let percent = 0;
-                let amount = 0;
+                let amount = 0n;
                 if (token == 'QU' && tokenBalances[token]) {
-                    amount = (tokenBalances[token][currentAddress] || 0);
+                    amount = BigInt(tokenBalances[token][currentAddress] || 0) * 100000000n;
                 }
                 else if (tokenPrices[token][0] !== 0 && tokenBalances[token] && tokenPrices[token]) {
-                    amount = (tokenBalances[token][currentAddress] || 0) * tokenPrices[token][1] / tokenPrices[token][0];
+                    amount = BigInt(tokenBalances[token][currentAddress] || 0) * BigInt(tokenPrices[token][1] * 100000000) / BigInt(tokenPrices[token][0]);
                 }
-                if (totalAmount !== 0 && tokenBalances[token]) {
-                    percent = amount * 100 / totalAmount
+                if (totalAmount !== 0n && tokenBalances[token]) {
+                    percent = Number(amount * 10000n / totalAmount) / 100
                 }
                 return <AssetItem token={token} key={idx} percent={percent} />;
             })}
