@@ -5,6 +5,7 @@ import Button from "../../components/commons/Button";
 import ColumnGrid from "./ColumnGrid";
 import { useAuth } from "../../contexts/AuthContext";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const BackupSeeds = () => {
     // const [backup, setBackup] = useState(false);
@@ -39,6 +40,10 @@ const BackupSeeds = () => {
 
     const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
+        if (backupSeeds.length !== 24 || !backupSeeds.every(element => element !== "")) {
+            toast.error('Please input valid seeds');
+            return;
+        }
         if (recoverStatus) {
             restoreAccount();
         } else {
