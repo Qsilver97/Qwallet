@@ -43,9 +43,7 @@ const TokenComponent: React.FC<TokensProps> = ({ onSend }) => {
                                     </div>
                                 </td>
                                 {
-                                    tokenBalances[item.name] ?
-                                        <td className="text-white py-2">{tokenBalances?.[token]?.[currentAddress]?.toString() || '0'}</td> :
-                                        <td className="text-white py-2">0</td>
+                                    <td className="text-white py-2">{tokenBalances?.[token]?.[currentAddress]?.toString() || '0'}</td>
                                 }
                                 <td className="py-2 flex justify-center">
                                     <button
