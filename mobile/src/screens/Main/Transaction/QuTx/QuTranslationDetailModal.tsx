@@ -6,6 +6,7 @@ import {
   IModalProps,
   Link,
   Modal,
+  Pressable,
   Text,
   VStack,
 } from "native-base";
@@ -15,6 +16,7 @@ import { useSelector } from "react-redux";
 import { useAuth } from "@app/context/AuthContext";
 import FormLabel from "@app/components/UI/FormLabel";
 import local from "@app/utils/locales";
+import { handleCopy } from "@app/utils/utils";
 
 interface IProps extends IModalProps {
   isOpen: boolean;
@@ -77,23 +79,21 @@ const QuTransactionDetailModal: React.FC<IProps> = ({
                 parseFloat(transaction[3]) * parseFloat(marketcap.price)
               )}`}
             ></FormLabel>
-            <FormControl>
-              <Text color={textColor} fontWeight="semibold">
-                {lang.TransactionID}
-              </Text>
-              <Link
-                href={`http://89.38.98.214:7004/explorer/tx/${transaction[1]}`}
-                colorScheme={"blue"}
-                _text={{
-                  color: main.celestialBlue,
-                  textDecoration: "none",
-                }}
-              >
+            <Pressable
+              onPress={() => {
+                handleCopy(transaction[1]);
+              }}
+              _pressed={{ opacity: 0.6 }}
+            >
+              <FormControl>
+                <Text color={textColor} fontWeight="semibold">
+                  {lang.TransactionID}
+                </Text>
                 <Text ml="2" textAlign="center">
                   {transaction[1]}
                 </Text>
-              </Link>
-            </FormControl>
+              </FormControl>
+            </Pressable>
             <FormLabel
               label={lang.Status}
               value={`${
@@ -104,14 +104,28 @@ const QuTransactionDetailModal: React.FC<IProps> = ({
                   : statusLang.OldEpoch
               }`}
             ></FormLabel>
-            <FormLabel
-              label={lang.From}
-              value={`${isSend ? currentAddress : transaction[2]}`}
-            ></FormLabel>
-            <FormLabel
-              label={lang.To}
-              value={`${isSend ? transaction[2] : currentAddress}`}
-            ></FormLabel>
+            <Pressable
+              onPress={() => {
+                handleCopy(isSend ? currentAddress : transaction[2]);
+              }}
+              _pressed={{ opacity: 0.6 }}
+            >
+              <FormLabel
+                label={lang.From}
+                value={`${isSend ? currentAddress : transaction[2]}`}
+              ></FormLabel>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                handleCopy(isSend ? transaction[2] : currentAddress);
+              }}
+              _pressed={{ opacity: 0.7 }}
+            >
+              <FormLabel
+                label={lang.To}
+                value={`${isSend ? transaction[2] : currentAddress}`}
+              ></FormLabel>
+            </Pressable>
           </VStack>
           <HStack justifyContent="center">
             <Button

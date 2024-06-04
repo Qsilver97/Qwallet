@@ -67,7 +67,7 @@ interface QxTxItem {
   utc?: string;
 }
 
-export {
+export type {
   AccountDetailType,
   UserDetailType,
   Balances,

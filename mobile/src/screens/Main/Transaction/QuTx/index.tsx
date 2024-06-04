@@ -13,7 +13,7 @@ import {
   VStack,
   useDisclose,
 } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import QuTransactionItem from "./QuTransactionItem";
 import QuTransactionDetailModal from "./QuTranslationDetailModal";
@@ -26,6 +26,40 @@ const index = () => {
   const lang = local.Main.Transaction;
 
   const { isOpen, onToggle } = useDisclose();
+
+  const Item = useMemo(
+    () =>
+      quHistory.reverse().length ? (
+        <VStack flex={1}>
+          {quHistory.map((tx, key) => (
+            <Pressable
+              key={key}
+              onPress={() => {
+                setCurrentTx(tx);
+                onToggle();
+              }}
+              _pressed={{ opacity: 0.7 }}
+            >
+              <QuTransactionItem
+                transaction={tx}
+                index={key + 1}
+                // scTx={scTx[tx[1]]}
+              />
+            </Pressable>
+          ))}
+        </VStack>
+      ) : (
+        <VStack flex={1} alignItems="center" justifyContent="center">
+          <Center>
+            <Icon as={AntDesign} name="questioncircle" size={20}></Icon>
+            <Text color={textColor} fontSize="md" mt="4" textAlign="center">
+              {lang.NoTransactionHistory}
+            </Text>
+          </Center>
+        </VStack>
+      ),
+    [quHistory]
+  );
 
   useEffect(() => {
     const newQuHistory: TransactionItem[] = [];
@@ -62,40 +96,7 @@ const index = () => {
                 flexGrow: 1,
               }}
             >
-              {quHistory.length ? (
-                <VStack flex={1}>
-                  {quHistory.map((tx, key) => (
-                    <Pressable
-                      key={key}
-                      onPress={() => {
-                        setCurrentTx(tx);
-                        onToggle();
-                      }}
-                      _pressed={{ opacity: 0.7 }}
-                    >
-                      <QuTransactionItem
-                        transaction={tx}
-                        index={key + 1}
-                        // scTx={scTx[tx[1]]}
-                      />
-                    </Pressable>
-                  ))}
-                </VStack>
-              ) : (
-                <VStack flex={1} alignItems="center" justifyContent="center">
-                  <Center>
-                    <Icon as={AntDesign} name="questioncircle" size={20}></Icon>
-                    <Text
-                      color={textColor}
-                      fontSize="md"
-                      mt="4"
-                      textAlign="center"
-                    >
-                      {lang.NoTransactionHistory}
-                    </Text>
-                  </Center>
-                </VStack>
-              )}
+              {Item}
             </ScrollView>
           )}
         </VStack>

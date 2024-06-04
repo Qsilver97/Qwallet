@@ -16,11 +16,10 @@ export const SocketCom: React.FC = () => {
   useEffect(() => {
     eventEmitter.on("S2C/live", (res) => {
       console.log(res);
-      setLastSocketResponseTime(Date.now());
+      // setLastSocketResponseTime(Date.now());
       if (res.data.command == "CurrentTickInfo") {
         dispatch(setTick(res.data.tick));
       } else if (res.data.command == "EntityInfo") {
-        // setBalances({ [res.data.address]: parseFloat(res.data.balance) });
         if (res.data.address)
           if (res.data.tokens) {
             res.data.tokens.length &&
