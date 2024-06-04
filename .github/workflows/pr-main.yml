@@ -29,12 +29,12 @@ jobs:
         cd app/server
         npm install
         npx electron-packager . --overwrite --platform=win32 --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f --asar
-        mkdir ./release-builds/server-win32-x64/keys
-        touch ./release-builds/server-win32-x64/keys/.keep
+        mkdir ./release-builds/qwallet-win32-x64/keys
+        touch ./release-builds/qwallet-win32-x64/keys/.keep
       
     - name: Zip the Windows build
       run: |
-        Compress-Archive -Path app/server/release-builds/server-win32-x64/* -DestinationPath Qwallet-Windows.zip
+        Compress-Archive -Path app/server/release-builds/qwallet-win32-x64/* -DestinationPath Qwallet-Windows.zip
       
     - name: Upload Windows build to Server
       env:
@@ -64,12 +64,12 @@ jobs:
       run: |
         cd app/server
         npm install
-        npx electron-packager . --overwrite --platform=win32 --arch=darwin --icon=logo.ico --prune=true --out=release-builds -f --asar
+        npx electron-packager . --overwrite --platform=darwin --arch=darwin --icon=logo.ico --prune=true --out=release-builds -f --asar
       
     - name: Zip the macOS build
       run: |
         mkdir Qwallet-macOS
-        cp -rf app/server/release-builds/server-darwin-x64/* ./Qwallet-macOS/
+        cp -rf app/server/release-builds/qwallet-darwin-x64/* ./Qwallet-macOS/
         zip -r Qwallet-macOS.zip Qwallet-macOS/*
       
     - name: Upload macOS build to Server
@@ -101,10 +101,10 @@ jobs:
         cd app/server
         npm install
         npx electron-packager . --overwrite --platform=linux --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f --asar
-        mkdir ./release-builds/server-linux-x64/keys
+        mkdir ./release-builds/qwallet-linux-x64/keys
       
     - name: Zip the Linux build
-      run: tar -czvf Qwallet-Linux.tar.gz -C app/server/release-builds/server-linux-x64/ .
+      run: tar -czvf Qwallet-Linux.tar.gz -C app/server/release-builds/qwallet-linux-x64/ .
       
     - name: Upload Linux build to Server
       env:
