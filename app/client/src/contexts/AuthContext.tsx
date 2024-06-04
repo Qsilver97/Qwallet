@@ -37,6 +37,7 @@ interface AuthContextType {
     richlist: RichListInterface;
     currentAddress: string;
     tokenBalances: { [name: string]: Balances };
+    portfolio: Balances;
     totalBalance: string;
     recoverStatus: boolean;
     mode: ModeProps;
@@ -96,6 +97,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     const [totalBalance, setTotalBalance] = useState<string>('0');
     const [tokenPrices, setTokenprices] = useState<TokenPriceInterface>({});
     // const [totalBalance, setTotalBalance] = useState<string>('0');
+    const [portfolio, setPortfolio] = useState<any>({})
 
     const [tick, setTick] = useState("0");
     const [balances, setBalances] = useState<Balances>({});
@@ -446,6 +448,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         checkAuthenticated();
     }, [])
 
+    useEffect(() => {
+        let tmp: Balances = {};
+    
+        Object.keys(tokenBalances).forEach((token) => {
+            const tokenPrice = BigInt(tokenPrices?.[token]?.[0] || 0);
+    
+            Object.keys(tokenBalances[token]).forEach((addr) => {
+                const balance = BigInt(tokenBalances?.[token]?.[addr] || 0);
+                
+                if (tmp[addr] !== undefined) {
+                    tmp[addr] += balance * tokenPrice;
+                } else {
+                    tmp[addr] = balance * tokenPrice;
+                }
+    
+                console.log(addr, balance, tokenPrice, tmp[addr]);
+            });
+        });
+    
+        setPortfolio(tmp);
+    }, [tokenBalances, tokenPrices]);
+
     return (
         <AuthContext.Provider
             value={{
@@ -461,6 +485,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 tick,
                 balances,
                 totalBalance,
+                portfolio,
                 mode,
                 tokenBalances,
                 currentAddress,

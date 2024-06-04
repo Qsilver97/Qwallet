@@ -28,8 +28,8 @@ const Assets: React.FC = () => {
                 if (token == 'QU' && tokenBalances[token]) {
                     amount = BigInt(tokenBalances[token][currentAddress] || 0) * 100000000n;
                 }
-                else if (tokenPrices[token][0] !== 0 && tokenBalances[token] && tokenPrices[token]) {
-                    amount = BigInt(tokenBalances[token][currentAddress] || 0) * BigInt(tokenPrices[token][1] * 100000000) / BigInt(tokenPrices[token][0]);
+                else if (tokenPrices?.[token]?.[0] !== 0 && tokenBalances?.[token] && tokenPrices?.[token]) {
+                    amount = BigInt(tokenBalances?.[token]?.[currentAddress] || 0) * BigInt(tokenPrices?.[token]?.[1] * 100000000) / BigInt(tokenPrices?.[token]?.[0]);
                 }
                 if (totalAmount !== 0n && tokenBalances[token]) {
                     percent = Number(amount * 10000n / totalAmount) / 100

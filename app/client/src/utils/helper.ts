@@ -17,9 +17,9 @@ function isPositiveNumber(str: string): boolean {
     return positiveNumberRegex.test(str);
 }
 
-function formatNumberWithCommas(number: number) {
-    if(!number) return 0;
-    const options = Number.isInteger(number)
+function formatNumberWithCommas(number: any) {
+    if (!number) return 0;
+    const options = (Number.isInteger(number) || typeof number == "bigint")
         ? {}
         : { minimumFractionDigits: 3, maximumFractionDigits: 3 };
 
