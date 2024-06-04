@@ -11,9 +11,9 @@ const Assets: React.FC = () => {
             tokens.forEach(token => {
                 let amount = 0n;  // All amount amplified by 100000000
                 if (tokenPrices[token][0] !== 0 && tokenBalances[token] && tokenPrices[token]) {
-                    amount = (BigInt(tokenBalances[token][currentAddress] || 0)) * BigInt(tokenPrices[token][1] * 100000000) / BigInt(tokenPrices[token][0]);
+                    amount = (BigInt(tokenBalances[token][currentAddress] || 0)) * BigInt(tokenPrices[token][0] * 100000000);
                 }
-                console.log(amount)
+                console.log(token, amount)
                 _totalAmount += amount;
             })
         }
@@ -29,7 +29,7 @@ const Assets: React.FC = () => {
                     amount = BigInt(tokenBalances[token][currentAddress] || 0) * 100000000n;
                 }
                 else if (tokenPrices?.[token]?.[0] !== 0 && tokenBalances?.[token] && tokenPrices?.[token]) {
-                    amount = BigInt(tokenBalances?.[token]?.[currentAddress] || 0) * BigInt(tokenPrices?.[token]?.[1] * 100000000) / BigInt(tokenPrices?.[token]?.[0]);
+                    amount = BigInt(tokenBalances?.[token]?.[currentAddress] || 0) * BigInt(tokenPrices?.[token]?.[0] * 100000000);
                 }
                 if (totalAmount !== 0n && tokenBalances[token]) {
                     percent = Number(amount * 10000n / totalAmount) / 100
