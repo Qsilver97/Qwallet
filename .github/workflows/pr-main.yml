@@ -64,7 +64,7 @@ jobs:
       run: |
         cd app/server
         npm install
-        npx electron-packager . --overwrite --platform=darwin --arch=darwin --icon=logo.ico --prune=true --out=release-builds -f --asar
+        npx electron-packager . --overwrite --platform=darwin --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f --asar
       
     - name: Zip the macOS build
       run: |
