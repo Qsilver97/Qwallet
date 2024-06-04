@@ -7,19 +7,19 @@ const AccountSummary: React.FC = () => {
     return (
         <div>
             <div className="flex">
-                {marketcap?.price && portfolio[currentAddress] ? <>
+                
                     <SummaryItem
                         label="Portfolio(USD)"
                         icon="/assets/images/dashboard/totalDeposit.svg"
                         unit="$"
-                        amount={Number(BigInt(portfolio[currentAddress]) * BigInt(Math.floor((parseFloat(marketcap?.price) || 0) * 10000000))) / 10000000}
+                        amount={marketcap?.price && portfolio[currentAddress] ? Number(BigInt(portfolio[currentAddress]) * BigInt(Math.floor((parseFloat(marketcap?.price) || 0) * 10000000))) / 10000000 : 0}
                     />
                     <SummaryItem
                         label="Portfolio(QU)"
                         icon="/assets/images/dashboard/totalAssets.svg"
                         unit="QU"
-                        amount={portfolio[currentAddress]}
-                    /></> : <></>}
+                        amount={portfolio[currentAddress] || 0n}
+                    />
             </div>
         </div>
     );
