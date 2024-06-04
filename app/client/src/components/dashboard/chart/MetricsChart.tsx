@@ -61,7 +61,6 @@ const MetricsChart: React.FC = () => {
                 setData(prices.map(price => parseFloat(price[1]) * 10 ** decimals));
                 const yAxisValues: number[] = getYAxisValues(prices.map(price => parseFloat(price[1]) * 10 ** decimals), showLength);
                 setYAxisData(yAxisValues);
-                console.log(xAxisValues, yAxisValues,)
             } catch (error) {
 
             } finally {
