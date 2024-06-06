@@ -114,8 +114,8 @@ jobs:
 
     - name: Install Emscripten
       run: |
-        emcc --version
         sudo apt-get install emscripten
+        emcc --version
       
     - name: Compile wasm
       run: |
