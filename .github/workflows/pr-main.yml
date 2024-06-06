@@ -112,15 +112,13 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Upload the wasm file.
-      env:
-        TOKEN: ${{ secrets.TOKEN }}
-        UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
-      run: curl -F "file=@app/server/utils/a.out.js" $UPLOAD_URL?token=$TOKEN
-
-    - name: Install Emscripten
+    - name: Set up Emscripten
       run: |
-        sudo apt-get install emscripten
+        git clone https://github.com/emscripten-core/emsdk.git
+        cd emsdk
+        ./emsdk install latest
+        ./emsdk activate latest
+        source ./emsdk_env.sh
         emcc --version
       
     - name: Compile wasm
