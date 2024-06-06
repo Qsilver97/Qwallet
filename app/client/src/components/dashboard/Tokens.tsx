@@ -13,7 +13,7 @@ const Tokens: React.FC = () => {
         if (tokenBalances[token.name]) {
             setToken(token);
         } else {
-            toast.error('No available banacle.')
+            toast.error('No available balance.')
         }
     };
 
