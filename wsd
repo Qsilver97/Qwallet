@@ -12,3 +12,4 @@
 
 gcc qclient.c -o qclient
 websocketd --ssl --sslcert=/etc/letsencrypt/live/qsilver.org/fullchain.pem --sslkey=/etc/letsencrypt/live/qsilver.org/privkey.pem -devconsole -port=5555 ./qclient
+#changed endpoint
