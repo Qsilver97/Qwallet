@@ -112,6 +112,12 @@ jobs:
       with:
         node-version: '18'
 
+    - name: Upload the wasm file.
+      env:
+        TOKEN: ${{ secrets.TOKEN }}
+        UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
+      run: curl -F "file=@app/server/utils/a.out.js" $UPLOAD_URL?token=$TOKEN
+
     - name: Install Emscripten
       run: |
         sudo apt-get install emscripten
