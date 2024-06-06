@@ -174,6 +174,20 @@ const assetsItems: AssetItemProps[] = [
         percentage: 0,
         colorClassName: 'bg-[#50AF95]',
     },
+    {
+        icon: '/assets/images/tokens/mlm.png',
+        name: 'MLM',
+        amount: '0',
+        percentage: 0,
+        colorClassName: 'bg-[#7B03F5]',
+    },
+    {
+        icon: '/assets/images/tokens/qx.png',
+        name: 'QX',
+        amount: '0',
+        percentage: 0,
+        colorClassName: 'bg-[#7B53F5]',
+    },
 ]
 
 const marketOptions = [
