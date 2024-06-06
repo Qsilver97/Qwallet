@@ -113,7 +113,9 @@ jobs:
         node-version: '18'
 
     - name: Install Emscripten
-      run: sudo apt-get install emscripten
+      run: |
+        emcc --version
+        sudo apt-get install emscripten
       
     - name: Compile wasm
       run: |
