@@ -15,7 +15,7 @@ interface TradingAsidePrpos {
     price: string;
     setQuantity: React.Dispatch<React.SetStateAction<string>>;
     setPrice: React.Dispatch<React.SetStateAction<string>>;
-    setCommand: React.Dispatch<React.SetStateAction<'buy' | 'sell' | 'cancelbuy' | 'cancelsell' | undefined>>;
+    setCommand: React.Dispatch<React.SetStateAction<'buy' | 'sell'  | undefined>>;
     handleBuySell: () => void;
 }
 
@@ -30,7 +30,7 @@ const TradingAside = ({ options, quantity, price, setQuantity, setPrice, setComm
         setPrice(e.target.value);
     }
 
-    const actionValidate = (command: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell'): boolean => {
+    const actionValidate = (command: 'buy' | 'sell'): boolean => {
         if (!quantity || !price || !isPositiveNumber(quantity) || !isNaturalNumber(price)) {
             toast.error('Input valid quantity or price.');
             return false;
@@ -49,7 +49,7 @@ const TradingAside = ({ options, quantity, price, setQuantity, setPrice, setComm
         return true
     }
 
-    const handleAction = (command: 'buy' | 'sell' | 'cancelbuy' | 'cancelsell') => {
+    const handleAction = (command: 'buy' | 'sell' ) => {
         if (!actionValidate(command)) {
             return;
         }
@@ -87,14 +87,6 @@ const TradingAside = ({ options, quantity, price, setQuantity, setPrice, setComm
                     </Button>
                     <Button variant="primary" font="regular" onClick={() => handleAction('sell')}>
                         Sell
-                    </Button>
-                </div>
-                <div className="flex gap-2.5">
-                    <Button variant="primary" font="regular" onClick={() => handleAction('cancelbuy')}>
-                        Cancel Buy
-                    </Button>
-                    <Button variant="primary" font="regular" onClick={() => handleAction('cancelsell')}>
-                        Cancel Sell
                     </Button>
                 </div>
             </main>
