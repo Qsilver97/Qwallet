@@ -9,8 +9,9 @@ const Tokens: React.FC = () => {
     const { tokenBalances } = useAuth();
     const [token, setToken] = useState<AssetItemProps | null>(null);
 
-    const handleSend = (token: AssetItemProps) => {
-        if (tokenBalances[token.name]) {
+    const handleSend = (token: AssetItemProps, tokenName: string) => {
+        token.name = tokenName;
+        if (tokenBalances[tokenName]) {
             setToken(token);
         } else {
             toast.error('No available balance.')
