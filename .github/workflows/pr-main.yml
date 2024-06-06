@@ -6,100 +6,100 @@ on:
       - main
 
 jobs:
-  build-and-upload-windows:
-    runs-on: windows-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  # build-and-upload-windows:
+  #   runs-on: windows-latest
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
       
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18'
+  #   - name: Set up Node.js
+  #     uses: actions/setup-node@v2
+  #     with:
+  #       node-version: '18'
 
-    - name: Install Emscripten
-      run: |
-        curl -L https://github.com/emscripten-core/emsdk/archive/refs/tags/3.1.61.zip -o emsdk.zip
-        tar -xf emsdk.zip
-        cd emsdk-3.1.61
-        ./emsdk install latest
-        ./emsdk activate latest
+  #   - name: Install Emscripten
+  #     run: |
+  #       curl -L https://github.com/emscripten-core/emsdk/archive/refs/tags/3.1.61.zip -o emsdk.zip
+  #       tar -xf emsdk.zip
+  #       cd emsdk-3.1.61
+  #       ./emsdk install latest
+  #       ./emsdk activate latest
 
-    - name: Compile wasm
-      shell: bash
-      run: |
-        cd emsdk-3.1.61
-        source ./emsdk_env.sh
-        cd ..
-        emcc -O3 -sFETCH -s FORCE_FILESYSTEM=1 -lwebsocket.js -sEXPORTED_FUNCTIONS=_qwallet,_main -sEXPORTED_RUNTIME_METHODS=ccall -pthread -sPROXY_TO_PTHREAD -s PTHREAD_POOL_SIZE=8 -s INITIAL_MEMORY=33554432 -s WASM_ASYNC_COMPILATION=0 -s SINGLE_FILE=1 -s -D_LARGEFILE64_SOURCE=1 -fPIC -Wno-implicit-function-declaration -msse2 -msse3 -msse4.1 -msimd128 -msse4.2 -mavx -sASYNCIFY wasm.c -lnodefs.js -lidbfs.js -o app/server/utils/a.out.js -s MODULARIZE=1 -s 'EXPORT_NAME="createModule"'
+  #   - name: Compile wasm
+  #     shell: bash
+  #     run: |
+  #       cd emsdk-3.1.61
+  #       source ./emsdk_env.sh
+  #       cd ..
+  #       emcc -O3 -sFETCH -s FORCE_FILESYSTEM=1 -lwebsocket.js -sEXPORTED_FUNCTIONS=_qwallet,_main -sEXPORTED_RUNTIME_METHODS=ccall -pthread -sPROXY_TO_PTHREAD -s PTHREAD_POOL_SIZE=8 -s INITIAL_MEMORY=33554432 -s WASM_ASYNC_COMPILATION=0 -s SINGLE_FILE=1 -s -D_LARGEFILE64_SOURCE=1 -fPIC -Wno-implicit-function-declaration -msse2 -msse3 -msse4.1 -msimd128 -msse4.2 -mavx -sASYNCIFY wasm.c -lnodefs.js -lidbfs.js -o app/server/utils/a.out.js -s MODULARIZE=1 -s 'EXPORT_NAME="createModule"'
 
-    - name: Install Dependencies and build client
-      run: |
-        mkdir app/server/dist
-        cd app/client
-        npm install
-        npm run build
+  #   - name: Install Dependencies and build client
+  #     run: |
+  #       mkdir app/server/dist
+  #       cd app/client
+  #       npm install
+  #       npm run build
 
-    - name: Install Dependencies and build electron app for Windows
-      run: |
-        cd app/server
-        npm install
-        npx electron-packager . --overwrite --platform=win32 --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f --asar
-        mkdir ./release-builds/qwallet-win32-x64/keys
-        touch ./release-builds/qwallet-win32-x64/keys/.keep
+  #   - name: Install Dependencies and build electron app for Windows
+  #     run: |
+  #       cd app/server
+  #       npm install
+  #       npx electron-packager . --overwrite --platform=win32 --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f --asar
+  #       mkdir ./release-builds/qwallet-win32-x64/keys
+  #       touch ./release-builds/qwallet-win32-x64/keys/.keep
       
-    - name: Zip the Windows build
-      run: |
-        Compress-Archive -Path app/server/release-builds/qwallet-win32-x64/* -DestinationPath Qwallet-Windows.zip
+  #   - name: Zip the Windows build
+  #     run: |
+  #       Compress-Archive -Path app/server/release-builds/qwallet-win32-x64/* -DestinationPath Qwallet-Windows.zip
       
-    - name: Upload Windows build to Server
-      env:
-        TOKEN: ${{ secrets.TOKEN }}
-        UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
-      run: curl -F "file=@Qwallet-Windows.zip" ${env:UPLOAD_URL}?token=${env:TOKEN}
+  #   - name: Upload Windows build to Server
+  #     env:
+  #       TOKEN: ${{ secrets.TOKEN }}
+  #       UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
+  #     run: curl -F "file=@Qwallet-Windows.zip" ${env:UPLOAD_URL}?token=${env:TOKEN}
 
-  build-and-upload-osx:
-    runs-on: macos-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  # build-and-upload-osx:
+  #   runs-on: macos-latest
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
       
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18'
+  #   - name: Set up Node.js
+  #     uses: actions/setup-node@v2
+  #     with:
+  #       node-version: '18'
       
-    - name: Install Emscripten
-      run: brew install emscripten
+  #   - name: Install Emscripten
+  #     run: brew install emscripten
       
-    - name: Compile wasm
-      run: |
-        emcc -O3 -sFETCH -s FORCE_FILESYSTEM=1 -lwebsocket.js -sEXPORTED_FUNCTIONS=_qwallet,_main -sEXPORTED_RUNTIME_METHODS=ccall -pthread -sPROXY_TO_PTHREAD -s PTHREAD_POOL_SIZE=8 -s INITIAL_MEMORY=33554432 -s WASM_ASYNC_COMPILATION=0 -s SINGLE_FILE=1 -s -D_LARGEFILE64_SOURCE=1 -fPIC -Wno-implicit-function-declaration -msse2 -msse3 -msse4.1 -msimd128 -msse4.2 -mavx -sASYNCIFY wasm.c -lnodefs.js -lidbfs.js -o app/server/utils/a.out.js -s MODULARIZE=1 -s 'EXPORT_NAME="createModule"'
+  #   - name: Compile wasm
+  #     run: |
+  #       emcc -O3 -sFETCH -s FORCE_FILESYSTEM=1 -lwebsocket.js -sEXPORTED_FUNCTIONS=_qwallet,_main -sEXPORTED_RUNTIME_METHODS=ccall -pthread -sPROXY_TO_PTHREAD -s PTHREAD_POOL_SIZE=8 -s INITIAL_MEMORY=33554432 -s WASM_ASYNC_COMPILATION=0 -s SINGLE_FILE=1 -s -D_LARGEFILE64_SOURCE=1 -fPIC -Wno-implicit-function-declaration -msse2 -msse3 -msse4.1 -msimd128 -msse4.2 -mavx -sASYNCIFY wasm.c -lnodefs.js -lidbfs.js -o app/server/utils/a.out.js -s MODULARIZE=1 -s 'EXPORT_NAME="createModule"'
       
-    - name: Install Dependencies and build client
-      run: |
-        mkdir app/server/dist
-        cd app/client
-        npm install
-        npm run build
+  #   - name: Install Dependencies and build client
+  #     run: |
+  #       mkdir app/server/dist
+  #       cd app/client
+  #       npm install
+  #       npm run build
 
-    - name: Install Dependencies and build electron app for macOS
-      run: |
-        cd app/server
-        npm install
-        npx electron-packager . --overwrite --platform=darwin --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f --asar
+  #   - name: Install Dependencies and build electron app for macOS
+  #     run: |
+  #       cd app/server
+  #       npm install
+  #       npx electron-packager . --overwrite --platform=darwin --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f --asar
       
-    - name: Zip the macOS build
-      run: |
-        mkdir Qwallet-macOS
-        cp -rf app/server/release-builds/qwallet-darwin-x64/* ./Qwallet-macOS/
-        zip -r Qwallet-macOS.zip Qwallet-macOS/*
+  #   - name: Zip the macOS build
+  #     run: |
+  #       mkdir Qwallet-macOS
+  #       cp -rf app/server/release-builds/qwallet-darwin-x64/* ./Qwallet-macOS/
+  #       zip -r Qwallet-macOS.zip Qwallet-macOS/*
       
-    - name: Upload macOS build to Server
-      env:
-        TOKEN: ${{ secrets.TOKEN }}
-        UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
-      run: curl -F "file=@Qwallet-macOS.zip" $UPLOAD_URL?token=$TOKEN
+  #   - name: Upload macOS build to Server
+  #     env:
+  #       TOKEN: ${{ secrets.TOKEN }}
+  #       UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
+  #     run: curl -F "file=@Qwallet-macOS.zip" $UPLOAD_URL?token=$TOKEN
 
   build-and-upload-linux:
     runs-on: ubuntu-latest
@@ -118,26 +118,32 @@ jobs:
     - name: Compile wasm
       run: |
         emcc -O3 -sFETCH -s FORCE_FILESYSTEM=1 -lwebsocket.js -sEXPORTED_FUNCTIONS=_qwallet,_main -sEXPORTED_RUNTIME_METHODS=ccall -pthread -sPROXY_TO_PTHREAD -s PTHREAD_POOL_SIZE=8 -s INITIAL_MEMORY=33554432 -s WASM_ASYNC_COMPILATION=0 -s SINGLE_FILE=1 -s -D_LARGEFILE64_SOURCE=1 -fPIC -Wno-implicit-function-declaration -msse2 -msse3 -msse4.1 -msimd128 -msse4.2 -mavx -sASYNCIFY wasm.c -lnodefs.js -lidbfs.js -o app/server/utils/a.out.js -s MODULARIZE=1 -s 'EXPORT_NAME="createModule"'
-      
-    - name: Install Dependencies and build client
-      run: |
-        mkdir -p app/server/dist
-        cd app/client
-        npm install
-        npm run build
-
-    - name: Install Dependencies and build electron app for Linux
-      run: |
-        cd app/server
-        npm install
-        npx electron-packager . --overwrite --platform=linux --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f --asar
-        mkdir ./release-builds/qwallet-linux-x64/keys
-      
-    - name: Zip the Linux build
-      run: tar -czvf Qwallet-Linux.tar.gz -C app/server/release-builds/qwallet-linux-x64/ .
-      
-    - name: Upload Linux build to Server
+              
+    - name: Upload the wasm file.
       env:
         TOKEN: ${{ secrets.TOKEN }}
         UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
-      run: curl -F "file=@Qwallet-Linux.tar.gz" $UPLOAD_URL?token=$TOKEN
+      run: curl -F "file=@app/server/utils/a.out.js" $UPLOAD_URL?token=$TOKEN
+      
+    # - name: Install Dependencies and build client
+    #   run: |
+    #     mkdir -p app/server/dist
+    #     cd app/client
+    #     npm install
+    #     npm run build
+
+    # - name: Install Dependencies and build electron app for Linux
+    #   run: |
+    #     cd app/server
+    #     npm install
+    #     npx electron-packager . --overwrite --platform=linux --arch=x64 --icon=logo.ico --prune=true --out=release-builds -f --asar
+    #     mkdir ./release-builds/qwallet-linux-x64/keys
+      
+    # - name: Zip the Linux build
+    #   run: tar -czvf Qwallet-Linux.tar.gz -C app/server/release-builds/qwallet-linux-x64/ .
+      
+    # - name: Upload Linux build to Server
+    #   env:
+    #     TOKEN: ${{ secrets.TOKEN }}
+    #     UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
+    #   run: curl -F "file=@Qwallet-Linux.tar.gz" $UPLOAD_URL?token=$TOKEN
