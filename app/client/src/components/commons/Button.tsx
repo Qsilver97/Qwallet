@@ -1,7 +1,7 @@
 import React from "react";
 
 interface ButtonProps {
-    variant: "primary" | "secondary";
+    variant: "primary" | "secondary" | "outline";
     size?: "base" | "wide" | "full";
     font?: "base" | "regular";
     className?: string;
@@ -37,6 +37,7 @@ const Button: React.FC<ButtonProps> = ({
     const variantStyles = {
         primary: `bg-blue-500 ${fontStyles[font].color.primary} focus:ring-blue-500 hover:bg-blue-600`,
         secondary: `bg-gray-600 ${fontStyles[font].color.secondary} focus:ring-gray-500 hover:bg-gray-700`,
+        outline: "border border-input bg-gray-600 hover:bg-blue-600 ",
     };
 
     const sizesStyles = {
